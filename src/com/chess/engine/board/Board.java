@@ -1,21 +1,11 @@
 package com.chess.engine.board;
 
-public class Board {
+import com.chess.engine.board.BoardUtils;
 
-	public Tile getTile(final int candidateDestinationCoordinate) {
-		return null;
-	}
+public class Board {
 	
-	public static boolean isValidTile(final int tileCoordinate) {
-		
-		boolean isValidTile = false;
-		
-		if(tileCoordinate >= 0 && tileCoordinate < 64)
-			isValidTile = true;
-		
-        return isValidTile;
-	}
-	
-	
+	public Tile getTile(final int tileCoordinate) {
+        return BoardUtils.EMPTY_TILES_CACHE.get(tileCoordinate);
+    }
 
 }

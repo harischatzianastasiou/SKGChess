@@ -2,6 +2,9 @@ package com.chess.engine.board;
 
 import java.util.Map;
 import java.util.HashMap;
+
+import com.chess.engine.Alliance;
+import com.chess.engine.board.Tile.EmptyTile;
 import com.chess.engine.pieces.Piece;
 import com.google.common.collect.ImmutableMap;
 
@@ -11,42 +14,48 @@ import com.google.common.collect.ImmutableMap;
 //immutable class
 public abstract class Tile {                                                                       // we cannot instantiate abstract classes directly, but we can create instances of their subclasses.
 
-	protected final int tileCoordinate;                                                            // protected so that it can only be accessed by subclasses - final so that once the tileCoordinate is instantiated via the constructor its value cannot be changed! This is suggested in Effective Java for immutability objects.
-	private static final Map<Integer, EmptyTile> EMPTY_TILES_CACHE = createAllPossibleEmptyTiles();      // for caching create all possible empty tiles before using them.
+	protected final int tileCoordinate;
+	protected final Alliance tileAlliance;															// protected so that it can only be accessed by subclasses - final so that once the tileCoordinate is instantiated via the constructor its value cannot be changed! This is suggested in Effective Java for immutability objects.
 	
-	private Tile(int tileCoordinate) {
+	private Tile(int tileCoordinate,  final Alliance tileAlliance) {
 		this.tileCoordinate = tileCoordinate;
-	}
-	
-	public static Map<Integer, EmptyTile> createAllPossibleEmptyTiles(){
+		this.tileAlliance = tileAlliance;
 		
-		final Map<Integer, EmptyTile> emptyTileMap = new HashMap<>();
-		for(int i=0; i<64; i++) {
-			emptyTileMap.put(i, new EmptyTile(i));
-		}
-		return ImmutableMap.copyOf(emptyTileMap);//else if you don't want to use guava, use jdk's Collections.unmodifiableMap(emptyTileMap);
-	
 	}
 	
 	// factory method, used for a single point of creation for tiles
-	public static Tile createTile(final int tileCoordinate,final Piece piece) {
-		return piece != null? new OccupiedTile(tileCoordinate, piece) : EMPTY_TILES_CACHE.get(tileCoordinate);
+	public static Tile createTile(final int tileCoordinate,final Alliance alliance,final Piece piece) {
+		return piece != null? new OccupiedTile(tileCoordinate, alliance, piece) : new EmptyTile(tileCoordinate,alliance);
 	}
 	
 	public abstract boolean isTileOccupied();
+	
+	public abstract int getTileCoordinate();
+	
+	public abstract Alliance getTileAlliance();
 	
 	public abstract Piece getPiece();
 	
 	public static final class EmptyTile extends Tile  { 
 		
-		private EmptyTile(final int coordinate) {
-			super(coordinate);
+		private EmptyTile(final int coordinate, final Alliance alliance) {
+			super(coordinate, alliance);
 		}
 		
 		@Override
 		public boolean isTileOccupied() {
             return false;
         }
+		
+		@Override
+		public int getTileCoordinate() {
+            return this.tileCoordinate;
+        }
+		
+		@Override
+		public Alliance getTileAlliance() {
+            return this.tileAlliance;
+        }	
 		
 		@Override
         public Piece getPiece() {
@@ -58,8 +67,8 @@ public abstract class Tile {                                                    
 		
 		private final Piece pieceOnTile;
 		
-        private OccupiedTile(int coordinate, Piece piece) {//private or public, since the constructor of Tile is private then it cannot be instatiated from outside the Tile class.
-            super(coordinate);
+        private OccupiedTile(int coordinate, Alliance alliance, Piece piece) {//private or public, since the constructor of Tile is private then it cannot be instatiated from outside the Tile class.
+            super(coordinate, alliance);
             this.pieceOnTile = piece;
         }
         
@@ -68,10 +77,20 @@ public abstract class Tile {                                                    
             return true;
         }
         
+		@Override
+		public int getTileCoordinate() {
+            return this.tileCoordinate;
+        }
+        
+        @Override
+        public Alliance getTileAlliance() {
+            return this.tileAlliance;
+        }
+        
         @Override
         public Piece getPiece() {
             return this.pieceOnTile;
-        };
+        }
 	}
 }
 //A.Why Nested?? --> 
