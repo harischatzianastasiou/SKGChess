@@ -46,7 +46,7 @@ public class Knight extends Piece {
 	            		final Piece targetPiece = candidateTargetTile.getPiece();
 	            		final Alliance targetPieceAlliance = targetPiece.getPieceAlliance();
 	            		
-	            		if( this.pieceAlliance != targetPieceAlliance){
+	            		if( this.pieceAlliance != targetPieceAlliance ){
 	            			
 	                        legalMoves.add(new CapturingMove(board, this.pieceTile, targetPiece.pieceTile, this, targetPiece));
 	                        System.out.println(candidateTargetCoordinate);
