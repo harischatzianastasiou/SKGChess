@@ -17,14 +17,14 @@ public abstract class Tile {                                                    
 	protected final int tileCoordinate;
 	protected final Alliance tileAlliance;															// protected so that it can only be accessed by subclasses - final so that once the tileCoordinate is instantiated via the constructor its value cannot be changed! This is suggested in Effective Java for immutability objects.
 	
-	private Tile(int tileCoordinate,  final Alliance tileAlliance) {
+	private Tile(final int tileCoordinate,  final Alliance tileAlliance) {
 		this.tileCoordinate = tileCoordinate;
 		this.tileAlliance = tileAlliance;
 		
 	}
 	
 	// factory method, used for a single point of creation for tiles
-	public static Tile createTile(final int tileCoordinate,final Alliance alliance,final Piece piece) {
+	public static Tile createTile(final int tileCoordinate,final Alliance alliance, final Piece piece) {
 		return piece != null? new OccupiedTile(tileCoordinate, alliance, piece) : new EmptyTile(tileCoordinate,alliance);
 	}
 	
@@ -67,7 +67,7 @@ public abstract class Tile {                                                    
 		
 		private final Piece pieceOnTile;
 		
-        private OccupiedTile(int coordinate, Alliance alliance, Piece piece) {//private or public, since the constructor of Tile is private then it cannot be instatiated from outside the Tile class.
+        private OccupiedTile(int coordinate, final Alliance alliance, final Piece piece) {//private or public, since the constructor of Tile is private then it cannot be instatiated from outside the Tile class.
             super(coordinate, alliance);
             this.pieceOnTile = piece;
         }

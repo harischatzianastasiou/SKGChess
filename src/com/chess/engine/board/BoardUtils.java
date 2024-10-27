@@ -19,7 +19,7 @@ public class BoardUtils {
 	}
 	
 	public static boolean isValidTileCoordinate(final int tileCoordinate) {
-		return tileCoordinate >= 0 && tileCoordinate < 64;
+		return tileCoordinate >= 0 && tileCoordinate < NUM_TILES;
 	}
 	
     public static int getTileCoordinateRank(final int tileCoordinate) {
@@ -33,7 +33,7 @@ public class BoardUtils {
 	public static Map<Integer, Tile> createAllPossibleEmptyTiles(){
 		
 		final Map<Integer, Tile> emptyTileMap = new HashMap<>();
-		for(int tileCoordinate=0; tileCoordinate<64; tileCoordinate++) {
+		for(int tileCoordinate=0; tileCoordinate<NUM_TILES; tileCoordinate++) {
 	
 	        Alliance alliance = (getTileCoordinateRank(tileCoordinate) + getTileCoordinateFile(tileCoordinate)) % 2 == 0 ? Alliance.BLACK : Alliance.WHITE;
 			emptyTileMap.put(tileCoordinate,Tile.createTile(tileCoordinate, alliance, null));

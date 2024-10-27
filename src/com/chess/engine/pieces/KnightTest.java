@@ -27,11 +27,7 @@ public class KnightTest {
             Knight knight = new Knight(tile, Alliance.WHITE);
             Board board = new Board(); // Assuming a default constructor that initializes an empty board
             Collection<Move> legalMoves = knight.calculateLegalMoves(board);
-
-            System.out.println("Knight on Tile " + tileCoordinate + " has " + legalMoves.size() + " legal moves.");
-            System.out.println("Legal moves: ");
-            System.out.println("\n");
-
+            System.out.println("Knight on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }
     }
 }
