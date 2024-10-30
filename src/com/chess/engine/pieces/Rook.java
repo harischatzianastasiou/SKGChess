@@ -32,11 +32,7 @@ public class Rook extends Piece {
 				candidateTargetCoordinate = this.pieceTile.getTileCoordinate() + (currentMoveCandidate * distance);
 
 	            if (BoardUtils.isValidTileCoordinate(candidateTargetCoordinate)){
-//				    System.out.println(" candidateTargetCoordinate is " + candidateTargetCoordinate);
-//					System.out.println(" candidateTargetCoordinate result is " + candidateTargetCoordinate/8);
-//					System.out.println(" current tile of rook " + this.pieceTile.getTileCoordinate());
-//					System.out.println(" current tile of rook result is " + this.pieceTile.getTileCoordinate()/8 + "\n");
-					if((Math.abs(candidateTargetCoordinate - this.pieceTile.getTileCoordinate())) % 8 == 0 || Math.abs(candidateTargetCoordinate/8) == Math.abs(this.pieceTile.getTileCoordinate()/8)){ // Check if the tile is on the same rank or file as the source tile.
+	            	if((Math.abs(candidateTargetCoordinate - this.pieceTile.getTileCoordinate())) % 8 == 0 || Math.abs(candidateTargetCoordinate/8) == Math.abs(this.pieceTile.getTileCoordinate()/8)){ // Check if the tile is on the same rank or file as the source tile.
 						
 		            	final Tile candidateTargetTile = board.getTile(candidateTargetCoordinate);
 	            	
