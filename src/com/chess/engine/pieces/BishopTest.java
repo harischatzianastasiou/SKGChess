@@ -17,7 +17,7 @@ public class BishopTest {
     public static void main(String[] args) {
    //Bishop legal moves vary depending the state of the tile(empty or occupied) in front of the bishop. So we have to test for both empty and occupied squares.
     	//testBishopMovesWithEmptyBoard();
-    	testBishopMovesWithRandomOccupiedTiles(10,Alliance.WHITE);1
+    	testBishopMovesWithRandomOccupiedTiles(10,Alliance.WHITE);
     }
 
     public static void testBishopMovesWithEmptyBoard() {

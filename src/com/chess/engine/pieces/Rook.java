@@ -12,12 +12,12 @@ import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
 import com.google.common.collect.ImmutableList;
 
-public class Bishop extends Piece {
+public class Rook extends Piece {
 	
-	private static final int BISHOP_MAX_DIAGONAL_DISTANCE = 7;
-	private static final int[] CANDIDATE_MOVE_VECTOR_COORDINATES = { -9, -7, 7, 9 };
+	private static final int ROOK_MAX_DIAGONAL_DISTANCE = 7;
+	private static final int[] CANDIDATE_MOVE_VECTOR_COORDINATES = { -8, -1, 1, 8 };
 	
-	public Bishop(final Tile pieceTile, final Alliance pieceAlliance) {
+	public Rook(final Tile pieceTile, final Alliance pieceAlliance) {
         super(pieceTile, pieceAlliance);
 	}
 	
@@ -28,16 +28,18 @@ public class Bishop extends Piece {
 		final List<Move> legalMoves = new ArrayList<>();
 		
 		for (final int currentMoveCandidate : CANDIDATE_MOVE_VECTOR_COORDINATES) {
-			for(int distance=1; distance <= BISHOP_MAX_DIAGONAL_DISTANCE; distance++ ) {
+			for(int distance=1; distance <= ROOK_MAX_DIAGONAL_DISTANCE; distance++ ) {
 				candidateTargetCoordinate = this.pieceTile.getTileCoordinate() + (currentMoveCandidate * distance);
-	            
-				if (BoardUtils.isValidTileCoordinate(candidateTargetCoordinate)) {
-	            	final Tile candidateTargetTile = board.getTile(candidateTargetCoordinate);
-	            	final Alliance candidateTargetTileAlliance = candidateTargetTile.getTileAlliance();
-	            	final Alliance sourceTileAlliance = this.pieceTile.getTileAlliance(); 
+
+	            if (BoardUtils.isValidTileCoordinate(candidateTargetCoordinate)){
+//				    System.out.println(" candidateTargetCoordinate is " + candidateTargetCoordinate);
+//					System.out.println(" candidateTargetCoordinate result is " + candidateTargetCoordinate/8);
+//					System.out.println(" current tile of rook " + this.pieceTile.getTileCoordinate());
+//					System.out.println(" current tile of rook result is " + this.pieceTile.getTileCoordinate()/8 + "\n");
+					if((Math.abs(candidateTargetCoordinate - this.pieceTile.getTileCoordinate())) % 8 == 0 || Math.abs(candidateTargetCoordinate/8) == Math.abs(this.pieceTile.getTileCoordinate()/8)){ // Check if the tile is on the same rank or file as the source tile.
+						
+		            	final Tile candidateTargetTile = board.getTile(candidateTargetCoordinate);
 	            	
-	            	if (candidateTargetTileAlliance == sourceTileAlliance) {
-	        
 		            	if(!candidateTargetTile.isTileOccupied() ) {
 		            		legalMoves.add(new NonCapturingMove(board, this.pieceTile, candidateTargetTile, this));
 		            		System.out.println(candidateTargetCoordinate);
@@ -53,14 +55,8 @@ public class Bishop extends Piece {
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}
 	            	}
-	            	else {
-	            		break; //if the current vector does not apply for the pieceTile(eg for tiles that are on 1st or 8th rank), stop further checking in this direction.
-	            	}
 	            }
-	            else {
-	            	break;//If the candidateTargetCoordinate is out of boundaries, stop further checking in this direction.
-	            }
-			} 
+			}
 		}
 		return ImmutableList.copyOf(legalMoves);
     }
