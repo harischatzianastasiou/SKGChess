@@ -13,19 +13,18 @@ import java.util.Map;
 public class KnightTest {
 
     public static void main(String[] args) {
-        testKnightMoves();
+        testKnightMovesWithEmptyBoard();
     }
 
-    public static void testKnightMoves() {
+    public static void testKnightMovesWithEmptyBoard() {
     	
+        Board board = new Board(); // Assuming a default constructor that initializes an empty board
     	Map<Integer, Tile> EMPTY_TILES_CACHE = BoardUtils.createAllPossibleEmptyTiles();
         
     	for (Map.Entry<Integer, Tile> entry : EMPTY_TILES_CACHE.entrySet()) {
             int tileCoordinate = entry.getKey();
             Tile tile = entry.getValue();
-   
             Knight knight = new Knight(tile, Alliance.WHITE);
-            Board board = new Board(); // Assuming a default constructor that initializes an empty board
             Collection<Move> legalMoves = knight.calculateLegalMoves(board);
             System.out.println("Knight on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }

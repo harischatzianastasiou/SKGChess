@@ -15,42 +15,37 @@ import java.util.Map;
 public class BishopTest {
 
     public static void main(String[] args) {
-//    	testBishopMovesForEmptySquares();
-    	testBishopMovesForOccupiedSquares(10,Alliance.WHITE);
+   //Bishop legal moves vary depending the state of the tile(empty or occupied) in front of the bishop. So we have to test for both empty and occupied squares.
+    	//testBishopMovesWithEmptyBoard();
+    	testBishopMovesWithRandomOccupiedTiles(10,Alliance.WHITE);1
     }
 
-    public static void testBishopMovesForEmptySquares() {
+    public static void testBishopMovesWithEmptyBoard() {
     	
-    	//must add scenarios where the are blocking pieces in the direction a bishop looks at.
-    	Map<Integer, Tile> EMPTY_TILES_CACHE = BoardUtils.createAllPossibleEmptyTiles();
+        Board board = new Board(); // Assuming a default constructor that initializes an empty board
+    	Map<Integer, Tile> ALL_TILES = board.getAllTiles();
         
-    	for (Map.Entry<Integer, Tile> entry : EMPTY_TILES_CACHE.entrySet()) {
+    	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
             Tile tile = entry.getValue();
-   
             Bishop bishop = new Bishop(tile, Alliance.WHITE);
-            Board board = new Board(); // Assuming a default constructor that initializes an empty board
             Collection<Move> legalMoves = bishop.calculateLegalMoves(board);
             System.out.println("Bishop on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }
     }
     
-    public static void testBishopMovesForOccupiedSquares(final int tileOccupiedByEnemyCoordinate, final Alliance tileOccupiedByEnemyAlliance) {
+    public static void testBishopMovesWithRandomOccupiedTiles(final int tileOccupiedByEnemyCoordinate, final Alliance tileOccupiedByEnemyAlliance) {
     	
-    	//must add scenarios where the are blocking pieces in the direction a bishop looks at.
-    	Map<Integer, Tile> ALL_TILES = Board.ALL_TILES;
-        
+        Board board = new Board(); // Assuming a default constructor that initializes an empty board
+    	Map<Integer, Tile> ALL_TILES = board.getAllTiles();
+    	Knight knight = new Knight(board.getTile(tileOccupiedByEnemyCoordinate), Alliance.BLACK);
+    	Tile occupiedTile = Tile.createTile(tileOccupiedByEnemyCoordinate,tileOccupiedByEnemyAlliance, knight);
+    	ALL_TILES.replace(tileOccupiedByEnemyCoordinate, occupiedTile);
+    	
     	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
             Tile tile = entry.getValue();
-   
             Bishop bishop = new Bishop(tile, Alliance.WHITE);
-            Board board = new Board(); // Assuming a default constructor that initializes an empty board
-
-            Knight knight = new Knight(board.getTile(tileOccupiedByEnemyCoordinate), Alliance.BLACK);
-            Tile occupiedTile = Tile.createTile(tileOccupiedByEnemyCoordinate,tileOccupiedByEnemyAlliance, knight);
-            ALL_TILES.replace(tileOccupiedByEnemyCoordinate, occupiedTile);
-            
             Collection<Move> legalMoves = bishop.calculateLegalMoves(board);
             System.out.println("Bishop on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }

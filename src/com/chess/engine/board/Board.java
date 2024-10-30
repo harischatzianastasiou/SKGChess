@@ -9,9 +9,14 @@ import com.google.common.collect.ImmutableMap;
 
 public class Board {
 	
-	public static Map<Integer, Tile> ALL_TILES = new HashMap<> (BoardUtils.createAllPossibleEmptyTiles());
+	private Map<Integer, Tile> ALL_TILES = new HashMap<> (BoardUtils.createAllPossibleEmptyTiles());
 
 	public Tile getTile(final int tileCoordinate) {
         return ALL_TILES.get(tileCoordinate);
     }
+	
+	public  Map<Integer, Tile> getAllTiles() {
+		return this.ALL_TILES;
+	}
+	
 }

@@ -1,0 +1,10 @@
+TODO: 1) Easily pull from other branch in git to revert any changes or test different versions of the project.
+		2) Finish with board and how an empty tile will be an occupied tile OR how to retrieve occupied tiles.
+		  3) Debugging
+		  	4) Problhmatikh sxesh BOARD-TILE-BOARDUTILS
+		  		5) Problhmatikh sxesh PIECE(PIECETILE) KAI TILE
+		  		
+		  		6) Apothikeush tile alliance se mia domh dedomenwn opws ta EMPTY_TILES mias kai den prokeitai na allaksei.
+		  		7) make a getTileAlliance
+		  		8) maybe github cli??
+				9) fix email of the commit author on the commits
