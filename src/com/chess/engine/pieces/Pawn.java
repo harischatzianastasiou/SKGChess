@@ -31,7 +31,7 @@ public class Pawn extends Piece{
 
 		// Logic for first move of pawn to move 2 tiles upwards. 
 		if( this.pieceAlliance == Alliance.WHITE && 
-			BoardUtils.getTileCoordinateRank(this.pieceTile.getTileCoordinate()) == 1 &&
+			BoardUtils.getTileCoordinateRank(this.pieceTile.getTileCoordinate()) == 2 &&
 			!board.getTile(this.pieceTile.getTileCoordinate() + PAWN_MOVE_COORDINATE).isTileOccupied() && 
 			!board.getTile(this.pieceTile.getTileCoordinate() + PAWN_MOVE_COORDINATE*2).isTileOccupied()){
         	
@@ -40,7 +40,7 @@ public class Pawn extends Piece{
     		System.out.println(candidateTargetCoordinate);
     		
 		} else if( this.pieceAlliance == Alliance.BLACK &&
-				   BoardUtils.getTileCoordinateRank(this.pieceTile.getTileCoordinate()) == 8 && 
+				   BoardUtils.getTileCoordinateRank(this.pieceTile.getTileCoordinate()) == 7 && 
 				   !board.getTile(this.pieceTile.getTileCoordinate() + PAWN_MOVE_COORDINATE).isTileOccupied() &&
 				   !board.getTile(this.pieceTile.getTileCoordinate() + PAWN_MOVE_COORDINATE*2).isTileOccupied()){
         	
