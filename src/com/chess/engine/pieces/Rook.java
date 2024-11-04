@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableList;
 
 public class Rook extends Piece {
 	
-	private static final int ROOK_MAX_DIAGONAL_DISTANCE = 7;
+	private static final int ROOK_MAX_DISTANCE = 7;
 	private static final int[] CANDIDATE_MOVE_VECTOR_COORDINATES = { -8, -1, 1, 8 };
 	
 	public Rook(final Tile pieceTile, final Alliance pieceAlliance) {
@@ -28,7 +28,7 @@ public class Rook extends Piece {
 		final List<Move> legalMoves = new ArrayList<>();
 		
 		for (final int currentMoveCandidate : CANDIDATE_MOVE_VECTOR_COORDINATES) {
-			for(int distance=1; distance <= ROOK_MAX_DIAGONAL_DISTANCE; distance++ ) {
+			for(int distance=1; distance <= ROOK_MAX_DISTANCE; distance++ ) {
 				candidateTargetCoordinate = this.pieceTile.getTileCoordinate() + (currentMoveCandidate * distance);
 
 	            if (BoardUtils.isValidTileCoordinate(candidateTargetCoordinate)){

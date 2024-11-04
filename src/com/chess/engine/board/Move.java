@@ -1,6 +1,7 @@
 package com.chess.engine.board;
 
 import com.chess.engine.Alliance;
+import com.chess.engine.board.Move.NonCapturingMove;
 import com.chess.engine.board.Tile.EmptyTile;
 import com.chess.engine.board.Tile.OccupiedTile;
 import com.chess.engine.pieces.Piece;
@@ -49,3 +50,4 @@ public abstract class Move {
         }
 	}
 }
+
