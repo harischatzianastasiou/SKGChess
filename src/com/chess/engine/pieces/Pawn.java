@@ -16,10 +16,9 @@ import com.chess.engine.board.Move.NonCapturingMove;
 public class Pawn extends Piece {
     
     private static final int CANDIDATE_MOVE_OFFSET = 8; 
-    private static final int[] CANDIDATE_CAPTURE_OFFSETS = { 7, 9 };
+    private static final int[] CANDIDATE_CAPTURE_OFFSETS = {7, 9};
     private int pawnAdvanceDirection = this.getPieceAlliance().getMovingDirection();
 
-    
     public Pawn(final int pieceCoordinate, final Alliance pieceAlliance) {
         super(pieceCoordinate, pieceAlliance);
     }

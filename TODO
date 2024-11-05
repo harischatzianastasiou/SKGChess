@@ -1,9 +1,7 @@
 TODO: 1) Easily pull from other branch in git to revert any changes or test different versions of the project.
 		2) Finish with board and how an empty tile will be an occupied tile OR how to retrieve occupied tiles.
 		  3) Debugging
-		  	4) Problhmatikh sxesh BOARD-TILE-BOARDUTILS
-		  		5) Problhmatikh sxesh PIECE(PIECETILE) KAI TILE
-		  		
+		  	4) Problhmatikh sxesh BOARD-TILE-BOARDUTILS		  		
 		  		6) Apothikeush tile alliance se mia domh dedomenwn opws ta EMPTY_TILES mias kai den prokeitai na allaksei.
 		  		7) make a getTileAlliance
 		  		8) maybe github cli??
@@ -14,3 +12,20 @@ TODO: 1) Easily pull from other branch in git to revert any changes or test diff
 				board exei tiles, tiles exei pieces. 
 					tiles exei int coordinates,Alliance alliance
 					pieces exei int coordinates, Alliance alliance
+					
+					//    must add cases for all tests like --> 1. testing with no occupied tiles(knight,bishop,rook,pawn)
+    
+//									            the two tiles that we are testing are of the same color
+//									            the two tiles that we are testing are not of the same color
+//    
+//    										2. testing with occupied tiles
+//    
+//    										    a)  
+//    										
+//	    										testing with an occupied tile of the same color by an enemy
+//	    										testing with an occupied tile of different color by an enemy
+//	    										testing with an occupied tile of the same color by an ally
+//	    										testing with an occupied tile of different color by an ally
+//    										
+//    										
+    

@@ -59,21 +59,20 @@ public class RookTest {
         return alliances[RANDOM.nextInt(alliances.length)];
     }
     
-//    must add cases for all tests like --> 1. testing with no occupied tiles(knight,bishop,rook)
+//    must add cases for all tests like --> 1. testing with no occupied tiles(knight,bishop,rook,pawn)
     
 //									            the two tiles that we are testing are of the same color
 //									            the two tiles that we are testing are not of the same color
 //    
-//    										2. when color of tiles is important (knight,bishop) then 
+//    										2. testing with occupied tiles
+//    
+//    										    a)  
 //    										
 //	    										testing with an occupied tile of the same color by an enemy
 //	    										testing with an occupied tile of different color by an enemy
 //	    										testing with an occupied tile of the same color by an ally
 //	    										testing with an occupied tile of different color by an ally
 //    										
-//    										3. when color of tile is not important then
 //    										
-//	    										testing with an occupied tile of the same color by an enemy
-//	    										testing with an occupied tile of different color by an enemy
     										
 }
