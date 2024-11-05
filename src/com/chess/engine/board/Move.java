@@ -9,15 +9,15 @@ import com.chess.engine.pieces.Piece;
 public abstract class Move {
 
 	final Board board;
-	final Tile sourceTile;
-	final Tile targetTile;
+	final int sourceCoordinate;
+	final int targetCoordinate;
 	final Piece movedPiece;
 	
 	
-	private Move(final Board board, final Tile sourceTile, final Tile targetTile, final Piece movedPiece) {
+	private Move(final Board board, final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece) {
 			this.board = board;
-	        this.sourceTile = sourceTile;
-	        this.targetTile = targetTile;
+	        this.sourceCoordinate = sourceCoordinate;
+	        this.targetCoordinate = targetCoordinate;
 	        this.movedPiece = movedPiece;
 	}
 	
@@ -25,8 +25,8 @@ public abstract class Move {
 	
 	public static final class NonCapturingMove extends Move{
 		
-        public NonCapturingMove(final Board board, final Tile sourceTile, final Tile targetTile, final Piece movedPiece) {
-            super(board, sourceTile, targetTile, movedPiece);
+        public NonCapturingMove(final Board board, final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece) {
+            super(board, sourceCoordinate, targetCoordinate, movedPiece);
         }
         
         @Override
@@ -39,8 +39,8 @@ public abstract class Move {
 		
 		private final Piece capturedPiece;
 		
-		public CapturingMove(final Board board, final Tile sourceTile, final Tile targetTile, final Piece movedPiece, final Piece capturedPiece) {
-            super(board, sourceTile, targetTile, movedPiece);
+		public CapturingMove(final Board board, final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece, final Piece capturedPiece) {
+            super(board, sourceCoordinate, targetCoordinate, movedPiece);
             this.capturedPiece = capturedPiece;
 		}
 		

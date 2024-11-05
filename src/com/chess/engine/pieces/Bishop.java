@@ -14,41 +14,43 @@ import com.google.common.collect.ImmutableList;
 
 public class Bishop extends Piece {
 	
-	private static final int BISHOP_MAX_DIAGONAL_DISTANCE = 7;
-	private static final int[] CANDIDATE_MOVE_VECTOR_COORDINATES = { -9, -7, 7, 9 };
+	private static final int[] CANDIDATE_MOVE_OFFSETS= { -9, -7, 7, 9 };
+	private static final int MAX_SQUARES_MOVED = 7;
 	
-	public Bishop(final Tile pieceTile, final Alliance pieceAlliance) {
-        super(pieceTile, pieceAlliance);
+	public Bishop(final int pieceCoordinate, final Alliance pieceAlliance) {
+        super(pieceCoordinate, pieceAlliance);
 	}
 	
     @Override
     public Collection<Move> calculateLegalMoves(final Board board) {
 		
-		int candidateTargetCoordinate;
 		final List<Move> legalMoves = new ArrayList<>();
+		int coordinateOfAppliedOffset;
 		
-		for (final int currentMoveCandidate : CANDIDATE_MOVE_VECTOR_COORDINATES) {
-			for(int distance=1; distance <= BISHOP_MAX_DIAGONAL_DISTANCE; distance++ ) {
-				candidateTargetCoordinate = this.pieceTile.getTileCoordinate() + (currentMoveCandidate * distance);
+		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
+			for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
+				int total_offset = candidateOffset * squaresMoved;
+				coordinateOfAppliedOffset = this.pieceCoordinate + total_offset;
 	            
-				if (BoardUtils.isValidTileCoordinate(candidateTargetCoordinate)) {
-	            	final Tile candidateTargetTile = board.getTile(candidateTargetCoordinate);
-	            	final Alliance candidateTargetTileAlliance = candidateTargetTile.getTileAlliance();
-	            	final Alliance sourceTileAlliance = this.pieceTile.getTileAlliance(); 
+				if (BoardUtils.isValidTileCoordinate(coordinateOfAppliedOffset)) {
+	            	final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
+	            	final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
+	            	final Tile currentTile = board.getTile(pieceCoordinate);
+	            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
 	            	
-	            	if (candidateTargetTileAlliance == sourceTileAlliance) {
+	            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile) {
 	        
-		            	if(!candidateTargetTile.isTileOccupied() ) {
-		            		legalMoves.add(new NonCapturingMove(board, this.pieceTile, candidateTargetTile, this));
-		            		System.out.println(candidateTargetCoordinate);
+		            	if(!candidateDestinationTile.isTileOccupied()) {
+		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));
+		            		System.out.println(coordinateOfAppliedOffset);
 		            		
 		            	}else {
-		            		final Piece targetPiece = candidateTargetTile.getPiece();
-		            		final Alliance targetPieceAlliance = targetPiece.getPieceAlliance();
+		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
+		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		
-		            		if( this.pieceAlliance != targetPieceAlliance ){
-		                        legalMoves.add(new CapturingMove(board, this.pieceTile, targetPiece.pieceTile, this, targetPiece));
-		                        System.out.println(candidateTargetCoordinate);
+		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile ){
+		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this, pieceOnCandidateDestinationTile));
+		                        System.out.println(coordinateOfAppliedOffset);
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}

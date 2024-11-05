@@ -13,48 +13,46 @@ import java.util.List;
 
 public class Knight extends Piece {
 	
-	private static final int[] CANDIDATE_MOVE_COORDINATES = {-17, -15, -10, -6, 6, 10, 15, 17};
+	private static final int[] CANDIDATE_MOVE_OFFSETS = {-17, -15, -10, -6, 6, 10, 15, 17};
 	
-	public Knight(final Tile pieceTile, final Alliance pieceAlliance) {
-        super(pieceTile, pieceAlliance);
+	public Knight(final int pieceCoordinate, final Alliance pieceAlliance) {
+        super(pieceCoordinate, pieceAlliance);
     }
 	
 	@Override
     public Collection<Move> calculateLegalMoves(final Board board) {
 		
-		int candidateTargetCoordinate;
 		final List<Move> legalMoves = new ArrayList<>();
+		int coordinateOfAppliedOffset;
 		
-		for (final int currentMoveCandidate : CANDIDATE_MOVE_COORDINATES) {
-			candidateTargetCoordinate = this.pieceTile.getTileCoordinate() + currentMoveCandidate;
+	    // Iterate over all possible L-shaped moves for a knight
+		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
+			coordinateOfAppliedOffset = this.pieceCoordinate + candidateOffset;
 			
-            if (BoardUtils.isValidTileCoordinate(candidateTargetCoordinate)) {
+            if (BoardUtils.isValidTileCoordinate(coordinateOfAppliedOffset)) {
+            	final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
+            	final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
+            	final Tile currentTile = board.getTile(pieceCoordinate);
+            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
             	
-            	final Tile candidateTargetTile = board.getTile(candidateTargetCoordinate);
-            	final Alliance candidateTargetTileAlliance = candidateTargetTile.getTileAlliance();
-            	final Alliance sourceTileAlliance = this.pieceTile.getTileAlliance(); 
-            	
-            	if (candidateTargetTileAlliance != sourceTileAlliance) {
+            	if (allianceOfCandidateDestinationTile != allianceOfCurrentTile) {
             		
-	            	if(!candidateTargetTile.isTileOccupied() ) {
-	            		
-	            		legalMoves.add(new NonCapturingMove(board, this.pieceTile, candidateTargetTile, this));
-	            		System.out.println(candidateTargetCoordinate);
+	            	if(!candidateDestinationTile.isTileOccupied()) {
+	            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));
+	            		System.out.println(coordinateOfAppliedOffset);
 	            		
 	            	}else {
+	 
+	            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
+	            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 	            		
-	            		final Piece targetPiece = candidateTargetTile.getPiece();
-	            		final Alliance targetPieceAlliance = targetPiece.getPieceAlliance();
-	            		
-	            		if( this.pieceAlliance != targetPieceAlliance ){
-	            			
-	                        legalMoves.add(new CapturingMove(board, this.pieceTile, targetPiece.pieceTile, this, targetPiece));
-	                        System.out.println(candidateTargetCoordinate);
+	            		if(this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
+	                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this, pieceOnCandidateDestinationTile));
+	                        System.out.println(coordinateOfAppliedOffset);
 	                    }
 	            	}
             	}
             }
-            
         } 
         return ImmutableList.copyOf(legalMoves);
 	}

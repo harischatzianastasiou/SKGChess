@@ -8,3 +8,9 @@ TODO: 1) Easily pull from other branch in git to revert any changes or test diff
 		  		7) make a getTileAlliance
 		  		8) maybe github cli??
 				9) fix email of the commit author on the commits
+				
+				
+				
+				board exei tiles, tiles exei pieces. 
+					tiles exei int coordinates,Alliance alliance
+					pieces exei int coordinates, Alliance alliance

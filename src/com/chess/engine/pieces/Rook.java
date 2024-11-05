@@ -14,39 +14,40 @@ import com.google.common.collect.ImmutableList;
 
 public class Rook extends Piece {
 	
-	private static final int ROOK_MAX_DISTANCE = 7;
-	private static final int[] CANDIDATE_MOVE_VECTOR_COORDINATES = { -8, -1, 1, 8 };
+	private static final int[] CANDIDATE_MOVE_OFFSETS = { -8, -1, 1, 8 };
+	private static final int MAX_SQUARES_MOVED = 7;
 	
-	public Rook(final Tile pieceTile, final Alliance pieceAlliance) {
-        super(pieceTile, pieceAlliance);
+	Rook(final int pieceCoordinate, final Alliance pieceAlliance) {
+        super(pieceCoordinate, pieceAlliance);
 	}
 	
     @Override
     public Collection<Move> calculateLegalMoves(final Board board) {
-		
-		int candidateTargetCoordinate;
-		final List<Move> legalMoves = new ArrayList<>();
-		
-		for (final int currentMoveCandidate : CANDIDATE_MOVE_VECTOR_COORDINATES) {
-			for(int distance=1; distance <= ROOK_MAX_DISTANCE; distance++ ) {
-				candidateTargetCoordinate = this.pieceTile.getTileCoordinate() + (currentMoveCandidate * distance);
 
-	            if (BoardUtils.isValidTileCoordinate(candidateTargetCoordinate)){
-	            	if((Math.abs(candidateTargetCoordinate - this.pieceTile.getTileCoordinate())) % 8 == 0 || Math.abs(candidateTargetCoordinate/8) == Math.abs(this.pieceTile.getTileCoordinate()/8)){ // Check if the tile is on the same rank or file as the source tile.
+		final List<Move> legalMoves = new ArrayList<>();
+		int coordinateOfAppliedOffset;
+		
+		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
+			for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
+				int total_offset = candidateOffset * squaresMoved;
+				coordinateOfAppliedOffset = this.pieceCoordinate + total_offset;
+
+	            if (BoardUtils.isValidTileCoordinate(coordinateOfAppliedOffset)){
+	            	if((Math.abs(coordinateOfAppliedOffset - this.pieceCoordinate)) % 8 == 0 || Math.abs(coordinateOfAppliedOffset/8) == Math.abs(this.pieceCoordinate/8)){ // Check if the tile is on the same rank or file as the source tile.
 						
-		            	final Tile candidateTargetTile = board.getTile(candidateTargetCoordinate);
+		            	final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
 	            	
-		            	if(!candidateTargetTile.isTileOccupied() ) {
-		            		legalMoves.add(new NonCapturingMove(board, this.pieceTile, candidateTargetTile, this));
-		            		System.out.println(candidateTargetCoordinate);
+		            	if(!candidateDestinationTile.isTileOccupied() ) {
+		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));
+		            		System.out.println(coordinateOfAppliedOffset);
 		            		
 		            	}else {
-		            		final Piece targetPiece = candidateTargetTile.getPiece();
-		            		final Alliance targetPieceAlliance = targetPiece.getPieceAlliance();
+		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
+		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		
-		            		if( this.pieceAlliance != targetPieceAlliance ){
-		                        legalMoves.add(new CapturingMove(board, this.pieceTile, targetPiece.pieceTile, this, targetPiece));
-		                        System.out.println(candidateTargetCoordinate);
+		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile ){
+		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this, pieceOnCandidateDestinationTile));
+		                        System.out.println(coordinateOfAppliedOffset);
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}

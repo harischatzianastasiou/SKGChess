@@ -12,14 +12,14 @@ import com.google.common.collect.ImmutableList;
 
 public class Queen extends Piece {
 
-	public Queen(final Tile pieceTile, final Alliance pieceAlliance ) {
-		super(pieceTile, pieceAlliance);
+	public Queen(final int pieceCoordinate, final Alliance pieceAlliance ) {
+		super(pieceCoordinate, pieceAlliance);
 	}
 	
 	public Collection<Move> calculateLegalMoves(final Board board) {
 	       
-        final Collection<Move> equivalentRookMoves =  new Rook(this.pieceTile, this.pieceAlliance).calculateLegalMoves(board);
-        final Collection<Move> equivalentBishopMoves = new Bishop(this.pieceTile, this.pieceAlliance).calculateLegalMoves(board);
+        final Collection<Move> equivalentRookMoves =  new Rook(this.pieceCoordinate, this.pieceAlliance).calculateLegalMoves(board);
+        final Collection<Move> equivalentBishopMoves = new Bishop(this.pieceCoordinate, this.pieceAlliance).calculateLegalMoves(board);
         final List<Move> legalMoves = new ArrayList<>(equivalentRookMoves);
         legalMoves.addAll(equivalentBishopMoves);
 
