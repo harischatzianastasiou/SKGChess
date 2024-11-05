@@ -17,7 +17,7 @@ public class Rook extends Piece {
 	private static final int[] CANDIDATE_MOVE_OFFSETS = { -8, -1, 1, 8 };
 	private static final int MAX_SQUARES_MOVED = 7;
 	
-	Rook(final int pieceCoordinate, final Alliance pieceAlliance) {
+	public Rook(final int pieceCoordinate, final Alliance pieceAlliance) {
         super(pieceCoordinate, pieceAlliance);
 	}
 	

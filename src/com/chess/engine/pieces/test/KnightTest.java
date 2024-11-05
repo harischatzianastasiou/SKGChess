@@ -24,8 +24,7 @@ public class KnightTest {
         
     	for (Map.Entry<Integer, Tile> entry : EMPTY_TILES_CACHE.entrySet()) {
             int tileCoordinate = entry.getKey();
-            Tile tile = entry.getValue();
-            Knight knight = new Knight(tile, Alliance.WHITE);
+            Knight knight = new Knight(tileCoordinate, Alliance.WHITE);
             Collection<Move> legalMoves = knight.calculateLegalMoves(board);
             System.out.println("Knight on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }

@@ -29,8 +29,7 @@ public class BishopTest {
         
     	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
-            Tile tile = entry.getValue();
-            Bishop bishop = new Bishop(tile, Alliance.WHITE);
+            Bishop bishop = new Bishop(tileCoordinate, Alliance.WHITE);
             Collection<Move> legalMoves = bishop.calculateLegalMoves(board);
             System.out.println("Bishop on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }
@@ -40,14 +39,13 @@ public class BishopTest {
     	
         Board board = new Board(); // Assuming a default constructor that initializes an empty board
     	Map<Integer, Tile> ALL_TILES = board.getAllTiles();
-    	Knight knight = new Knight(board.getTile(tileOccupiedByEnemyCoordinate), Alliance.BLACK);
+    	Knight knight = new Knight(tileOccupiedByEnemyCoordinate, Alliance.BLACK);
     	Tile occupiedTile = Tile.createTile(tileOccupiedByEnemyCoordinate,tileOccupiedByEnemyAlliance, knight);
     	ALL_TILES.replace(tileOccupiedByEnemyCoordinate, occupiedTile);
     	
     	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
-            Tile tile = entry.getValue();
-            Bishop bishop = new Bishop(tile, Alliance.WHITE);
+            Bishop bishop = new Bishop(tileCoordinate, Alliance.WHITE);
             Collection<Move> legalMoves = bishop.calculateLegalMoves(board);
             System.out.println("Bishop on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }

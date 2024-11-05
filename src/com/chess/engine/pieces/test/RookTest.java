@@ -32,8 +32,7 @@ public class RookTest {
         
     	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
-            Tile tile = entry.getValue();
-            Rook rook = new Rook(tile, Alliance.WHITE);
+            Rook rook = new Rook(tileCoordinate, Alliance.WHITE);
             Collection<Move> legalMoves = rook.calculateLegalMoves(board);
             System.out.println("Rook on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }
@@ -43,14 +42,13 @@ public class RookTest {
     	
         Board board = new Board(); // Assuming a default constructor that initializes an empty board
     	Map<Integer, Tile> ALL_TILES = board.getAllTiles();
-    	Knight knight = new Knight(board.getTile(tileOccupiedByEnemyCoordinate), Alliance.BLACK);
+    	Knight knight = new Knight(tileOccupiedByEnemyCoordinate, Alliance.BLACK);
     	Tile occupiedTile = Tile.createTile(tileOccupiedByEnemyCoordinate, getRandomAlliance(), knight);
     	ALL_TILES.replace(tileOccupiedByEnemyCoordinate, occupiedTile);
     	
     	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
-            Tile tile = entry.getValue();
-            Rook rook = new Rook(tile, Alliance.WHITE);
+            Rook rook = new Rook(tileCoordinate, Alliance.WHITE);
             Collection<Move> legalMoves = rook.calculateLegalMoves(board);
             System.out.println("Rook on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }

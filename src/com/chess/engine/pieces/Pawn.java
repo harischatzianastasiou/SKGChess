@@ -53,12 +53,12 @@ public class Pawn extends Piece {
         }
     }
     
-    private void addDoubleMove(final Board board, final List<Move> legalMoves, int coordinateOfFrontSquare) {
-        int coordinateOfAppliedOffset = coordinateOfFrontSquare * 2;
-        final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
+    private void addDoubleMove(final Board board, final List<Move> legalMoves, int coordinateOfAppliedOffset) {
+        int coordinateOfDoubleAppliedOffset = coordinateOfAppliedOffset * 2;
+        final Tile candidateDestinationTile = board.getTile(coordinateOfDoubleAppliedOffset);
         
         if (!candidateDestinationTile.isTileOccupied()) {
-            legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));
+            legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfDoubleAppliedOffset, this));
         }
     }
     
