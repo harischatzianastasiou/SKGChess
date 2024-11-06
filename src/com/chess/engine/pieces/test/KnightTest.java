@@ -18,10 +18,8 @@ public class KnightTest {
     }
 
     public static void testKnightMovesWithEmptyBoard() {
-    	
         Board board = new Board(); // Assuming a default constructor that initializes an empty board
     	Map<Integer, Tile> EMPTY_TILES_CACHE = BoardUtils.createAllPossibleEmptyTiles();
-        
     	for (Map.Entry<Integer, Tile> entry : EMPTY_TILES_CACHE.entrySet()) {
             int tileCoordinate = entry.getKey();
             Knight knight = new Knight(tileCoordinate, Alliance.WHITE);

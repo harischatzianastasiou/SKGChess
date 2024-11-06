@@ -17,16 +17,13 @@ import java.util.Map;
 public class BishopTest {
 
     public static void main(String[] args) {
-   //Bishop legal moves vary depending the state of the tile(empty or occupied) in front of the bishop. So we have to test for both empty and occupied squares.
     	//testBishopMovesWithEmptyBoard();
     	testBishopMovesWithRandomOccupiedTiles(10,Alliance.WHITE);
     }
 
     public static void testBishopMovesWithEmptyBoard() {
-    	
         Board board = new Board(); // Assuming a default constructor that initializes an empty board
     	Map<Integer, Tile> ALL_TILES = board.getAllTiles();
-        
     	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
             Bishop bishop = new Bishop(tileCoordinate, Alliance.WHITE);
@@ -36,13 +33,11 @@ public class BishopTest {
     }
     
     public static void testBishopMovesWithRandomOccupiedTiles(final int tileOccupiedByEnemyCoordinate, final Alliance tileOccupiedByEnemyAlliance) {
-    	
         Board board = new Board(); // Assuming a default constructor that initializes an empty board
     	Map<Integer, Tile> ALL_TILES = board.getAllTiles();
     	Knight knight = new Knight(tileOccupiedByEnemyCoordinate, Alliance.BLACK);
     	Tile occupiedTile = Tile.createTile(tileOccupiedByEnemyCoordinate,tileOccupiedByEnemyAlliance, knight);
     	ALL_TILES.replace(tileOccupiedByEnemyCoordinate, occupiedTile);
-    	
     	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
             Bishop bishop = new Bishop(tileCoordinate, Alliance.WHITE);
