@@ -22,7 +22,7 @@ public class BoardUtils {
 	}
 	
     public static int getTileCoordinateRank(final int tileCoordinate) {
-        return (tileCoordinate / NUM_TILES_PER_ROW);
+        return tileCoordinate / NUM_TILES_PER_ROW;
     }
 
     public static int getTileCoordinateFile(final int tileCoordinate) {
