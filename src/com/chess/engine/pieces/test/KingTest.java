@@ -21,8 +21,8 @@ public class KingTest {
 	
     public static void main(String[] args) {
 //    	testRankAndFile();
-    	testKingMovesWithEmptyBoard();
-//    	testKingMovesWithRandomOccupiedTiles(10);
+//    	testKingMovesWithEmptyBoard();
+    	testKingMovesWithRandomOccupiedTiles(10);
     }
 
     public static void testKingMovesWithEmptyBoard() {
@@ -39,13 +39,13 @@ public class KingTest {
     public static void testKingMovesWithRandomOccupiedTiles(final int tileOccupiedByEnemyCoordinate) {
         Board board = new Board(); // Assuming a default constructor that initializes an empty board
     	Map<Integer, Tile> ALL_TILES = board.getAllTiles();
-    	Knight knight = new Knight(tileOccupiedByEnemyCoordinate, Alliance.BLACK);
+    	Knight knight = new Knight(tileOccupiedByEnemyCoordinate, Alliance.WHITE);
     	Tile occupiedTile = Tile.createTile(tileOccupiedByEnemyCoordinate, getRandomAlliance(), knight);
     	ALL_TILES.replace(tileOccupiedByEnemyCoordinate, occupiedTile);
     	for (Map.Entry<Integer, Tile> entry : ALL_TILES.entrySet()) {
             int tileCoordinate = entry.getKey();
-            King rook = new King(tileCoordinate, Alliance.WHITE);
-            Collection<Move> legalMoves = rook.calculateLegalMoves(board);
+            King king = new King(tileCoordinate, Alliance.WHITE);
+            Collection<Move> legalMoves = king.calculateLegalMoves(board);
             System.out.println("King on Tile " + tileCoordinate + " has the above " + legalMoves.size() + " legal moves.\n");
         }
     }
@@ -57,8 +57,8 @@ public class KingTest {
     
     public static void testRankAndFile() {
         for (int i = 0; i < 64; i++) {
-            int rank = BoardUtils.getTileCoordinateRank(i);
-            int file = BoardUtils.getTileCoordinateFile(i);
+            int rank = BoardUtils.getCoordinateRank(i);
+            int file = BoardUtils.getCoordinateFile(i);
             System.out.printf("Tile %2d: Rank %d, File %d%n", i, rank, file);
         }
     }

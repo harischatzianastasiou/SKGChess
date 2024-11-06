@@ -24,26 +24,23 @@ public class King extends Piece  {
     @Override
     public Collection<Move> calculateLegalMoves(final Board board) {
 		final List<Move> legalMoves = new ArrayList<>();
-		int coordinateOfAppliedOffset;
+		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
-				coordinateOfAppliedOffset = this.pieceCoordinate + candidateOffset;
-				
-	            if (BoardUtils.isValidTileCoordinate(coordinateOfAppliedOffset)){
-	            	final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
-	            	final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
-	            	final Tile currentTile = board.getTile(pieceCoordinate);
-	            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
-	            	if(Math.abs(BoardUtils.getTileCoordinateRank(coordinateOfAppliedOffset) - BoardUtils.getTileCoordinateRank(this.pieceCoordinate)) <= 1 &&
-	            			Math.abs(BoardUtils.getTileCoordinateFile(coordinateOfAppliedOffset) - BoardUtils.getTileCoordinateFile(this.pieceCoordinate)) <= 1) {
-	            			if(!candidateDestinationTile.isTileOccupied() ) {
-		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));
-		            		System.out.println(coordinateOfAppliedOffset);	
+				candidateDestinationCoordinate = this.pieceCoordinate + candidateOffset;
+	            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)){
+	            	final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
+	            	int rankDifference = Math.abs(BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate,this.pieceCoordinate));
+	                int fileDifference = Math.abs(BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate,this.pieceCoordinate));
+	                if (rankDifference <= 1 && fileDifference <= 1) {
+	                	if(!candidateDestinationTile.isTileOccupied() ) {
+		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));
+		            		System.out.println(candidateDestinationCoordinate);	
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
-		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this, pieceOnCandidateDestinationTile));
-		                        System.out.println(coordinateOfAppliedOffset);
+		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+		                        System.out.println(candidateDestinationCoordinate);
 		                    }
 		            		break;//if there is a piece in the direction that king can move, stop further checking in this direction.
 		            	}

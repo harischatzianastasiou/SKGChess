@@ -21,18 +21,26 @@ public class BoardUtils {
 		return tileCoordinate >= 0 && tileCoordinate < NUM_TILES;
 	}
 	
-    public static int getTileCoordinateRank(final int tileCoordinate) {
+    public static int getCoordinateRank(final int tileCoordinate) {
         return tileCoordinate / NUM_TILES_PER_ROW;
     }
 
-    public static int getTileCoordinateFile(final int tileCoordinate) {
+    public static int getCoordinateFile(final int tileCoordinate) {
         return tileCoordinate % NUM_TILES_PER_ROW ;
+    }
+    
+    public static int getCoordinateRankDifference(int destinationCoordinate, int sourceCoordinate) {
+        return getCoordinateRank(destinationCoordinate) - getCoordinateRank(sourceCoordinate);
+    }
+
+    public static int getCoordinateFileDifference(int destinationCoordinate, int sourceCoordinate) {
+        return getCoordinateFile(destinationCoordinate) - getCoordinateFile(sourceCoordinate);
     }
 	
 	public static Map<Integer, Tile> createAllPossibleEmptyTiles(){
 		final Map<Integer, Tile> emptyTileMap = new HashMap<>();
 		for(int tileCoordinate=0; tileCoordinate<NUM_TILES; tileCoordinate++) {
-	        Alliance alliance = (getTileCoordinateRank(tileCoordinate) + getTileCoordinateFile(tileCoordinate)) % 2 == 0 ? Alliance.BLACK : Alliance.WHITE;
+	        Alliance alliance = (getCoordinateRank(tileCoordinate) + getCoordinateFile(tileCoordinate)) % 2 == 0 ? Alliance.BLACK : Alliance.WHITE;
 			emptyTileMap.put(tileCoordinate,Tile.createTile(tileCoordinate, alliance, null));
 		}
 		return ImmutableMap.copyOf(emptyTileMap);//else if you don't want to use guava, use jdk's Collections.unmodifiableMap(emptyTileMap);

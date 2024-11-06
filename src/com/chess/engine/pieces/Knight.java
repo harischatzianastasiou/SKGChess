@@ -22,25 +22,25 @@ public class Knight extends Piece {
 	@Override
     public Collection<Move> calculateLegalMoves(final Board board) {
 		final List<Move> legalMoves = new ArrayList<>();
-		int coordinateOfAppliedOffset;
+		int candidateDestinationCoordinate;
 	    // Iterate over all possible L-shaped moves for a knight
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
-			coordinateOfAppliedOffset = this.pieceCoordinate + candidateOffset;
-            if (BoardUtils.isValidTileCoordinate(coordinateOfAppliedOffset)) {
-            	final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
+			candidateDestinationCoordinate = this.pieceCoordinate + candidateOffset;
+            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+            	final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
             	final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
             	final Tile currentTile = board.getTile(pieceCoordinate);
             	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance();
             	if (allianceOfCandidateDestinationTile != allianceOfCurrentTile) {
 	            	if(!candidateDestinationTile.isTileOccupied()) {
-	            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));
-	            		System.out.println(coordinateOfAppliedOffset);	
+	            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));
+	            		System.out.println(candidateDestinationCoordinate);	
 	            	}else {
 	            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 	            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 	            		if(this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
-	                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this, pieceOnCandidateDestinationTile));
-	                        System.out.println(coordinateOfAppliedOffset);
+	                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+	                        System.out.println(candidateDestinationCoordinate);
 	                    }
 	            	}
             	}

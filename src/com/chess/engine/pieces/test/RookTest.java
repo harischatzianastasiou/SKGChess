@@ -20,8 +20,8 @@ public class RookTest {
 	private static final Random RANDOM = new Random();
 	
     public static void main(String[] args) {
-//    	testRookMovesWithEmptyBoard();
-    	testRookMovesWithRandomOccupiedTiles(10);
+    	testRookMovesWithEmptyBoard();
+//    	testRookMovesWithRandomOccupiedTiles(10);
     }
 
     public static void testRookMovesWithEmptyBoard() {

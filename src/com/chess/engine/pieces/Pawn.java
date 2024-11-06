@@ -27,7 +27,7 @@ public class Pawn extends Piece {
         super(pieceCoordinate, pieceAlliance);
         this.advanceDirection = this.pieceAlliance.getMovingDirection();  
         this.initialRank = this.pieceAlliance.isWhite() ? 2 : 7;
-        this.currentRank = BoardUtils.getTileCoordinateRank(this.pieceCoordinate);
+        this.currentRank = BoardUtils.getCoordinateRank(this.pieceCoordinate);
         this.promotionRank = this.pieceAlliance.isWhite() ? 7 : 2;
         this.enPassantRank = this.pieceAlliance.isWhite()? 5 : 4;
     }
@@ -41,35 +41,37 @@ public class Pawn extends Piece {
     }
     
     private void addNonCapturingMoves(final Board board, final List<Move> legalMoves) {
-        int coordinateOfAppliedOffset = this.pieceCoordinate + (CANDIDATE_MOVE_OFFSET * advanceDirection);
-        final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
-        if (!candidateDestinationTile.isTileOccupied()) {
-            legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));//Add standard advance move
-            if (this.currentRank == this.initialRank) {
-                addDoubleAdvanceMove(board, legalMoves, coordinateOfAppliedOffset);
-            }else if (this.currentRank == this.promotionRank)
-                addPromotionMove(board, legalMoves, coordinateOfAppliedOffset);
+        int candidateDestinationCoordinate = this.pieceCoordinate + (CANDIDATE_MOVE_OFFSET * advanceDirection);
+        if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+	        final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
+	        if (!candidateDestinationTile.isTileOccupied()) {
+	            legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
+	            if (this.currentRank == this.initialRank) {
+	                addDoubleAdvanceMove(board, legalMoves, candidateDestinationCoordinate);
+	            }else if (this.currentRank == this.promotionRank)
+	                addPromotionMove(board, legalMoves, candidateDestinationCoordinate);
+	        }
         }
     }
     
-    private void addDoubleAdvanceMove(final Board board, final List<Move> legalMoves, int coordinateOfAppliedOffset) {
-        int coordinateOfDoubleAppliedOffset = coordinateOfAppliedOffset * 2;
-        final Tile candidateDestinationTile = board.getTile(coordinateOfDoubleAppliedOffset);
+    private void addDoubleAdvanceMove(final Board board, final List<Move> legalMoves, int candidateDestinationCoordinate) {
+        int CandidateDoubleDestinationCoordinate = candidateDestinationCoordinate * 2;
+        final Tile candidateDestinationTile = board.getTile(CandidateDoubleDestinationCoordinate);
         if (!candidateDestinationTile.isTileOccupied())
-            legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfDoubleAppliedOffset, this));
+            legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, CandidateDoubleDestinationCoordinate, this));
     }
     
-    private void addPromotionMove(final Board board, final List<Move> legalMoves, int coordinateOfAppliedOffset) {
+    private void addPromotionMove(final Board board, final List<Move> legalMoves, int candidateDestinationCoordinate) {
         // todo Add Logic for pawn promotion
-        legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));
-        System.out.println(coordinateOfAppliedOffset);
+        legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));
+        System.out.println(candidateDestinationCoordinate);
     }
     
     private void addCaptureMoves(final Board board, final List<Move> legalMoves) {
         for (final int candidateOffset : CANDIDATE_CAPTURE_OFFSETS) {
-            int coordinateOfAppliedOffset = this.pieceCoordinate + (candidateOffset * advanceDirection);
-            if (BoardUtils.isValidTileCoordinate(coordinateOfAppliedOffset)) {
-            	final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
+            int candidateDestinationCoordinate = this.pieceCoordinate + (candidateOffset * advanceDirection);
+            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+            	final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 	            if(candidateDestinationTile.isTileOccupied()) { 
 	            	final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 	        		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
@@ -78,11 +80,11 @@ public class Pawn extends Piece {
 		            	final Tile currentTile = board.getTile(pieceCoordinate);
 		            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
 		            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile)
-	        				legalMoves.add(new CapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this, pieceOnCandidateDestinationTile));
+	        				legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 	        		}
 	            }else if(this.currentRank == this.enPassantRank) {
 	            	//check last move
-	            	addEnPassantMove(board, legalMoves, coordinateOfAppliedOffset);
+	            	addEnPassantMove(board, legalMoves, candidateDestinationCoordinate);
 	            }
             }
         }

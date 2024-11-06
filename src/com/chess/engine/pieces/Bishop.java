@@ -24,26 +24,26 @@ public class Bishop extends Piece {
     @Override
     public Collection<Move> calculateLegalMoves(final Board board) {
 		final List<Move> legalMoves = new ArrayList<>();
-		int coordinateOfAppliedOffset;
+		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
 			for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
 				int total_offset = candidateOffset * squaresMoved;
-				coordinateOfAppliedOffset = this.pieceCoordinate + total_offset;
-				if (BoardUtils.isValidTileCoordinate(coordinateOfAppliedOffset)) {
-	            	final Tile candidateDestinationTile = board.getTile(coordinateOfAppliedOffset);
+				candidateDestinationCoordinate = this.pieceCoordinate + total_offset;
+				if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+	            	final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 	            	final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
 	            	final Tile currentTile = board.getTile(pieceCoordinate);
 	            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
 	            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile) {
 		            	if(!candidateDestinationTile.isTileOccupied()) {
-		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this));
-		            		System.out.println(coordinateOfAppliedOffset);
+		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));
+		            		System.out.println(candidateDestinationCoordinate);
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile ){
-		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, coordinateOfAppliedOffset, this, pieceOnCandidateDestinationTile));
-		                        System.out.println(coordinateOfAppliedOffset);
+		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+		                        System.out.println(candidateDestinationCoordinate);
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}
