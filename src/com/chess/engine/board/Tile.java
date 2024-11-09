@@ -8,6 +8,7 @@ import com.chess.engine.board.Tile.EmptyTile;
 import com.chess.engine.pieces.Piece;
 import com.google.common.collect.ImmutableMap;
 
+//immutable class
 public abstract class Tile {                                                                       
 
 	protected final int tileCoordinate;
