@@ -10,6 +10,7 @@ import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.google.common.collect.ImmutableList;
 
 public class Rook extends Piece {
@@ -19,6 +20,11 @@ public class Rook extends Piece {
 	
 	public Rook(final int pieceCoordinate, final Alliance pieceAlliance) {
         super(pieceCoordinate, pieceAlliance);
+	}
+	
+	@Override
+	public String toString() {
+		return PieceSymbol.ROOK.toString();
 	}
 	
     @Override
@@ -36,13 +42,13 @@ public class Rook extends Piece {
                         final Tile candidateDestinationTile = board.getTile(candidateDestinationCoordinate);
 		            	if(!candidateDestinationTile.isTileOccupied() ) {
 		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));
-		            		System.out.println(candidateDestinationCoordinate);	
+//		            		System.out.println(candidateDestinationCoordinate);	
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
 		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
-		                        System.out.println(candidateDestinationCoordinate);
+//		                        System.out.println(candidateDestinationCoordinate);
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}

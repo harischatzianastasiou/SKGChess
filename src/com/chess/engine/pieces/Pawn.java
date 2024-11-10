@@ -12,6 +12,7 @@ import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.pieces.Piece.PieceSymbol;
 
 public class Pawn extends Piece {
     
@@ -31,6 +32,11 @@ public class Pawn extends Piece {
         this.promotionRank = this.pieceAlliance.isWhite() ? 7 : 2;
         this.enPassantRank = this.pieceAlliance.isWhite()? 5 : 4;
     }
+    
+	@Override
+	public String toString() {
+		return PieceSymbol.PAWN.toString();
+	}
      
     @Override
     public Collection<Move> calculateLegalMoves(final Board board) {

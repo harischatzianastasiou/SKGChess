@@ -16,9 +16,33 @@ public abstract class Piece {
         this.pieceAlliance = pieceAlliance;
 	}
 	
+	public int getPieceCoordinate() {
+		return this.pieceCoordinate;     
+	}
+	
 	public Alliance getPieceAlliance() {
 		return this.pieceAlliance;
 	}
 	
 	public abstract Collection<Move> calculateLegalMoves(final Board board);
+	
+	public enum PieceSymbol {
+		PAWN("P"), 
+		KNIGHT("N"),
+		BISHOP("B"), 
+		ROOK("R"), 
+		QUEEN("Q"), 
+		KING("K");
+        
+        private final String symbol;
+        
+        PieceSymbol(final String symbol) {
+            this.symbol = symbol;
+        }
+        
+        @Override
+        public String toString() {
+            return this.symbol;
+        }
+	}
 }

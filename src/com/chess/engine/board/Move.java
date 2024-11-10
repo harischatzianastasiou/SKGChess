@@ -22,6 +22,10 @@ public abstract class Move {
 	
 	public abstract Piece getCapturedPiece();
 	
+	public int getTargetCoordinate() {
+		return targetCoordinate;
+	}
+	
 	public static final class NonCapturingMove extends Move{
         public NonCapturingMove(final Board board, final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece) {
             super(board, sourceCoordinate, targetCoordinate, movedPiece);

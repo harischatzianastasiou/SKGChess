@@ -21,6 +21,11 @@ public class Bishop extends Piece {
         super(pieceCoordinate, pieceAlliance);
 	}
 	
+	@Override
+	public String toString() {
+		return PieceSymbol.BISHOP.toString();
+	}
+	
     @Override
     public Collection<Move> calculateLegalMoves(final Board board) {
 		final List<Move> legalMoves = new ArrayList<>();
@@ -37,13 +42,13 @@ public class Bishop extends Piece {
 	            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile) {
 		            	if(!candidateDestinationTile.isTileOccupied()) {
 		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));
-		            		System.out.println(candidateDestinationCoordinate);
+//		            		System.out.println(candidateDestinationCoordinate);
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile ){
 		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
-		                        System.out.println(candidateDestinationCoordinate);
+//		                        System.out.println(candidateDestinationCoordinate);
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}

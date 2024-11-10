@@ -12,17 +12,25 @@ import com.google.common.collect.ImmutableMap;
 public abstract class Tile {                                                                       
 
 	protected final int tileCoordinate;
-	protected final Alliance tileAlliance;															
+	protected final Alliance tileAlliance;	
+	private static final Map<Integer, Tile> EMPTY_TILES_CACHE = createEmptyTilesCache();
+
+	private static Map<Integer, Tile> createEmptyTilesCache() {
+		final Map<Integer, Tile> emptyTiles = new HashMap<>();
+        for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
+            emptyTiles.put(i, new EmptyTile(i, BoardUtils.getCoordinateAlliance(i)));
+        }
+        return ImmutableMap.copyOf(emptyTiles);
+	}
+	// factory method, used for a single point of creation for tiles
+	public static Tile createTile(final int tileCoordinate,final Alliance alliance, final Piece piece) {
+		return piece != null? new OccupiedTile(tileCoordinate, alliance, piece) : EMPTY_TILES_CACHE.get(tileCoordinate);
+	}
 	
 	private Tile(final int tileCoordinate,  final Alliance tileAlliance) {
 		this.tileCoordinate = tileCoordinate;
 		this.tileAlliance = tileAlliance;
 		
-	}
-	
-	// factory method, used for a single point of creation for tiles
-	public static Tile createTile(final int tileCoordinate,final Alliance alliance, final Piece piece) {
-		return piece != null? new OccupiedTile(tileCoordinate, alliance, piece) : new EmptyTile(tileCoordinate,alliance);
 	}
 	
 	public abstract boolean isTileOccupied();

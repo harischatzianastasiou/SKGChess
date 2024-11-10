@@ -5,6 +5,7 @@ import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Move.*;
+import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -18,6 +19,11 @@ public class Knight extends Piece {
 	public Knight(final int pieceCoordinate, final Alliance pieceAlliance) {
         super(pieceCoordinate, pieceAlliance);
     }
+	
+	@Override
+	public String toString() {
+		return PieceSymbol.KNIGHT.toString();
+	}
 	
 	@Override
     public Collection<Move> calculateLegalMoves(final Board board) {
@@ -34,13 +40,13 @@ public class Knight extends Piece {
             	if (allianceOfCandidateDestinationTile != allianceOfCurrentTile) {
 	            	if(!candidateDestinationTile.isTileOccupied()) {
 	            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));
-	            		System.out.println(candidateDestinationCoordinate);	
+//	            		System.out.println(candidateDestinationCoordinate);	
 	            	}else {
 	            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 	            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 	            		if(this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
 	                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
-	                        System.out.println(candidateDestinationCoordinate);
+//	                        System.out.println(candidateDestinationCoordinate);
 	                    }
 	            	}
             	}

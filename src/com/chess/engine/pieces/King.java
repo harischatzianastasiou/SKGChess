@@ -11,6 +11,7 @@ import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.google.common.collect.ImmutableList;
 
 public class King extends Piece  {
@@ -20,6 +21,11 @@ public class King extends Piece  {
 	public King(final int pieceCoordinate, final Alliance pieceAlliance) {
         super(pieceCoordinate, pieceAlliance);
     }
+	
+	@Override
+	public String toString() {
+		return PieceSymbol.KING.toString();
+	}
 
     @Override
     public Collection<Move> calculateLegalMoves(final Board board) {
@@ -34,13 +40,13 @@ public class King extends Piece  {
 	                if (rankDifference <= 1 && fileDifference <= 1) {
 	                	if(!candidateDestinationTile.isTileOccupied() ) {
 		            		legalMoves.add(new NonCapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this));
-		            		System.out.println(candidateDestinationCoordinate);	
+//		            		System.out.println(candidateDestinationCoordinate);	
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
 		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
-		                        System.out.println(candidateDestinationCoordinate);
+//		                        System.out.println(candidateDestinationCoordinate);
 		                    }
 		            		break;//if there is a piece in the direction that king can move, stop further checking in this direction.
 		            	}
