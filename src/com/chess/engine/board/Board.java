@@ -9,23 +9,30 @@ import java.util.Map;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.pieces.*;
+import com.chess.engine.player.BlackPlayer;
+import com.chess.engine.player.Player;
+import com.chess.engine.player.WhitePlayer;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public class Board {
 	
 	private final List<Tile> tiles;
-	private final Collection<Piece>	whiteActivePieces;
-	private final Collection<Piece> blackActivePieces;
-	
+	private final Collection<Piece>	whitePieces;
+	private final Collection<Piece> blackPieces;
+	private final Collection<Move>  whiteLegalMoves;
+	private final Collection<Move>  blackLegalMoves;
+	private final Player whitePlayer;
+	private final Player blackPlayer;
 	
 	private Board(Builder builder) {
 		this.tiles = createBoard(builder);
-		this.whiteActivePieces = calculateActivePieces(this.tiles, Alliance.WHITE);
-		this.blackActivePieces = calculateActivePieces(this.tiles, Alliance.BLACK);
-		
-		final Collection<Move> whiteLegalMoves = calculateLegalMoves(this.whiteActivePieces);
-		final Collection<Move> blackLegalMoves = calculateLegalMoves(this.blackActivePieces);
+		this.whitePieces = calculateActivePieces(this.tiles, Alliance.WHITE);
+		this.blackPieces = calculateActivePieces(this.tiles, Alliance.BLACK);
+		this.whiteLegalMoves = calculateLegalMoves(this.whitePieces);
+		this.blackLegalMoves = calculateLegalMoves(this.blackPieces);
+		this.whitePlayer = new WhitePlayer(this, whiteLegalMoves, blackLegalMoves);
+		this.blackPlayer = new BlackPlayer(this, blackLegalMoves, whiteLegalMoves);
 	}
 	
 	@Override
@@ -138,7 +145,6 @@ public class Board {
 	public Tile getTile(final int tileCoordinate) {
         return tiles.get(tileCoordinate);
     }
-	
 }
 
 
