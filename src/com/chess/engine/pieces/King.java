@@ -47,7 +47,7 @@ public class King extends Piece  {
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
 		                        legalMoves.add(new CapturingMove(board, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 //		                        System.out.println(candidateDestinationCoordinate);
-		                    }
+		                    }		            	    
 		            		break;//if there is a piece in the direction that king can move, stop further checking in this direction.
 		            	}
 	            	}

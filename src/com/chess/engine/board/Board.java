@@ -26,7 +26,7 @@ public class Board {
 	private final Player blackPlayer;
 	
 	private Board(Builder builder) {
-		this.tiles = createBoard(builder);
+		this.tiles = createTiles(builder);
 		this.whitePieces = calculateActivePieces(this.tiles, Alliance.WHITE);
 		this.blackPieces = calculateActivePieces(this.tiles, Alliance.BLACK);
 		this.whiteLegalMoves = calculateLegalMoves(this.whitePieces);
@@ -34,6 +34,10 @@ public class Board {
 		this.whitePlayer = new WhitePlayer(this, whiteLegalMoves, blackLegalMoves);
 		this.blackPlayer = new BlackPlayer(this, blackLegalMoves, whiteLegalMoves);
 	}
+	
+    public static Board createBoard(Builder builder) {
+        return new Board(builder);
+    }
 	
 	@Override
 	public String toString() {
@@ -73,7 +77,7 @@ public class Board {
 		return ImmutableList.copyOf(legalMoves);
 	}
 
-	private static List<Tile> createBoard(Builder builder) {
+	private static List<Tile> createTiles(Builder builder) {
 		final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];        
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
             tiles[i] = Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), builder.startingPieces.get(i));
@@ -114,13 +118,13 @@ public class Board {
 	    builder.setMovePlayer(Alliance.WHITE);
 	    
 	    // Build and return the board
-	    return builder.build();
+        return createBoard(builder);
 	}
 	
 	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.
 		
-		Map<Integer, Piece> startingPieces;
-		Alliance nextMovePlayer;
+		private Map<Integer, Piece> startingPieces;
+		private Alliance nextMovePlayer;
 		
 		public Builder() {
 			this.startingPieces = new HashMap<>();
@@ -136,15 +140,39 @@ public class Board {
             return this;		
 		}
 		
-		public Board build() {
-			return new Board(this);
+		public Map<Integer,Piece> getStartingPieces() {
+			return startingPieces;
 		}
+		
+		public Alliance getNextMovePlayer() {
+            return nextMovePlayer;
+        }
+		
+        public Board build() {
+            return Board.createBoard(this);
+        }	
 	}
 	
 
 	public Tile getTile(final int tileCoordinate) {
         return tiles.get(tileCoordinate);
     }
+	
+	public Collection<Piece> getWhitePieces() {
+		return whitePieces;
+	}
+	
+	public Collection<Piece> getBlackPieces() {
+        return blackPieces;
+	}
+	
+	public Player getWhitePlayer() {
+		return this.whitePlayer;
+	}
+	
+	public Player getBlackPlayer() {
+        return this.blackPlayer;
+	}
 }
 
 

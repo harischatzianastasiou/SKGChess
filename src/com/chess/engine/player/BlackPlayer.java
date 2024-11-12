@@ -6,6 +6,7 @@ import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.Move;
 import com.chess.engine.pieces.King;
+import com.chess.engine.pieces.Piece;
 
 public class BlackPlayer extends Player  {
 
@@ -13,4 +14,15 @@ public class BlackPlayer extends Player  {
 		super(board, blackStandardLegalMoves, whiteStandardLegalMoves);
 	}
 
+	public Collection<Piece> getActivePieces(){
+		return board.getBlackPieces();
+	}
+	
+	public Alliance getAlliance() {
+		return Alliance.BLACK;
+	}
+	
+	public Player getOpponent() {
+		return this.board.getWhitePlayer();
+	}
 }
