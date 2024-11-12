@@ -31,11 +31,9 @@ public class Board {
 		this.blackPieces = calculateActivePieces(this.tiles, Alliance.BLACK);
 		this.whiteLegalMoves = calculateLegalMoves(this.whitePieces);
 		this.blackLegalMoves = calculateLegalMoves(this.blackPieces);
-		this.whitePlayer = new WhitePlayer(this, whiteLegalMoves, blackLegalMoves);
-		this.blackPlayer = new BlackPlayer(this, blackLegalMoves, whiteLegalMoves);
 	}
 	
-    public static Board createBoard(Builder builder) {
+    private static Board createBoard(Builder builder) {
         return new Board(builder);
     }
 	
@@ -80,7 +78,7 @@ public class Board {
 	private static List<Tile> createTiles(Builder builder) {
 		final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];        
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
-            tiles[i] = Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), builder.startingPieces.get(i));
+            tiles[i] = Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), builder.pieces.get(i));
         }
         return ImmutableList.copyOf(tiles);
     }
@@ -123,15 +121,15 @@ public class Board {
 	
 	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.
 		
-		private Map<Integer, Piece> startingPieces;
+		private Map<Integer, Piece> pieces;
 		private Alliance nextMovePlayer;
 		
 		public Builder() {
-			this.startingPieces = new HashMap<>();
+			this.pieces = new HashMap<>();
         }
 		
 		public Builder setPiece(final Piece piece) {
-			this.startingPieces.put(piece.getPieceCoordinate(), piece);
+			this.pieces.put(piece.getPieceCoordinate(), piece);
 			return this;
 		}
 		
@@ -140,8 +138,8 @@ public class Board {
             return this;		
 		}
 		
-		public Map<Integer,Piece> getStartingPieces() {
-			return startingPieces;
+		public Map<Integer,Piece> getPieces() {
+			return pieces;
 		}
 		
 		public Alliance getNextMovePlayer() {
@@ -153,6 +151,25 @@ public class Board {
         }	
 	}
 	
+	//memoization-make it new  class
+	public class BoardCache {
+	    private static final Map<String, Board> boardCache = new HashMap<>();
+
+	    public static Board getBoard(Board.Builder builder) {
+	        String boardKey = generateBoardKey(builder);
+	        return boardCache.computeIfAbsent(boardKey, k -> Board.createBoard(builder));
+	    }
+
+	    private static String generateBoardKey(Board.Builder builder) {
+	        // Generate a unique key based on the board configuration
+	        StringBuilder key = new StringBuilder();
+	        for (Map.Entry<Integer, Piece> entry : builder.getPieces().entrySet()) {
+	            key.append(entry.getKey()).append(":").append(entry.getValue().toString()).append("|");
+	        }
+	        key.append(builder.getNextMovePlayer());
+	        return key.toString();
+	    }
+	}
 
 	public Tile getTile(final int tileCoordinate) {
         return tiles.get(tileCoordinate);
@@ -166,13 +183,20 @@ public class Board {
         return blackPieces;
 	}
 	
+	public Collection<Piece> getAllPieces() {
+		Collection<Piece> allPieces = new ArrayList<>();
+		allPieces.addAll(whitePieces);
+		allPieces.addAll(blackPieces);
+	    return ImmutableList.copyOf(allPieces);
+	}
+	
 	public Player getWhitePlayer() {
 		return this.whitePlayer;
 	}
 	
 	public Player getBlackPlayer() {
         return this.blackPlayer;
-	}
+    }
 }
 
 

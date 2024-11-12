@@ -83,9 +83,27 @@ public abstract class Player {
         return false; //TODO implement en passant detection
     }
 	
-	public MoveMaker makeMove(final Move move) {
-			// TODO implement move making logic and return new MoveMaker object
-        return null; //TODO implement move making logic and return new MoveMaker object}
+	public Board makeMove(final Move move) {
+	    if (isMoveLegal(move)) {
+	        // Create a new MoveMaker and execute the move to get the new board
+	        MoveMaker moveMaker = new MoveMaker(board, move, this.getOpponent().getAlliance());
+	        Board newBoard = moveMaker.executeMove();
+
+	        // Update players with the new board state
+	        Player currentPlayer = this.getAlliance().isWhite() ? new WhitePlayer(newBoard,legalMoves,opponentMoves) : new BlackPlayer(newBoard,opponentMoves,legalMoves);
+	        Player opponentPlayer = currentPlayer.getOpponent();
+
+	        // Check for game-ending conditions
+	        if (currentPlayer.isInCheckMate()) {
+	            System.out.println("Checkmate! " + currentPlayer.getAlliance() + " loses.");
+	        } else if (currentPlayer.isInStaleMate()) {
+	            System.out.println("Stalemate! The game is a draw.");
+	        }
+
+	        return newBoard;
+	    } else {
+	        throw new IllegalArgumentException("Illegal move: " + move);
+	    }
 	}
 
 	public Collection<Move> getOpponentMoves() {
