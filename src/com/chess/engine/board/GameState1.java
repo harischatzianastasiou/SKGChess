@@ -6,24 +6,24 @@ import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.pieces.Piece;
-import com.chess.engine.player.OpponentPlayer;
+import com.chess.engine.player.BlackPlayer;
 import com.chess.engine.player.Player;
-import com.chess.engine.player.CurrentPlayer;
+import com.chess.engine.player.WhitePlayer;
 import com.chess.engine.player.Player.*;
 import com.google.common.collect.ImmutableList;
 
-public class GameState {
+public class GameState1 {
 	
-	private final Collection<Move>  currentPlayerLegalMoves;
-	private final Collection<Move>  opponentLegalMoves;
-	private final Player currentPlayer;
-	private final Player opponentPlayer;
+	private final Collection<Move>  whiteLegalMoves;
+	private final Collection<Move>  blackLegalMoves;
+	private final Player whitePlayer;
+	private final Player blackPlayer;
 	
-	public GameState(Board board, Player moveMaker) {
-		this.currentPlayerLegalMoves = calculateLegalMoves(moveMaker.);
-		this.opponentLegalMoves = calculateLegalMoves(board,Alliance.BLACK);
-		this.currentPlayer = new CurrentPlayer(board,currentPlayerLegalMoves,opponentLegalMoves,currentPlayerAlliance);
-		this.opponentPlayer = new OpponentPlayer(board,opponentLegalMoves,currentPlayerLegalMoves,currentPlayerAlliance);
+	public GameState(Board board) {
+		this.whiteLegalMoves = calculateLegalMoves(board,Alliance.WHITE);
+		this.blackLegalMoves = calculateLegalMoves(board,Alliance.BLACK);
+		this.whitePlayer = new WhitePlayer(board,whiteLegalMoves,blackLegalMoves);
+		this.blackPlayer = new BlackPlayer(board,blackLegalMoves,whiteLegalMoves);
 	}
 	
 	private Collection<Move> calculateLegalMoves(Board board,Alliance alliance) {
@@ -48,3 +48,4 @@ public class GameState {
 	
 	
 }
+s

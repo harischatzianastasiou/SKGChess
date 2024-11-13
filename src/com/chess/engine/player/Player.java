@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
+import com.chess.engine.board.GameState;
 import com.chess.engine.board.Move;
 import com.chess.engine.pieces.King;
 import com.chess.engine.pieces.Piece;
@@ -28,8 +29,8 @@ public abstract class Player {
 	
 	public abstract Alliance getAlliance();
 	
-	public abstract Player getOpponent();
-	
+	public abstract Alliance getOpponentAlliance();
+		
 	public King findKing() {
 		for( final Piece piece : getActivePieces()) {
 			if(piece instanceof King && piece.getPieceAlliance() == this.getAlliance()) {
@@ -90,8 +91,7 @@ public abstract class Player {
 	        Board newBoard = moveMaker.executeMove();
 
 	        // Update players with the new board state
-	        Player currentPlayer = this.getAlliance().isWhite() ? new WhitePlayer(newBoard,legalMoves,opponentMoves) : new BlackPlayer(newBoard,opponentMoves,legalMoves);
-	        Player opponentPlayer = currentPlayer.getOpponent();
+	        GameState newGameState = new GameState(newBoard,this.getAlliance());
 
 	        // Check for game-ending conditions
 	        if (currentPlayer.isInCheckMate()) {

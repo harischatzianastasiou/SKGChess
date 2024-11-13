@@ -9,7 +9,7 @@ import java.util.Map;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.pieces.*;
-import com.chess.engine.player.BlackPlayer;
+import com.chess.engine.player.OpponentPlayer;
 import com.chess.engine.player.Player;
 import com.chess.engine.player.WhitePlayer;
 import com.google.common.collect.ImmutableList;
@@ -20,17 +20,11 @@ public class Board {
 	private final List<Tile> tiles;
 	private final Collection<Piece>	whitePieces;
 	private final Collection<Piece> blackPieces;
-	private final Collection<Move>  whiteLegalMoves;
-	private final Collection<Move>  blackLegalMoves;
-	private final Player whitePlayer;
-	private final Player blackPlayer;
 	
 	private Board(Builder builder) {
 		this.tiles = createTiles(builder);
 		this.whitePieces = calculateActivePieces(this.tiles, Alliance.WHITE);
 		this.blackPieces = calculateActivePieces(this.tiles, Alliance.BLACK);
-		this.whiteLegalMoves = calculateLegalMoves(this.whitePieces);
-		this.blackLegalMoves = calculateLegalMoves(this.blackPieces);
 	}
 	
     private static Board createBoard(Builder builder) {
@@ -63,17 +57,6 @@ public class Board {
 		}
 		return ImmutableList.copyOf(activePieces);
 	}
-	
-	private Collection<Move> calculateLegalMoves(final Collection<Piece> pieces) {
-		final List<Move> legalMoves = new ArrayList();
-		for(final Tile tile : tiles){
-				if(tile.isTileOccupied()){
-					final Piece piece = tile.getPiece();
-						legalMoves.addAll(piece.calculateLegalMoves(this));
-				}	
-		}
-		return ImmutableList.copyOf(legalMoves);
-	}
 
 	private static List<Tile> createTiles(Builder builder) {
 		final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];        
@@ -84,6 +67,7 @@ public class Board {
     }
 	
 	public static Board createStandardBoard() {
+		// create white and black player here once
 	    final Builder builder = new Builder();
 	    
 	    // Set up White pieces
@@ -189,14 +173,10 @@ public class Board {
 		allPieces.addAll(blackPieces);
 	    return ImmutableList.copyOf(allPieces);
 	}
-	
-	public Player getWhitePlayer() {
-		return this.whitePlayer;
+
+	public List<Tile> getTiles() {
+		return this.tiles;
 	}
-	
-	public Player getBlackPlayer() {
-        return this.blackPlayer;
-    }
 }
 
 

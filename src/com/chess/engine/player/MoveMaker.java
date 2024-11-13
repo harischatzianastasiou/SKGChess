@@ -11,7 +11,7 @@ public class MoveMaker {
     private final Move move;
     private final Alliance nextMovePlayer;
     
-    public MoveMaker(Board board, Move move, Alliance nextMovePlayer) { 
+    public MoveMaker(GameState gameState, Board board, Move move, Alliance nextMovePlayer) { 
         this.board = board;
         this.move = move;
         this.nextMovePlayer = nextMovePlayer;
@@ -38,4 +38,6 @@ public class MoveMaker {
         // Build and return the new board
         return builder.build();
     }
+    
+    //if move succesfull return new GameState
 }
