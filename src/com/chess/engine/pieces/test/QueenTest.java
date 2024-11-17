@@ -25,7 +25,7 @@ public class QueenTest {
             Tile currentTile = board.getTile(i);
             if (currentTile.isTileOccupied() && currentTile.getPiece() instanceof Queen) {
                 Queen queen = (Queen) currentTile.getPiece();
-                Collection<Move> legalMoves = queen.calculateLegalMoves(board);
+                Collection<Move> legalMoves = queen.calculateMoves(board.getTiles());
                 System.out.print("Queen on Tile " + i + " has " + legalMoves.size() + " legal moves ");
                 if(legalMoves.size() > 0) {
                 	System.out.print("--> ");

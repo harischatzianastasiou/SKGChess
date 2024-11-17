@@ -22,7 +22,7 @@ public class RookTest {
             Tile currentTile = board.getTile(i);
             if (currentTile.isTileOccupied() && currentTile.getPiece() instanceof Rook) {
                 Rook rook = (Rook) currentTile.getPiece();
-                Collection<Move> legalMoves = rook.calculateLegalMoves(board);
+                Collection<Move> legalMoves = rook.calculateMoves(board.getTiles());
                 System.out.print("Rook on Tile " + i + " has " + legalMoves.size() + " legal moves ");
                 if(legalMoves.size() > 0) {
                 	System.out.print("--> ");

@@ -7,14 +7,11 @@ import com.chess.engine.board.Tile.OccupiedTile;
 import com.chess.engine.pieces.Piece;
 
 public abstract class Move {
-
-	final Board board;
 	final int sourceCoordinate;
 	final int targetCoordinate;
-	private final Piece movedPiece;
+	private final Piece movedPiece;// with the alliance of the moved piece we know who made the move
 	
-	private Move(final Board board, final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece) {
-			this.board = board;
+	private Move(final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece) {
 	        this.sourceCoordinate = sourceCoordinate;
 	        this.targetCoordinate = targetCoordinate;
 	        this.movedPiece = movedPiece;
@@ -31,8 +28,8 @@ public abstract class Move {
 	}
 
 	public static final class NonCapturingMove extends Move{
-        public NonCapturingMove(final Board board, final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece) {
-            super(board, sourceCoordinate, targetCoordinate, movedPiece);
+        public NonCapturingMove(final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece) {
+            super(sourceCoordinate, targetCoordinate, movedPiece);
         }
      
         @Override
@@ -43,8 +40,8 @@ public abstract class Move {
 	
 	public static final class CapturingMove extends Move{
 		private final Piece capturedPiece;
-		public CapturingMove(final Board board, final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece, final Piece capturedPiece) {
-            super(board, sourceCoordinate, targetCoordinate, movedPiece);
+		public CapturingMove(final int sourceCoordinate, final int targetCoordinate, final Piece movedPiece, final Piece capturedPiece) {
+            super(sourceCoordinate, targetCoordinate, movedPiece);
             this.capturedPiece = capturedPiece;
 		}
 		

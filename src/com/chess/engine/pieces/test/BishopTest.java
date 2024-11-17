@@ -18,7 +18,7 @@ public class BishopTest {
             Tile currentTile = board.getTile(i);
             if (currentTile.isTileOccupied() && currentTile.getPiece() instanceof Bishop) {
                 Bishop bishop = (Bishop) currentTile.getPiece();
-                Collection<Move> legalMoves = bishop.calculateLegalMoves(board);
+                Collection<Move> legalMoves = bishop.calculateMoves(board.getTiles());
                 System.out.print("Bishop on Tile " + i + " has " + legalMoves.size() + " legal moves ");
                 if(legalMoves.size() > 0) {
                 	System.out.print("--> ");

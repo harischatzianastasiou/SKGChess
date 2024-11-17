@@ -9,55 +9,22 @@ import java.util.Map;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.pieces.*;
-import com.chess.engine.player.OpponentPlayer;
 import com.chess.engine.player.Player;
-import com.chess.engine.player.WhitePlayer;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public class Board {
 	
 	private final List<Tile> tiles;
-	private final Collection<Piece>	whitePieces;
-	private final Collection<Piece> blackPieces;
-	
+	private final Player currentPlayer;
+	private final Player opponentPlayer;
+
 	private Board(Builder builder) {
 		this.tiles = createTiles(builder);
-		this.whitePieces = calculateActivePieces(this.tiles, Alliance.WHITE);
-		this.blackPieces = calculateActivePieces(this.tiles, Alliance.BLACK);
+		this.currentPlayer = createNewPlayer(tiles,builder.currentPlayerAlliance);
+		this.opponentPlayer = createNewPlayer(tiles,currentPlayer.getOpponentAlliance());		
 	}
 	
-    private static Board createBoard(Builder builder) {
-        return new Board(builder);
-    }
-	
-	@Override
-	public String toString() {
-	    StringBuilder builder = new StringBuilder();
-	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
-	        Tile tile = this.tiles.get(i);
-	        String tileText = tile.isTileOccupied() ? tile.getPiece().toString() : "-";
-	        builder.append(String.format("%3s", tileText));
-	        if ((i + 1) % BoardUtils.NUM_TILES_PER_ROW == 0) {
-	            builder.append("\n");
-	        }
-	    }
-	    return builder.toString();
-	}
-	private static Collection<Piece> calculateActivePieces(final List<Tile> tiles, Alliance alliance) {
-		final List<Piece> activePieces = new ArrayList<>();
-		for(final Tile tile : tiles) {
-			if(tile.isTileOccupied()) {
-				final Piece piece = tile.getPiece();
-				if(piece.getPieceAlliance() == alliance) {
-                    activePieces.add(piece);
-                }
-			}
-			
-		}
-		return ImmutableList.copyOf(activePieces);
-	}
-
 	private static List<Tile> createTiles(Builder builder) {
 		final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];        
         for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
@@ -65,6 +32,21 @@ public class Board {
         }
         return ImmutableList.copyOf(tiles);
     }
+
+    private Player createNewPlayer(List<Tile> tiles,Alliance alliance) {
+		final List<Piece> activePieces = new ArrayList<>();
+		final List<Move> legalMoves = new ArrayList();
+		for(final Tile tile : tiles){
+				if(tile.isTileOccupied()){
+					final Piece piece = tile.getPiece();
+					if(piece.getPieceAlliance() == alliance){}
+						legalMoves.addAll(piece.calculateMoves(tiles));
+						activePieces.add(piece);
+				}	
+		}
+		
+		return Player.createPlayer(tiles, ImmutableList.copyOf(activePieces),ImmutableList.copyOf(legalMoves), alliance);
+	}
 	
 	public static Board createStandardBoard() {
 		// create white and black player here once
@@ -96,17 +78,18 @@ public class Board {
 	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
 	    }
 	    
-	    // Set the first move to White
-	    builder.setMovePlayer(Alliance.WHITE);
-	    
+	    // Set up players
+	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
+                
 	    // Build and return the board
         return createBoard(builder);
+         
 	}
 	
 	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.
 		
 		private Map<Integer, Piece> pieces;
-		private Alliance nextMovePlayer;
+		private Alliance currentPlayerAlliance;
 		
 		public Builder() {
 			this.pieces = new HashMap<>();
@@ -117,25 +100,56 @@ public class Board {
 			return this;
 		}
 		
-		public Builder setMovePlayer(final Alliance nextMovePlayer) {
-			this.nextMovePlayer = nextMovePlayer;
-            return this;		
-		}
+		
+		public Builder setCurrentPlayerAlliance(final Alliance currentPlayerAlliance) {
+            this.currentPlayerAlliance = currentPlayerAlliance;
+            return this;
+        }
 		
 		public Map<Integer,Piece> getPieces() {
 			return pieces;
 		}
-		
-		public Alliance getNextMovePlayer() {
-            return nextMovePlayer;
-        }
 		
         public Board build() {
             return Board.createBoard(this);
         }	
 	}
 	
-	//memoization-make it new  class
+    private static Board createBoard(Builder builder) {
+        return new Board(builder);
+    }
+	
+	public List<Tile> getTiles() {
+		return this.tiles;
+	}
+	
+	public Tile getTile(final int tileCoordinate) {
+        return tiles.get(tileCoordinate);
+    }
+	public Player getCurrentPlayer() {
+		return this.currentPlayer;
+	}
+	
+	public Player getOpponentPlayer() {
+        return this.opponentPlayer;
+    }
+	
+	@Override
+	public String toString() {
+	    StringBuilder builder = new StringBuilder();
+	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
+	        Tile tile = this.tiles.get(i);
+	        String tileText = tile.isTileOccupied() ? tile.getPiece().toString() : "-";
+	        builder.append(String.format("%3s", tileText));
+	        if ((i + 1) % BoardUtils.NUM_TILES_PER_ROW == 0) {
+	            builder.append("\n");
+	        }
+	    }
+	    return builder.toString();
+	}
+
+	
+//	memoization-make it new  class
 	public class BoardCache {
 	    private static final Map<String, Board> boardCache = new HashMap<>();
 
@@ -150,34 +164,12 @@ public class Board {
 	        for (Map.Entry<Integer, Piece> entry : builder.getPieces().entrySet()) {
 	            key.append(entry.getKey()).append(":").append(entry.getValue().toString()).append("|");
 	        }
-	        key.append(builder.getNextMovePlayer());
+	        key.append(builder.currentPlayerAlliance);
 	        return key.toString();
 	    }
 	}
-
-	public Tile getTile(final int tileCoordinate) {
-        return tiles.get(tileCoordinate);
-    }
-	
-	public Collection<Piece> getWhitePieces() {
-		return whitePieces;
-	}
-	
-	public Collection<Piece> getBlackPieces() {
-        return blackPieces;
-	}
-	
-	public Collection<Piece> getAllPieces() {
-		Collection<Piece> allPieces = new ArrayList<>();
-		allPieces.addAll(whitePieces);
-		allPieces.addAll(blackPieces);
-	    return ImmutableList.copyOf(allPieces);
-	}
-
-	public List<Tile> getTiles() {
-		return this.tiles;
-	}
 }
+
 
 
 /*

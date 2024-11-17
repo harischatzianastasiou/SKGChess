@@ -19,7 +19,7 @@ public class KnightTest {
             Tile currentTile = board.getTile(i);
             if (currentTile.isTileOccupied() && currentTile.getPiece() instanceof Knight) {
                 Knight knight = (Knight) currentTile.getPiece();
-                Collection<Move> legalMoves = knight.calculateLegalMoves(board);
+                Collection<Move> legalMoves = knight.calculateMoves(board.getTiles());
                 System.out.print("Knight on Tile " + i + " has " + legalMoves.size() + " legal moves ");
                 if(legalMoves.size() > 0) {
                 	System.out.print("--> ");

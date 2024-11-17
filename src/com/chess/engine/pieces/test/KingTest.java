@@ -22,7 +22,7 @@ public class KingTest {
             Tile currentTile = board.getTile(i);
             if (currentTile.isTileOccupied() && currentTile.getPiece() instanceof King) {
                 King king = (King) currentTile.getPiece();
-                Collection<Move> legalMoves = king.calculateLegalMoves(board);
+                Collection<Move> legalMoves = king.calculateMoves(board.getTiles());
                 System.out.print("King on Tile " + i + " has " + legalMoves.size() + " legal moves ");
                 if(legalMoves.size() > 0) {
                 	System.out.print("--> ");

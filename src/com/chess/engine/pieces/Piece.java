@@ -1,10 +1,12 @@
 package com.chess.engine.pieces;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.Move;
+import com.chess.engine.board.Tile;
 
 public abstract class Piece {
 
@@ -24,7 +26,7 @@ public abstract class Piece {
 		return this.pieceAlliance;
 	}
 	
-	public abstract Collection<Move> calculateLegalMoves(final Board board);
+	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles);
 	
 	public enum PieceSymbol {
 		PAWN("P"), 

@@ -26,6 +26,5 @@ public class SKGChess {
         
         System.out.println("\nTesting King Moves:");
         KingTest.testKingMovesWithStandardBoard();
-
     }
 }
