@@ -6,7 +6,11 @@ TODO: 1) Easily pull from other branch in git to revert any changes or test diff
 		  		7) make a getTileAlliance
 		  		8) maybe github cli??
 				9) fix email of the commit author on the commits
-				
+				make a blog and explain coding approaches etc.
+                next project personal site, with portfolio, blog, pictures etc etc.
+
+
+
 				
 				
 				board exei tiles, tiles exei pieces. 
@@ -27,5 +31,785 @@ TODO: 1) Easily pull from other branch in git to revert any changes or test diff
 //	    										testing with an occupied tile of the same color by an ally
 //	    										testing with an occupied tile of different color by an ally
 //    										
-//    										
+//    							
+
+
+------------------------
+
+how to make this not new every time the board is created
+Tabnine
+Claude 3.5 Sonnet
+To avoid creating new WhitePlayer and BlackPlayer objects every time a Board is created, you can use a caching mechanism or a singleton pattern for players. Here's how you can modify the Board class to achieve this:
+
+1.
+First, create a PlayerCache class to store and manage player instances:
+
+
+File: C:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\com\chess\engine\player\PlayerCache.java
+package com.chess.engine.player;
+
+import com.chess.engine.Alliance;
+import com.chess.engine.board.Board;
+import java.util.EnumMap;
+import java.util.Map;
+
+public class PlayerCache {
+    private static final Map<Alliance, Player> playerCache = new EnumMap<>(Alliance.class);
+
+    public static Player getPlayer(Alliance alliance, Board board) {
+        return playerCache.computeIfAbsent(alliance, a -> createPlayer(a, board));
+    }
+
+    private static Player createPlayer(Alliance alliance, Board board) {
+        if (alliance == Alliance.WHITE) {
+            return new WhitePlayer(board, board.getWhiteLegalMoves(), board.getBlackLegalMoves());
+        } else {
+            return new BlackPlayer(board, board.getBlackLegalMoves(), board.getWhiteLegalMoves());
+        }
+    }
+}
+Insert
+Copy
+New file
+
+2.
+Now, modify the Board class to use the PlayerCache:
+
+
+File: C:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\com\chess\engine\board\Board.java
+// ... (other imports)
+import com.chess.engine.player.PlayerCache;
+
+public class Board {
+    // ... (other fields)
+    private final Player whitePlayer;
+    private final Player blackPlayer;
     
+    private Board(Builder builder) {
+        // ... (other initializations)
+        this.whitePlayer = PlayerCache.getPlayer(Alliance.WHITE, this);
+        this.blackPlayer = PlayerCache.getPlayer(Alliance.BLACK, this);
+    }
+
+    // ... (rest of the class remains the same)
+
+    // Add these getter methods if they don't exist
+    public Collection<Move> getWhiteLegalMoves() {
+        return whiteLegalMoves;
+    }
+
+    public Collection<Move> getBlackLegalMoves() {
+        return blackLegalMoves;
+    }
+}
+Insert
+Copy
+New file
+
+This approach has several benefits:
+
+1.
+It avoids creating new Player objects every time a Board is created.
+2.
+It uses a cache to store and reuse Player instances.
+3.
+The PlayerCache uses lazy initialization, creating players only when needed.
+4.
+It maintains the immutability of the Board class.
+
+
+However, there are a few considerations:
+
+1.
+The Player instances are now shared across different Board instances. Make sure that the Player class doesn't store any board-specific state that could cause issues when reused.
+2.
+If the Player class needs to be updated with new board state, you'll need to implement a method to do so, or consider a different caching strategy.
+3.
+This approach assumes that players are differentiated only by their alliance (WHITE or BLACK). If there are other factors that make players unique, you might need to adjust the caching strategy.
+
+
+Remember to update any other parts of your code that might be affected by this change, such as tests or any code that relies on the Player constructor being called for each new Board.
+References (4)
+1. 
+Board.java - 33-34
+2. 
+BoardUtils.java - 14-16
+3. 
+Rook.java - 26-31
+4. 
+RookTest.java - 16-36
+Copy
+
+harischatzi
+how could i also make the board not new every time
+Tabnine
+Claude 3.5 Sonnet
+To avoid creating a new Board object every time, you can implement a caching mechanism similar to what we did for the Player objects. This approach is often referred to as the Flyweight pattern. Here's how you can modify your code to cache Board objects:
+
+1.
+First, create a BoardCache class:
+
+
+File: C:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\com\chess\engine\board\BoardCache.java
+package com.chess.engine.board;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class BoardCache {
+    private static final Map<String, Board> boardCache = new HashMap<>();
+
+    public static Board getBoard(Board.Builder builder) {
+        String boardKey = generateBoardKey(builder);
+        return boardCache.computeIfAbsent(boardKey, k -> new Board(builder));
+    }
+
+    private static String generateBoardKey(Board.Builder builder) {
+        // Generate a unique key based on the board configuration
+        // This is a simple example; you might need a more sophisticated key generation
+        StringBuilder key = new StringBuilder();
+        for (Map.Entry<Integer, Piece> entry : builder.startingPieces.entrySet()) {
+            key.append(entry.getKey()).append(":").append(entry.getValue().toString()).append("|");
+        }
+        key.append(builder.nextMovePlayer);
+        return key.toString();
+    }
+}
+Insert
+Copy
+New file
+
+2.
+Now, modify the Board class:
+
+
+File: C:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\com\chess\engine\board\Board.java
+public class Board {
+    // ... (other fields)
+
+    private Board(Builder builder) {
+        // ... (existing initialization code)
+    }
+
+    public static Board createBoard(Builder builder) {
+        return BoardCache.getBoard(builder);
+    }
+
+    public static Board createStandardBoard() {
+        Builder builder = new Builder();
+        // ... (existing code to set up pieces)
+        return createBoard(builder);
+    }
+
+    // ... (rest of the class remains the same)
+
+    public static class Builder {
+        // Make these public or provide getters
+        public Map<Integer, Piece> startingPieces;
+        public Alliance nextMovePlayer;
+
+        // ... (rest of the Builder class remains the same)
+
+        public Board build() {
+            return Board.createBoard(this);
+        }
+    }
+}
+Insert
+Copy
+New file
+
+3.
+Update the PlayerCache to use the cached Board:
+
+
+File: C:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\com\chess\engine\player\PlayerCache.java
+public class PlayerCache {
+    private static final Map<Alliance, Player> playerCache = new EnumMap<>(Alliance.class);
+
+    public static Player getPlayer(Alliance alliance, Board board) {
+        return playerCache.computeIfAbsent(alliance, a -> createPlayer(a, board));
+    }
+
+    private static Player createPlayer(Alliance alliance, Board board) {
+        if (alliance == Alliance.WHITE) {
+            return new WhitePlayer(board, board.getWhiteLegalMoves(), board.getBlackLegalMoves());
+        } else {
+            return new BlackPlayer(board, board.getBlackLegalMoves(), board.getWhiteLegalMoves());
+        }
+    }
+}
+Insert
+Copy
+New file
+
+With these changes:
+
+1.
+Board objects are now cached based on their configuration.
+2.
+createStandardBoard() and build() methods now use the cache.
+3.
+The Board constructor remains private, ensuring that all Board instances come from the cache.
+
+
+Important considerations:
+
+1.
+This approach assumes that Board objects are immutable. If you need to modify a board during gameplay, you'll need to create a new Board instance with the updated state.
+2.
+The key generation in BoardCache is simplistic. You might need a more sophisticated key generation method depending on your specific requirements.
+3.
+This caching mechanism will keep all created Board objects in memory. If you're creating a large number of unique boards, you might need to implement a cache eviction strategy.
+4.
+Ensure that the Piece classes properly implement toString() for the key generation to work correctly.
+5.
+You may need to adjust other parts of your code that directly create Board objects to use this new caching mechanism.
+
+
+This approach will significantly reduce the number of Board and Player objects created, potentially improving performance and reducing memory usage, especially if you frequently create boards with the same configuration.
+References (5)
+1. 
+Board.java - 33-34
+2. 
+Rook.java - 26-31
+3. 
+Rook.java - 15-60
+4. 
+Rook.java - 31-60
+Show more
+Copy
+What are the potential benefits and drawbacks of using the Flyweight pattern for caching Boards and Players in the context of this chess engine?
+Workspace indexing: Done
+New Conversation
+Type '/' for commands, '@' for code snippets, or simply type
+/
+@
+			
+
+-------------------------------------------------------------------------------
+
+The BoardCache class is designed to manage and cache instances of the Board class based on their configurations. This is useful in a chess engine to avoid recreating board instances that have already been generated, which can improve performance by reusing existing objects.
+
+Here's a breakdown of how the BoardCache class works:
+
+1.
+Package and Imports:
+The class is part of the com.chess.engine.board package.
+It imports HashMap and Map from the Java Collections Framework to store cached boards.
+It also imports Piece from com.chess.engine.pieces, which represents chess pieces on the board.
+2.
+Static Cache:
+boardCache is a static Map that stores Board instances. The keys are String representations of board configurations, and the values are Board objects.
+3.
+getBoard Method:
+This static method takes a Board.Builder object as a parameter. The Board.Builder presumably contains the configuration needed to create a Board.
+It generates a unique key for the board configuration using the generateBoardKey method.
+It then uses computeIfAbsent to check if a board with the same configuration already exists in the cache. If it does, it returns the cached board. If not, it creates a new Board using the builder and stores it in the cache.
+4.
+generateBoardKey Method:
+This private static method generates a unique key for a given board configuration.
+It constructs a StringBuilder to build the key.
+It iterates over the starting pieces of the board (obtained from the builder), appending each piece's position and its string representation to the key.
+It also appends the player who is to make the next move.
+The resulting string is a unique representation of the board's state, which is used as the key in the cache.
+
+
+Overall, the BoardCache class is a utility for efficiently managing board states by caching them, which can be particularly beneficial in a chess engine where many board states are evaluated repeatedly.
+References (1)
+1. 
+BoardCache.java - 0-24
+
+harischatzi
+how line 13 works
+Tabnine
+GPT-4o
+File: C:/Users/tchatzia/OneDrive - Netcompany/Files/Notes/Languages/backend/Java/eclipse-workspace/SKGChess/src/com/chess/engine/board/BoardCache.java
+private static final Map<String, Board> boardCache = new HashMap<>();
+
+Line 13 declares and initializes a static final variable named boardCache. Here's a detailed explanation of how it works:
+
+1.
+Access Modifiers:
+private: The boardCache variable is private, meaning it can only be accessed within the BoardCache class. This encapsulation ensures that the cache is not directly accessible from outside the class, maintaining control over how the cache is used and modified.
+static: The boardCache variable is static, meaning it belongs to the class itself rather than any particular instance of the class. This allows all instances of BoardCache (if any were to exist) to share the same cache. In this case, since all methods are static, it indicates that the class is used as a utility class.
+final: The boardCache variable is final, meaning it can only be assigned once. This ensures that the reference to the Map object cannot be changed after it is initialized, though the contents of the map can still be modified.
+2.
+Type:
+Map<String, Board>: The boardCache is a map where the keys are String objects representing unique board configurations, and the values are Board objects representing the corresponding board states.
+3.
+Initialization:
+new HashMap<>(): The boardCache is initialized as a new instance of HashMap, which is a concrete implementation of the Map interface. This HashMap will store the board configurations and their corresponding Board objects.
+
+
+In summary, line 13 sets up a static cache for storing and retrieving Board instances based on their unique configurations, which is central to the caching mechanism implemented in the BoardCache class.
+References (1)
+1. 
+BoardCache.java - 12-12
+
+harischatzi
+how this works
+Tabnine
+GPT-4o
+File: C:/Users/tchatzia/OneDrive - Netcompany/Files/Notes/Languages/backend/Java/eclipse-workspace/SKGChess/src/com/chess/engine/board/BoardCache.java
+        return boardCache.computeIfAbsent(boardKey, k -> new Board(builder));
+
+This line of code is part of the getBoard method in the BoardCache class. It is responsible for retrieving a Board instance from the cache or creating a new one if it doesn't already exist. Here's how it works:
+
+1.
+Method Call:
+computeIfAbsent: This is a method provided by the Map interface in Java. It attempts to compute a value for the specified key if it is not already associated with a value (i.e., if the key is absent from the map).
+2.
+Parameters:
+boardKey: This is the key used to look up the Board in the boardCache. It is a String that uniquely represents the board's configuration.
+k -> new Board(builder): This is a lambda expression that serves as the mapping function. If the boardKey is not present in the boardCache, this function is executed to create a new Board instance using the provided builder.
+3.
+Return Value:
+The computeIfAbsent method returns the existing Board associated with the boardKey if it is present in the cache. If the boardKey is absent, it computes a new Board using the lambda expression, stores it in the cache, and then returns it.
+
+
+In summary, this line ensures that a Board instance corresponding to the given boardKey is retrieved from the cache if it exists. If it doesn't exist, a new Board is created using the builder, added to the cache, and then returned. This approach optimizes performance by reusing existing Board instances and only creating new ones when necessary.
+References (1)
+1. 
+BoardCache.java - 12-13
+
+harischatzi
+how to fix
+Tabnine
+GPT-4o
+The error message "The constructor Board(Board.Builder) is not visible" indicates that the constructor of the Board class, which takes a Board.Builder as a parameter, is not accessible from the BoardCache class. This typically means that the constructor is either private or has package-private access, and BoardCache is not in the same package or does not have the necessary access.
+
+To fix this issue, you have a few options:
+
+1.
+Change the Constructor's Access Modifier:
+If you have control over the Board class, you can change the access modifier of the constructor to public or protected if BoardCache is in a subclass or the same package.
+
+
+File: /path/to/Board.java
+public class Board {
+    public Board(Board.Builder builder) {
+        // constructor implementation
+    }
+}
+2.
+Use a Factory Method:
+If changing the constructor's access is not desirable or possible, consider adding a public static factory method in the Board class that creates a Board instance using the builder.
+
+
+File: /path/to/Board.java
+public class Board {
+    private Board(Board.Builder builder) {
+        // constructor implementation
+    }
+
+    public static Board createBoard(Board.Builder builder) {
+        return new Board(builder);
+    }
+}
+
+Then, modify the BoardCache class to use this factory method:
+
+File: C:/Users/tchatzia/OneDrive - Netcompany/Files/Notes/Languages/backend/Java/eclipse-workspace/SKGChess/src/com/chess/engine/board/BoardCache.java
+return boardCache.computeIfAbsent(boardKey, k -> Board.createBoard(builder));
+3.
+Ensure Package Access:
+If the constructor is package-private (no access modifier), ensure that BoardCache is in the same package as Board. If they are in different packages, you might need to refactor your package structure.
+
+
+Choose the option that best fits your design and access requirements.
+References (1)
+1. 
+BoardCache.java - 0-24
+
+harischatzi
+now that i did that how does boardcache will work???
+Tabnine
+GPT-4o
+With the changes made to the Board class, specifically the addition of the createBoard static factory method, the BoardCache class will now work correctly without any visibility issues. Here's how the BoardCache will function with these changes:
+
+1.
+Board Creation:
+The BoardCache class uses the computeIfAbsent method to check if a Board instance with a specific configuration (represented by boardKey) is already present in the cache.
+If the Board is not present, the lambda expression k -> Board.createBoard(builder) is executed. This calls the createBoard static method of the Board class, which is now publicly accessible and can create a Board instance using the Builder.
+2.
+Caching Mechanism:
+The boardCache map stores Board instances with their unique configuration keys. This ensures that if a Board with the same configuration is requested again, it can be retrieved from the cache without needing to create a new instance.
+This caching mechanism optimizes performance by reusing existing Board instances, reducing the overhead of repeatedly constructing the same board configuration.
+3.
+Usage:
+When BoardCache.getBoard(builder) is called, it generates a unique key for the board configuration using generateBoardKey(builder).
+It then attempts to retrieve the Board from the cache using this key. If the Board is not found, it creates a new one using the createBoard method and stores it in the cache.
+
+
+Overall, the BoardCache class now effectively manages the creation and reuse of Board instances, leveraging the createBoard method to handle the construction of new boards when necessary. This setup ensures that the chess engine can efficiently handle multiple board states without unnecessary duplication.
+References (9)
+1. 
+Board.java - 0-197
+2. 
+BoardCache.java - 0-24
+3. 
+BoardCache.java - 10-13
+4. 
+BoardCache.java - 7-24
+
+harischatzi
+read the Board and translate what do you mean with same configuration. when will it create a new board?
+Tabnine
+GPT-4o
+In the context of the BoardCache class, a "same configuration" refers to a board state that is identical in terms of the positions of all pieces and the player whose turn it is to move. The generateBoardKey method is responsible for creating a unique string representation of this configuration, which is used as the key in the cache.
+
+Here's a breakdown of what constitutes the "same configuration" and when a new board will be created:
+
+1.
+Configuration Components:
+Piece Positions: The positions of all pieces on the board are part of the configuration. This includes which pieces are on which tiles.
+Next Move Player: The player who is to make the next move (either White or Black) is also part of the configuration.
+2.
+generateBoardKey Method:
+This method iterates over the starting pieces in the Board.Builder and appends each piece's position and its string representation to a StringBuilder.
+It also appends the player who is to make the next move.
+The resulting string is a unique representation of the board's state.
+3.
+When a New Board is Created:
+A new Board is created when the computeIfAbsent method in BoardCache does not find an existing entry in the boardCache map for the generated key.
+This means that if the exact same piece positions and next move player have not been encountered before (i.e., there is no matching key in the cache), a new Board instance will be created using the Board.Builder.
+4.
+Example Scenarios:
+If you have a board where all pieces are in their starting positions and it's White's turn to move, this configuration will generate a specific key.
+If later in the game, the pieces have moved to different positions and it's Black's turn, this will generate a different key.
+If you reset the board to the starting position and it's White's turn again, the key will match the initial configuration, and the cached board will be reused.
+
+
+In summary, a new board is created only when a unique configuration (in terms of piece positions and the next move player) is encountered for the first time. Subsequent requests for the same configuration will retrieve the board from the cache, avoiding the need to create a new instance.
+References (5)
+1. 
+BoardCache.java - 10-13
+2. 
+Rook.java - 26-31
+3. 
+BoardCache.java - 0-24
+4. 
+RookTest.java - 18-36
+
+harischatzi
+but how can a chess board happen exaxtly the same, is that not quiete unlikely to happen?
+Tabnine
+GPT-4o
+In a typical chess game, it is indeed quite unlikely for the exact same board configuration to occur multiple times, especially in casual play. However, there are scenarios where caching board states can be beneficial:
+
+1.
+Repetitive Positions:
+In some games, certain positions may repeat due to specific strategies or tactics, such as perpetual check or threefold repetition, where the same position occurs three times with the same player to move and the same set of possible moves.
+2.
+Analysis and AI:
+In chess engines and AI, board caching can be useful during analysis or when evaluating multiple potential moves. The engine might explore various branches of the game tree, some of which may lead back to previously evaluated positions.
+3.
+Performance Optimization:
+Caching can help optimize performance by avoiding redundant calculations. If a position has been evaluated before, the engine can reuse the results instead of recalculating legal moves, evaluating the board, etc.
+4.
+Transposition Tables:
+In more advanced chess engines, transposition tables are used to store previously evaluated positions. These tables help recognize positions that are reached through different move orders but result in the same board state.
+5.
+Testing and Debugging:
+During development, caching can be useful for testing and debugging, allowing developers to quickly reproduce and analyze specific board states.
+
+
+While exact repetitions of board states are rare in a single game, caching mechanisms are more about optimizing the broader analysis and evaluation processes, especially in computational contexts like AI and game engines.
+References (2)
+1. 
+RookTest.java - 18-36
+2. 
+QueenTest.java - 21-39
+
+harischatzi
+how is the technique in boardcache is called
+Tabnine
+GPT-4o
+The technique used in the BoardCache class is commonly referred to as memoization. Memoization is an optimization technique that involves storing the results of expensive function calls and returning the cached result when the same inputs occur again. In the context of the BoardCache, it involves caching Board instances based on their unique configurations to avoid redundant creation and computation.
+
+Here's how memoization is applied in BoardCache:
+
+Key Generation: A unique key is generated for each board configuration using the generateBoardKey method. This key represents the state of the board, including piece positions and the next player to move.
+Caching: The boardCache map stores Board instances with their corresponding keys. When a board configuration is requested, the cache is checked to see if it already exists.
+Reuse: If the board configuration is found in the cache, the existing Board instance is returned. If not, a new Board is created, stored in the cache, and then returned.
+
+
+This technique is particularly useful in scenarios where the same computations might be repeated, such as in game engines, where different move sequences might lead to the same board state. Memoization helps improve performance by reducing the need for repeated calculations.
+References (1)
+1. 
+BoardCache.java - 0-37
+
+harischatzi
+use singletton to create new player only when alliance is different and king position has changed. does that sound correct?? do a research. check current board and player classes subclasses and find a way to do that
+Tabnine
+GPT-4o
+To implement a singleton pattern for creating new Player instances only when the alliance is different or the king's position has changed, you need to ensure that each Player instance is unique to a specific board state. This involves checking the player's alliance and the king's position.
+
+Here's a general approach to achieve this:
+
+1.
+Identify Key Attributes:
+The player's alliance (White or Black).
+The position of the king for that player.
+2.
+Modify the Player Class:
+Use a map to store existing Player instances based on a unique key that combines the alliance and the king's position.
+Implement a method to retrieve or create a Player instance based on this key.
+3.
+Implement Singleton Logic:
+Use a static method to manage the creation and retrieval of Player instances.
+
+
+Here's a conceptual implementation:
+
+File: /home/user/project/src/com/chess/engine/player/Player.java
+package com.chess.engine.player;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.chess.engine.board.Board;
+import com.chess.engine.pieces.King;
+import com.chess.engine.Alliance;
+
+public abstract class Player {
+    private static final Map<String, Player> playerCache = new HashMap<>();
+    protected final Board board;
+    protected final King playerKing;
+    protected final Collection<Move> legalMoves;
+    protected final Collection<Move> opponentMoves;
+    protected final boolean isInCheck;
+
+    Player(final Board board, final Collection<Move> legalMoves, final Collection<Move> opponentMoves) {
+        this.board = board;
+        this.playerKing = getKing();
+        this.legalMoves = legalMoves;
+        this.opponentMoves = opponentMoves;
+        this.isInCheck = isKingInCheck();
+    }
+
+    public static Player getPlayer(Board board, Alliance alliance) {
+        King king = board.getKing(alliance);
+        String key = alliance.toString() + "-" + king.getPosition();
+        return playerCache.computeIfAbsent(key, k -> {
+            if (alliance == Alliance.WHITE) {
+                return new WhitePlayer(board, board.getWhiteLegalMoves(), board.getBlackLegalMoves());
+            } else {
+                return new BlackPlayer(board, board.getBlackLegalMoves(), board.getWhiteLegalMoves());
+            }
+        });
+    }
+
+    protected abstract King getKing();
+
+    // Other methods...
+}
+
+File: /home/user/project/src/com/chess/engine/player/WhitePlayer.java
+package com.chess.engine.player;
+
+import com.chess.engine.board.Board;
+import com.chess.engine.pieces.King;
+
+public class WhitePlayer extends Player {
+    WhitePlayer(Board board, Collection<Move> whiteLegalMoves, Collection<Move> blackLegalMoves) {
+        super(board, whiteLegalMoves, blackLegalMoves);
+    }
+
+    @Override
+    protected King getKing() {
+        // Logic to get the white king
+    }
+
+    // Other methods...
+}
+
+File: /home/user/project/src/com/chess/engine/player/BlackPlayer.java
+package com.chess.engine.player;
+
+import com.chess.engine.board.Board;
+import com.chess.engine.pieces.King;
+
+public class BlackPlayer extends Player {
+    BlackPlayer(Board board, Collection<Move> blackLegalMoves, Collection<Move> whiteLegalMoves) {
+        super(board, blackLegalMoves, whiteLegalMoves);
+    }
+
+    @Override
+    protected King getKing() {
+        // Logic to get the black king
+    }
+
+    // Other methods...
+}
+
+Explanation:
+Key Generation: The key for caching is a combination of the player's alliance and the king's position. This ensures that a new Player instance is created only if the alliance or the king's position changes.
+Singleton Logic: The getPlayer method uses computeIfAbsent to either retrieve an existing Player or create a new one if the key is not found in the cache.
+Player Subclasses: The WhitePlayer and BlackPlayer classes extend Player and implement the getKing method to return the respective king.
+
+
+This approach ensures that Player instances are reused whenever possible, reducing unnecessary object creation and improving performance.
+References (7)
+1. 
+BoardCache.java - 0-38
+2. 
+Player.java - 18-24
+3. 
+Player.java - 40-46
+4. 
+King.java - 31-59
+
+harischatzi
+does Boardcache uses singleton
+Tabnine
+GPT-4o
+The BoardCache class, as currently implemented, does not use the Singleton pattern. Instead, it uses a static map (boardCache) to store and retrieve Board instances based on their unique configurations. This is an example of memoization, where the results of expensive operations (in this case, creating a new Board) are cached for reuse.
+
+Singleton Pattern Explanation
+The Singleton pattern is a design pattern that restricts the instantiation of a class to a single instance and provides a global point of access to that instance. It is typically used when exactly one object is needed to coordinate actions across the system.
+
+Why `BoardCache` is Not a Singleton
+Multiple Instances: The BoardCache class does not restrict the creation of multiple instances of itself. Instead, it uses a static method and a static map to manage board instances.
+Global Access: While the BoardCache provides a global access point to retrieve Board instances, it does not ensure that only one instance of BoardCache exists.
+
+
+How to Implement Singleton (If Needed)
+If you wanted to implement the Singleton pattern for BoardCache, you would typically do something like this:
+
+File: /home/user/project/src/com/chess/engine/board/BoardCache.java
+package com.chess.engine.board;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.chess.engine.pieces.Piece;
+
+public class BoardCache {
+    private static final BoardCache INSTANCE = new BoardCache();
+    private final Map<String, Board> boardCache = new HashMap<>();
+
+    private BoardCache() {
+        // Private constructor to prevent instantiation
+    }
+
+    public static BoardCache getInstance() {
+        return INSTANCE;
+    }
+
+    public Board getBoard(Board.Builder builder) {
+        String boardKey = generateBoardKey(builder);
+        return boardCache.computeIfAbsent(boardKey, k -> Board.createBoard(builder));
+    }
+
+    private String generateBoardKey(Board.Builder builder) {
+        StringBuilder key = new StringBuilder();
+        for (Map.Entry<Integer, Piece> entry : builder.getStartingPieces().entrySet()) {
+            key.append(entry.getKey()).append(":").append(entry.getValue().toString()).append("|");
+        }
+        key.append(builder.getNextMovePlayer());
+        return key.toString();
+    }
+}
+
+Explanation
+Private Constructor: The constructor is private to prevent instantiation from outside the class.
+Static Instance: A static instance of BoardCache is created and returned via the getInstance method.
+Global Access: The getInstance method provides a global access point to the single instance of BoardCache.
+
+
+This implementation ensures that only one instance of BoardCache exists, which can be accessed globally. However, in the context of your current implementation, using a singleton for BoardCache may not be necessary unless you specifically need to ensure only one instance of the cache exists.
+References (4)
+1. 
+Player.java - 0-79
+2. 
+BoardCache.java - 10-13
+3. 
+BoardCache.java - 7-24
+4. 
+BoardCache.java - 0-24
+
+harischatzi
+    public static BoardCache getInstance() {
+        return INSTANCE;
+    } 
+
+if the aove is missing how can we create multiple instances
+Tabnine
+GPT-4o
+If the getInstance method is missing and the class does not implement the Singleton pattern, you can create multiple instances of the class by simply using the new keyword. However, in the case of the BoardCache class as it is currently implemented, you cannot create multiple instances because:
+
+1.
+Static Methods and Fields: The BoardCache class uses static methods and a static map (boardCache). This means that the cache is shared across all uses of the class, regardless of how many times you might instantiate it (if it were possible).
+2.
+No Constructor: The class does not provide a public constructor, which means you cannot instantiate it directly.
+
+
+How to Allow Multiple Instances
+If you want to allow multiple instances of BoardCache, you would need to:
+
+1.
+Remove Static Modifiers: Remove the static keyword from the methods and fields that you want to be instance-specific.
+2.
+Provide a Public Constructor: Add a public constructor to allow instantiation.
+
+
+Here's how you could modify the class to allow multiple instances:
+
+File: /home/user/project/src/com/chess/engine/board/BoardCache.java
+package com.chess.engine.board;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.chess.engine.pieces.Piece;
+
+public class BoardCache {
+    private final Map<String, Board> boardCache = new HashMap<>();
+
+    public BoardCache() {
+        // Public constructor to allow instantiation
+    }
+
+    public Board getBoard(Board.Builder builder) {
+        String boardKey = generateBoardKey(builder);
+        return boardCache.computeIfAbsent(boardKey, k -> Board.createBoard(builder));
+    }
+
+    private String generateBoardKey(Board.Builder builder) {
+        StringBuilder key = new StringBuilder();
+        for (Map.Entry<Integer, Piece> entry : builder.getStartingPieces().entrySet()) {
+            key.append(entry.getKey()).append(":").append(entry.getValue().toString()).append("|");
+        }
+        key.append(builder.getNextMovePlayer());
+        return key.toString();
+    }
+}
+
+Explanation
+Instance Fields and Methods: The boardCache map and the getBoard method are now instance-specific, meaning each instance of BoardCache will have its own cache.
+Public Constructor: A public constructor is provided, allowing you to create new instances of BoardCache using new BoardCache().
+
+
+With these changes, you can create multiple instances of BoardCache, each with its own separate cache.
+
+-----------------------------------------------------------------------------------------------
+
+In a chess game implementation, creating a new Player instance every time a Board is created is generally correct and necessary. Here's why:
+
+1.
+Board State Dependency: Each Player instance is tied to a specific state of the Board. The player's legal moves, the position of the king, and other state-dependent attributes are based on the current configuration of the board.
+2.
+Game Progression: As the game progresses, the board state changes with each move. Consequently, the players' states (such as legal moves and check status) need to be recalculated, which typically involves creating new Player instances.
+3.
+Encapsulation of Logic: The Player class encapsulates logic related to the player's moves, check status, and other game rules. Creating a new Player instance ensures that this logic is applied to the current board state.
+4.
+Immutable Board Design: If the Board is designed to be immutable (a common design pattern in chess engines), then each move results in a new Board instance. In such a design, it is natural to also create new Player instances to reflect the new state.
+
+
+Considerations
+Performance: If performance becomes a concern due to frequent creation of Player instances, you might consider optimizing the process. However, this should not compromise the correctness of the game logic.
+Caching and Reuse: While caching can be used to optimize certain aspects of the game (like board positions), it is generally not applied to Player instances because their state is closely tied to the specific board configuration.
+
+makeMove can be singleton

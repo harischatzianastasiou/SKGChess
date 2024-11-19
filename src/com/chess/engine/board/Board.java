@@ -10,6 +10,7 @@ import com.chess.engine.Alliance;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.pieces.*;
 import com.chess.engine.player.Player;
+import com.chess.engine.player.PlayerFactory;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
@@ -21,8 +22,8 @@ public class Board {
 
 	private Board(Builder builder) {
 		this.tiles = createTiles(builder);
-		this.currentPlayer = createNewPlayer(tiles,builder.currentPlayerAlliance);
-		this.opponentPlayer = createNewPlayer(tiles,currentPlayer.getOpponentAlliance());		
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());	
 	}
 	
 	private static List<Tile> createTiles(Builder builder) {
@@ -32,21 +33,6 @@ public class Board {
         }
         return ImmutableList.copyOf(tiles);
     }
-
-    private Player createNewPlayer(List<Tile> tiles,Alliance alliance) {
-		final List<Piece> activePieces = new ArrayList<>();
-		final List<Move> legalMoves = new ArrayList();
-		for(final Tile tile : tiles){
-				if(tile.isTileOccupied()){
-					final Piece piece = tile.getPiece();
-					if(piece.getPieceAlliance() == alliance){}
-						legalMoves.addAll(piece.calculateMoves(tiles));
-						activePieces.add(piece);
-				}	
-		}
-		
-		return Player.createPlayer(tiles, ImmutableList.copyOf(activePieces),ImmutableList.copyOf(legalMoves), alliance);
-	}
 	
 	public static Board createStandardBoard() {
 		// create white and black player here once

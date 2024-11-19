@@ -1,12 +1,11 @@
-package com.chess.engine.player;
+package com.chess.engine.board;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Board;
-import com.chess.engine.board.Move;
 import com.chess.engine.pieces.King;
 import com.chess.engine.pieces.Piece;
+import com.chess.engine.player.Player;
 
-public class MoveMaker {
+public class PostMoveBoard {
     
     private final Board board;
     private final Move move;
@@ -17,7 +16,7 @@ public class MoveMaker {
 	private final King currentPlayerKing;
 	private final boolean isCurrentPlayerKingInCheck;
 
-    public MoveMaker(final Board board,final Move move) { 
+    public PostMoveBoard(final Board board,final Move move) { 
         this.board = board;
         this.move = move;
         this.currentPlayer = board.getCurrentPlayer();

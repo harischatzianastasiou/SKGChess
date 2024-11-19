@@ -15,26 +15,22 @@ import com.google.common.collect.ImmutableList;
 public class Player {
 	private final List<Tile> boardTiles;
 	private final Collection<Piece>	pieces;
-	protected final Collection<Move> moves;
+	protected final Collection<Move> legalMoves;
 	private final Alliance alliance;
 	
-	private Player(final List<Tile> boardTiles,final Collection<Piece> pieces,final Collection<Move> moves, Alliance alliance) {
+	protected Player(final List<Tile> boardTiles,final Collection<Piece> pieces,final Collection<Move> legalMoves, Alliance alliance) {
 		this.boardTiles = boardTiles;
 		this.pieces = pieces;
-        this.moves = moves;
+        this.legalMoves = legalMoves;
         this.alliance = alliance;
-	}
-	
-	public static Player createPlayer(final List<Tile> boardTiles,final Collection<Piece> pieces,final Collection<Move> moves, Alliance alliance) {
-		return new Player(boardTiles, pieces, moves, alliance);
 	}
 
 	public Collection<Piece> getPieces(){
 		return this.pieces;
 	}
 	
-	public Collection<Move> getMoves() {
-        return this.moves;
+	public Collection<Move> getLegalMoves() {
+        return this.legalMoves;
     }
 	
 	public Alliance getAlliance() {
