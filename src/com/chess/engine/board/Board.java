@@ -16,14 +16,17 @@ import com.google.common.collect.ImmutableMap;
 
 public class Board {
 	
+	private final BoardHistory boardHistory;
 	private final List<Tile> tiles;
 	private final Player currentPlayer;
 	private final Player opponentPlayer;
-
+    
 	private Board(Builder builder) {
+		this.boardHistory = BoardHistory.getInstance();
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,builder.isInCheck);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),!builder.isInCheck);	
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
+        this.boardHistory.addBoardState(this); // instance variables are initialized before
 	}
 	
 	private static List<Tile> createTiles(Builder builder) {
@@ -66,18 +69,14 @@ public class Board {
 	    
 	    // Set up players
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
-	    builder.setIsCurrentPlayerInCheck(false);
-                
-	    // Build and return the board
-        return createBoard(builder);
-         
+	    
+	    return createBoard(builder); 
 	}
 	
 	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.
 		
 		private Map<Integer, Piece> pieces;
 		private Alliance currentPlayerAlliance;
-		private boolean isInCheck;
 		
 		public Builder() {
 			this.pieces = new HashMap<>();
@@ -88,14 +87,8 @@ public class Board {
 			return this;
 		}
 		
-		
 		public Builder setCurrentPlayerAlliance(final Alliance currentPlayerAlliance) {
             this.currentPlayerAlliance = currentPlayerAlliance;
-            return this;
-        }
-		
-		public Builder setIsCurrentPlayerInCheck(final boolean isInCheck) {
-            this.isInCheck = isInCheck;
             return this;
         }
 		
@@ -105,7 +98,7 @@ public class Board {
 		
         public Board build() {
             return Board.createBoard(this);
-        }	
+        }
 	}
 	
     private static Board createBoard(Builder builder) {

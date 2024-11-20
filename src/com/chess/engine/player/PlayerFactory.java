@@ -1,6 +1,7 @@
 package com.chess.engine.player;
 
 import com.chess.engine.Alliance;
+import com.chess.engine.board.BoardHistory;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.King;
@@ -13,10 +14,11 @@ import java.util.List;
 
 public class PlayerFactory {
 
-    public static Player createPlayer(final List<Tile> tiles, final Alliance alliance,final boolean isInCheck) {
+    public static Player createPlayer(final List<Tile> tiles, final Alliance alliance) {
         final List<Piece> activePieces = new ArrayList<>();
         final List<Move> legalMoves = new ArrayList<>();
         final List<Move> opponentMoves = calculateOpponentMoves(tiles, alliance);
+        boolean isKingInCheck = false;
 
         for (final Tile tile : tiles) {
             if (tile.isTileOccupied()) {
@@ -26,24 +28,24 @@ public class PlayerFactory {
             		for (Move move : piece.calculateMoves(tiles)) {
             			if(piece instanceof King) {
 	            			for (Move opponentMove : opponentMoves) {
-	    	                	if (!leavesKingInCheck(move, opponentMove)) {
-	    	                		legalMoves.add(move);
-	    	                    }
+	    	                	if (isKingInCheck(move, opponentMove)) {
+	    	                		isKingInCheck = true;
+								break;
+								}
 	            			}
             			}
-            			else
-            				legalMoves.add(move);
+            			legalMoves.add(move);
             		}
                 }
             }
         }
-		if(isInCheck && legalMoves.isEmpty()) {
+		if(isKingInCheck && legalMoves.isEmpty()) {
 			System.out.println("Checkmate");
 		}
-	    if(isInCheck && legalMoves.isEmpty()) {
+	    if(isKingInCheck && legalMoves.isEmpty()) {
 	        System.out.println("Stalemate");
 	    }        	
-        return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance, false);
+        return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance, isKingInCheck);
     }
    
     
@@ -60,13 +62,38 @@ public class PlayerFactory {
         return opponentMoves;
     }
     
-	public static boolean leavesKingInCheck(Move move, Move opponentMove) { 
+	public static boolean isKingInCheck(Move move, Move opponentMove) { 
 		if(opponentMove.getTargetCoordinate() == move.getTargetCoordinate()) {
 			return true;
     	}
         return false; // Replace with actual legality check logic
 	}
 	
+	public static boolean isInCheck(final List<Tile> tiles, final Alliance alliance) {
+	    Tile kingTile = null;
+	    for (final Tile tile : tiles) {
+	        if (tile.isTileOccupied()) {
+	            final Piece piece = tile.getPiece();
+	            if (piece instanceof King && piece.getPieceAlliance() == alliance) {
+	                kingTile = tile;
+	                break;
+	            }
+	        }
+	    }
+
+	    if (kingTile == null) {
+	        throw new RuntimeException("King not found on the board");
+	    }
+
+	    final List<Move> opponentMoves = calculateOpponentMoves(tiles, alliance);
+	    for (final Move move : opponentMoves) {
+	        if (move.getTargetCoordinate() == kingTile.getTileCoordinate()) {
+	            return true; // The king is in check
+	        }
+	    }
+	    return false; // The king is not in check
+	}
+		
 	public boolean isThreefoldRepetition() {
         return false; //TODO implement threefold repetition detection
     }

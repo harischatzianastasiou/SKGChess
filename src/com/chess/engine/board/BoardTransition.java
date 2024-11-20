@@ -10,22 +10,14 @@ import com.chess.engine.pieces.Queen;
 import com.chess.engine.pieces.Rook;
 import com.chess.engine.player.Player;
 
-public class PostMoveBoard {
+public class BoardTransition {
     
     private final Board board;
     private final Move move;
-    //add here moveHistory class to keep track of all moves made, and correctly implement en passant, 3 repetion rule etc
-	// make moveHistory with singletton pattern
-    private final Player currentPlayer;
-	private final Player opponentPlayer;
-	private final boolean isCurrentPlayerInCheck;
 
-    public PostMoveBoard(final Board board,final Move move) { 
+    public BoardTransition(final Board board,final Move move) { 
         this.board = board;
         this.move = move;
-        this.currentPlayer = board.getCurrentPlayer();
-        this.opponentPlayer = board.getOpponentPlayer();
-    	this.isCurrentPlayerInCheck = currentPlayer.isInCheck();
     }
     
     public Board makeMove(Move move) {
@@ -53,8 +45,7 @@ public class PostMoveBoard {
         builder.setPiece(movedPiece);
 	        
         // Set the next player's alliance
-        builder.setCurrentPlayerAlliance(this.opponentPlayer.getAlliance());
-       
+        builder.setCurrentPlayerAlliance(this.board.getOpponentPlayer().getAlliance());
         // Build and return the new board
         return builder.build();
     }
