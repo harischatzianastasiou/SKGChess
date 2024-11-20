@@ -13,7 +13,7 @@ import java.util.List;
 
 public class PlayerFactory {
 
-    public static Player createPlayer(List<Tile> tiles, Alliance alliance) {
+    public static Player createPlayer(final List<Tile> tiles, final Alliance alliance,final boolean isInCheck) {
         final List<Piece> activePieces = new ArrayList<>();
         final List<Move> legalMoves = new ArrayList<>();
         final List<Move> opponentMoves = calculateOpponentMoves(tiles, alliance);
@@ -23,16 +23,29 @@ public class PlayerFactory {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
-                	for (Move move : piece.calculateMoves(tiles)) {
-                		if (isMoveLegal(piece, move, opponentMoves, tiles, alliance)) {
-                            legalMoves.add(move);
-                        }
-                    }
+            		for (Move move : piece.calculateMoves(tiles)) {
+            			if(piece instanceof King) {
+	            			for (Move opponentMove : opponentMoves) {
+	    	                	if (!leavesKingInCheck(move, opponentMove)) {
+	    	                		legalMoves.add(move);
+	    	                    }
+	            			}
+            			}
+            			else
+            				legalMoves.add(move);
+            		}
                 }
             }
         }
-        return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance);
+		if(isInCheck && legalMoves.isEmpty()) {
+			System.out.println("Checkmate");
+		}
+	    if(isInCheck && legalMoves.isEmpty()) {
+	        System.out.println("Stalemate");
+	    }        	
+        return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance, false);
     }
+   
     
     private static List<Move> calculateOpponentMoves(List<Tile> tiles, Alliance alliance) {
         final List<Move> opponentMoves = new ArrayList<>();
@@ -47,41 +60,13 @@ public class PlayerFactory {
         return opponentMoves;
     }
     
-    private static boolean isMoveLegal(Piece piece, Move move, List<Move> opponentMoves, List<Tile> tiles, Alliance alliance) {
-    	if(piece instanceof King) {
-	    	for(final Move opponentMove : opponentMoves){
-	    		if(opponentMove.getTargetCoordinate() == move.getTargetCoordinate()) {
-					return false;
-				}
-	    	}
-        return true; // Replace with actual legality check logic
-    }
-	
-	public boolean hasCurrentPlayerKingEscapeMoves() {
-	    for (final Move legalMove : this.currentPlayer.getMoves()) {
-	        if (legalMove.getMovedPiece() == this.currentPlayerKing) {
-	            boolean isSafeMove = true;
-	            for (final Move opponentMove : this.opponentPlayer.getMoves()) {
-	                if (opponentMove.getTargetCoordinate() == legalMove.getTargetCoordinate()) {
-	                    isSafeMove = false;
-	                    break;
-	                }
-	            }
-	            if (isSafeMove) {
-	                return true; // The King has at least one escape move
-	            }
-	        }
-	    }
-	    return false; // No escape moves for the King
+	public static boolean leavesKingInCheck(Move move, Move opponentMove) { 
+		if(opponentMove.getTargetCoordinate() == move.getTargetCoordinate()) {
+			return true;
+    	}
+        return false; // Replace with actual legality check logic
 	}
 	
-	public boolean isInCheckMate() {
-	    return this.isCurrentPlayerKingInCheck && !this.hasCurrentPlayerKingEscapeMoves();
-	}
-
-	public boolean isInStaleMate() {
-	    return !this.isCurrentPlayerKingInCheck && !this.hasCurrentPlayerKingEscapeMoves();
-	}
 	public boolean isThreefoldRepetition() {
         return false; //TODO implement threefold repetition detection
     }

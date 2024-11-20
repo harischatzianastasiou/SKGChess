@@ -17,12 +17,14 @@ public class Player {
 	private final Collection<Piece>	pieces;
 	protected final Collection<Move> legalMoves;
 	private final Alliance alliance;
+	private final boolean isInCheck;
 	
-	protected Player(final List<Tile> boardTiles,final Collection<Piece> pieces,final Collection<Move> legalMoves, Alliance alliance) {
+	protected Player(final List<Tile> boardTiles,final Collection<Piece> pieces,final Collection<Move> legalMoves,final Alliance alliance, final boolean isInCheck) {
 		this.boardTiles = boardTiles;
 		this.pieces = pieces;
         this.legalMoves = legalMoves;
         this.alliance = alliance;
+        this.isInCheck = isInCheck;
 	}
 
 	public Collection<Piece> getPieces(){
@@ -37,10 +39,11 @@ public class Player {
 		return this.alliance;
 	}
 	
+	public boolean isInCheck() {
+        return this.isInCheck;
+    }
+	
 	public Alliance getOpponentAlliance() {
-		if(this.alliance == Alliance.WHITE) {
-			return Alliance.BLACK;
-		}else 
-			return Alliance.WHITE;
-	}
+        return this.alliance == Alliance.WHITE ? Alliance.BLACK : Alliance.WHITE;
+    }
 }

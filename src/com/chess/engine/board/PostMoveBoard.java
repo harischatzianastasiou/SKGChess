@@ -1,8 +1,13 @@
 package com.chess.engine.board;
 
 import com.chess.engine.Alliance;
+import com.chess.engine.pieces.Bishop;
 import com.chess.engine.pieces.King;
+import com.chess.engine.pieces.Knight;
+import com.chess.engine.pieces.Pawn;
 import com.chess.engine.pieces.Piece;
+import com.chess.engine.pieces.Queen;
+import com.chess.engine.pieces.Rook;
 import com.chess.engine.player.Player;
 
 public class PostMoveBoard {
@@ -13,122 +18,65 @@ public class PostMoveBoard {
 	// make moveHistory with singletton pattern
     private final Player currentPlayer;
 	private final Player opponentPlayer;
-	private final King currentPlayerKing;
-	private final boolean isCurrentPlayerKingInCheck;
+	private final boolean isCurrentPlayerInCheck;
 
     public PostMoveBoard(final Board board,final Move move) { 
         this.board = board;
         this.move = move;
         this.currentPlayer = board.getCurrentPlayer();
         this.opponentPlayer = board.getOpponentPlayer();
-        this.currentPlayerKing = findKing();
-    	this.isCurrentPlayerKingInCheck = isCurrentPlayerKingInCheck();
+    	this.isCurrentPlayerInCheck = currentPlayer.isInCheck();
     }
     
     public Board makeMove(Move move) {
-        //check if move is legal
-    	if(isMoveLegal(move)) {
-    		// Create a new board builder
-	        Board.Builder builder = new Board.Builder();
+		// Create a new board builder
+        Board.Builder builder = new Board.Builder();
 	        
-	        // Iterate over all current pieces on the board
-	        for (Piece piece : this.board.getCurrentPlayer().getPieces()) {
-	        	
-	            // If the piece is not the moved piece, place it on the new board
-	            if (move.getMovedPiece().equals(piece)) {
-	                builder.setPiece(piece);
-	            }
-	        }
-	        
-	        // Move the moved piece to the new position
-	        builder.setPiece(this.move.getMovedPiece()); // MUST DO -->Piece Position: The builder.setPiece(this.move.getMovedPiece()) should correctly place the moved piece at its new position. Ensure that the Move class correctly updates the piece's position.
-	        //can get piece type and then create a new piece with alliance and destination of move.
-	        // Set the next player's alliance
-	        builder.setCurrentPlayerAlliance(this.opponentPlayer.getAlliance()); //Correctness: Ensure that the Move class correctly updates the piece's position and that the Builder class correctly handles setting pieces on specific coordinates.
-	        
-	        // Build and return the new board
-	        return builder.build();
-	    }else {
-	        // Handle illegal move case
-	        throw new IllegalArgumentException("Illegal move: " + move);
-	        // can also return current board here
-	    }
-    	
-    }
-
-    public King findKing() {
-		for( final Piece piece : currentPlayer.getPieces()) {
-			if(piece instanceof King && piece.getPieceAlliance() == this.currentPlayer.getAlliance()) {
-            return (King) piece;}
-		}
-	    throw new RuntimeException("Invalid board: " + this.currentPlayer.getAlliance() + " king not found!");
-	}
-	
-    public boolean isMoveLegal(final Move move) {
-        // Check if the move is in the current player's legal moves
-        if (!this.currentPlayer.getMoves().contains(move)) {
-            return false;
-        }
-
-        // If the moved piece is the King, check opponent's legal moves
-        if (move.getMovedPiece() instanceof King) {
-            for (final Move opponentMove : this.opponentPlayer.getMoves()) {
-                if (opponentMove.getTargetCoordinate() == move.getTargetCoordinate()) {
-                    return false; // The move is not legal if the King would be captured
-                }
+        // Iterate over all current pieces on the board
+        for (Piece piece : this.board.getCurrentPlayer().getPieces()) {
+            // If the piece is not the moved piece, place it on the new board
+            if (!move.getMovedPiece().equals(piece)) {
+                builder.setPiece(piece);
             }
         }
+        
+        // Iterate over all opponent pieces on the board
+        for (Piece piece : this.board.getOpponentPlayer().getPieces()) {
+            // If the piece is not captured, place it on the new board
+            if (move.getTargetCoordinate() != piece.getPieceCoordinate()) {
+                builder.setPiece(piece);
+            }
+        }
+        
+        // Create the moved piece on the new board
+        Piece movedPiece = createMovedPiece(move);
+        builder.setPiece(movedPiece);
+	        
+        // Set the next player's alliance
+        builder.setCurrentPlayerAlliance(this.opponentPlayer.getAlliance());
+       
+        // Build and return the new board
+        return builder.build();
+    }
+    
+    private Piece createMovedPiece(Move move) {
+        Piece movedPiece = move.getMovedPiece();
+        int destinationCoordinate = move.getTargetCoordinate();
+        Alliance pieceAlliance = movedPiece.getPieceAlliance();
 
-        return true;
-    }
-	
-	public boolean isCurrentPlayerKingInCheck() { 
-		for( final Move opponentMove : this.opponentPlayer.getMoves() ){
-				if(opponentMove.getTargetCoordinate() == this.currentPlayerKing.getPieceCoordinate()){
-					return true;
-				}
-			}
-		return false;
-	}
-	
-	public boolean hasCurrentPlayerKingEscapeMoves() {
-	    for (final Move legalMove : this.currentPlayer.getMoves()) {
-	        if (legalMove.getMovedPiece() == this.currentPlayerKing) {
-	            boolean isSafeMove = true;
-	            for (final Move opponentMove : this.opponentPlayer.getMoves()) {
-	                if (opponentMove.getTargetCoordinate() == legalMove.getTargetCoordinate()) {
-	                    isSafeMove = false;
-	                    break;
-	                }
-	            }
-	            if (isSafeMove) {
-	                return true; // The King has at least one escape move
-	            }
-	        }
-	    }
-	    return false; // No escape moves for the King
-	}
-	
-	public boolean isInCheckMate() {
-	    return this.isCurrentPlayerKingInCheck && !this.hasCurrentPlayerKingEscapeMoves();
-	}
-
-	public boolean isInStaleMate() {
-	    return !this.isCurrentPlayerKingInCheck && !this.hasCurrentPlayerKingEscapeMoves();
-	}
-	public boolean isThreefoldRepetition() {
-        return false; //TODO implement threefold repetition detection
-    }
-	
-	public boolean isFiftyMoveRule() {
-        return false; //TODO implement fifty move rule detection
-    }
-	
-	public boolean isCastled() {
-		return false; //TODO implement castling detection
-	}
-	
-	public boolean isEnPassantLegal() {
-        return false; //TODO implement en passant detection
+        if (movedPiece instanceof Pawn) {
+            return new Pawn(destinationCoordinate, pieceAlliance);
+        } else if (movedPiece instanceof Rook) {
+            return new Rook(destinationCoordinate, pieceAlliance);
+        } else if (movedPiece instanceof Knight) {
+            return new Knight(destinationCoordinate, pieceAlliance);
+        } else if (movedPiece instanceof Bishop) {
+            return new Bishop(destinationCoordinate, pieceAlliance);
+        } else if (movedPiece instanceof Queen) {
+            return new Queen(destinationCoordinate, pieceAlliance);
+        } else if (movedPiece instanceof King) {
+            return new King(destinationCoordinate, pieceAlliance);
+        }
+        throw new RuntimeException("Unknown piece type");
     }
 }

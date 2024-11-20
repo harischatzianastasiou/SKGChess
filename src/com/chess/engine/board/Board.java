@@ -22,8 +22,8 @@ public class Board {
 
 	private Board(Builder builder) {
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());	
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,builder.isInCheck);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),!builder.isInCheck);	
 	}
 	
 	private static List<Tile> createTiles(Builder builder) {
@@ -66,6 +66,7 @@ public class Board {
 	    
 	    // Set up players
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
+	    builder.setIsCurrentPlayerInCheck(false);
                 
 	    // Build and return the board
         return createBoard(builder);
@@ -76,6 +77,7 @@ public class Board {
 		
 		private Map<Integer, Piece> pieces;
 		private Alliance currentPlayerAlliance;
+		private boolean isInCheck;
 		
 		public Builder() {
 			this.pieces = new HashMap<>();
@@ -89,6 +91,11 @@ public class Board {
 		
 		public Builder setCurrentPlayerAlliance(final Alliance currentPlayerAlliance) {
             this.currentPlayerAlliance = currentPlayerAlliance;
+            return this;
+        }
+		
+		public Builder setIsCurrentPlayerInCheck(final boolean isInCheck) {
+            this.isInCheck = isInCheck;
             return this;
         }
 		
