@@ -41,13 +41,13 @@ public class Bishop extends Piece {
 	            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
 	            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile) {
 		            	if(!candidateDestinationTile.isTileOccupied()) {
-		            		legalMoves.add(new NonCapturingMove(this.pieceCoordinate, candidateDestinationCoordinate, this));
+		            		legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
 //		            		System.out.println(candidateDestinationCoordinate);
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile ){
-		                        legalMoves.add(new CapturingMove(this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+		                        legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 //		                        System.out.println(candidateDestinationCoordinate);
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
@@ -59,5 +59,10 @@ public class Bishop extends Piece {
 			} 
 		}
 		return ImmutableList.copyOf(legalMoves);
+    }
+    
+    @Override
+    public Piece movePiece(int destinationCoordinate) {
+        return new Bishop(destinationCoordinate, this.getPieceAlliance());
     }
 }

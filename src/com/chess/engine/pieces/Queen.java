@@ -30,4 +30,9 @@ public class Queen extends Piece {
         legalMoves.addAll(equivalentBishopMoves);
         return ImmutableList.copyOf(legalMoves);
 	}
+	
+    @Override
+    public Piece movePiece(int destinationCoordinate) {
+        return new Queen(destinationCoordinate, this.getPieceAlliance());
+    }
 }

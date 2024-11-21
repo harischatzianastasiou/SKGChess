@@ -51,7 +51,7 @@ public class Pawn extends Piece {
         if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 	        final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	        if (!candidateDestinationTile.isTileOccupied()) {
-	            legalMoves.add(new NonCapturingMove(this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
+	            legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
 	            if (this.currentRank == this.initialRank) {
 	                addDoubleAdvanceMove(boardTiles,legalMoves, candidateDestinationCoordinate);
 	            }else if (this.currentRank == this.promotionRank)
@@ -64,12 +64,12 @@ public class Pawn extends Piece {
         int CandidateDoubleDestinationCoordinate = candidateDestinationCoordinate * 2;
         final Tile candidateDestinationTile = boardTiles.get(CandidateDoubleDestinationCoordinate);
         if (!candidateDestinationTile.isTileOccupied())
-            legalMoves.add(new NonCapturingMove(this.pieceCoordinate, CandidateDoubleDestinationCoordinate, this));
+            legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, CandidateDoubleDestinationCoordinate, this));
     }
     
     private void addPromotionMove(final List<Tile> boardTiles, final List<Move> legalMoves, int candidateDestinationCoordinate) {
         // todo Add Logic for pawn promotion
-        legalMoves.add(new NonCapturingMove(this.pieceCoordinate, candidateDestinationCoordinate, this));
+        legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
         System.out.println(candidateDestinationCoordinate);
     }
     
@@ -86,19 +86,24 @@ public class Pawn extends Piece {
 		            	final Tile currentTile = boardTiles.get(pieceCoordinate);
 		            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
 		            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile)
-	        				legalMoves.add(new CapturingMove(this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+	        				legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 	        		}
 	            }else if(this.currentRank == this.enPassantRank) {
 	            	//check last move
-	            	addEnPassantMove(legalMoves, candidateDestinationCoordinate);
+	            	addEnPassantMove(boardTiles,legalMoves, candidateDestinationCoordinate);
 	            }
             }
         }
     }
     
-    private void addEnPassantMove(final List<Move> legalMoves, int coordinateOfAppliedOffset) {
+    private void addEnPassantMove(final List<Tile> boardTiles,final List<Move> legalMoves, int coordinateOfAppliedOffset) {
         // todo Add Logic for en passant
-        legalMoves.add(new NonCapturingMove(this.pieceCoordinate, coordinateOfAppliedOffset, this));
+        legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, coordinateOfAppliedOffset, this));
         System.out.println(coordinateOfAppliedOffset);
+    }
+    
+    @Override
+    public Piece movePiece(int destinationCoordinate) {
+        return new Pawn(destinationCoordinate, this.getPieceAlliance());
     }
 }

@@ -14,6 +14,7 @@ public enum Alliance {
         public boolean isBlack() {
             return false;
         }
+        
 	},
 	BLACK{
 		@Override
@@ -33,6 +34,7 @@ public enum Alliance {
 	public abstract int getMovingDirection();
 	public abstract boolean isWhite();
 	public abstract boolean isBlack();
+
 }
 
 

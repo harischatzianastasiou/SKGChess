@@ -28,6 +28,8 @@ public abstract class Piece {
 	
 	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles);
 	
+	public abstract Piece movePiece(int destinationCoordinate);
+	
 	public enum PieceSymbol {
 		PAWN("P"), 
 		KNIGHT("N"),

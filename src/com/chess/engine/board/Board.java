@@ -26,7 +26,7 @@ public class Board {
 		this.tiles = createTiles(builder);
 		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
 		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
-        this.boardHistory.addBoardState(this); // instance variables are initialized before
+        this.boardHistory.addBoardState(this);
 	}
 	
 	private static List<Tile> createTiles(Builder builder) {

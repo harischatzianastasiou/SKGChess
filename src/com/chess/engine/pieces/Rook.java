@@ -41,13 +41,13 @@ public class Rook extends Piece {
                     if (rankDifference == 0 || fileDifference == 0) {
                         final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 		            	if(!candidateDestinationTile.isTileOccupied() ) {
-		            		legalMoves.add(new NonCapturingMove(this.pieceCoordinate, candidateDestinationCoordinate, this));
+		            		legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
 //		            		System.out.println(candidateDestinationCoordinate);	
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
-		                        legalMoves.add(new CapturingMove(this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+		                        legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 //		                        System.out.println(candidateDestinationCoordinate);
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
@@ -57,5 +57,10 @@ public class Rook extends Piece {
 			}
 		}
 		return ImmutableList.copyOf(legalMoves);
+    }
+    
+    @Override
+    public Piece movePiece(int destinationCoordinate) {
+        return new Rook(destinationCoordinate, this.getPieceAlliance());
     }
 }

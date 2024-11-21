@@ -26,14 +26,10 @@ public class PlayerFactory {
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
             		for (Move move : piece.calculateMoves(tiles)) {
-            			if(piece instanceof King) {
-	            			for (Move opponentMove : opponentMoves) {
-	    	                	if (isKingInCheck(move, opponentMove)) {
-	    	                		isKingInCheck = true;
-								break;
-								}
-	            			}
-            			}
+	                	if (isKingInCheck(move, opponentMoves)) {
+	                		isKingInCheck = true;
+						break;
+						}
             			legalMoves.add(move);
             		}
                 }
@@ -49,7 +45,7 @@ public class PlayerFactory {
     }
    
     
-    private static List<Move> calculateOpponentMoves(List<Tile> tiles, Alliance alliance) {
+    private static List<Move> calculateOpponentMoves(final List<Tile> tiles, final Alliance alliance) {
         final List<Move> opponentMoves = new ArrayList<>();
         for (final Tile tile : tiles) {
             if (tile.isTileOccupied()) {
@@ -59,39 +55,18 @@ public class PlayerFactory {
                 }
             }
         }
-        return opponentMoves;
+        return ImmutableList.copyOf(opponentMoves);
     }
     
-	public static boolean isKingInCheck(Move move, Move opponentMove) { 
-		if(opponentMove.getTargetCoordinate() == move.getTargetCoordinate()) {
-			return true;
-    	}
-        return false; // Replace with actual legality check logic
-	}
-	
-	public static boolean isInCheck(final List<Tile> tiles, final Alliance alliance) {
-	    Tile kingTile = null;
-	    for (final Tile tile : tiles) {
-	        if (tile.isTileOccupied()) {
-	            final Piece piece = tile.getPiece();
-	            if (piece instanceof King && piece.getPieceAlliance() == alliance) {
-	                kingTile = tile;
-	                break;
-	            }
-	        }
-	    }
-
-	    if (kingTile == null) {
-	        throw new RuntimeException("King not found on the board");
-	    }
-
-	    final List<Move> opponentMoves = calculateOpponentMoves(tiles, alliance);
-	    for (final Move move : opponentMoves) {
-	        if (move.getTargetCoordinate() == kingTile.getTileCoordinate()) {
-	            return true; // The king is in check
-	        }
-	    }
-	    return false; // The king is not in check
+	public static boolean isKingInCheck(Move move, List<Move> opponentMoves) { 
+		if(move.getPieceToMove() instanceof King) {
+			for (Move opponentMove : opponentMoves) {
+				if(opponentMove.getTargetCoordinate() == move.getTargetCoordinate()) {
+					return true;
+		    	}
+			}
+		}
+        return false;
 	}
 		
 	public boolean isThreefoldRepetition() {
