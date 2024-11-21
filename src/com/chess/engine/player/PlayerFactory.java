@@ -1,7 +1,7 @@
 package com.chess.engine.player;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.BoardHistory;
+import com.chess.engine.board.GameHistory;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.King;

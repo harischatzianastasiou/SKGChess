@@ -85,7 +85,7 @@ public abstract class Move {
                          builder.setPiece(piece);
                      }
              	}
-             }
+             }   
          }
 
          // Create the moved piece on the new board
@@ -94,8 +94,8 @@ public abstract class Move {
  	        
          // Set the next player's alliance
          builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-         // Build and return the new board
-         return builder.build();
+         
+         return builder.build(this);
     }
     
 	public abstract Piece getCapturedPiece();

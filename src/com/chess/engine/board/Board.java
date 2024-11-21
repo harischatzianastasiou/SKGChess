@@ -16,17 +16,22 @@ import com.google.common.collect.ImmutableMap;
 
 public class Board {
 	
-	private final BoardHistory boardHistory;
 	private final List<Tile> tiles;
 	private final Player currentPlayer;
 	private final Player opponentPlayer;
     
 	private Board(Builder builder) {
-		this.boardHistory = BoardHistory.getInstance();
 		this.tiles = createTiles(builder);
 		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
 		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
-        this.boardHistory.addBoardState(this);
+	}
+	
+	private Board(Builder builder, Move move) {// called when a move is made, create a new board and add to GameHistory
+		this.tiles = createTiles(builder);
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
+        GameHistory.getInstance().addBoardState(this);
+        GameHistory.getInstance().addMove(move);
 	}
 	
 	private static List<Tile> createTiles(Builder builder) {
@@ -96,15 +101,23 @@ public class Board {
 			return pieces;
 		}
 		
-        public Board build() {
+        public Board build() {// build the 1st board
             return Board.createBoard(this);
+        }
+        
+        public Board build(Move move) {//build a new board everytime a move is executed
+            return Board.createBoard(this, move);
         }
 	}
 	
     private static Board createBoard(Builder builder) {
         return new Board(builder);
     }
-	
+    
+    private static Board createBoard(Builder builder,Move move) {
+        return new Board(builder);
+    }
+   
 	public List<Tile> getTiles() {
 		return this.tiles;
 	}
