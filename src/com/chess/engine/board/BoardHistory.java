@@ -50,7 +50,7 @@ public class BoardHistory {
         for (int i = 0; i < currentTiles.size(); i++) {
             Tile currentTile = currentTiles.get(i);
             Tile lastTile = lastTiles.get(i);
-            if (!currentTile.equals(lastTile)) {
+            if (!currentTile.equals(lastTile)) {// maybe I'll need equals and hashcode methods in Tile class
                 Piece movedPiece = currentTile.getPiece();
                 if (movedPiece != null) {
                     System.out.println("Piece moved: " + movedPiece + " from " + lastTile + " to " + currentTile);
