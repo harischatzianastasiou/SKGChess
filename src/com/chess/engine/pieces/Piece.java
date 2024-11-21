@@ -10,13 +10,19 @@ import com.chess.engine.board.Tile;
 
 public abstract class Piece {
 
+	protected final PieceSymbol pieceSymbol;
 	protected final int pieceCoordinate;
 	protected final Alliance pieceAlliance;
+	private final boolean isFirstMove;
+	private final int cachedHashCode;
 	
-	Piece(final int pieceCoordinate, final Alliance pieceAlliance) {
-		this.pieceCoordinate = pieceCoordinate;
+	Piece(final PieceSymbol pieceSymbol, final int piecePosition,  final Alliance pieceAlliance, final boolean isFirstMove) {
+        this.pieceSymbol = pieceSymbol;
+        this.pieceCoordinate = piecePosition;
         this.pieceAlliance = pieceAlliance;
-	}
+        this.isFirstMove = isFirstMove;
+        this.cachedHashCode = computeHashCode();
+    }
 	
 	public int getPieceCoordinate() {
 		return this.pieceCoordinate;     
@@ -29,6 +35,33 @@ public abstract class Piece {
 	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles);
 	
 	public abstract Piece movePiece(int destinationCoordinate);
+	
+	@Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof Piece)) {
+            return false;
+        }
+        final Piece otherPiece = (Piece) other;
+        return this.pieceCoordinate == otherPiece.pieceCoordinate && this.pieceSymbol == otherPiece.pieceSymbol &&
+               this.pieceAlliance == otherPiece.pieceAlliance && this.isFirstMove == otherPiece.isFirstMove;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.cachedHashCode;
+    }
+
+    private int computeHashCode() {
+        int result = this.pieceSymbol.hashCode();
+        result = 31 * result + this.pieceAlliance.hashCode();
+        result = 31 * result + this.pieceCoordinate;
+        result = 31 * result + (this.isFirstMove ? 1 : 0);
+        return result;
+    }
+
 	
 	public enum PieceSymbol {
 		PAWN("P"), 

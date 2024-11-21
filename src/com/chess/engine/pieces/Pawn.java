@@ -25,7 +25,7 @@ public class Pawn extends Piece {
     private final int enPassantRank;
     
     public Pawn(final int pieceCoordinate, final Alliance pieceAlliance) {
-        super(pieceCoordinate, pieceAlliance);
+        super(PieceSymbol.PAWN,pieceCoordinate, pieceAlliance, true);
         this.advanceDirection = this.pieceAlliance.getMovingDirection();  
         this.initialRank = this.pieceAlliance.isWhite() ? 2 : 7;
         this.currentRank = BoardUtils.getCoordinateRank(this.pieceCoordinate);
@@ -33,10 +33,19 @@ public class Pawn extends Piece {
         this.enPassantRank = this.pieceAlliance.isWhite()? 5 : 4;
     }
     
-	@Override
-	public String toString() {
-		return PieceSymbol.PAWN.toString();
-	}
+    public Pawn(final int pieceCoordinate, final Alliance pieceAlliance, final boolean isFirstMove) {
+        super(PieceSymbol.PAWN,pieceCoordinate, pieceAlliance, isFirstMove);
+        this.advanceDirection = this.pieceAlliance.getMovingDirection();  
+        this.initialRank = this.pieceAlliance.isWhite() ? 2 : 7;
+        this.currentRank = BoardUtils.getCoordinateRank(this.pieceCoordinate);
+        this.promotionRank = this.pieceAlliance.isWhite() ? 7 : 2;
+        this.enPassantRank = this.pieceAlliance.isWhite()? 5 : 4;
+    }
+    
+    @Override
+    public String toString() {
+        return this.pieceSymbol.toString();
+    }
      
     @Override
     public Collection<Move> calculateMoves(final List<Tile> boardTiles) {

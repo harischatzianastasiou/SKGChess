@@ -19,13 +19,17 @@ public class King extends Piece  {
 	private static final int[] CANDIDATE_MOVE_OFFSETS = { -9, -8, -7, -1, 1, 7, 8, 9 };
 	
 	public King(final int pieceCoordinate, final Alliance pieceAlliance) {
-        super(pieceCoordinate, pieceAlliance);
-    }
-	
-	@Override
-	public String toString() {
-		return PieceSymbol.KING.toString();
+        super(PieceSymbol.KING, pieceCoordinate, pieceAlliance, true);
 	}
+	
+	public King(final int pieceCoordinate, final Alliance pieceAlliance, final boolean isFirstMove) {
+        super(PieceSymbol.KING, pieceCoordinate, pieceAlliance, isFirstMove);
+	}
+	
+    @Override
+    public String toString() {
+        return this.pieceSymbol.toString();
+    }
 
     @Override
     public Collection<Move> calculateMoves(final List<Tile> boardTiles) {

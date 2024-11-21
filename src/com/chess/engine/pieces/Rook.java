@@ -19,13 +19,17 @@ public class Rook extends Piece {
 	private static final int MAX_SQUARES_MOVED = 7;
 	
 	public Rook(final int pieceCoordinate, final Alliance pieceAlliance) {
-        super(pieceCoordinate, pieceAlliance);
+        super(PieceSymbol.ROOK, pieceCoordinate, pieceAlliance, true);
 	}
 	
-	@Override
-	public String toString() {
-		return PieceSymbol.ROOK.toString();
+	public Rook(final int pieceCoordinate, final Alliance pieceAlliance, final boolean isFirstMove) {
+        super(PieceSymbol.ROOK, pieceCoordinate, pieceAlliance, isFirstMove);
 	}
+	
+    @Override
+    public String toString() {
+        return this.pieceSymbol.toString();
+    }
 	
     @Override
     public Collection<Move> calculateMoves(final List<Tile> boardTiles) {

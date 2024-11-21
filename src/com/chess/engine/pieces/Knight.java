@@ -17,13 +17,17 @@ public class Knight extends Piece {
 	private static final int[] CANDIDATE_MOVE_OFFSETS = {-17, -15, -10, -6, 6, 10, 15, 17};
 	
 	public Knight(final int pieceCoordinate, final Alliance pieceAlliance) {
-        super(pieceCoordinate, pieceAlliance);
-    }
-	
-	@Override
-	public String toString() {
-		return PieceSymbol.KNIGHT.toString();
+        super(PieceSymbol.KNIGHT, pieceCoordinate, pieceAlliance, true);
 	}
+	
+	public Knight(final int pieceCoordinate, final Alliance pieceAlliance, final boolean isFirstMove) {
+        super(PieceSymbol.KNIGHT, pieceCoordinate, pieceAlliance, isFirstMove);
+	}
+	
+    @Override
+    public String toString() {
+        return this.pieceSymbol.toString();
+    }
 	
 	@Override
     public Collection<Move> calculateMoves(final List<Tile> boardTiles) {

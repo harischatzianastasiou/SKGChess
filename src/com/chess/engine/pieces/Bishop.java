@@ -10,6 +10,7 @@ import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.google.common.collect.ImmutableList;
 
 public class Bishop extends Piece {
@@ -18,12 +19,16 @@ public class Bishop extends Piece {
 	private static final int MAX_SQUARES_MOVED = 7;
 	
 	public Bishop(final int pieceCoordinate, final Alliance pieceAlliance) {
-        super(pieceCoordinate, pieceAlliance);
+        super(PieceSymbol.BISHOP, pieceCoordinate, pieceAlliance, true);
+	}
+	
+	public Bishop(final int pieceCoordinate, final Alliance pieceAlliance, final boolean isFirstMove) {
+        super(PieceSymbol.BISHOP, pieceCoordinate, pieceAlliance, isFirstMove);
 	}
 	
 	@Override
 	public String toString() {
-		return PieceSymbol.BISHOP.toString();
+		return this.pieceSymbol.toString();
 	}
 	
     @Override

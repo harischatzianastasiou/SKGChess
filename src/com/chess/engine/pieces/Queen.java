@@ -13,14 +13,18 @@ import com.google.common.collect.ImmutableList;
 
 public class Queen extends Piece {
 
-	public Queen(final int pieceCoordinate, final Alliance pieceAlliance ) {
-		super(pieceCoordinate, pieceAlliance);
+	public Queen(final int pieceCoordinate, final Alliance pieceAlliance) {
+        super(PieceSymbol.QUEEN, pieceCoordinate, pieceAlliance, true);
 	}
 	
-	@Override
-	public String toString() {
-		return PieceSymbol.QUEEN.toString();
+	public Queen(final int pieceCoordinate, final Alliance pieceAlliance, final boolean isFirstMove) {
+        super(PieceSymbol.QUEEN, pieceCoordinate, pieceAlliance, isFirstMove);
 	}
+	
+    @Override
+    public String toString() {
+        return this.pieceSymbol.toString();
+    }
 	
 	@Override
 	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
