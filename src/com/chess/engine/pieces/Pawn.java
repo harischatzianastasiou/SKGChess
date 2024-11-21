@@ -7,11 +7,15 @@ import java.util.List;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
+import com.chess.engine.board.GameHistory;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.board.Move.PawnJumpMove;
+import com.chess.engine.board.Move.PawnEnPassantAttack;
+import com.chess.engine.board.Move.PawnPromotionMove;
 import com.chess.engine.pieces.Piece.PieceSymbol;
 
 public class Pawn extends Piece {
@@ -73,13 +77,13 @@ public class Pawn extends Piece {
         int CandidateDoubleDestinationCoordinate = candidateDestinationCoordinate * 2;
         final Tile candidateDestinationTile = boardTiles.get(CandidateDoubleDestinationCoordinate);
         if (!candidateDestinationTile.isTileOccupied())
-            legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, CandidateDoubleDestinationCoordinate, this));
+            legalMoves.add(new PawnJumpMove(boardTiles,this.pieceCoordinate, CandidateDoubleDestinationCoordinate, this));
     }
     
     private void addPromotionMove(final List<Tile> boardTiles, final List<Move> legalMoves, int candidateDestinationCoordinate) {
-        // todo Add Logic for pawn promotion
-        legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
-        System.out.println(candidateDestinationCoordinate);
+    	if(GameHistory.getInstance().getLastMove() instanceof PawnPromotionMove) {
+    		legalMoves.add(new PawnPromotionMove(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
+    	}
     }
     
     private void addCaptureMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
@@ -106,13 +110,14 @@ public class Pawn extends Piece {
     }
     
     private void addEnPassantMove(final List<Tile> boardTiles,final List<Move> legalMoves, int coordinateOfAppliedOffset) {
-        // todo Add Logic for en passant
-        legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, coordinateOfAppliedOffset, this));
-        System.out.println(coordinateOfAppliedOffset);
+    	if(GameHistory.getInstance().getLastMove() instanceof PawnJumpMove) {
+    		final int EnPassantDestinationCoordinate = coordinateOfAppliedOffset + (CANDIDATE_MOVE_OFFSET * pieceAlliance.getMovingDirection());
+    		legalMoves.add(new PawnEnPassantAttack(boardTiles,this.pieceCoordinate, EnPassantDestinationCoordinate, this, GameHistory.getInstance().getLastMove().getPieceToMove()));
+    	}
     }
     
     @Override
     public Piece movePiece(int destinationCoordinate) {
         return new Pawn(destinationCoordinate, this.getPieceAlliance());
-    }
+    }   
 }

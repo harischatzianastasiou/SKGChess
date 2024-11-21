@@ -98,9 +98,20 @@ public abstract class Move {
          return builder.build(this);
     }
     
+    public Board undo() {
+        final Board.Builder builder = new Board.Builder();
+        for (final Tile tile : this.boardTiles) {
+            if (tile.isTileOccupied()) {
+                builder.setPiece(tile.getPiece());
+            }
+        }        
+        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance());
+        return builder.build();
+    }
+    
 	public abstract Piece getCapturedPiece();
 
-	public static final class NonCapturingMove extends Move{
+	public static class NonCapturingMove extends Move{
         public NonCapturingMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
             super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
         }
@@ -111,7 +122,7 @@ public abstract class Move {
         }
 	}
 	
-	public static final class CapturingMove extends Move{
+	public static class CapturingMove extends Move{
 		private final Piece capturedPiece;
 		public CapturingMove(final List<Tile> boardTiles,final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
             super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
@@ -122,6 +133,91 @@ public abstract class Move {
 		public Piece getCapturedPiece() {
             return this.capturedPiece;
 		}
+	}
+	
+	public static class PawnMove extends NonCapturingMove {
+		public PawnMove(final List<Tile> boardTiles,
+						final int sourceCoordinate,
+		                final int targetCoordinate,
+		                final Piece pieceToMove) {
+		    super(boardTiles, sourceCoordinate, targetCoordinate,pieceToMove );
+		}
+		
+		@Override
+		public boolean equals(final Object other) {
+		    return this == other || other instanceof PawnMove && super.equals(other);
+		}
+	}
+	
+	public static class PawnJumpMove extends NonCapturingMove {
+		public PawnJumpMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+			super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+		}
+		@Override
+        public boolean equals(final Object other) {
+            return this == other || other instanceof PawnJumpMove && super.equals(other);
+        }
+	}
+	        
+	public static class PawnPromotionMove extends NonCapturingMove {
+		public PawnPromotionMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+			super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+		}
+		@Override
+	    public boolean equals(final Object other) {
+	        return this == other || other instanceof PawnPromotionMove && super.equals(other);
+	    }
+	}
+	    	
+	public static class PawnAttackMove extends CapturingMove {
+		public PawnAttackMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
+		    super(boardTiles, sourceCoordinate, targetCoordinate,pieceToMove,capturedPiece);
+		}
+		
+        @Override
+        public boolean equals(final Object other) {
+            return this == other || other instanceof PawnAttackMove && super.equals(other);
+        }
+	}
+	
+	public static class PawnEnPassantAttack extends PawnAttackMove {
+		public PawnEnPassantAttack(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
+			super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove, capturedPiece);
+		}
+        @Override
+        public boolean equals(final Object other) {
+            return this == other || other instanceof PawnEnPassantAttack && super.equals(other);
+        }
+	}
+	
+	public static class CastleMove extends NonCapturingMove {
+		public CastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+			super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+		}
+		@Override
+	    public boolean equals(final Object other) {
+	        return this == other || other instanceof CastleMove && super.equals(other);
+	    }
+	}
+	
+	public static class KingSideCastleMove extends NonCapturingMove {
+		public KingSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+			super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+		}
+		@Override
+	    public boolean equals(final Object other) {
+	        return this == other || other instanceof KingSideCastleMove && super.equals(other);
+	    }
+	}
+	
+	public static class QueenSideCastleMove extends NonCapturingMove {
+		public QueenSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+			super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+		}
+		@Override
+	    public boolean equals(final Object other) {
+	        return this == other || other instanceof QueenSideCastleMove && super.equals(other);
+	    }
 	}
 }
 
