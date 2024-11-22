@@ -22,14 +22,14 @@ public class Board {
     
 	private Board(Builder builder) {
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,builder.isInitialSetup);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),builder.isInitialSetup);
 	}
 	
 	private Board(Builder builder, Move move) {// called when a move is made, create a new board and add to GameHistory
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,builder.isInitialSetup);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),builder.isInitialSetup);
         GameHistory.getInstance().addBoardState(this);
         GameHistory.getInstance().addMove(move);
 	}
@@ -74,6 +74,7 @@ public class Board {
 	    
 	    // Set up players
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
+	    builder.setIsInitialSetup(true);
 	    
 	    return createBoard(builder); 
 	}
@@ -82,6 +83,7 @@ public class Board {
 		
 		private Map<Integer, Piece> pieces;
 		private Alliance currentPlayerAlliance;
+		private boolean isInitialSetup;
 		
 		public Builder() {
 			this.pieces = new HashMap<>();
@@ -96,6 +98,10 @@ public class Board {
             this.currentPlayerAlliance = currentPlayerAlliance;
             return this;
         }
+		public Builder setIsInitialSetup(final boolean isInitialSetup) {
+			this.isInitialSetup = true;
+            return this;
+		}
 		
 		public Map<Integer,Piece> getPieces() {
 			return pieces;
@@ -138,8 +144,14 @@ public class Board {
 	    StringBuilder builder = new StringBuilder();
 	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
 	        Tile tile = this.tiles.get(i);
-	        String tileText = tile.isTileOccupied() ? tile.getPiece().toString() : "-";
-	        builder.append(String.format("%3s", tileText));
+	        if (tile.isTileOccupied()) {
+	            Piece piece = tile.getPiece();
+	            String pieceSymbol = piece.getPieceSymbol().toString();
+	            String tileText = piece.getPieceAlliance().isWhite() ? pieceSymbol.toUpperCase() : pieceSymbol.toLowerCase();
+	            builder.append(String.format("%3s", tileText));
+	        } else {
+	            builder.append(String.format("%3s", "-"));
+	        }
 	        if ((i + 1) % BoardUtils.NUM_TILES_PER_ROW == 0) {
 	            builder.append("\n");
 	        }

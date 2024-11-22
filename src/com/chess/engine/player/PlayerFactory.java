@@ -10,28 +10,28 @@ import com.chess.engine.player.Player;
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class PlayerFactory {
 
-    public static Player createPlayer(final List<Tile> tiles, final Alliance alliance) {
+    public static Player createPlayer(final List<Tile> tiles, Alliance alliance,boolean isInitialSetup) {
         final List<Piece> activePieces = new ArrayList<>();
         final List<Move> legalMoves = new ArrayList<>();
         final List<Move> opponentMoves = calculateOpponentMoves(tiles, alliance);
-        boolean isKingInCheck = false;
+        final int kingCoordinate = getKingCoordinate(tiles, alliance);
+        boolean isKingInCheck = isKingInCheck(kingCoordinate,opponentMoves);
 
         for (final Tile tile : tiles) {
             if (tile.isTileOccupied()) {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
-            		for (Move move : piece.calculateMoves(tiles)) {
-	                	if (isKingInCheck(move, opponentMoves)) {
-	                		isKingInCheck = true;
-						break;
-						}
-            			legalMoves.add(move);
-            		}
+                	if(isInitialSetup) {
+                        legalMoves.addAll(piece.calculateMoves(tiles));
+                    } else {
+                        legalMoves.addAll(piece.calculateMovesConsideringOpponent(tiles, opponentMoves, isKingInCheck, kingCoordinate));
+                    }
                 }
             }
         }
@@ -57,18 +57,28 @@ public class PlayerFactory {
         }
         return ImmutableList.copyOf(opponentMoves);
     }
-    
-	public static boolean isKingInCheck(Move move, List<Move> opponentMoves) { 
-		if(move.getPieceToMove() instanceof King) {
-			for (Move opponentMove : opponentMoves) {
-				if(opponentMove.getTargetCoordinate() == move.getTargetCoordinate()) {
-					return true;
-		    	}
-			}
-		}
-        return false;
-	}
 		
+	public static int getKingCoordinate(final List<Tile> tiles, final Alliance alliance) {
+	    for (Tile tile : tiles) {
+	        if (tile.isTileOccupied()) {
+	            Piece piece = tile.getPiece();
+	            if (piece instanceof King && piece.getPieceAlliance() == alliance) {
+	                return tile.getTileCoordinate();
+	            }
+	        }
+	    }
+	    throw new RuntimeException("King not found on the board");
+	}
+	
+	public static boolean isKingInCheck(final int kingCoordinate, final List<Move> opponentMoves) { 
+		for (Move opponentMove : opponentMoves) {
+			if(opponentMove.getTargetCoordinate() == kingCoordinate) {
+				return true;
+	    	}
+		}
+    return false;
+}
+	
 	public boolean isThreefoldRepetition() {
         return false; //TODO implement threefold repetition detection
     }

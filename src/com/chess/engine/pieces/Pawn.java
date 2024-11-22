@@ -81,9 +81,7 @@ public class Pawn extends Piece {
     }
     
     private void addPromotionMove(final List<Tile> boardTiles, final List<Move> legalMoves, int candidateDestinationCoordinate) {
-    	if(GameHistory.getInstance().getLastMove() instanceof PawnPromotionMove) {
     		legalMoves.add(new PawnPromotionMove(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
-    	}
     }
     
     private void addCaptureMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
@@ -109,15 +107,38 @@ public class Pawn extends Piece {
         }
     }
     
-    private void addEnPassantMove(final List<Tile> boardTiles,final List<Move> legalMoves, int coordinateOfAppliedOffset) {
-    	if(GameHistory.getInstance().getLastMove() instanceof PawnJumpMove) {
-    		final int EnPassantDestinationCoordinate = coordinateOfAppliedOffset + (CANDIDATE_MOVE_OFFSET * pieceAlliance.getMovingDirection());
-    		legalMoves.add(new PawnEnPassantAttack(boardTiles,this.pieceCoordinate, EnPassantDestinationCoordinate, this, GameHistory.getInstance().getLastMove().getPieceToMove()));
+    private void addEnPassantMove(final List<Tile> boardTiles,final List<Move> legalMoves, int candidateDestinationCoordinate) {
+    	Move lastMove = GameHistory.getInstance().getLastMove();
+    	if(lastMove instanceof PawnJumpMove) {
+    		int lastMoveTargetCoordinate = lastMove.getTargetCoordinate();
+    		int rankDifference = Math.abs(BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate,lastMoveTargetCoordinate));
+            int fileDifference = Math.abs(BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate,lastMoveTargetCoordinate));
+            if (rankDifference ==0 && fileDifference == 1) {
+            	final int EnPassantDestinationCoordinate = candidateDestinationCoordinate + (CANDIDATE_MOVE_OFFSET * pieceAlliance.getMovingDirection());
+            	legalMoves.add(new PawnEnPassantAttack(boardTiles,this.pieceCoordinate, EnPassantDestinationCoordinate, this, GameHistory.getInstance().getLastMove().getPieceToMove()));
+    	
+            }
     	}
     }
     
     @Override
     public Piece movePiece(int destinationCoordinate) {
         return new Pawn(destinationCoordinate, this.getPieceAlliance());
-    }   
+    } 
+    
+    public Piece promotePawn(int destinationCoordinate, String newPieceType) {
+        switch (newPieceType.toUpperCase()) {
+            case "QUEEN":
+                return new Queen(destinationCoordinate, this.getPieceAlliance());
+            case "ROOK":
+                return new Rook(destinationCoordinate, this.getPieceAlliance());
+            case "BISHOP":
+                return new Bishop(destinationCoordinate, this.getPieceAlliance());
+            case "KNIGHT":
+                return new Knight(destinationCoordinate, this.getPieceAlliance());
+            default:
+                throw new IllegalArgumentException("Invalid piece type for promotion: " + newPieceType);
+        }
+    }
+    
 }

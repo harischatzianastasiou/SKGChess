@@ -25,7 +25,7 @@ public class Queen extends Piece {
     public String toString() {
         return this.pieceSymbol.toString();
     }
-	
+    
 	@Override
 	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
         final Collection<Move> equivalentRookMoves =  new Rook(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles);

@@ -62,7 +62,7 @@ public class Rook extends Piece {
 		}
 		return ImmutableList.copyOf(legalMoves);
     }
-    
+        
     @Override
     public Piece movePiece(int destinationCoordinate) {
         return new Rook(destinationCoordinate, this.getPieceAlliance());
