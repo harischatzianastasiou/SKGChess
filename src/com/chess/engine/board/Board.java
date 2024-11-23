@@ -47,29 +47,29 @@ public class Board {
 	    final Builder builder = new Builder();
 	    
 	    // Set up White pieces
-	    builder.setPiece(new Rook  (0, Alliance.BLACK));
-	    builder.setPiece(new Knight(1, Alliance.BLACK));
-	    builder.setPiece(new Bishop(2, Alliance.BLACK));
-	    builder.setPiece(new Queen (3, Alliance.BLACK));
-	    builder.setPiece(new King  (4, Alliance.BLACK));
-	    builder.setPiece(new Bishop(5, Alliance.BLACK));
-	    builder.setPiece(new Knight(6, Alliance.BLACK));
-	    builder.setPiece(new Rook  (7, Alliance.BLACK));
+	    builder.setPiece(new Rook  (0, Alliance.WHITE));
+	    builder.setPiece(new Knight(1, Alliance.WHITE));
+	    builder.setPiece(new Bishop(2, Alliance.WHITE));
+	    builder.setPiece(new Queen (3, Alliance.WHITE));
+	    builder.setPiece(new King  (4, Alliance.WHITE));
+	    builder.setPiece(new Bishop(5, Alliance.WHITE));
+	    builder.setPiece(new Knight(6, Alliance.WHITE));
+	    builder.setPiece(new Rook  (7, Alliance.WHITE));
 	    for(int coordinate = 8; coordinate < 16; coordinate++) {
-	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
+	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
 	    }
 	    
 	    // Set up Black pieces
-	    builder.setPiece(new Rook  (56, Alliance.WHITE));
-	    builder.setPiece(new Knight(57, Alliance.WHITE));
-	    builder.setPiece(new Bishop(58, Alliance.WHITE));
-	    builder.setPiece(new Queen (59, Alliance.WHITE));
-	    builder.setPiece(new King  (60, Alliance.WHITE));
-	    builder.setPiece(new Bishop(61, Alliance.WHITE));
-	    builder.setPiece(new Knight(62, Alliance.WHITE));
-	    builder.setPiece(new Rook  (63, Alliance.WHITE));
+	    builder.setPiece(new Rook  (56, Alliance.BLACK));
+	    builder.setPiece(new Knight(57, Alliance.BLACK));
+	    builder.setPiece(new Bishop(58, Alliance.BLACK));
+	    builder.setPiece(new Queen (59, Alliance.BLACK));
+	    builder.setPiece(new King  (60, Alliance.BLACK));
+	    builder.setPiece(new Bishop(61, Alliance.BLACK));
+	    builder.setPiece(new Knight(62, Alliance.BLACK));
+	    builder.setPiece(new Rook  (63, Alliance.BLACK));
 	    for(int coordinate = 48; coordinate < 56; coordinate++) {
-	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
+	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
 	    }
 	    
 	    // Set up players

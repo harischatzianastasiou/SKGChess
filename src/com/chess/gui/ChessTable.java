@@ -92,7 +92,7 @@ public class ChessTable {
         BoardPanel(){
             super(new GridLayout(8,8));
             this.boardTiles = new ArrayList<>();
-            for(int i=0; i<BoardUtils.NUM_TILES; i++) {
+            for (int i = BoardUtils.NUM_TILES - 1; i >= 0; i--) {
                 final TilePanel tilePanel = new TilePanel(this, i);
                 this.boardTiles.add(tilePanel);
                 add(tilePanel); // Add each TilePanel to the BoardPanel

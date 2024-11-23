@@ -31,4 +31,21 @@ public class BishopTest {
             }
             System.out.print("\n");
     }
+	
+	public static void testBishopMovesWithStandardBoard(Board board) {
+		Collection<Move> legalMoves = new ArrayList<>();
+			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+            	if(move.getPieceToMove() instanceof Bishop) {
+            		legalMoves.add(move);
+            	}
+            } 
+            System.out.print("Bishop has " + legalMoves.size() + " legal moves ");
+            if(legalMoves.size() > 0) {
+            	System.out.print("--> ");
+                for (Move move : legalMoves) {
+                	System.out.print(move.getTargetCoordinate() + " ");          
+                }
+            }
+            System.out.print("\n");
+    }
 }

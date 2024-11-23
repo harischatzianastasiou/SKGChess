@@ -17,9 +17,28 @@ import java.util.Map;
 public class PawnTest {
 
 	public static void testPawnMovesWithStandardBoard(Board board,int coordinate) {
+		Alliance alliance = null;
 		Collection<Move> legalMoves = new ArrayList<>();
 			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
             	if(move.getPieceToMove() instanceof Pawn && move.getPieceToMove().getPieceCoordinate() == coordinate) {
+            		legalMoves.add(move);
+            		alliance = move.getPieceToMove().getPieceAlliance();
+            	}
+            } 
+            System.out.print("Pawn" + alliance.toString() + " has " + legalMoves.size() + " legal moves ");
+            if(legalMoves.size() > 0) {
+            	System.out.print("--> ");
+                for (Move move : legalMoves) {
+                	System.out.print(move.getTargetCoordinate() + " ");          
+                }
+            }
+            System.out.print("\n");
+    }
+	
+	public static void testPawnMovesWithStandardBoard(Board board) {
+		Collection<Move> legalMoves = new ArrayList<>();
+			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+            	if(move.getPieceToMove() instanceof Pawn) {
             		legalMoves.add(move);
             	}
             } 

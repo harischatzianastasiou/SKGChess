@@ -32,4 +32,21 @@ public class KnightTest {
             }
             System.out.print("\n");
     }
+	
+	public static void testKnightMovesWithStandardBoard(Board board) {
+		Collection<Move> legalMoves = new ArrayList<>();
+			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+            	if(move.getPieceToMove() instanceof Knight) {
+            		legalMoves.add(move);
+            	}
+            } 
+            System.out.print("Knight has " + legalMoves.size() + " legal moves ");
+            if(legalMoves.size() > 0) {
+            	System.out.print("--> ");
+                for (Move move : legalMoves) {
+                	System.out.print(move.getTargetCoordinate() + " ");          
+                }
+            }
+            System.out.print("\n");
+    }
 }

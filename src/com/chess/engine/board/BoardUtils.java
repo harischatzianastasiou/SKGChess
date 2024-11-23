@@ -20,11 +20,11 @@ public class BoardUtils {
 		return tileCoordinate >= 0 && tileCoordinate < NUM_TILES;
 	}
 	
-    public static int getCoordinateRank(final int tileCoordinate) {
+    public static int getCoordinateRank(int tileCoordinate) {
         return tileCoordinate / NUM_TILES_PER_ROW;
     }
 
-    public static int getCoordinateFile(final int tileCoordinate) {
+    public static int getCoordinateFile(int tileCoordinate) {
         return tileCoordinate % NUM_TILES_PER_ROW ;
     }
     
@@ -39,5 +39,6 @@ public class BoardUtils {
     public static Alliance getCoordinateAlliance(int tileCoordinate) {
         return (BoardUtils.getCoordinateRank(tileCoordinate) + BoardUtils.getCoordinateFile(tileCoordinate)) % 2 == 0 ? Alliance.BLACK : Alliance.WHITE;
     }
+
 	
 }

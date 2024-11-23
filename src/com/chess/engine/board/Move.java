@@ -76,6 +76,8 @@ public abstract class Move {
             }
         }        
         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance());
+        builder.setIsInitialSetup(false);// if gamehistory size = 2 then it must return true
+
         return builder.build();
     }
     
@@ -107,7 +109,8 @@ public abstract class Move {
 	 	        
 	         // Set the next player's alliance
 	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	         
+	         builder.setIsInitialSetup(false);
+
 	         return builder.build(this);
 	    }
      
@@ -144,7 +147,7 @@ public abstract class Move {
 	 	        
 	         // Set the next player's alliance
 	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	         
+	         builder.setIsInitialSetup(false);
 	         return builder.build(this);
 	    }
 		
@@ -182,7 +185,8 @@ public abstract class Move {
 	 	        
 	         // Set the next player's alliance
 	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	         
+	         builder.setIsInitialSetup(false);
+
 	         return builder.build(this);
 	    }
 		
@@ -233,6 +237,7 @@ public abstract class Move {
 
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+	        builder.setIsInitialSetup(false);
 
 	        return builder.build(this);
 	    }
@@ -298,6 +303,7 @@ public abstract class Move {
 
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+	        builder.setIsInitialSetup(false);
 
 	        return builder.build(this);
 	    }

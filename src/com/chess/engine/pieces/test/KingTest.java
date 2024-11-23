@@ -35,4 +35,21 @@ public class KingTest {
             }
             System.out.print("\n");
     }
+	
+	public static void testKingMovesWithStandardBoard(Board board) {
+		Collection<Move> legalMoves = new ArrayList<>();
+			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+            	if(move.getPieceToMove() instanceof King) {
+            		legalMoves.add(move);
+            	}
+            } 
+            System.out.print("King has " + legalMoves.size() + " legal moves ");
+            if(legalMoves.size() > 0) {
+            	System.out.print("--> ");
+                for (Move move : legalMoves) {
+                	System.out.print(move.getTargetCoordinate() + " ");          
+                }
+            }
+            System.out.print("\n");
+    }
 }
