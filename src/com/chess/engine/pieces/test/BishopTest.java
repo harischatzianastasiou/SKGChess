@@ -7,27 +7,28 @@ import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Bishop;
 import com.chess.engine.pieces.Knight;
+import com.chess.engine.pieces.Pawn;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
 public class BishopTest {
 
-    public static void testBishopMovesWithStandardBoard() {
-        Board board = Board.createStandardBoard();
-        for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
-            Tile currentTile = board.getTile(i);
-            if (currentTile.isTileOccupied() && currentTile.getPiece() instanceof Bishop) {
-                Bishop bishop = (Bishop) currentTile.getPiece();
-                Collection<Move> legalMoves = bishop.calculateMoves(board.getTiles());
-                System.out.print("Bishop on Tile " + i + " has " + legalMoves.size() + " legal moves ");
-                if(legalMoves.size() > 0) {
-                	System.out.print("--> ");
-	                for (Move move : legalMoves) {
-	                	System.out.print(move.getTargetCoordinate() + " ");          
-	                }
+	public static void testBishopMovesWithStandardBoard(Board board,int coordinate) {
+		Collection<Move> legalMoves = new ArrayList<>();
+			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+            	if(move.getPieceToMove() instanceof Bishop && move.getPieceToMove().getPieceCoordinate() == coordinate) {
+            		legalMoves.add(move);
+            	}
+            } 
+            System.out.print("Bishop has " + legalMoves.size() + " legal moves ");
+            if(legalMoves.size() > 0) {
+            	System.out.print("--> ");
+                for (Move move : legalMoves) {
+                	System.out.print(move.getTargetCoordinate() + " ");          
                 }
-                System.out.print("\n");
             }
-        }
+            System.out.print("\n");
     }
 }

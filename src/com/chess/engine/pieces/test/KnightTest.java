@@ -6,6 +6,9 @@ import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Knight;
+import com.chess.engine.pieces.Pawn;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -13,22 +16,20 @@ import java.util.Map;
 
 public class KnightTest {
 
-	public static void testKnightMovesWithStandardBoard() {
-        Board board = Board.createStandardBoard();
-        for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
-            Tile currentTile = board.getTile(i);
-            if (currentTile.isTileOccupied() && currentTile.getPiece() instanceof Knight) {
-                Knight knight = (Knight) currentTile.getPiece();
-                Collection<Move> legalMoves = knight.calculateMoves(board.getTiles());
-                System.out.print("Knight on Tile " + i + " has " + legalMoves.size() + " legal moves ");
-                if(legalMoves.size() > 0) {
-                	System.out.print("--> ");
-	                for (Move move : legalMoves) {
-	                	System.out.print(move.getTargetCoordinate() + " ");          
-	                }
+	public static void testKnightMovesWithStandardBoard(Board board,int coordinate) {
+		Collection<Move> legalMoves = new ArrayList<>();
+			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+            	if(move.getPieceToMove() instanceof Knight && move.getPieceToMove().getPieceCoordinate() == coordinate) {
+            		legalMoves.add(move);
+            	}
+            } 
+            System.out.print("Knight has " + legalMoves.size() + " legal moves ");
+            if(legalMoves.size() > 0) {
+            	System.out.print("--> ");
+                for (Move move : legalMoves) {
+                	System.out.print(move.getTargetCoordinate() + " ");          
                 }
-                System.out.print("\n");
             }
-        }
+            System.out.print("\n");
     }
 }
