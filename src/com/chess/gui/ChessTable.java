@@ -115,6 +115,8 @@ public class ChessTable {
     private class TilePanel extends JPanel{
         
         private final int tileId;
+        private Color highlightColor; // Store the current highlight color
+
         
         TilePanel(final BoardPanel boardPanel, final int tileId){
             super(new GridBagLayout());
@@ -126,13 +128,15 @@ public class ChessTable {
 	        	@Override
 	            public void mouseClicked(MouseEvent e) {
 	                if(isRightMouseButtonClicked(e)) {
-	                	sourceTile = null;
+	                    highlightColor = Color.BLUE; // Set highlight color for right-clicK
+	                    sourceTile = null;
 	                	targetTile = null;
 	                	selectedPiece = null;
 	                }else if(isLeftMouseButtonClicked(e)) {
 	                	//first click
 	                	if(sourceTile == null) {
-	                		sourceTile = chessboard.getTile(tileId);
+	                        highlightColor = Color.GREEN; // Set highlight color for left-click
+	                        sourceTile = chessboard.getTile(tileId);
 	                        selectedPiece = sourceTile.getPiece();
 	                        if(selectedPiece== null) {
 	                        	sourceTile = null;
@@ -164,7 +168,8 @@ public class ChessTable {
 	                        }
 	                    //second click
 	                	}else {
-	                		targetTile = chessboard.getTile(tileId);
+	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
+	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
 	                           for(Move move : chessboard.getCurrentPlayer().getLegalMoves()) {
 	                        	   if(move.getSourceCoordinate() == sourceTile.getTileCoordinate() && 
@@ -177,8 +182,10 @@ public class ChessTable {
 	                        sourceTile = null;
 	                        targetTile = null;
 	                        selectedPiece = null;
-	                        
 	                	}
+	                    setBackground(highlightColor);
+	                    repaint();
+	                	
 	                	SwingUtilities.invokeLater(new Runnable() {
 	                		@Override
 	                		public void run() {
