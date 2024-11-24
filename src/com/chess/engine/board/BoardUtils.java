@@ -21,11 +21,11 @@ public class BoardUtils {
 	}
 	
     public static int getCoordinateRank(int tileCoordinate) {
-        return tileCoordinate / NUM_TILES_PER_ROW;
+        return (tileCoordinate / NUM_TILES_PER_ROW) + 1;
     }
 
     public static int getCoordinateFile(int tileCoordinate) {
-        return tileCoordinate % NUM_TILES_PER_ROW ;
+        return (tileCoordinate % NUM_TILES_PER_ROW) + 1;
     }
     
     public static int getCoordinateRankDifference(int destinationCoordinate, int sourceCoordinate) {

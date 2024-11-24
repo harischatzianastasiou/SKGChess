@@ -24,6 +24,7 @@ public class Pawn extends Piece {
     private static final int[] CANDIDATE_CAPTURE_OFFSETS = {7, 9};
     private final int advanceDirection;
     private final int initialRank;
+    private final int currentRank;
     private final int promotionRank;
     private final int enPassantRank;
     
@@ -31,6 +32,7 @@ public class Pawn extends Piece {
         super(PieceSymbol.PAWN,pieceCoordinate, pieceAlliance, true);
         this.advanceDirection = this.pieceAlliance.getMovingDirection();  
         this.initialRank = this.pieceAlliance.isWhite() ? 2 : 7;
+        this.currentRank = BoardUtils.getCoordinateRank(this.pieceCoordinate);
         this.promotionRank = this.pieceAlliance.isWhite() ? 7 : 2;
         this.enPassantRank = this.pieceAlliance.isWhite()? 5 : 4;
     }
@@ -39,6 +41,7 @@ public class Pawn extends Piece {
         super(PieceSymbol.PAWN,pieceCoordinate, pieceAlliance, isFirstMove);
         this.advanceDirection = this.pieceAlliance.getMovingDirection();  
         this.initialRank = this.pieceAlliance.isWhite() ? 2 : 7;
+        this.currentRank = BoardUtils.getCoordinateRank(this.pieceCoordinate);
         this.promotionRank = this.pieceAlliance.isWhite() ? 7 : 2;
         this.enPassantRank = this.pieceAlliance.isWhite()? 5 : 4;
     }
@@ -57,14 +60,13 @@ public class Pawn extends Piece {
     }
     
     private void addNonCapturingMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
-        int currentRank = this.pieceCoordinate / 8;
     	int candidateDestinationCoordinate = this.pieceCoordinate + (CANDIDATE_MOVE_OFFSET * advanceDirection);
         if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 	        final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	        if (!candidateDestinationTile.isTileOccupied()) {
 	            legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
 	            if (currentRank == this.initialRank) {
-	            	 System.out.println(" Tile " + this.getPieceCoordinate() +" has rank" + currentRank);
+	            	System.out.println(" Tile " + this.getPieceCoordinate() +" has rank" + currentRank);
 	 	            System.out.println(" Tile " + this.getPieceCoordinate() +" has initial rank" + initialRank);
 	                addDoubleAdvanceMove(boardTiles,legalMoves, candidateDestinationCoordinate);
 	            }else if (currentRank == this.promotionRank)
@@ -74,7 +76,7 @@ public class Pawn extends Piece {
     }
     
     private void addDoubleAdvanceMove(final List<Tile> boardTiles, final List<Move> legalMoves, int candidateDestinationCoordinate) {
-        int CandidateDoubleDestinationCoordinate = candidateDestinationCoordinate * 2;
+        int CandidateDoubleDestinationCoordinate = this.pieceCoordinate + (2 * CANDIDATE_MOVE_OFFSET * advanceDirection);
         final Tile candidateDestinationTile = boardTiles.get(CandidateDoubleDestinationCoordinate);
         if (!candidateDestinationTile.isTileOccupied())
             legalMoves.add(new PawnJumpMove(boardTiles,this.pieceCoordinate, CandidateDoubleDestinationCoordinate, this));
@@ -85,7 +87,6 @@ public class Pawn extends Piece {
     }
     
     private void addCaptureMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
-    	int currentRank = this.pieceCoordinate / 8;
     	for (final int candidateOffset : CANDIDATE_CAPTURE_OFFSETS) {
             int candidateDestinationCoordinate = this.pieceCoordinate + (candidateOffset * advanceDirection);
             if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
