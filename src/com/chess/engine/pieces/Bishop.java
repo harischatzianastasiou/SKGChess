@@ -36,7 +36,7 @@ public class Bishop extends Piece {
 	}
 	
     @Override
-    public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
@@ -53,11 +53,8 @@ public class Bishop extends Piece {
 	            		    // Check if this move blocks the castling of the opposite king
 	            		    boolean blocksOpponentKingSideCastling = false;
 	            		    boolean blocksOpponentQueenSideCastling = false;
-	            		    int opponentKingCoordinate = getKingCoordinate(boardTiles, this.pieceAlliance.getOpposite());
 
-	            		    // Check kingside castling path
-	            		    int[] kingSideCastlingPath = getKingSideCastlingPath(opponentKingCoordinate, this.pieceAlliance.getOpposite());
-	            		    for (int coordinate : kingSideCastlingPath) {
+	            		    for (int coordinate : oppositeKingSideCastlePath) {
 	            		        if (coordinate == candidateDestinationCoordinate) {
 	            		            blocksOpponentKingSideCastling = true;
 	    		            		legalMoves.add(new BlockingKingSideCastleMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
@@ -65,9 +62,7 @@ public class Bishop extends Piece {
 	            		        }
 	            		    }
 
-	            		    // Check queenside castling path
-	            		    int[] queenSideCastlingPath = getQueenSideCastlingPath(opponentKingCoordinate, this.pieceAlliance.getOpposite());
-	            		    for (int coordinate : queenSideCastlingPath) {
+	            		    for (int coordinate : oppositeQueenSideCastlePath) {
 	            		        if (coordinate == candidateDestinationCoordinate) {
 	            		            blocksOpponentQueenSideCastling = true;
 	    		            		legalMoves.add(new BlockingQueenSideCastleMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));

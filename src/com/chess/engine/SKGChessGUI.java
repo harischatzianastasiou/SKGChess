@@ -93,16 +93,16 @@ public class SKGChessGUI {
                 }
             } else {
                 Tile destinationTile = board.getTile(row * 8 + col);
-                if (selectedPiece != null) {
-                    Collection<Move> legalMoves = selectedPiece.calculateMoves(board.getTiles());
-                    for (Move move : legalMoves) {
-                        if (move.getTargetCoordinate() == destinationTile.getTileCoordinate()) {
-                            board = move.execute();
-                            currentPlayer = currentPlayer.isWhite() ? Alliance.BLACK : Alliance.WHITE; // Switch turns
-                            break;
-                        }
-                    }
-                }
+//                if (selectedPiece != null) {
+////                    Collection<Move> legalMoves = selectedPiece.calculateMoves(tiles, isInCheck, oppositeKingCoordinate, oppositeKingSideCastlePath, oppositeQueenSideCastlePath));
+////                    for (Move move : legalMoves) {
+////                        if (move.getTargetCoordinate() == destinationTile.getTileCoordinate()) {
+////                            board = move.execute();
+////                            currentPlayer = currentPlayer.isWhite() ? Alliance.BLACK : Alliance.WHITE; // Switch turns
+////                            break;
+////                        }
+////                    }
+//                }
                 selectedTile = null;
                 selectedPiece = null;
                 updateBoard();

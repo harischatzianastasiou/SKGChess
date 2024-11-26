@@ -27,9 +27,9 @@ public class Queen extends Piece {
     }
     
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck) {
-        final Collection<Move> equivalentRookMoves =  new Rook(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles);
-        final Collection<Move> equivalentBishopMoves = new Bishop(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles);
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
+        final Collection<Move> equivalentRookMoves =  new Rook(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles, isKingInCheck, oppositeKingCoordinate, oppositeKingSideCastlePath, oppositeQueenSideCastlePath);
+        final Collection<Move> equivalentBishopMoves = new Bishop(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles, isKingInCheck, oppositeKingCoordinate, oppositeKingSideCastlePath, oppositeQueenSideCastlePath);
         final List<Move> legalMoves = new ArrayList<>(equivalentRookMoves);
         legalMoves.addAll(equivalentBishopMoves);
         return ImmutableList.copyOf(legalMoves);

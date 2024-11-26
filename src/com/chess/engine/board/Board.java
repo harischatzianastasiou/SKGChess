@@ -28,8 +28,8 @@ public class Board {
 	
 	private Board(Builder builder, Move move) {// called when a move is made, create a new board and add to GameHistory
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,builder.currentPlayerInCheck);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),false);
         GameHistory.getInstance().addBoardState(this);
         GameHistory.getInstance().addMove(move);
 	}

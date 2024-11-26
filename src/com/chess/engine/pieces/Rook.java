@@ -13,6 +13,7 @@ import com.chess.engine.board.Move.BlockingQueenSideCastleMove;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.CapturingPinnedPieceMove;
 import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.board.Move.OppositeKingInCheck;
 import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.google.common.collect.ImmutableList;
 
