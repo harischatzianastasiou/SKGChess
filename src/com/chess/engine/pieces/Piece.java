@@ -43,80 +43,9 @@ public abstract class Piece {
 		return isFirstMove;
 	}
 	
-	public Collection<Move> calculateMovesConsideringOpponent(final List<Tile> boardTiles, final Collection<Move> opponentMoves, final boolean isKingInCheck, final int kingCoordinate) {
-        final List<Move> legalMoves = new ArrayList<>();
-        
-        if (!isKingInCheck) {
-            legalMoves.addAll(calculateMoves(boardTiles));
-            // Filter out moves that put the King in check
-            legalMoves.removeIf(move -> wouldMovePutKingInCheck( kingCoordinate, opponentMoves));
-        } else {
-            // Identify the pieces that threat the King
-            List<Move> threatingCheckmateMoves = new ArrayList<>();
-            for (Move move : opponentMoves) {
-                if (move.getTargetCoordinate() == kingCoordinate) {
-                	threatingCheckmateMoves.add(move);
-                }
-            }
-
-            // If there's only one attacking piece, try to block or capture it
-            if (threatingCheckmateMoves.size() == 1) {
-                Move threatingCheckmateMove = threatingCheckmateMoves.get(0);
-                int threatingPieceCoordinate = threatingCheckmateMove.getSourceCoordinate();
-
-                // Calculate potential blocking moves
-                legalMoves.addAll(calculateMoves(boardTiles));
-                legalMoves.removeIf(move -> {
-                    // Check if the move captures the attacking piece
-                    if (move.getTargetCoordinate() == threatingPieceCoordinate) {
-                        return false;
-                    }
-                    // Check if the move blocks the attack path
-                    return !isMoveBlockingCheck(move, threatingCheckmateMove, kingCoordinate);
-                });
-            }
-        }
-
-        return ImmutableList.copyOf(legalMoves);
-    }
-	
-	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck);
+	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath);
 	
 	public abstract Piece movePiece(int destinationCoordinate);
-	
-	protected boolean wouldMovePutKingInCheck(final int kingCoordinate, final Collection<Move> opponentMoves ) {
-	    // Check if the king's position or the pawn's target position is under attack
-	    return isTileUnderAttack(kingCoordinate, opponentMoves);
-	}
-	
-	protected boolean isTileUnderAttack(int coordinate, Collection<Move> opponentMoves) {
-	    for (Move move : opponentMoves) {
-	        if (move.getTargetCoordinate() == coordinate) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
-	
-    protected boolean isMoveBlockingCheck(Move move, Move attackMove, int kingCoordinate) {
-        int attackSource = attackMove.getSourceCoordinate();
-        int attackTarget = attackMove.getTargetCoordinate();
-
-        // Calculate the direction of the attack
-        int rankDirection = Integer.signum(BoardUtils.getCoordinateRankDifference(attackSource, attackTarget));
-        int fileDirection = Integer.signum(BoardUtils.getCoordinateFileDifference(attackSource, attackTarget));
-
-        // Traverse the path from the attacker to the king
-        int currentCoordinate = attackSource + rankDirection * 8 + fileDirection;
-        while (currentCoordinate != kingCoordinate) {
-            if (move.getTargetCoordinate() == currentCoordinate) {
-                return true; // The move blocks the check
-            }
-            currentCoordinate += rankDirection * 8 + fileDirection;
-        }
-
-        return false; // The move does not block the check
-    }
 	
 	@Override
     public boolean equals(final Object other) {

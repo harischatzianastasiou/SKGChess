@@ -22,14 +22,14 @@ public class Board {
     
 	private Board(Builder builder) {
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,builder.isInitialSetup);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),builder.isInitialSetup);
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance, builder.currentPlayerInCheck);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),false);
 	}
 	
 	private Board(Builder builder, Move move) {// called when a move is made, create a new board and add to GameHistory
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,builder.isInitialSetup);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),builder.isInitialSetup);
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
+		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
         GameHistory.getInstance().addBoardState(this);
         GameHistory.getInstance().addMove(move);
 	}
@@ -74,7 +74,6 @@ public class Board {
 	    
 	    // Set up players
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
-	    builder.setIsInitialSetup(true);
 	    
 	    return createBoard(builder); 
 	}
@@ -83,7 +82,7 @@ public class Board {
 		
 		private Map<Integer, Piece> pieces;
 		private Alliance currentPlayerAlliance;
-		private boolean isInitialSetup;
+		private boolean currentPlayerInCheck;
 		
 		public Builder() {
 			this.pieces = new HashMap<>();
@@ -98,8 +97,9 @@ public class Board {
             this.currentPlayerAlliance = currentPlayerAlliance;
             return this;
         }
-		public Builder setIsInitialSetup(final boolean isInitialSetup) {
-			this.isInitialSetup = true;
+		
+		public Builder setCurrentPlayerInCheck(final boolean currentPlayerInCheck) {
+			this.currentPlayerInCheck = currentPlayerInCheck;
             return this;
 		}
 		

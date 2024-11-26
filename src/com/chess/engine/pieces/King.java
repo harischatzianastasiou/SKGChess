@@ -11,15 +11,14 @@ import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
-import com.chess.engine.board.Move.CastleMove;
+import com.chess.engine.board.Move.QueenSideCastleMove;
+import com.chess.engine.board.Move.KingSideCastleMove;
 import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.google.common.collect.ImmutableList;
 
 public class King extends Piece  {
 	
 	private final boolean isInCheck;
-//	private final boolean canCastleKingside;
-//	private final boolean canCastleQueenside;
 	private static final int[] CANDIDATE_MOVE_OFFSETS = { -9, -8, -7, -1, 1, 7, 8, 9 };
 	
 	public King(final int pieceCoordinate, final Alliance pieceAlliance) {
@@ -38,50 +37,7 @@ public class King extends Piece  {
     }
     
     @Override
-    public Collection<Move> calculateMovesConsideringOpponent(final List<Tile> boardTiles, final Collection<Move> opponentMoves, final boolean isKingInCheck, final int kingCoordinate) {
-        final List<Move> legalMoves = new ArrayList<>();
-        
-        if (!isKingInCheck) {
-            legalMoves.addAll(calculateMoves(boardTiles));
-            legalMoves.addAll(calculateCastlingMoves(boardTiles, opponentMoves, isKingInCheck));
-            // Filter out moves that put the King in check
-            legalMoves.removeIf(move -> wouldMovePutKingInCheck( kingCoordinate, opponentMoves));
-        } else {
-            // Identify the pieces that threat the King
-            List<Move> threatingCheckmateMoves = new ArrayList<>();
-            for (Move move : opponentMoves) {
-                if (move.getTargetCoordinate() == kingCoordinate) {
-                	threatingCheckmateMoves.add(move);
-                }
-            }
-
-            // If there's only one attacking piece, try to block or capture it
-            if (threatingCheckmateMoves.size() == 1) {
-                Move threatingCheckmateMove = threatingCheckmateMoves.get(0);
-                int threatingPieceCoordinate = threatingCheckmateMove.getSourceCoordinate();
-
-                // Calculate potential blocking moves
-                legalMoves.addAll(calculateMoves(boardTiles));
-                legalMoves.removeIf(move -> {
-                    // Check if the move captures the attacking piece
-                    if (move.getTargetCoordinate() == threatingPieceCoordinate) {
-                        return false;
-                    }
-                    // Check if the move blocks the attack path
-                    return !isMoveBlockingCheck(move, threatingCheckmateMove, kingCoordinate);
-                });
-            }else {
-        	    // If there are multiple attacking pieces, the king can only move to a safe square
-        	    legalMoves.addAll(calculateMoves(boardTiles));
-                legalMoves.removeIf(move -> wouldMovePutKingInCheck( kingCoordinate, opponentMoves));
-            }
-        }
-
-        return ImmutableList.copyOf(legalMoves);
-    }
-    
-    @Override
-    public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
@@ -129,7 +85,7 @@ public class King extends Piece  {
                         }
                     }
                     if (isPathClear) {
-                        castlingMoves.add(new CastleMove(boardTiles, this.pieceCoordinate, this.pieceCoordinate - 2, this, rookCoordinate, this.pieceCoordinate - 1, rook));
+                        castlingMoves.add(new QueenSideCastleMove(boardTiles, this.pieceCoordinate, this.pieceCoordinate - 2, this, rookCoordinate, this.pieceCoordinate - 1, rook));
                     }
                 }
             }
@@ -151,7 +107,7 @@ public class King extends Piece  {
                         }
                     }
                     if (isPathClear) {
-                        castlingMoves.add(new CastleMove(boardTiles, this.pieceCoordinate, this.pieceCoordinate + 2, this, rookCoordinate, this.pieceCoordinate + 1, rook));
+                        castlingMoves.add(new KingSideCastleMove(boardTiles, this.pieceCoordinate, this.pieceCoordinate + 2, this, rookCoordinate, this.pieceCoordinate + 1, rook));
                     }
                 }
             }
@@ -164,4 +120,13 @@ public class King extends Piece  {
     public Piece movePiece(int destinationCoordinate) {
         return new King(destinationCoordinate, this.getPieceAlliance());
     }
+    
+    protected boolean isTileUnderAttack(int coordinate, Collection<Move> opponentMoves) {
+	    for (Move move : opponentMoves) {
+	        if (move.getTargetCoordinate() == coordinate) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 }

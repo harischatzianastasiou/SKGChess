@@ -30,7 +30,7 @@ public class Knight extends Piece {
     }
 	
 	@Override
-    public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 	    // Iterate over all possible L-shaped moves for a knight
@@ -75,7 +75,7 @@ public class Knight extends Piece {
 	            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 	            		if(this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
 	            			if(pieceOnCandidateDestinationTile instanceof King) {
-	                            legalMoves.add(new OppositeKingInCheck(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+	                            legalMoves.add(new OppositeKingInCheck(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
 	            			}else {
 	            				legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 	            			}

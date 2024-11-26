@@ -76,7 +76,6 @@ public abstract class Move {
             }
         }        
         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance());
-        builder.setIsInitialSetup(false);// if gamehistory size = 2 then it must return true
 
         return builder.build();
     }
@@ -109,7 +108,6 @@ public abstract class Move {
 	 	        
 	         // Set the next player's alliance
 	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	         builder.setIsInitialSetup(false);
 
 	         return builder.build(this);
 	    }
@@ -148,7 +146,6 @@ public abstract class Move {
 	 	        
 	         // Set the next player's alliance
 	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	         builder.setIsInitialSetup(false);
 
 	         return builder.build(this);
 	    }
@@ -200,7 +197,6 @@ public abstract class Move {
 
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	        builder.setIsInitialSetup(false);
 
 	        return builder.build(this);
 	    }
@@ -260,7 +256,7 @@ public abstract class Move {
 	 	        
 	         // Set the next player's alliance
 	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	         builder.setIsInitialSetup(false);
+
 	         return builder.build(this);
 	    }
 		
@@ -305,12 +301,12 @@ public abstract class Move {
         }
 	}
 	
-	public static class CastleMove extends NonCapturingMove {
+	public static class KingSideCastleMove extends NonCapturingMove {
 	    protected final int rookSourceCoordinate;
 	    protected final int rookTargetCoordinate;
 	    protected final Rook rook;
 
-	    public CastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final int rookSourceCoordinate, final int rookTargetCoordinate, final Rook rook) {
+	    public KingSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final int rookSourceCoordinate, final int rookTargetCoordinate, final Rook rook) {
 	        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
 	        this.rookSourceCoordinate = rookSourceCoordinate;
 	        this.rookTargetCoordinate = rookTargetCoordinate;
@@ -340,16 +336,95 @@ public abstract class Move {
 
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	        builder.setIsInitialSetup(false);
 
 	        return builder.build(this);
 	    }
 
-
-		@Override
+	    @Override
 	    public boolean equals(final Object other) {
-	        return this == other || other instanceof CastleMove && super.equals(other);
+	        return this == other || other instanceof KingSideCastleMove && super.equals(other);
 	    }
+	}
+
+	public static class QueenSideCastleMove extends NonCapturingMove {
+	    protected final int rookSourceCoordinate;
+	    protected final int rookTargetCoordinate;
+	    protected final Rook rook;
+
+	    public QueenSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final int rookSourceCoordinate, final int rookTargetCoordinate, final Rook rook) {
+	        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+	        this.rookSourceCoordinate = rookSourceCoordinate;
+	        this.rookTargetCoordinate = rookTargetCoordinate;
+	        this.rook = rook;
+	    }
+	    
+	    @Override
+	    public Board execute() {
+	        final Board.Builder builder = new Board.Builder();
+	        
+	        for (final Tile tile : this.boardTiles) {
+	            if (tile.isTileOccupied()) {
+	                final Piece piece = tile.getPiece();
+	                if (!this.getPieceToMove().equals(piece) && !this.rook.equals(piece)) {
+	                    builder.setPiece(piece);
+	                }
+	            }
+	        }
+
+	        // Move the king
+	        final Piece movedKing = this.getPieceToMove().movePiece(this.getTargetCoordinate());
+	        builder.setPiece(movedKing);
+
+	        // Move the rook
+	        final Piece movedRook = this.rook.movePiece(this.rookTargetCoordinate);
+	        builder.setPiece(movedRook);
+
+	        // Set the next player's alliance
+	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+
+	        return builder.build(this);
+	    }
+
+	    @Override
+	    public boolean equals(final Object other) {
+	        return this == other || other instanceof QueenSideCastleMove && super.equals(other);
+	    }
+	}
+	
+	public static class OppositeKingInCheck extends Move{
+        public OppositeKingInCheck(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+            super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+        }
+        
+        @Override
+		public Board execute() {
+	 		// Create a new board builder
+	         Board.Builder builder = new Board.Builder();
+	 	        
+	         for (final Tile tile : this.boardTiles) {
+	             if (tile.isTileOccupied()) {
+	                 final Piece piece = tile.getPiece();
+	                 // Iterate over all current player pieces on the board
+	             		if(!this.getPieceToMove().equals(piece)) {
+	             			builder.setPiece(piece);
+	             		}
+	             }   
+	         }
+
+	         // Create the moved piece on the new board
+	         Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
+	         builder.setPiece(movedPiece);
+	 	        
+	         // Set the next player's alliance
+	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+
+	         return builder.build(this);
+	    }
+     
+        @Override
+        public Piece getCapturedPiece() {
+            return null;
+        }
 	}
 }
 

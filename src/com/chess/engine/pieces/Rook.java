@@ -35,7 +35,7 @@ public class Rook extends Piece {
     }
 	
     @Override
-    public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
@@ -80,7 +80,7 @@ public class Rook extends Piece {
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile ){
 		            			if(pieceOnCandidateDestinationTile instanceof King) {
-		                            legalMoves.add(new OppositeKingInCheck(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+		                            legalMoves.add(new OppositeKingInCheck(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
 		            			}else {
 			            		    boolean isPinned = false;
 			            			// Check if the captured piece is pinned by looking further in the same direction
