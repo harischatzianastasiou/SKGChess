@@ -120,43 +120,6 @@ public abstract class Move {
         }
 	}
 	
-	public static class CapturingMove extends Move{
-		private final Piece capturedPiece;
-		public CapturingMove(final List<Tile> boardTiles,final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
-            super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
-            this.capturedPiece = capturedPiece;
-		}
-		@Override
-		public Board execute() {
-	 		// Create a new board builder
-	         Board.Builder builder = new Board.Builder();
-	 	        
-	         for (final Tile tile : this.boardTiles) {
-	             if (tile.isTileOccupied()) {
-	                 final Piece piece = tile.getPiece();
-	                 // Iterate over all current player pieces on the board
-	             		if(!this.getPieceToMove().equals(piece) && this.getCapturedPiece().getPieceCoordinate() != piece.getPieceCoordinate()) {
-	             			builder.setPiece(piece);
-	             		}
-	             }   
-	         }
-
-	         // Create the moved piece on the new board
-	         Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
-	         builder.setPiece(movedPiece);
-	 	        
-	         // Set the next player's alliance
-	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	         builder.setIsInitialSetup(false);
-	         return builder.build(this);
-	    }
-		
-		@Override
-		public Piece getCapturedPiece() {
-            return this.capturedPiece;
-		}
-	}
-	
 	public static class PawnMove extends NonCapturingMove {
 		public PawnMove(final List<Tile> boardTiles,
 						final int sourceCoordinate,
@@ -246,6 +209,80 @@ public abstract class Move {
 	        return this == other || other instanceof PawnPromotionMove && super.equals(other);
 	    }
 	}
+	
+	public static class BlockingKingSideCastleMove extends NonCapturingMove {
+	    public BlockingKingSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+	        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+	    }
+
+	    @Override
+	    public boolean equals(final Object other) {
+	        return this == other || (other instanceof BlockingKingSideCastleMove && super.equals(other));
+	    }
+	}
+	
+	public static class BlockingQueenSideCastleMove extends NonCapturingMove {
+	    public BlockingQueenSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+	        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+	    }
+
+	    @Override
+	    public boolean equals(final Object other) {
+	        return this == other || (other instanceof BlockingQueenSideCastleMove && super.equals(other));
+	    }
+	}
+	
+	public static class CapturingMove extends Move{
+		private final Piece capturedPiece;
+
+		public CapturingMove(final List<Tile> boardTiles,final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
+            super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+            this.capturedPiece = capturedPiece;
+		}
+		@Override
+		public Board execute() {
+	 		// Create a new board builder
+	         Board.Builder builder = new Board.Builder();
+	 	        
+	         for (final Tile tile : this.boardTiles) {
+	             if (tile.isTileOccupied()) {
+	                 final Piece piece = tile.getPiece();
+	                 // Iterate over all current player pieces on the board
+	             		if(!this.getPieceToMove().equals(piece) && this.getCapturedPiece().getPieceCoordinate() != piece.getPieceCoordinate()) {
+	             			builder.setPiece(piece);
+	             		}
+	             }   
+	         }
+
+	         // Create the moved piece on the new board
+	         Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
+	         builder.setPiece(movedPiece);
+	 	        
+	         // Set the next player's alliance
+	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+	         builder.setIsInitialSetup(false);
+	         return builder.build(this);
+	    }
+		
+		@Override
+		public Piece getCapturedPiece() {
+            return this.capturedPiece;
+		}
+	}
+	
+	public static class CapturingPinnedPieceMove extends CapturingMove{
+		private final boolean isCapturedPiecePinned;
+
+		public CapturingPinnedPieceMove(final List<Tile> boardTiles,final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
+            super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove,capturedPiece);
+            this.isCapturedPiecePinned = true;
+		}
+		
+		public boolean getIsCapturedPiecePinned() {
+            return this.isCapturedPiecePinned;
+		}
+	}
+	
 	    	
 	public static class PawnAttackMove extends CapturingMove {
 		public PawnAttackMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {

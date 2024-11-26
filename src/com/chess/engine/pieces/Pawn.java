@@ -52,7 +52,7 @@ public class Pawn extends Piece {
     }
      
     @Override
-    public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
+    public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck) {
         final List<Move> legalMoves = new ArrayList<>();
         addNonCapturingMoves(boardTiles,legalMoves);
         addCaptureMoves(boardTiles,legalMoves);
@@ -142,5 +142,5 @@ public class Pawn extends Piece {
                 throw new IllegalArgumentException("Invalid piece type for promotion: " + newPieceType);
         }
     }
-    
+    // add case for pawn blocking castle of king
 }

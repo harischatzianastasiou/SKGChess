@@ -80,7 +80,7 @@ public abstract class Piece {
         return ImmutableList.copyOf(legalMoves);
     }
 	
-	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles);
+	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck);
 	
 	public abstract Piece movePiece(int destinationCoordinate);
 	

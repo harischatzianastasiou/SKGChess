@@ -28,7 +28,7 @@ public class PlayerFactory {
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
                 	if(isInitialSetup) {
-                        legalMoves.addAll(piece.calculateMoves(tiles));
+                        legalMoves.addAll(piece.calculateMoves(tiles, isKingInCheck));
                     } else {
                         legalMoves.addAll(piece.calculateMovesConsideringOpponent(tiles, opponentMoves, isKingInCheck, kingCoordinate));
                     }

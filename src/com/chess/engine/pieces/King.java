@@ -18,6 +18,8 @@ import com.google.common.collect.ImmutableList;
 public class King extends Piece  {
 	
 	private final boolean isInCheck;
+//	private final boolean canCastleKingside;
+//	private final boolean canCastleQueenside;
 	private static final int[] CANDIDATE_MOVE_OFFSETS = { -9, -8, -7, -1, 1, 7, 8, 9 };
 	
 	public King(final int pieceCoordinate, final Alliance pieceAlliance) {
