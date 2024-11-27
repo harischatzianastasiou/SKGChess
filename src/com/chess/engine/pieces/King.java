@@ -40,14 +40,7 @@ public class King extends Piece  {
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
 				candidateDestinationCoordinate = this.pieceCoordinate + candidateOffset;
-	            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)){
-					if(!this.isFirstMove()) {
-		            	for(Move move : moveResult.getOpponentLegalMoves()) {
-							if (move.getTargetCoordinate() == candidateDestinationCoordinate) {
-		                        break;
-		                    }
-						}
-					}
+	            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 	            	final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	            	int rankDifference = Math.abs(BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate,this.pieceCoordinate));
 	                int fileDifference = Math.abs(BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate,this.pieceCoordinate));

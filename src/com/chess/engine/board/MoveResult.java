@@ -28,7 +28,7 @@ public class MoveResult {
     private MoveResult(Move move, Board simulatedBoard) {
         this.simulatedBoard = simulatedBoard;
         this.moveStatus = determineMoveStatus(move, simulatedBoard);
-        this.opponentLegalMoves = move.undo().getCurrentPlayer().getLegalMoves();
+        this.opponentLegalMoves = getOpponentLegalMoves();
     }
 
     private MoveResult() { // 1st move of each player
@@ -53,7 +53,7 @@ public class MoveResult {
 	    if (simulatedBoard == null || simulatedBoard.getOpponentPlayer() == null) {
 	        return ImmutableList.of(); // Return an empty list instead of null
 	    }
-	    return simulatedBoard.getOpponentPlayer().getLegalMoves();
+	    return simulatedBoard.getCurrentPlayer().getLegalMoves();
 	}
 
     private static MoveStatus determineMoveStatus(Move move, Board simulatedBoard) {

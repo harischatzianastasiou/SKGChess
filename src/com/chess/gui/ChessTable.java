@@ -185,7 +185,11 @@ public class ChessTable {
 	                        		   chessboard = move.execute();
 	                        		   if(!(chessboard.equals(null)))
 	                        			   break;
-	                        	   }
+	                        	   }//todo
+	                        	   // for all possible moves of currentplayer, simulate all the moves and check if it leads to check
+	                        	   // if it leads to kings check then remove them from chessboard.getCurrentPlayer().getLegalMoves())
+	                           /*New idea! By having the approach 2 I think I can just read all current player legal moves and all opponent player legal moves. Then I can call the simulate() function and check which of those are not allowed due to opponent legal moves. For those that are not allowed I remove them from the current player legal moves. Only then I give control to the user to click a square. What about this?*/
+	                           //todo: remove simulate from each execute. Call simulate here and return a new move result. if state = legal and no checkmate, allow the move. If state = checkmate, disallow the move. If state = stalemate, allow the move. If state = checkmate or stalemate
 	                           }
 	                        }
 	                        sourceTile = null;
@@ -792,4 +796,81 @@ SKGChessGUI.java - 112-114
 SKGChessGUI.java - 12-115
 Copy
 
+*/
+
+/*1. Approach 1: Each current player must take as instance variable the opponent moves so that it can calculate which of those make some of his moves illegal.
+2. Approach 2: As I did, each player calculates his moves, independently of the opponent moves. Then on the list of those moves I can simulate each move which will give me a way to identify the moves that are not legal due to some rules( for example as far as King is taken into consideration, King knows that he can go to square a5. But because opponent targets a5, I calculate it in the simulated boad and disqualify this move.
+
+Which approach is better?
+Tabnine
+GPT-4o
+Both approaches have their pros and cons, and the choice between them depends on your specific requirements and constraints. Here's a breakdown of each approach:
+
+Approach 1: Pre-compute Legal Moves Considering Opponent's Moves
+Pros:
+Immediate Feedback: Players can see all legal moves upfront, which improves the user experience by providing immediate feedback.
+Efficiency in Gameplay: By pre-computing legal moves, you avoid the need to check legality during each move attempt, which can make the game feel more responsive.
+Simplified Move Execution: Since illegal moves are filtered out beforehand, the move execution logic can be simpler and more straightforward.
+
+
+Cons:
+Complexity in Calculation: Calculating legal moves while considering opponent moves can be complex, especially for advanced rules like pins and checks.
+Performance Overhead: Pre-computing all possible moves and their legality can be computationally expensive, especially in complex board states.
+
+
+Approach 2: Calculate Moves Independently and Validate on Execution
+Pros:
+Simplicity in Initial Calculation: Calculating moves without considering the opponent's moves can be simpler and faster initially.
+Flexibility: This approach can be more flexible, as it allows for dynamic checks and adjustments based on the current game state.
+
+
+Cons:
+Delayed Feedback: Players might attempt moves that are later found to be illegal, which can disrupt the flow of the game.
+Increased Complexity in Execution: The move execution logic needs to handle legality checks dynamically, which can lead to more complex and error-prone code.
+
+
+Recommendation
+If your primary goal is to provide a smooth and responsive user experience, Approach 1 is generally preferable. It allows players to see all legal moves upfront and avoids the frustration of having moves rejected after they are attempted. However, it requires careful implementation to efficiently calculate and update legal moves.
+
+If you are more concerned with flexibility and simplicity in initial calculations, and you can manage the complexity of dynamic legality checks, Approach 2 might be suitable. This approach can be beneficial if you plan to implement complex rules or if performance is not a critical concern.
+
+Ultimately, the best approach depends on your specific requirements, such as performance constraints, user experience priorities, and the complexity of the rules you need to implement.
+References (1)
+1. 
+ChessTable.java - 177-189
+Copy
+
+harischatzi
+New idea! By having the approach 2 I think I can just read all current player legal moves and all opponent player legal moves. Then I can call the simulate() function and check which of those are not allowed due to opponent legal moves. For those that are not allowed I remove them from the current player legal moves. Only then I give control to the user to click a square. What about this?
+Tabnine
+GPT-4o
+Your new idea is a hybrid approach that combines elements of both approaches you previously described. Here's how it works and its potential benefits and drawbacks:
+
+Hybrid Approach: Pre-filter Legal Moves Using Simulation
+Process:
+1.
+Calculate Initial Legal Moves: Calculate the current player's legal moves without considering the opponent's moves.
+2.
+Simulate and Filter: For each move in the current player's legal moves, simulate the move and check against the opponent's legal moves to determine if it results in an illegal state (e.g., putting the king in check).
+3.
+Update Legal Moves: Remove any moves that are not allowed due to the opponent's legal moves.
+4.
+User Interaction: Allow the player to select from the filtered list of legal moves.
+
+
+Pros:
+Balanced Complexity: This approach balances the complexity of pre-computing all legal moves with the flexibility of dynamic checks.
+Improved User Experience: By filtering out illegal moves before user interaction, you provide a smoother experience with immediate feedback on available moves.
+Efficiency: You avoid the need to check legality during each move attempt, which can improve performance during gameplay.
+
+
+Cons:
+Initial Overhead: There is still some computational overhead in simulating and filtering moves before user interaction, which might be noticeable in complex board states.
+Complexity in Implementation: Implementing the simulation and filtering logic requires careful handling to ensure accuracy and efficiency.
+
+
+Recommendation
+This hybrid approach can be effective if you want to provide a responsive user experience while managing the complexity of move legality checks. It allows you to pre-filter moves based on the current game state, reducing the likelihood of user frustration from attempting illegal moves.
+
+To implement this approach, ensure that your simulation logic accurately reflects the game rules and efficiently handles the filtering process. This will help maintain performance and provide a seamless experience for the player.
 */
