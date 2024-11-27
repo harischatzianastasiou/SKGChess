@@ -7,7 +7,9 @@ import com.chess.engine.board.Move.KingSideCastleMove;
 import com.chess.engine.board.Move.QueenSideCastleMove;
 import com.chess.engine.pieces.King;
 import com.chess.engine.player.Player;
+import com.google.common.collect.ImmutableList;
 
+import java.util.Collection;
 import java.util.List;
 
 public class MoveResult {
@@ -21,15 +23,18 @@ public class MoveResult {
 
     private final Board simulatedBoard;
     private final MoveStatus moveStatus;
+    private final Collection<Move> opponentLegalMoves;
 
     private MoveResult(Move move, Board simulatedBoard) {
         this.simulatedBoard = simulatedBoard;
         this.moveStatus = determineMoveStatus(move, simulatedBoard);
+        this.opponentLegalMoves = move.undo().getCurrentPlayer().getLegalMoves();
     }
 
     private MoveResult() { // 1st move of each player
         this.simulatedBoard = null;
         this.moveStatus = MoveStatus.LEGAL;
+        this.opponentLegalMoves = null;
     }
 
     public static MoveResult getDefaultInstance() {
@@ -43,6 +48,13 @@ public class MoveResult {
     public MoveStatus getMoveStatus() {
         return moveStatus;
     }
+    
+	public Collection<Move> getOpponentLegalMoves() {
+	    if (simulatedBoard == null || simulatedBoard.getOpponentPlayer() == null) {
+	        return ImmutableList.of(); // Return an empty list instead of null
+	    }
+	    return simulatedBoard.getOpponentPlayer().getLegalMoves();
+	}
 
     private static MoveStatus determineMoveStatus(Move move, Board simulatedBoard) {
         if (checkIfMovePutsKingIntoCheck(simulatedBoard)) {

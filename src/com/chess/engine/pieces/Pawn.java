@@ -53,7 +53,7 @@ public class Pawn extends Piece {
     }
      
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles,final MoveResult moveResult, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
         final List<Move> legalMoves = new ArrayList<>();
     	addNonCapturingMoves(boardTiles,legalMoves);
     	addCaptureMoves(boardTiles,legalMoves);

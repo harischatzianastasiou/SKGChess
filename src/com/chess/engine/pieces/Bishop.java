@@ -35,7 +35,7 @@ public class Bishop extends Piece {
 	}
 	
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final MoveResult moveResult,final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {

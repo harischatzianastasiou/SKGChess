@@ -8,6 +8,7 @@ import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
+import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
@@ -34,12 +35,19 @@ public class King extends Piece  {
     }
     
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final MoveResult moveResult,final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
 				candidateDestinationCoordinate = this.pieceCoordinate + candidateOffset;
 	            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)){
+					if(!this.isFirstMove()) {
+		            	for(Move move : moveResult.getOpponentLegalMoves()) {
+							if (move.getTargetCoordinate() == candidateDestinationCoordinate) {
+		                        break;
+		                    }
+						}
+					}
 	            	final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	            	int rankDifference = Math.abs(BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate,this.pieceCoordinate));
 	                int fileDifference = Math.abs(BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate,this.pieceCoordinate));
@@ -58,7 +66,6 @@ public class King extends Piece  {
 	            	} 
 	            }
 		}
-		
 		return ImmutableList.copyOf(legalMoves);
     }
    

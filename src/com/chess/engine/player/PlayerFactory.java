@@ -32,7 +32,7 @@ public class PlayerFactory {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
-                    legalMoves.addAll(piece.calculateMoves(tiles, oppositeKingCoordinate,oppositeKingSideCastlePath,oppositeQueenSideCastlePath));
+                    legalMoves.addAll(piece.calculateMoves(tiles,moveResult, oppositeKingCoordinate,oppositeKingSideCastlePath,oppositeQueenSideCastlePath));
                 }
             }
         }
