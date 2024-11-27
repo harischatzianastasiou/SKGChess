@@ -8,6 +8,7 @@ import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
+import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -43,9 +44,18 @@ public abstract class Piece {
 		return isFirstMove;
 	}
 	
-	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath);
+	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final MoveResult moveResult);
 	
 	public abstract Piece movePiece(int destinationCoordinate);
+	
+	protected boolean isTileUnderAttack(int coordinate, Collection<Move> opponentMoves) {
+	    for (Move move : opponentMoves) {
+	        if (move.getTargetCoordinate() == coordinate) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 	
 	@Override
     public boolean equals(final Object other) {

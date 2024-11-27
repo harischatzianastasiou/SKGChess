@@ -17,19 +17,19 @@ import com.google.common.collect.ImmutableMap;
 public class Board {
 	
 	private final List<Tile> tiles;
-	private final Player currentPlayer;
-	private final Player opponentPlayer;
+    private Player currentPlayer;
+    private Player opponentPlayer;
     
 	private Board(Builder builder) {
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance, builder.currentPlayerInCheck);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),false);
+        this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,MoveResult.getDefaultInstance());
+        this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),MoveResult.getDefaultInstance());
 	}
 	
-	private Board(Builder builder, Move move) {// called when a move is made, create a new board and add to GameHistory
+	private Board(Builder builder, Move move, MoveResult moveResult) {// called when a move is made, create a new board and add to GameHistory
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,builder.currentPlayerInCheck);
-		this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),false);
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance, moveResult);
+	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(), moveResult);
         GameHistory.getInstance().addBoardState(this);
         GameHistory.getInstance().addMove(move);
 	}
@@ -72,18 +72,17 @@ public class Board {
 	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
 	    }
 	    
-	    // Set up players
+	    // Set up next player
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
-	    
-	    return createBoard(builder); 
+
+	    return createBoard(builder);
 	}
 	
 	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.
 		
 		private Map<Integer, Piece> pieces;
 		private Alliance currentPlayerAlliance;
-		private boolean currentPlayerInCheck;
-		
+
 		public Builder() {
 			this.pieces = new HashMap<>();
         }
@@ -98,11 +97,6 @@ public class Board {
             return this;
         }
 		
-		public Builder setCurrentPlayerInCheck(final boolean currentPlayerInCheck) {
-			this.currentPlayerInCheck = currentPlayerInCheck;
-            return this;
-		}
-		
 		public Map<Integer,Piece> getPieces() {
 			return pieces;
 		}
@@ -111,8 +105,8 @@ public class Board {
             return Board.createBoard(this);
         }
         
-        public Board build(Move move) {//build a new board everytime a move is executed
-            return Board.createBoard(this, move);
+        public Board build(Move move, MoveResult moveResult) {//build a new board everytime a move is executed
+            return Board.createBoard(this, move, moveResult);
         }
 	}
 	
@@ -120,8 +114,8 @@ public class Board {
         return new Board(builder);
     }
     
-    private static Board createBoard(Builder builder,Move move) {
-        return new Board(builder);
+    private static Board createBoard(Builder builder, Move move, MoveResult moveResult) {
+        return new Board(builder, move, moveResult);
     }
    
 	public List<Tile> getTiles() {

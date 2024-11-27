@@ -9,6 +9,7 @@ import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.GameHistory;
 import com.chess.engine.board.Move;
+import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 import com.chess.engine.board.Move.CapturingMove;
@@ -52,10 +53,10 @@ public class Pawn extends Piece {
     }
      
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final boolean isKingInCheck, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final MoveResult moveResult){
         final List<Move> legalMoves = new ArrayList<>();
-        addNonCapturingMoves(boardTiles,legalMoves);
-        addCaptureMoves(boardTiles,legalMoves);
+    	addNonCapturingMoves(boardTiles,legalMoves);
+    	addCaptureMoves(boardTiles,legalMoves,moveResult);
         return ImmutableList.copyOf(legalMoves);
     }
     
@@ -86,10 +87,18 @@ public class Pawn extends Piece {
     		legalMoves.add(new PawnPromotionMove(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
     }
     
-    private void addCaptureMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
+    private void addCaptureMoves(final List<Tile> boardTiles, final List<Move> legalMoves, final MoveResult moveResult) {
     	for (final int candidateOffset : CANDIDATE_CAPTURE_OFFSETS) {
             int candidateDestinationCoordinate = this.pieceCoordinate + (candidateOffset * advanceDirection);
             if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+            	if(!(moveResult.getCheckingPieces().isEmpty())) {
+    				if(moveResult.getCheckingPieces().size() == 1 && candidateDestinationCoordinate != moveResult.getCheckingPieces().get(0).getPieceCoordinate()) {
+    					break;
+    				}
+    				if(moveResult.getCheckingPieces().size() > 1) {
+    					return;
+    				}
+        		}
             	final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	            if(candidateDestinationTile.isTileOccupied()) { 
 	            	final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();

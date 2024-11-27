@@ -3,6 +3,7 @@ package com.chess.engine.player;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.GameHistory;
 import com.chess.engine.board.Move;
+import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.King;
 import com.chess.engine.pieces.Piece;
@@ -14,8 +15,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class PlayerFactory {
-
-    public static Player createPlayer(final List<Tile> tiles, Alliance alliance, final boolean isInCheck) {
+	
+    public static Player createPlayer(final List<Tile> tiles, Alliance alliance, MoveResult moveResult) {
         final List<Piece> activePieces = new ArrayList<>();
         final List<Move> legalMoves = new ArrayList<>();
 //        final List<Move> opponentMoves = calculateOpponentMoves(tiles, alliance);
@@ -29,17 +30,20 @@ public class PlayerFactory {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
-                    legalMoves.addAll(piece.calculateMoves(tiles, isInCheck, oppositeKingCoordinate, oppositeKingSideCastlePath, oppositeQueenSideCastlePath));
+                    legalMoves.addAll(piece.calculateMoves(tiles, moveResult));
                 }
             }
         }
-		if(isInCheck && legalMoves.isEmpty()) {
-			System.out.println("Checkmate");
-		}
-	    if(isInCheck && legalMoves.isEmpty()) {
-	        System.out.println("Stalemate");
-	    }        
-        return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance, isInCheck);
+        // Filter checking pieces by the given alliance
+        long checkingPiecesCount = moveResult.getCheckingPieces().stream().count();
+
+        if (checkingPiecesCount >= 1 && legalMoves.isEmpty()) {
+            System.out.println("Checkmate");
+        }
+        if (checkingPiecesCount >= 1 && legalMoves.isEmpty()) {
+            System.out.println("Stalemate");
+        }        
+        return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance);
     }
 		
 	public static int getKingCoordinate(final List<Tile> tiles, final Alliance alliance) {

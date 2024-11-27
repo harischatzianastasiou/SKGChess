@@ -3,6 +3,7 @@ package com.chess.engine.board;
 import java.util.List;
 
 import com.chess.engine.Alliance;
+import com.chess.engine.board.Board.Builder;
 import com.chess.engine.board.Move.NonCapturingMove;
 import com.chess.engine.board.Tile.EmptyTile;
 import com.chess.engine.board.Tile.OccupiedTile;
@@ -21,15 +22,63 @@ public abstract class Move {
 	final int targetCoordinate;
 	private final Piece pieceToMove;// with the alliance of the moved piece we know who made the move
 	
-	private Move(final List<Tile> boardTiles,final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
+	private Move(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
 	    this.boardTiles = boardTiles;    
 		this.sourceCoordinate = sourceCoordinate;
         this.targetCoordinate = targetCoordinate;
         this.pieceToMove = pieceToMove;
 	}
 	
-	public abstract Board execute();
+	public abstract MoveResult simulate();
 	
+    public abstract Board execute();	
+    
+    public Builder createBuilderAfterCapturingMove() {
+    	// Create a new board builder
+        Board.Builder builder = new Board.Builder();
+	        
+        for (final Tile tile : this.boardTiles) {
+            if (tile.isTileOccupied()) {
+                final Piece piece = tile.getPiece();
+                // Iterate over all current player pieces on the board
+            		if(!this.getPieceToMove().equals(piece)) {
+            			builder.setPiece(piece);
+            		}
+            }   
+        }
+
+        // Create the moved piece on the new board
+        Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
+        builder.setPiece(movedPiece);
+	        
+        // Set the next player's alliance
+        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+        return builder;
+    }
+    
+    public Builder createBuilderAfterNonCapturingMove() {
+    	// Create a new board builder
+        Board.Builder builder = new Board.Builder();
+	        
+        for (final Tile tile : this.boardTiles) {
+            if (tile.isTileOccupied()) {
+                final Piece piece = tile.getPiece();
+                // Iterate over all current player pieces on the board
+            		if(!this.getPieceToMove().equals(piece)) {
+            			builder.setPiece(piece);
+            		}
+            }   
+        }
+
+        // Create the moved piece on the new board
+        Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
+        builder.setPiece(movedPiece);
+	        
+        // Set the next player's alliance
+        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+        return builder;
+    }
+    
     @Override
     public int hashCode() {
         int result = 1;
@@ -88,30 +137,15 @@ public abstract class Move {
         }
         
         @Override
-		public Board execute() {
-	 		// Create a new board builder
-	         Board.Builder builder = new Board.Builder();
-	 	        
-	         for (final Tile tile : this.boardTiles) {
-	             if (tile.isTileOccupied()) {
-	                 final Piece piece = tile.getPiece();
-	                 // Iterate over all current player pieces on the board
-	             		if(!this.getPieceToMove().equals(piece)) {
-	             			builder.setPiece(piece);
-	             		}
-	             }   
-	         }
-
-	         // Create the moved piece on the new board
-	         Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
-	         builder.setPiece(movedPiece);
-	 	        
-	         // Set the next player's alliance
-	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-
-	         return builder.build(this);
+        public MoveResult simulate() {
+        	return MoveResult.create(super.createBuilderAfterNonCapturingMove().build());
+        }
+        
+        @Override
+        public Board execute() {
+	         return super.createBuilderAfterNonCapturingMove().build(this, simulate());
 	    }
-     
+        
         @Override
         public Piece getCapturedPiece() {
             return null;
@@ -125,30 +159,6 @@ public abstract class Move {
 		                final Piece pieceToMove) {
 		    super(boardTiles, sourceCoordinate, targetCoordinate,pieceToMove );
 		}
-		@Override
-		public Board execute() {
-	 		// Create a new board builder
-	         Board.Builder builder = new Board.Builder();
-	 	        
-	         for (final Tile tile : this.boardTiles) {
-	             if (tile.isTileOccupied()) {
-	                 final Piece piece = tile.getPiece();
-	                 // Iterate over all current player pieces on the board
-	             		if(!this.getPieceToMove().equals(piece)) {
-	             			builder.setPiece(piece);
-	             		}
-	             }   
-	         }
-
-	         // Create the moved piece on the new board
-	         Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
-	         builder.setPiece(movedPiece);
-	 	        
-	         // Set the next player's alliance
-	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-
-	         return builder.build(this);
-	    }
 		
 		@Override
 		public boolean equals(final Object other) {
@@ -171,8 +181,39 @@ public abstract class Move {
 			super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
 			// add logic to promote pawn
 		}
+		
+        @Override
+        public MoveResult simulate() {
+        	// Create a new board builder
+	        Board.Builder builder = new Board.Builder();
+
+	        for (final Tile tile : this.boardTiles) {
+	            if (tile.isTileOccupied()) {
+	                final Piece piece = tile.getPiece();
+	                // Iterate over all current player pieces on the board
+	                if (!this.getPieceToMove().equals(piece)) {
+	                    builder.setPiece(piece);
+	                }
+	            }
+	        }
+
+	        // Let the user select a new piece
+	        System.out.println("Select a new piece for the pawn (Queen, Rook, Bishop, Knight): ");
+	        // Assume user input is handled elsewhere and stored in newPieceType
+	        String newPieceType = "QUEEN"; // Replace with actual user input
+
+	        // Create the promoted piece on the new board
+	        Piece promotedPiece = ((Pawn) this.getPieceToMove()).promotePawn(targetCoordinate, newPieceType);
+	        builder.setPiece(promotedPiece);
+
+	        // Set the next player's alliance
+	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+
+	        return MoveResult.create(builder.build());
+        }
+        
 		@Override
-	    public Board execute() {
+        public Board execute() {
 	        // Create a new board builder
 	        Board.Builder builder = new Board.Builder();
 
@@ -198,33 +239,11 @@ public abstract class Move {
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
 
-	        return builder.build(this);
+	        return builder.build(this, simulate());
 	    }
 		@Override
 	    public boolean equals(final Object other) {
 	        return this == other || other instanceof PawnPromotionMove && super.equals(other);
-	    }
-	}
-	
-	public static class BlockingKingSideCastleMove extends NonCapturingMove {
-	    public BlockingKingSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
-	        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
-	    }
-
-	    @Override
-	    public boolean equals(final Object other) {
-	        return this == other || (other instanceof BlockingKingSideCastleMove && super.equals(other));
-	    }
-	}
-	
-	public static class BlockingQueenSideCastleMove extends NonCapturingMove {
-	    public BlockingQueenSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
-	        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
-	    }
-
-	    @Override
-	    public boolean equals(final Object other) {
-	        return this == other || (other instanceof BlockingQueenSideCastleMove && super.equals(other));
 	    }
 	}
 	
@@ -235,29 +254,14 @@ public abstract class Move {
             super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
             this.capturedPiece = capturedPiece;
 		}
-		@Override
-		public Board execute() {
-	 		// Create a new board builder
-	         Board.Builder builder = new Board.Builder();
-	 	        
-	         for (final Tile tile : this.boardTiles) {
-	             if (tile.isTileOccupied()) {
-	                 final Piece piece = tile.getPiece();
-	                 // Iterate over all current player pieces on the board
-	             		if(!this.getPieceToMove().equals(piece) && this.getCapturedPiece().getPieceCoordinate() != piece.getPieceCoordinate()) {
-	             			builder.setPiece(piece);
-	             		}
-	             }   
-	         }
-
-	         // Create the moved piece on the new board
-	         Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
-	         builder.setPiece(movedPiece);
-	 	        
-	         // Set the next player's alliance
-	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-
-	         return builder.build(this);
+        @Override
+        public MoveResult simulate() {
+        	return MoveResult.create(super.createBuilderAfterCapturingMove().build());
+        }
+        
+        @Override
+        public Board execute() {
+	         return super.createBuilderAfterCapturingMove().build(this,simulate());
 	    }
 		
 		@Override
@@ -265,20 +269,6 @@ public abstract class Move {
             return this.capturedPiece;
 		}
 	}
-	
-	public static class CapturingPinnedPieceMove extends CapturingMove{
-		private final boolean isCapturedPiecePinned;
-
-		public CapturingPinnedPieceMove(final List<Tile> boardTiles,final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
-            super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove,capturedPiece);
-            this.isCapturedPiecePinned = true;
-		}
-		
-		public boolean getIsCapturedPiecePinned() {
-            return this.isCapturedPiecePinned;
-		}
-	}
-	
 	    	
 	public static class PawnAttackMove extends CapturingMove {
 		public PawnAttackMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
@@ -314,7 +304,7 @@ public abstract class Move {
 	    }
 	    
 	    @Override
-	    public Board execute() {
+        public MoveResult simulate() {
 	        final Board.Builder builder = new Board.Builder();
 	        
 	        for (final Tile tile : this.boardTiles) {
@@ -336,8 +326,35 @@ public abstract class Move {
 
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+	        
+	        return MoveResult.create(builder.build());
+	        }
+	    
+	    @Override
+        public Board execute() {
+	        final Board.Builder builder = new Board.Builder();
+	        
+	        for (final Tile tile : this.boardTiles) {
+	            if (tile.isTileOccupied()) {
+	                final Piece piece = tile.getPiece();
+	                if (!this.getPieceToMove().equals(piece) && !this.rook.equals(piece)) {
+	                    builder.setPiece(piece);
+	                }
+	            }
+	        }
 
-	        return builder.build(this);
+	        // Move the king
+	        final Piece movedKing = this.getPieceToMove().movePiece(this.getTargetCoordinate());
+	        builder.setPiece(movedKing);
+
+	        // Move the rook
+	        final Piece movedRook = this.rook.movePiece(this.rookTargetCoordinate);
+	        builder.setPiece(movedRook);
+
+	        // Set the next player's alliance
+	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+	        
+	        return builder.build(this, simulate());
 	    }
 
 	    @Override
@@ -356,6 +373,33 @@ public abstract class Move {
 	        this.rookSourceCoordinate = rookSourceCoordinate;
 	        this.rookTargetCoordinate = rookTargetCoordinate;
 	        this.rook = rook;
+	    }
+	    
+	    @Override
+	    public MoveResult simulate() {
+	        final Board.Builder builder = new Board.Builder();
+	        
+	        for (final Tile tile : this.boardTiles) {
+	            if (tile.isTileOccupied()) {
+	                final Piece piece = tile.getPiece();
+	                if (!this.getPieceToMove().equals(piece) && !this.rook.equals(piece)) {
+	                    builder.setPiece(piece);
+	                }
+	            }
+	        }
+
+	        // Move the king
+	        final Piece movedKing = this.getPieceToMove().movePiece(this.getTargetCoordinate());
+	        builder.setPiece(movedKing);
+
+	        // Move the rook
+	        final Piece movedRook = this.rook.movePiece(this.rookTargetCoordinate);
+	        builder.setPiece(movedRook);
+
+	        // Set the next player's alliance
+	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+	        
+	        return MoveResult.create(builder.build());
 	    }
 	    
 	    @Override
@@ -381,50 +425,14 @@ public abstract class Move {
 
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-
-	        return builder.build(this);
+	        
+	        return builder.build(this, simulate());
 	    }
 
 	    @Override
 	    public boolean equals(final Object other) {
 	        return this == other || other instanceof QueenSideCastleMove && super.equals(other);
 	    }
-	}
-	
-	public static class OppositeKingInCheck extends Move{
-        public OppositeKingInCheck(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
-            super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
-        }
-        
-        @Override
-		public Board execute() {
-	 		// Create a new board builder
-	         Board.Builder builder = new Board.Builder();
-	 	        
-	         for (final Tile tile : this.boardTiles) {
-	             if (tile.isTileOccupied()) {
-	                 final Piece piece = tile.getPiece();
-	                 // Iterate over all current player pieces on the board
-	             		if(!this.getPieceToMove().equals(piece)) {
-	             			builder.setPiece(piece);
-	             		}
-	             }   
-	         }
-
-	         // Create the moved piece on the new board
-	         Piece movedPiece = this.getPieceToMove().movePiece(targetCoordinate);
-	         builder.setPiece(movedPiece);
-	 	        
-	         // Set the next player's alliance
-	         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-
-	         return builder.build(this);
-	    }
-     
-        @Override
-        public Piece getCapturedPiece() {
-            return null;
-        }
 	}
 }
 

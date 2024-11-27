@@ -17,14 +17,12 @@ public class Player {
 	private final Collection<Piece>	pieces;
 	protected final Collection<Move> legalMoves;
 	private final Alliance alliance;
-	private final boolean isInCheck;
 	
-	protected Player(final List<Tile> boardTiles,final Collection<Piece> pieces,final Collection<Move> legalMoves,final Alliance alliance, final boolean isInCheck) {
+	protected Player(final List<Tile> boardTiles,final Collection<Piece> pieces,final Collection<Move> legalMoves,final Alliance alliance) {
 		this.boardTiles = boardTiles;
 		this.pieces = pieces;
         this.legalMoves = legalMoves;
         this.alliance = alliance;
-        this.isInCheck = isInCheck;
 	}
 
 	public Collection<Piece> getPieces(){
