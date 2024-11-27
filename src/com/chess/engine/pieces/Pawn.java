@@ -53,10 +53,10 @@ public class Pawn extends Piece {
     }
      
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final MoveResult moveResult){
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
         final List<Move> legalMoves = new ArrayList<>();
     	addNonCapturingMoves(boardTiles,legalMoves);
-    	addCaptureMoves(boardTiles,legalMoves,moveResult);
+    	addCaptureMoves(boardTiles,legalMoves);
         return ImmutableList.copyOf(legalMoves);
     }
     
@@ -87,18 +87,10 @@ public class Pawn extends Piece {
     		legalMoves.add(new PawnPromotionMove(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
     }
     
-    private void addCaptureMoves(final List<Tile> boardTiles, final List<Move> legalMoves, final MoveResult moveResult) {
+    private void addCaptureMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
     	for (final int candidateOffset : CANDIDATE_CAPTURE_OFFSETS) {
             int candidateDestinationCoordinate = this.pieceCoordinate + (candidateOffset * advanceDirection);
             if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
-            	if(!(moveResult.getCheckingPieces().isEmpty())) {
-    				if(moveResult.getCheckingPieces().size() == 1 && candidateDestinationCoordinate != moveResult.getCheckingPieces().get(0).getPieceCoordinate()) {
-    					break;
-    				}
-    				if(moveResult.getCheckingPieces().size() > 1) {
-    					return;
-    				}
-        		}
             	final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	            if(candidateDestinationTile.isTileOccupied()) { 
 	            	final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();

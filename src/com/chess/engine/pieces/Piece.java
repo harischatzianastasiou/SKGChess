@@ -44,7 +44,7 @@ public abstract class Piece {
 		return isFirstMove;
 	}
 	
-	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final MoveResult moveResult);
+	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath);
 	
 	public abstract Piece movePiece(int destinationCoordinate);
 	

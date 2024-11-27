@@ -26,12 +26,17 @@ public class Player {
 	}
 
 	public Collection<Piece> getPieces(){
-		return this.pieces;
+		return ImmutableList.copyOf(this.pieces);
 	}
 	
 	public Collection<Move> getLegalMoves() {
-        return this.legalMoves;
+        return ImmutableList.copyOf(legalMoves);
     }
+	
+//    private Collection<Move> calculateLegalMoves(final Collection<Piece> pieces) {
+//        return pieces.stream().flatMap(piece -> piece.calculateLegalMoves(this).stream())
+//                      .collect(Collectors.toList());
+//    }
 	
 	public Alliance getAlliance() {
 		return this.alliance;
@@ -40,4 +45,14 @@ public class Player {
 	public Alliance getOpponentAlliance() {
         return this.alliance == Alliance.WHITE ? Alliance.BLACK : Alliance.WHITE;
     }
+
+	public King getKing() {
+	    for (Piece piece : this.pieces) {
+	        if (piece instanceof King) {
+	            return (King) piece;
+	        }
+	    }
+	    throw new RuntimeException("No king found for this player");
+	}
+
 }

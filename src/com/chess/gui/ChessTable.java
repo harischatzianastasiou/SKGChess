@@ -125,10 +125,16 @@ public class ChessTable {
             this.tileId = tileId;
             setPreferredSize(TILE_PANEL_DIMENSION);
             assignTileColor(tileId);
-            assignTilePieceIcon(chessboard);
+            if(chessboard!=null) {
+            	assignTilePieceIcon(chessboard);
+            }
             addMouseListener(new MouseListener() {
 	        	@Override
 	            public void mouseClicked(MouseEvent e) {
+                    if (chessboard == null) {
+                        JOptionPane.showMessageDialog(null, "Chessboard is not initialized. Please restart the game.");
+                        return;
+                    }
 	                if(isRightMouseButtonClicked(e)) {
 	                    highlightColor = Color.BLUE; // Set highlight color for right-clicK
 	                    sourceTile = null;
@@ -177,7 +183,8 @@ public class ChessTable {
 	                        	   if(move.getSourceCoordinate() == sourceTile.getTileCoordinate() && 
 	                        	      move.getTargetCoordinate() == targetTile.getTileCoordinate()) {
 	                        		   chessboard = move.execute();
-	                        		   break;
+	                        		   if(!(chessboard.equals(null)))
+	                        			   break;
 	                        	   }
 	                           }
 	                        }
@@ -191,7 +198,9 @@ public class ChessTable {
 	                	SwingUtilities.invokeLater(new Runnable() {
 	                		@Override
 	                		public void run() {
-                                boardPanel.drawBoard(chessboard);
+	                			if(chessboard!= null) {
+	                				boardPanel.drawBoard(chessboard);
+	                			}
                             }
 	                	});
 	                		
@@ -218,10 +227,12 @@ public class ChessTable {
         }
 
         public void drawTile(final Board board) {
-        	assignTileColor(tileId);
-        	assignTilePieceIcon(board);
-        	validate();
-        	repaint();
+        	if (board != null) {
+	        	assignTileColor(tileId);
+	        	assignTilePieceIcon(board);
+	        	validate();
+	        	repaint();
+        	}
 		}
 
 		private void assignTileColor(final int tileId) {
@@ -229,21 +240,23 @@ public class ChessTable {
         }
         
         private void assignTilePieceIcon(final Board board) {
-            this.removeAll();
-            Tile tile = board.getTile(tileId);
-            if(tile.isTileOccupied()) {
-                Piece piece = tile.getPiece();
-                String pieceSymbol = piece.getPieceSymbol().toString().toLowerCase();
-                String colorPrefix = piece.getPieceAlliance().isWhite() ? "white" : "black";
-                String pieceIconPath = pieceImagesPath + colorPrefix + "_" + pieceSymbol + ".png";
-                try {
-                    final BufferedImage image = ImageIO.read(new File(pieceIconPath));
-                    ImageIcon icon = new ImageIcon(image.getScaledInstance(TILE_PANEL_DIMENSION.width, TILE_PANEL_DIMENSION.height, Image.SCALE_AREA_AVERAGING));
-                    add(new JLabel(icon));
-                }catch(IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        	if (board != null) {
+	            this.removeAll();
+	            Tile tile = board.getTile(tileId);
+	            if(tile.isTileOccupied()) {
+	                Piece piece = tile.getPiece();
+	                String pieceSymbol = piece.getPieceSymbol().toString().toLowerCase();
+	                String colorPrefix = piece.getPieceAlliance().isWhite() ? "white" : "black";
+	                String pieceIconPath = pieceImagesPath + colorPrefix + "_" + pieceSymbol + ".png";
+	                try {
+	                    final BufferedImage image = ImageIO.read(new File(pieceIconPath));
+	                    ImageIcon icon = new ImageIcon(image.getScaledInstance(TILE_PANEL_DIMENSION.width, TILE_PANEL_DIMENSION.height, Image.SCALE_AREA_AVERAGING));
+	                    add(new JLabel(icon));
+	                }catch(IOException e) {
+	                    e.printStackTrace();
+	                }
+	            }
+        	}
         }
         
     }

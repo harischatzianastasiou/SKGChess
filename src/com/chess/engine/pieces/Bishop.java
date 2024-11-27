@@ -8,6 +8,8 @@ import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.Tile;
+import com.chess.engine.board.Move.BlockingKingSideCastleMove;
+import com.chess.engine.board.Move.BlockingQueenSideCastleMove;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
 import com.chess.engine.board.MoveResult;
@@ -33,7 +35,7 @@ public class Bishop extends Piece {
 	}
 	
     @Override
-    public Collection<Move> calculateMoves(final List<Tile> boardTiles, final MoveResult moveResult) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
@@ -46,9 +48,29 @@ public class Bishop extends Piece {
 	            	final Tile currentTile = boardTiles.get(pieceCoordinate);	
 	            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
 	            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile) {
-		            	if(!candidateDestinationTile.isTileOccupied()) {
-		            		legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
-//		            		System.out.println(candidateDestinationCoordinate);
+	            		if (!candidateDestinationTile.isTileOccupied()) {
+	            		    // Check if this move blocks the castling of the opposite king
+	            		    boolean blocksOpponentKingSideCastling = false;
+	            		    boolean blocksOpponentQueenSideCastling = false;
+
+	            		    for (int coordinate : oppositeKingSideCastlePath) {
+	            		        if (coordinate == candidateDestinationCoordinate) {
+	            		            blocksOpponentKingSideCastling = true;
+	    		            		legalMoves.add(new BlockingKingSideCastleMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+	            		            break;
+	            		        }
+	            		    }
+
+	            		    for (int coordinate : oppositeQueenSideCastlePath) {
+	            		        if (coordinate == candidateDestinationCoordinate) {
+	            		            blocksOpponentQueenSideCastling = true;
+	    		            		legalMoves.add(new BlockingQueenSideCastleMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+	            		            break;
+	            		        }
+	            		    }
+	            		    if(!blocksOpponentQueenSideCastling && !blocksOpponentKingSideCastling) {
+	            		    	legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+	            		    }
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();

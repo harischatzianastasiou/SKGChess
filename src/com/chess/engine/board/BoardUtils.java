@@ -21,19 +21,19 @@ public class BoardUtils {
 	}
 	
     public static int getCoordinateRank(int tileCoordinate) {
-        return (tileCoordinate / NUM_TILES_PER_ROW) + 1;
+        return (Math.abs(tileCoordinate) / NUM_TILES_PER_ROW) + 1;
     }
 
     public static int getCoordinateFile(int tileCoordinate) {
-        return (tileCoordinate % NUM_TILES_PER_ROW) + 1;
+        return (Math.abs(tileCoordinate) % NUM_TILES_PER_ROW) + 1;
     }
     
     public static int getCoordinateRankDifference(int destinationCoordinate, int sourceCoordinate) {
-        return getCoordinateRank(destinationCoordinate) - getCoordinateRank(sourceCoordinate);
+        return Math.abs(getCoordinateRank(destinationCoordinate)) - Math.abs(getCoordinateRank(sourceCoordinate));
     }
 
     public static int getCoordinateFileDifference(int destinationCoordinate, int sourceCoordinate) {
-        return getCoordinateFile(destinationCoordinate) - getCoordinateFile(sourceCoordinate);
+        return Math.abs(getCoordinateFile(destinationCoordinate)) - Math.abs(getCoordinateFile(sourceCoordinate));
     }
     
     public static Alliance getCoordinateAlliance(int tileCoordinate) {

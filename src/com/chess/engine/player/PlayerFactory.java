@@ -19,7 +19,6 @@ public class PlayerFactory {
     public static Player createPlayer(final List<Tile> tiles, Alliance alliance, MoveResult moveResult) {
         final List<Piece> activePieces = new ArrayList<>();
         final List<Move> legalMoves = new ArrayList<>();
-//        final List<Move> opponentMoves = calculateOpponentMoves(tiles, alliance);
         final int kingCoordinate = getKingCoordinate(tiles, alliance);
         final int oppositeKingCoordinate = getOppositeKingCoordinate(tiles, alliance);
         final int[] oppositeKingSideCastlePath = getOppositeKingSideCastlingPath(oppositeKingCoordinate, alliance);
@@ -30,17 +29,15 @@ public class PlayerFactory {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
-                    legalMoves.addAll(piece.calculateMoves(tiles, moveResult));
+                    legalMoves.addAll(piece.calculateMoves(tiles, oppositeKingCoordinate,oppositeKingSideCastlePath,oppositeQueenSideCastlePath));
                 }
             }
         }
-        // Filter checking pieces by the given alliance
-        long checkingPiecesCount = moveResult.getCheckingPieces().stream().count();
 
-        if (checkingPiecesCount >= 1 && legalMoves.isEmpty()) {
+        if (moveResult.getMoveStatus() == MoveResult.MoveStatus.CHECK && legalMoves.isEmpty()) {
             System.out.println("Checkmate");
         }
-        if (checkingPiecesCount >= 1 && legalMoves.isEmpty()) {
+        if (legalMoves.isEmpty()) {
             System.out.println("Stalemate");
         }        
         return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance);

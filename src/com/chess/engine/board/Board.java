@@ -26,21 +26,26 @@ public class Board {
         this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),MoveResult.getDefaultInstance());
 	}
 	
-	private Board(Builder builder, Move move, MoveResult moveResult) {// called when a move is made, create a new board and add to GameHistory
+	private Board(Builder builder, Move move, MoveResult lastMoveResult) {// called when a move is made, create a new board and add to GameHistory
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance, moveResult);
-	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(), moveResult);
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance, lastMoveResult);
+	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(), lastMoveResult);
         GameHistory.getInstance().addBoardState(this);
         GameHistory.getInstance().addMove(move);
 	}
 	
 	private static List<Tile> createTiles(Builder builder) {
-		final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];        
-        for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
-            tiles[i] = Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), builder.pieces.get(i));
-        }
-        return ImmutableList.copyOf(tiles);
-    }
+	    final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];
+	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
+	        Piece piece = builder.pieces.get(i);
+	        if (builder.pieces.containsKey(i) && piece != null) {
+	            tiles[i] = Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), piece);
+	        } else {
+	            tiles[i] = Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), null);
+	        }
+	    }
+	    return ImmutableList.copyOf(tiles);
+	}
 	
 	public static Board createStandardBoard() {
 		// create white and black player here once
@@ -68,9 +73,9 @@ public class Board {
 	    builder.setPiece(new Bishop(61, Alliance.BLACK));
 	    builder.setPiece(new Knight(62, Alliance.BLACK));
 	    builder.setPiece(new Rook  (63, Alliance.BLACK));
-	    for(int coordinate = 48; coordinate < 56; coordinate++) {
-	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
-	    }
+//	    for(int coordinate = 48; coordinate < 56; coordinate++) {
+//	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
+//	    }//oxi mono gia ton king alla kai gia alla pieces lambanei ta tiles san oocupied
 	    
 	    // Set up next player
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
@@ -84,7 +89,7 @@ public class Board {
 		private Alliance currentPlayerAlliance;
 
 		public Builder() {
-			this.pieces = new HashMap<>();
+			this.pieces = new HashMap<>(32, 1.0f);
         }
 		
 		public Builder setPiece(final Piece piece) {
@@ -119,7 +124,7 @@ public class Board {
     }
    
 	public List<Tile> getTiles() {
-		return this.tiles;
+		return ImmutableList.copyOf(tiles);
 	}
 	
 	public Tile getTile(final int tileCoordinate) {
