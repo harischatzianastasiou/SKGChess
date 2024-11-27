@@ -25,7 +25,10 @@ public class PlayerFactory {
         final int[] oppositeQueenSideCastlePath = getOppositeQueenSideCastlingPath(oppositeKingCoordinate, alliance);
         
         for (final Tile tile : tiles) {
+        	System.out.println("Checking tile " + tile.getTileCoordinate());
+        	System.out.println("Piece at tile " + tile.getTileCoordinate() + ": " + tile.getPiece());
             if (tile.isTileOccupied()) {
+//            	System.out.println("Tile " + tile.getTileCoordinate() + " is occupied. Adding move.");
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);

@@ -38,6 +38,6 @@ public class Queen extends Piece {
 	
     @Override
     public Piece movePiece(int destinationCoordinate) {
-        return new Queen(destinationCoordinate, this.getPieceAlliance());
+        return new Queen(destinationCoordinate, this.getPieceAlliance(),false);
     }
 }

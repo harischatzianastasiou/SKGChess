@@ -18,17 +18,14 @@ import com.google.common.collect.ImmutableList;
 
 public class King extends Piece  {
 	
-	private final boolean isInCheck;
 	private static final int[] CANDIDATE_MOVE_OFFSETS = { -9, -8, -7, -1, 1, 7, 8, 9 };
 	
 	public King(final int pieceCoordinate, final Alliance pieceAlliance) {
         super(PieceSymbol.KING, pieceCoordinate, pieceAlliance, true);
-        this.isInCheck = false;
 	}
 	
 	public King(final int pieceCoordinate, final Alliance pieceAlliance, final boolean isFirstMove) {
         super(PieceSymbol.KING, pieceCoordinate, pieceAlliance, isFirstMove);
-        this.isInCheck = false;
 	}
 	
     @Override
@@ -57,7 +54,6 @@ public class King extends Piece  {
 		                        legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 //		                        System.out.println(candidateDestinationCoordinate);
 		                    }		            	    
-		            		break;//if there is a piece in the direction that king can move, stop further checking in this direction.
 		            	}
 	            	} 
 	            }
@@ -118,7 +114,7 @@ public class King extends Piece  {
 	
     @Override
     public Piece movePiece(int destinationCoordinate) {
-        return new King(destinationCoordinate, this.getPieceAlliance());
+        return new King(destinationCoordinate, this.getPieceAlliance(),false);
     }
     
     protected boolean isTileUnderAttack(int coordinate, Collection<Move> opponentMoves) {

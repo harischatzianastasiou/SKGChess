@@ -82,6 +82,6 @@ public class Knight extends Piece {
 	
     @Override
     public Piece movePiece(int destinationCoordinate) {
-        return new Knight(destinationCoordinate, this.getPieceAlliance());
+        return new Knight(destinationCoordinate, this.getPieceAlliance(),false);
     }
 }

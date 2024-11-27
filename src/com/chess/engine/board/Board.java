@@ -20,13 +20,13 @@ public class Board {
     private Player currentPlayer;
     private Player opponentPlayer;
     
-	private Board(Builder builder) {
+	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
         this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,MoveResult.getDefaultInstance());
         this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),MoveResult.getDefaultInstance());
 	}
 	
-	private Board(Builder builder, Move move, MoveResult lastMoveResult) {// called when a move is made, create a new board and add to GameHistory
+	private Board(final Builder builder, final Move move, final MoveResult lastMoveResult) {// called when a move is made, create a new board and add to GameHistory
 		this.tiles = createTiles(builder);
 		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance, lastMoveResult);
 	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(), lastMoveResult);
@@ -34,14 +34,17 @@ public class Board {
         GameHistory.getInstance().addMove(move);
 	}
 	
-	private static List<Tile> createTiles(Builder builder) {
-	    final Tile[] tiles = new Tile[BoardUtils.NUM_TILES];
+	private static List<Tile> createTiles(final Builder builder) {
+	    final List<Tile> tiles = new ArrayList<>(BoardUtils.NUM_TILES);
 	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
 	        Piece piece = builder.pieces.get(i);
+	        System.out.println("Coordinate" + i + "has piece: " + piece);
 	        if (builder.pieces.containsKey(i) && piece != null) {
-	            tiles[i] = Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), piece);
+	            tiles.add(Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), piece));
+	            System.out.println("Tile " + i + " is occupied by " + piece);
 	        } else {
-	            tiles[i] = Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), null);
+	            tiles.add(Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), null));
+	            System.out.println("Tile " + i + " is empty");
 	        }
 	    }
 	    return ImmutableList.copyOf(tiles);
@@ -52,30 +55,30 @@ public class Board {
 	    final Builder builder = new Builder();
 	    
 	    // Set up White pieces
-	    builder.setPiece(new Rook  (0, Alliance.WHITE));
-	    builder.setPiece(new Knight(1, Alliance.WHITE));
-	    builder.setPiece(new Bishop(2, Alliance.WHITE));
-	    builder.setPiece(new Queen (3, Alliance.WHITE));
-	    builder.setPiece(new King  (4, Alliance.WHITE));
-	    builder.setPiece(new Bishop(5, Alliance.WHITE));
-	    builder.setPiece(new Knight(6, Alliance.WHITE));
-	    builder.setPiece(new Rook  (7, Alliance.WHITE));
+	    builder.setPiece(new Rook  (0, Alliance.BLACK));
+	    builder.setPiece(new Knight(1, Alliance.BLACK));
+	    builder.setPiece(new Bishop(2, Alliance.BLACK));
+	    builder.setPiece(new Queen (3, Alliance.BLACK));
+	    builder.setPiece(new King  (4, Alliance.BLACK));
+	    builder.setPiece(new Bishop(5, Alliance.BLACK));
+	    builder.setPiece(new Knight(6, Alliance.BLACK));
+	    builder.setPiece(new Rook  (7, Alliance.BLACK));
 	    for(int coordinate = 8; coordinate < 16; coordinate++) {
-	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
+	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
 	    }
 	    
 	    // Set up Black pieces
-	    builder.setPiece(new Rook  (56, Alliance.BLACK));
-	    builder.setPiece(new Knight(57, Alliance.BLACK));
-	    builder.setPiece(new Bishop(58, Alliance.BLACK));
-	    builder.setPiece(new Queen (59, Alliance.BLACK));
-	    builder.setPiece(new King  (60, Alliance.BLACK));
-	    builder.setPiece(new Bishop(61, Alliance.BLACK));
-	    builder.setPiece(new Knight(62, Alliance.BLACK));
-	    builder.setPiece(new Rook  (63, Alliance.BLACK));
-//	    for(int coordinate = 48; coordinate < 56; coordinate++) {
-//	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
-//	    }//oxi mono gia ton king alla kai gia alla pieces lambanei ta tiles san oocupied
+	    builder.setPiece(new Rook  (56, Alliance.WHITE));
+	    builder.setPiece(new Knight(57, Alliance.WHITE));
+	    builder.setPiece(new Bishop(58, Alliance.WHITE));
+	    builder.setPiece(new Queen (59, Alliance.WHITE));
+	    builder.setPiece(new King  (60, Alliance.WHITE));
+	    builder.setPiece(new Bishop(61, Alliance.WHITE));
+	    builder.setPiece(new Knight(62, Alliance.WHITE));
+	    builder.setPiece(new Rook  (63, Alliance.WHITE));
+	    for(int coordinate = 48; coordinate < 56; coordinate++) {
+	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
+	    }//oxi mono gia ton king alla kai gia alla pieces lambanei ta tiles san oocupied
 	    
 	    // Set up next player
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);

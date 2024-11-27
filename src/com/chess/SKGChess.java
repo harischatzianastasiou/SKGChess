@@ -30,6 +30,6 @@ public class SKGChess {
 	PawnTest.testPawnMovesWithStandardBoard(chessboard);
 //    		
     	
-//        ChessTable table = new ChessTable();
+	ChessTable table = new ChessTable();
     }
 }

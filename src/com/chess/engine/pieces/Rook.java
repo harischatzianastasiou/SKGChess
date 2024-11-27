@@ -88,6 +88,6 @@ public class Rook extends Piece {
         
     @Override
     public Piece movePiece(int destinationCoordinate) {
-        return new Rook(destinationCoordinate, this.getPieceAlliance());
+        return new Rook(destinationCoordinate, this.getPieceAlliance(),false);
     }
 }

@@ -4,7 +4,7 @@ public enum Alliance {
 	WHITE{
 		@Override
         public int getMovingDirection() {
-            return 1; // make clear that this is for pieces
+            return -1; // make clear that this is for pieces
         }
         @Override
         public boolean isWhite() {
@@ -22,7 +22,7 @@ public enum Alliance {
 	BLACK{
 		@Override
         public int getMovingDirection() {
-            return -1; // make clear that this is for pieces
+            return 1; // make clear that this is for pieces
         }
         @Override
         public boolean isWhite() {

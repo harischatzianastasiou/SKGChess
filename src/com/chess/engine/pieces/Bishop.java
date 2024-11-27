@@ -91,6 +91,6 @@ public class Bishop extends Piece {
     
     @Override
     public Piece movePiece(int destinationCoordinate) {
-        return new Bishop(destinationCoordinate, this.getPieceAlliance());
+        return new Bishop(destinationCoordinate, this.getPieceAlliance(),false);
     }
 }
