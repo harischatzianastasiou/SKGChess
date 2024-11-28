@@ -150,18 +150,24 @@ public class ChessTable {
 	                        if(selectedPiece== null) {
 	                        	sourceTile = null;
 	                        }
-	                    //second click
+	                    	                    //second click
 	                	}else {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
                                Collection<Move> modifiedCollection = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
+                               Collection<Move> checkingMoves = new ArrayList<>();
+                               MoveResult moveResult = null;
 	                           for(Move move : chessboard.getCurrentPlayer().getLegalMoves()) {  
-	                        	   MoveResult moveResult = move.simulate();
+	                        	   moveResult = move.simulate();
 	                        	   if(moveResult.getMoveStatus() == MoveResult.MoveStatus.ILLEGAL) {
                                        modifiedCollection.remove(move); // remove illegal move from current player's legal moves list.
                                    }
+                                   if(moveResult.getMoveStatus() == MoveResult.MoveStatus.CHECKMATE) {
+                                    checkingMoves.add(move); // add check move to current player's legal moves list.
+                                }
 	                           }
+  
 	                           if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
 	                        		if(selectedPiece instanceof Rook) {
 		                            System.out.println("\nTesting Rook Moves:");
@@ -186,9 +192,12 @@ public class ChessTable {
 	                           for(Move move : modifiedCollection) {  
 	                        	   if(move.getSourceCoordinate() == sourceTile.getTileCoordinate() && 
 	                        	      move.getTargetCoordinate() == targetTile.getTileCoordinate()) {
-                                        GameHistory.getInstance().addBoardState(chessboard);
-                                        GameHistory.getInstance().addMove(move);
+                                       GameHistory.getInstance().addBoardState(chessboard);
+                                       GameHistory.getInstance().addMove(move);
 	                        		   chessboard = move.execute();
+                                       if(checkingMoves.contains(move)) {
+                                           JOptionPane.showMessageDialog(null, "CHECKMATE!");
+                                       }
                                        break;
 	                        	   }
                                 }

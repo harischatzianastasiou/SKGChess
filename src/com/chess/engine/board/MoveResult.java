@@ -6,22 +6,25 @@ import com.chess.engine.pieces.King;
 import com.chess.engine.player.Player;
 
 public class MoveResult {
-    
+
     public enum MoveStatus {
         ILLEGAL,
         LEGAL,
-        CHECK
+        CHECK,
+        CHECKMATE
     }
 
     private static final MoveResult DEFAULT_INSTANCE = new MoveResult();
-
+    private final Board simulatedBoard;
     private final MoveStatus moveStatus;
 
     private MoveResult(Move move, Board simulatedBoard) {
+        this.simulatedBoard = simulatedBoard;
         this.moveStatus = determineMoveStatus(move, simulatedBoard);
     }
 
     private MoveResult() { // 1st move of each player
+        this.simulatedBoard = null;
         this.moveStatus = MoveStatus.LEGAL;
     }
 
@@ -37,27 +40,36 @@ public class MoveResult {
         return moveStatus;
     }
 
+    public Board getSimulatedBoard() {
+        return simulatedBoard;
+    }
+
     private static MoveStatus determineMoveStatus(Move move, Board simulatedBoard) {
-        if (checkIfMovePutsKingIntoCheck(simulatedBoard)) {
+        if (isMoveLeavingKingOpenForCheckmate(simulatedBoard)) {
             return MoveStatus.ILLEGAL;
         }
         if(move instanceof KingSideCastleMove){
-            if(!checkIfKingSideCastleValid(move, simulatedBoard)){
+            if(!isKingSideCastleValid(move, simulatedBoard)){
                 return MoveStatus.ILLEGAL;
             }
         }
         if(move instanceof QueenSideCastleMove){
-            if(!checkIfQueenSideCastleValid(move, simulatedBoard)){
+            if(!isQueenSideCastleValid(move, simulatedBoard)){
                 return MoveStatus.ILLEGAL;
             }
         }
-        if (isOpponentKingInCheck(move, simulatedBoard)) {
+        
+        if (isMoveCheckingOpponentKing(move, simulatedBoard)) {
             return MoveStatus.CHECK;
+        }
+        if(isCheckmate(move, simulatedBoard)){
+            return MoveStatus.CHECKMATE;
         }
         return MoveStatus.LEGAL;
     }
 
-    private static boolean checkIfMovePutsKingIntoCheck(Board simulatedBoard) {
+    private static boolean isMoveLeavingKingOpenForCheckmate(Board simulatedBoard) {
+        //preventing king from moving to a square that is under attack, and other pieces from moving to a square that does not prevent checkmate.
         Player opponent = simulatedBoard.getCurrentPlayer();
         King king = simulatedBoard.getOpponentPlayer().getKing();
 
@@ -69,7 +81,7 @@ public class MoveResult {
         return false;
     }
 
-    private static boolean checkIfKingSideCastleValid(Move move, Board simulatedBoard) {
+    private static boolean isKingSideCastleValid(Move move, Board simulatedBoard) {
         Player opponent = simulatedBoard.getCurrentPlayer();
         int kingPosition = move.getSourceCoordinate();
         int[] castlingPath = {kingPosition, kingPosition + 1, kingPosition + 2}; // include current king position
@@ -85,7 +97,7 @@ public class MoveResult {
         return true;
     }
 
-    private static boolean checkIfQueenSideCastleValid(Move move, Board simulatedBoard) {
+    private static boolean isQueenSideCastleValid(Move move, Board simulatedBoard) {
         Player opponent = simulatedBoard.getCurrentPlayer();
         int kingPosition = move.getSourceCoordinate();
         int[] castlingPath = {kingPosition, kingPosition - 1, kingPosition - 2}; // include current king position
