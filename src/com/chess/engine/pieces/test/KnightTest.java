@@ -17,7 +17,7 @@ public class KnightTest {
             	}
             } 
             System.out.print("Knight has " + legalMoves.size() + " legal moves ");
-            if(legalMoves.size() > 0) {
+            if(!legalMoves.isEmpty()) {
             	System.out.print("--> ");
                 for (Move move : legalMoves) {
                 	System.out.print(move.getTargetCoordinate() + " ");          
@@ -34,7 +34,7 @@ public class KnightTest {
             	}
             } 
             System.out.print("Knight has " + legalMoves.size() + " legal moves ");
-            if(legalMoves.size() > 0) {
+            if(!legalMoves.isEmpty()) {
             	System.out.print("--> ");
                 for (Move move : legalMoves) {
                 	System.out.print(move.getTargetCoordinate() + " ");          
