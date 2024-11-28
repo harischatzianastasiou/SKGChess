@@ -2,7 +2,6 @@ package com.chess.engine.board;
 
 import com.chess.engine.Alliance;
 
-
 public class BoardUtils {
 	
 	public static final int NUM_TILES = 64;
@@ -35,6 +34,4 @@ public class BoardUtils {
     public static Alliance getCoordinateAlliance(int tileCoordinate) {
         return (BoardUtils.getCoordinateRank(tileCoordinate) + BoardUtils.getCoordinateFile(tileCoordinate)) % 2 == 0 ? Alliance.BLACK : Alliance.WHITE;
     }
-
-	
 }

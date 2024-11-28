@@ -7,7 +7,6 @@ import com.chess.engine.Alliance;
 import com.chess.engine.pieces.Piece;
 import com.google.common.collect.ImmutableMap;
 
-//immutable class
 public abstract class Tile {                                                                       
 
 	protected final int tileCoordinate;
@@ -71,7 +70,7 @@ public abstract class Tile {
 		
 		private final Piece pieceOnTile;
 		
-        private OccupiedTile(int coordinate, final Alliance alliance, final Piece piece) {//private or public, since the constructor of Tile is private then it cannot be instatiated from outside the Tile class.
+        private OccupiedTile(int coordinate, final Alliance alliance, final Piece piece) {
             super(coordinate, alliance);
             this.pieceOnTile = piece;
         }

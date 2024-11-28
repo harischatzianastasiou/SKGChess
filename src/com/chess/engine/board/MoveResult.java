@@ -6,6 +6,7 @@ import com.chess.engine.pieces.King;
 import com.chess.engine.player.Player;
 
 public class MoveResult {
+    
     public enum MoveStatus {
         ILLEGAL,
         LEGAL,
