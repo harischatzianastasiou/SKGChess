@@ -23,6 +23,7 @@ import javax.swing.*;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
+import com.chess.engine.board.GameHistory;
 import com.chess.engine.board.Move;
 import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
@@ -185,14 +186,12 @@ public class ChessTable {
 	                           for(Move move : modifiedCollection) {  
 	                        	   if(move.getSourceCoordinate() == sourceTile.getTileCoordinate() && 
 	                        	      move.getTargetCoordinate() == targetTile.getTileCoordinate()) {
+                                        GameHistory.getInstance().addBoardState(chessboard);
+                                        GameHistory.getInstance().addMove(move);
 	                        		   chessboard = move.execute();
                                        break;
-	                        	   }//todo
-	                        	   // for all possible moves of currentplayer, simulate all the moves and check if it leads to check
-	                        	   // if it leads to kings check then remove them from chessboard.getCurrentPlayer().getLegalMoves())
-	                           /*New idea! By having the approach 2 I think I can just read all current player legal moves and all opponent player legal moves. Then I can call the simulate() function and check which of those are not allowed due to opponent legal moves. For those that are not allowed I remove them from the current player legal moves. Only then I give control to the user to click a square. What about this?*/
-	                           //todo: remove simulate from each execute. Call simulate here and return a new move result. if state = legal and no checkmate, allow the move. If state = checkmate, disallow the move. If state = stalemate, allow the move. If state = checkmate or stalemate
-	                           }
+	                        	   }
+                                }
 	                        }
 	                        sourceTile = null;
 	                        targetTile = null;

@@ -33,12 +33,6 @@ public class Board {
 		this.tiles = createTiles(builder);
 		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
 	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
-        postConstructionInit(move);
-	}
-	
-	private void postConstructionInit(final Move move) {
-	    GameHistory.getInstance().addBoardState(this);
-	    GameHistory.getInstance().addMove(move);
 	}
 	
 	private static List<Tile> createTiles(final Builder builder) {

@@ -34,7 +34,7 @@ public abstract class Move {
             if (tile.isTileOccupied()) {
                 final Piece piece = tile.getPiece();
                 // Iterate over all current player pieces on the board
-            		if(!this.getPieceToMove().equals(piece)) {
+            		if(!this.getPieceToMove().equals(piece) && this.getCapturedPiece().getPieceCoordinate() != piece.getPieceCoordinate()) {
             			builder.setPiece(piece);
             		}
             }   
@@ -278,6 +278,9 @@ public abstract class Move {
 		public PawnEnPassantAttack(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final Piece capturedPiece) {
 			super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove, capturedPiece);
 		}
+		// Create a new board builder
+        Board.Builder builder = new Board.Builder();
+	    
         @Override
         public boolean equals(final Object other) {
             return this == other || other instanceof PawnEnPassantAttack && super.equals(other);

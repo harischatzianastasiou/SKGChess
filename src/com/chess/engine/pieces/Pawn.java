@@ -64,8 +64,6 @@ public class Pawn extends Piece {
 	        if (!candidateDestinationTile.isTileOccupied()) {
 	            legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
 	            if (currentRank == this.initialRank) {
-//	            	System.out.println(" Tile " + this.getPieceCoordinate() +" has rank" + currentRank);
-//	 	            System.out.println(" Tile " + this.getPieceCoordinate() +" has initial rank" + initialRank);
 	                addDoubleAdvanceMove(boardTiles,legalMoves);
 	            }else if (currentRank == this.promotionRank)
 	                addPromotionMove(boardTiles,legalMoves, candidateDestinationCoordinate);
@@ -81,7 +79,7 @@ public class Pawn extends Piece {
     }
     
     private void addPromotionMove(final List<Tile> boardTiles, final List<Move> legalMoves, int candidateDestinationCoordinate) {
-    		legalMoves.add(new PawnPromotionMove(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
+    	legalMoves.add(new PawnPromotionMove(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
     }
     
     private void addCaptureMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
@@ -107,18 +105,14 @@ public class Pawn extends Piece {
         }
     }
     
-    private void addEnPassantMove(final List<Tile> boardTiles,final List<Move> legalMoves, int candidateDestinationCoordinate) {
-    	Move lastMove = GameHistory.getInstance().getLastMove();
-    	if(lastMove instanceof PawnJumpMove) {
-    		int lastMoveTargetCoordinate = lastMove.getTargetCoordinate();
-    		int rankDifference = Math.abs(BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate,lastMoveTargetCoordinate));
-            int fileDifference = Math.abs(BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate,lastMoveTargetCoordinate));
-            if (rankDifference ==0 && fileDifference == 1) {
-            	final int EnPassantDestinationCoordinate = candidateDestinationCoordinate + (CANDIDATE_MOVE_OFFSET * pieceAlliance.getMovingDirection());
-            	legalMoves.add(new PawnEnPassantAttack(boardTiles,this.pieceCoordinate, EnPassantDestinationCoordinate, this, GameHistory.getInstance().getLastMove().getPieceToMove()));
-    	
-            }
-    	}
+    private void addEnPassantMove(final List<Tile> boardTiles, final List<Move> legalMoves, int candidateDestinationCoordinate) {
+        Move lastMove = GameHistory.getInstance().getLastMove();
+        if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == this.pieceAlliance || BoardUtils.getCoordinateFile(lastMove.getTargetCoordinate()) != BoardUtils.getCoordinateFile(candidateDestinationCoordinate)) {
+            return;
+        }
+        Piece pieceToCapture = boardTiles.get(lastMove.getTargetCoordinate()).getPiece();
+        // Add the en passant move
+        legalMoves.add(new PawnEnPassantAttack(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this, pieceToCapture));
     }
     
     @Override
