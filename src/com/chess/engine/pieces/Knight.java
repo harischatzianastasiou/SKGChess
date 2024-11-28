@@ -30,7 +30,7 @@ public class Knight extends Piece {
     }
 	
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 	    // Iterate over all possible L-shaped moves for a knight

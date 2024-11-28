@@ -20,7 +20,7 @@ public class PlayerFactory {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
-                    legalMoves.addAll(piece.calculateMoves(tiles, alliance));
+                    legalMoves.addAll(piece.calculateMoves(tiles));
                 }
             }
         }      

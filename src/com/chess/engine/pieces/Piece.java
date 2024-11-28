@@ -39,7 +39,7 @@ public abstract class Piece {
 		return isFirstMove;
 	}
 	
-	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer);
+	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles);
 	
 	public abstract Piece movePiece(int destinationCoordinate);
 	

@@ -31,7 +31,7 @@ public class Bishop extends Piece {
 	}
 	
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
 		final List<Move> legalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {

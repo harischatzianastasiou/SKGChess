@@ -50,7 +50,7 @@ public class Pawn extends Piece {
     }
      
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
         final List<Move> legalMoves = new ArrayList<>();
     	addNonCapturingMoves(boardTiles,legalMoves);
     	addCaptureMoves(boardTiles,legalMoves);
@@ -97,8 +97,11 @@ public class Pawn extends Piece {
 		            	final Tile currentTile = boardTiles.get(pieceCoordinate);
 		            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
 		            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile)
+                        if(currentRank != this.promotionRank)
 	        				legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
-	        		}
+                        else
+                            addPromotionMove(boardTiles,legalMoves, candidateDestinationCoordinate);
+                    }
 	            }else if(currentRank == this.enPassantRank) {
 	            	//check last move
 	            	addEnPassantMove(boardTiles,legalMoves, candidateDestinationCoordinate);

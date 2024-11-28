@@ -32,7 +32,7 @@ public class King extends Piece  {
     }
     
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
 		final List<Move> legalMoves = new ArrayList<>();
 		
 		// Add normal king moves
