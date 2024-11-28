@@ -62,10 +62,12 @@ public class Pawn extends Piece {
         if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
 	        final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	        if (!candidateDestinationTile.isTileOccupied()) {
-	            legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
-	            if (currentRank == this.initialRank) {
-	                addDoubleAdvanceMove(boardTiles,legalMoves);
-	            }else if (currentRank == this.promotionRank)
+                if(currentRank != this.promotionRank){
+	                legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
+	                if (currentRank == this.initialRank) {
+	                    addDoubleAdvanceMove(boardTiles,legalMoves);
+	                }
+	            }else
 	                addPromotionMove(boardTiles,legalMoves, candidateDestinationCoordinate);
 	        }
         }
