@@ -20,8 +20,8 @@ import com.google.common.collect.ImmutableList;
 public class Board {
 	
 	private final List<Tile> tiles;
-    private Player currentPlayer;
-    private Player opponentPlayer;
+    private final Player currentPlayer;
+    private final Player opponentPlayer;
     
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
@@ -29,12 +29,16 @@ public class Board {
         this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
 	}
 	
-	private Board(final Builder builder, final Move move) {// called when a move is made, create a new board and add to GameHistory
+	private Board(final Builder builder, final Move move) {
 		this.tiles = createTiles(builder);
 		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
 	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
-        GameHistory.getInstance().addBoardState(this);
-        GameHistory.getInstance().addMove(move);
+        postConstructionInit(move);
+	}
+	
+	private void postConstructionInit(final Move move) {
+	    GameHistory.getInstance().addBoardState(this);
+	    GameHistory.getInstance().addMove(move);
 	}
 	
 	private static List<Tile> createTiles(final Builder builder) {
@@ -78,7 +82,7 @@ public class Board {
 	    builder.setPiece(new Rook  (63, Alliance.WHITE));
 	    for(int coordinate = 48; coordinate < 56; coordinate++) {
 	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
-	    }//oxi mono gia ton king alla kai gia alla pieces lambanei ta tiles san oocupied
+	    }
 	    
 	    // Set up next player
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
@@ -162,25 +166,7 @@ public class Board {
 	}
 
 	
-//	memoization-make it new  class
-	public class BoardCache {
-	    private static final Map<String, Board> boardCache = new HashMap<>();
 
-	    public static Board getBoard(Board.Builder builder) {
-	        String boardKey = generateBoardKey(builder);
-	        return boardCache.computeIfAbsent(boardKey, k -> Board.createBoard(builder));
-	    }
-
-	    private static String generateBoardKey(Board.Builder builder) {
-	        // Generate a unique key based on the board configuration
-	        StringBuilder key = new StringBuilder();
-	        for (Map.Entry<Integer, Piece> entry : builder.getPieces().entrySet()) {
-	            key.append(entry.getKey()).append(":").append(entry.getValue().toString()).append("|");
-	        }
-	        key.append(builder.currentPlayerAlliance);
-	        return key.toString();
-	    }
-	}
 }
 
 

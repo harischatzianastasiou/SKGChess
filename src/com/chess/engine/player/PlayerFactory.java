@@ -15,31 +15,17 @@ public class PlayerFactory {
     public static Player createPlayer(final List<Tile> tiles, Alliance alliance) {
         final List<Piece> activePieces = new ArrayList<>();
         final List<Move> legalMoves = new ArrayList<>();
-        final int kingCoordinate = getKingCoordinate(tiles, alliance);
-        final int oppositeKingCoordinate = getOppositeKingCoordinate(tiles, alliance);
-        final int[] oppositeKingSideCastlePath = getOppositeKingSideCastlingPath(oppositeKingCoordinate, alliance);
-        final int[] oppositeQueenSideCastlePath = getOppositeQueenSideCastlingPath(oppositeKingCoordinate, alliance);
         
         for (final Tile tile : tiles) {
-//        	System.out.println("Checking tile " + tile.getTileCoordinate());
-//        	System.out.println("Piece at tile " + tile.getTileCoordinate() + ": " + tile.getPiece());
             if (tile.isTileOccupied()) {
-//            	System.out.println("Tile " + tile.getTileCoordinate() + " is occupied. Adding move.");
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
                     legalMoves.addAll(piece.calculateMoves(tiles, alliance));
                 }
             }
-        }
-
-//        if (moveResult.getMoveStatus() == MoveResult.MoveStatus.CHECK && legalMoves.isEmpty()) {
-//            System.out.println("Checkmate");
-//        }
-//        if (legalMoves.isEmpty()) {
-//            System.out.println("Stalemate");
-//        }        
-        return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance);
+        }      
+        return new Player(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance);
     }
 		
 	public static int getKingCoordinate(final List<Tile> tiles, final Alliance alliance) {
@@ -53,75 +39,4 @@ public class PlayerFactory {
 	    }
 	    throw new RuntimeException("King not found on the board");
 	}
-	
-//	public static boolean isKingInCheck(final int kingCoordinate, final List<Move> opponentMoves) { 
-//		for (Move opponentMove : opponentMoves) {
-//			if(opponentMove.getTargetCoordinate() == kingCoordinate) {
-//				return true;
-//	    	}
-//		}
-//    return false;
-//	}
-	
-	public static int getOppositeKingCoordinate(final List<Tile> tiles, final Alliance alliance) {
-	    for (Tile tile : tiles) {
-	        if (tile.isTileOccupied()) {
-	            Piece piece = tile.getPiece();
-	            if (piece instanceof King && piece.getPieceAlliance() == alliance) {
-	                return tile.getTileCoordinate();
-	            }
-	        }
-	    }
-	    throw new RuntimeException("King not found on the board");
-	}
-    
-    private static int[] getOppositeKingSideCastlingPath(int kingCoordinate, Alliance kingAlliance) {
-        // Assuming standard chess board coordinates
-        // Define the kingside castling paths for both white and black
-        int[] kingsideCastlingPath;
-
-        if (kingAlliance.isWhite()) {
-            // White king's kingside castling path
-            kingsideCastlingPath = new int[]{61, 62}; // f1, g1
-        } else {
-            // Black king's kingside castling path
-            kingsideCastlingPath = new int[]{5, 6}; // f8, g8
-        }
-
-        // Return the kingside castling path
-        return kingsideCastlingPath;
-    }
-    
-    private static int[] getOppositeQueenSideCastlingPath(int kingCoordinate, Alliance kingAlliance) {
-        // Assuming standard chess board coordinates
-        // Define the queenside castling paths for both white and black
-        int[] queensideCastlingPath;
-
-        if (kingAlliance.isWhite()) {
-            // White king's queenside castling path
-            queensideCastlingPath = new int[]{59, 58, 57}; // c1, d1, b1
-        } else {
-            // Black king's queenside castling path
-            queensideCastlingPath = new int[]{3, 2, 1}; // c8, d8, b8
-        }
-
-        // Return the queenside castling path
-        return queensideCastlingPath;
-    }
-	
-	public boolean isThreefoldRepetition() {
-        return false; //TODO implement threefold repetition detection
-    }
-	
-	public boolean isFiftyMoveRule() {
-        return false; //TODO implement fifty move rule detection
-    }
-	
-	public boolean isCastled() {
-		return false; //TODO implement castling detection
-	}
-	
-	public boolean isEnPassantLegal() {
-        return false; //TODO implement en passant detection
-    }
 }

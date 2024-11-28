@@ -10,7 +10,6 @@ import com.chess.engine.board.Move;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
 import com.chess.engine.board.Tile;
-import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.google.common.collect.ImmutableList;
 
 public class Bishop extends Piece {

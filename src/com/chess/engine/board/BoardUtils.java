@@ -1,11 +1,7 @@
 package com.chess.engine.board;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Tile.EmptyTile;
-import com.google.common.collect.ImmutableMap;
+
 
 public class BoardUtils {
 	

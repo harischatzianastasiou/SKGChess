@@ -1,0 +1,4 @@
+--patch-module
+SKGChess=_
+--add-reads
+SKGChess=ALL-UNNAMED

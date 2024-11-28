@@ -14,7 +14,6 @@ import com.chess.engine.board.Move.PawnEnPassantAttack;
 import com.chess.engine.board.Move.PawnJumpMove;
 import com.chess.engine.board.Move.PawnPromotionMove;
 import com.chess.engine.board.Tile;
-import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.google.common.collect.ImmutableList;
 
 public class Pawn extends Piece {
@@ -67,14 +66,14 @@ public class Pawn extends Piece {
 	            if (currentRank == this.initialRank) {
 //	            	System.out.println(" Tile " + this.getPieceCoordinate() +" has rank" + currentRank);
 //	 	            System.out.println(" Tile " + this.getPieceCoordinate() +" has initial rank" + initialRank);
-	                addDoubleAdvanceMove(boardTiles,legalMoves, candidateDestinationCoordinate);
+	                addDoubleAdvanceMove(boardTiles,legalMoves);
 	            }else if (currentRank == this.promotionRank)
 	                addPromotionMove(boardTiles,legalMoves, candidateDestinationCoordinate);
 	        }
         }
     }
     
-    private void addDoubleAdvanceMove(final List<Tile> boardTiles, final List<Move> legalMoves, int candidateDestinationCoordinate) {
+    private void addDoubleAdvanceMove(final List<Tile> boardTiles, final List<Move> legalMoves) {
         int CandidateDoubleDestinationCoordinate = this.pieceCoordinate + (2 * CANDIDATE_MOVE_OFFSET * advanceDirection);
         final Tile candidateDestinationTile = boardTiles.get(CandidateDoubleDestinationCoordinate);
         if (!candidateDestinationTile.isTileOccupied())
@@ -130,13 +129,13 @@ public class Pawn extends Piece {
     public Piece promotePawn(int destinationCoordinate, String newPieceType) {
         switch (newPieceType.toUpperCase()) {
             case "QUEEN":
-                return new Queen(destinationCoordinate, this.getPieceAlliance());
+                return new Queen(destinationCoordinate, this.getPieceAlliance(), false);
             case "ROOK":
-                return new Rook(destinationCoordinate, this.getPieceAlliance());
+                return new Rook(destinationCoordinate, this.getPieceAlliance(), false);
             case "BISHOP":
-                return new Bishop(destinationCoordinate, this.getPieceAlliance());
+                return new Bishop(destinationCoordinate, this.getPieceAlliance(), false);
             case "KNIGHT":
-                return new Knight(destinationCoordinate, this.getPieceAlliance());
+                return new Knight(destinationCoordinate, this.getPieceAlliance(), false);
             default:
                 throw new IllegalArgumentException("Invalid piece type for promotion: " + newPieceType);
         }

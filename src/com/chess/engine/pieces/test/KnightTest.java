@@ -1,18 +1,11 @@
 package com.chess.engine.pieces.test;
 
-import com.chess.engine.Alliance;
-import com.chess.engine.board.Board;
-import com.chess.engine.board.BoardUtils;
-import com.chess.engine.board.Move;
-import com.chess.engine.board.Tile;
-import com.chess.engine.pieces.Knight;
-import com.chess.engine.pieces.Pawn;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import com.chess.engine.board.Board;
+import com.chess.engine.board.Move;
+import com.chess.engine.pieces.Knight;
 
 public class KnightTest {
 

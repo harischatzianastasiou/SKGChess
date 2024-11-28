@@ -14,16 +14,13 @@ public class MoveResult {
 
     private static final MoveResult DEFAULT_INSTANCE = new MoveResult();
 
-    private final Board simulatedBoard;
     private final MoveStatus moveStatus;
 
     private MoveResult(Move move, Board simulatedBoard) {
-        this.simulatedBoard = simulatedBoard;
         this.moveStatus = determineMoveStatus(move, simulatedBoard);
     }
 
     private MoveResult() { // 1st move of each player
-        this.simulatedBoard = null;
         this.moveStatus = MoveStatus.LEGAL;
     }
 
@@ -103,11 +100,8 @@ public class MoveResult {
         return true;
     }
 
-    private static boolean isOpponentKingInCheck(Move move,Board simulatedBoard) {
+    private static boolean isOpponentKingInCheck(Move move, Board simulatedBoard) {
         King king = simulatedBoard.getCurrentPlayer().getKing();
-        if (move.getTargetCoordinate() == king.getPieceCoordinate()) {
-            return true;
-        }
-        return false;
+        return move.getTargetCoordinate() == king.getPieceCoordinate();
     }
 }

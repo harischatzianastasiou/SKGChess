@@ -5,15 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
-import com.chess.engine.board.Tile;
 import com.chess.engine.board.Move.CapturingMove;
+import com.chess.engine.board.Move.KingSideCastleMove;
 import com.chess.engine.board.Move.NonCapturingMove;
 import com.chess.engine.board.Move.QueenSideCastleMove;
-import com.chess.engine.board.Move.KingSideCastleMove;
-import com.chess.engine.pieces.Piece.PieceSymbol;
+import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 
 public class King extends Piece  {

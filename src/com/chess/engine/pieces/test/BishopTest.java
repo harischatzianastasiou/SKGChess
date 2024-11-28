@@ -1,17 +1,11 @@
 package com.chess.engine.pieces.test;
 
-import com.chess.engine.Alliance;
-import com.chess.engine.board.Board;
-import com.chess.engine.board.BoardUtils;
-import com.chess.engine.board.Move;
-import com.chess.engine.board.Tile;
-import com.chess.engine.pieces.Bishop;
-import com.chess.engine.pieces.Knight;
-import com.chess.engine.pieces.Pawn;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Random;
+
+import com.chess.engine.board.Board;
+import com.chess.engine.board.Move;
+import com.chess.engine.pieces.Bishop;
 
 public class BishopTest {
 
@@ -23,7 +17,7 @@ public class BishopTest {
             	}
             } 
             System.out.print("Bishop has " + legalMoves.size() + " legal moves ");
-            if(legalMoves.size() > 0) {
+            if(!legalMoves.isEmpty()) {
             	System.out.print("--> ");
                 for (Move move : legalMoves) {
                 	System.out.print(move.getTargetCoordinate() + " ");          
@@ -40,7 +34,7 @@ public class BishopTest {
             	}
             } 
             System.out.print("Bishop has " + legalMoves.size() + " legal moves ");
-            if(legalMoves.size() > 0) {
+            if(!legalMoves.isEmpty()) {
             	System.out.print("--> ");
                 for (Move move : legalMoves) {
                 	System.out.print(move.getTargetCoordinate() + " ");          

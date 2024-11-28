@@ -4,15 +4,8 @@ import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board.Builder;
-import com.chess.engine.board.Move.NonCapturingMove;
-import com.chess.engine.board.Tile.EmptyTile;
-import com.chess.engine.board.Tile.OccupiedTile;
-import com.chess.engine.pieces.Bishop;
-import com.chess.engine.pieces.King;
-import com.chess.engine.pieces.Knight;
 import com.chess.engine.pieces.Pawn;
 import com.chess.engine.pieces.Piece;
-import com.chess.engine.pieces.Queen;
 import com.chess.engine.pieces.Rook;
 import com.google.common.collect.ImmutableList;
 

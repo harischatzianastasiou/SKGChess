@@ -1,10 +1,9 @@
 package com.chess.engine.board;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Tile.EmptyTile;
 import com.chess.engine.pieces.Piece;
 import com.google.common.collect.ImmutableMap;
 

@@ -1,31 +1,22 @@
 package com.chess.engine.pieces.test;
 
-import com.chess.engine.Alliance;
-import com.chess.engine.board.Board;
-import com.chess.engine.board.BoardUtils;
-import com.chess.engine.board.Move;
-import com.chess.engine.board.Tile;
-import com.chess.engine.pieces.Knight;
-import com.chess.engine.pieces.Pawn;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import com.chess.engine.board.Board;
+import com.chess.engine.board.Move;
+import com.chess.engine.pieces.Pawn;
 
 public class PawnTest {
 
 	public static void testPawnMovesWithStandardBoard(Collection<Move> modifiedCollection,int coordinate) {
-		Alliance alliance = null;
 		Collection<Move> legalMoves = new ArrayList<>();
 			for(Move move : modifiedCollection) {
             	if(move.getPieceToMove() instanceof Pawn && move.getPieceToMove().getPieceCoordinate() == coordinate) {
             		legalMoves.add(move);
-            		alliance = move.getPieceToMove().getPieceAlliance();
             	}
             } 
-            if(legalMoves.size() > 0) {
+            if(!legalMoves.isEmpty()) {
             	System.out.print("--> ");
                 for (Move move : legalMoves) {
                 	System.out.print(move.getTargetCoordinate() + " ");          
@@ -42,7 +33,7 @@ public class PawnTest {
             	}
             } 
             System.out.print("Pawn has " + legalMoves.size() + " legal moves ");
-            if(legalMoves.size() > 0) {
+            if(!legalMoves.isEmpty()) {
             	System.out.print("--> ");
                 for (Move move : legalMoves) {
                 	System.out.print(move.getTargetCoordinate() + " ");          

@@ -1,13 +1,12 @@
 package com.chess;
 
 import com.chess.engine.board.Board;
-import com.chess.engine.pieces.Bishop;
-import com.chess.engine.pieces.King;
-import com.chess.engine.pieces.Knight;
-import com.chess.engine.pieces.Pawn;
-import com.chess.engine.pieces.Queen;
-import com.chess.engine.pieces.Rook;
-import com.chess.engine.pieces.test.*;
+import com.chess.engine.pieces.test.BishopTest;
+import com.chess.engine.pieces.test.KingTest;
+import com.chess.engine.pieces.test.KnightTest;
+import com.chess.engine.pieces.test.PawnTest;
+import com.chess.engine.pieces.test.QueenTest;
+import com.chess.engine.pieces.test.RookTest;
 import com.chess.gui.ChessTable;
 
 public class SKGChess {
@@ -30,6 +29,6 @@ public class SKGChess {
 	PawnTest.testPawnMovesWithStandardBoard(chessboard);
 //    		
     	
-	ChessTable table = new ChessTable();
+	ChessTable chesstable = new ChessTable();
     }
 }

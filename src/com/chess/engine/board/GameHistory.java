@@ -3,8 +3,6 @@ package com.chess.engine.board;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.chess.engine.pieces.Piece;
-
 public class GameHistory {
 
     private static GameHistory instance;

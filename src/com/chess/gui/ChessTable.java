@@ -15,9 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -41,7 +39,6 @@ import com.chess.engine.pieces.test.KnightTest;
 import com.chess.engine.pieces.test.PawnTest;
 import com.chess.engine.pieces.test.QueenTest;
 import com.chess.engine.pieces.test.RookTest;
-import com.google.common.collect.ImmutableList;
 
 public class ChessTable {
     
@@ -189,8 +186,7 @@ public class ChessTable {
 	                        	   if(move.getSourceCoordinate() == sourceTile.getTileCoordinate() && 
 	                        	      move.getTargetCoordinate() == targetTile.getTileCoordinate()) {
 	                        		   chessboard = move.execute();
-	                        		   if(!(chessboard.equals(null)))
-	                        			   break;
+                                       break;
 	                        	   }//todo
 	                        	   // for all possible moves of currentplayer, simulate all the moves and check if it leads to check
 	                        	   // if it leads to kings check then remove them from chessboard.getCurrentPlayer().getLegalMoves())
