@@ -33,11 +33,6 @@ public class Player {
         return ImmutableList.copyOf(legalMoves);
     }
 	
-//    private Collection<Move> calculateLegalMoves(final Collection<Piece> pieces) {
-//        return pieces.stream().flatMap(piece -> piece.calculateLegalMoves(this).stream())
-//                      .collect(Collectors.toList());
-//    }
-	
 	public Alliance getAlliance() {
 		return this.alliance;
 	}

@@ -5,19 +5,17 @@ import java.util.Collection;
 import java.util.List;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.GameHistory;
 import com.chess.engine.board.Move;
-import com.chess.engine.board.MoveResult;
-import com.chess.engine.board.Tile;
-import com.google.common.collect.ImmutableList;
 import com.chess.engine.board.Move.CapturingMove;
 import com.chess.engine.board.Move.NonCapturingMove;
-import com.chess.engine.board.Move.PawnJumpMove;
 import com.chess.engine.board.Move.PawnEnPassantAttack;
+import com.chess.engine.board.Move.PawnJumpMove;
 import com.chess.engine.board.Move.PawnPromotionMove;
+import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Piece.PieceSymbol;
+import com.google.common.collect.ImmutableList;
 
 public class Pawn extends Piece {
     
@@ -53,7 +51,7 @@ public class Pawn extends Piece {
     }
      
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer) {
         final List<Move> legalMoves = new ArrayList<>();
     	addNonCapturingMoves(boardTiles,legalMoves);
     	addCaptureMoves(boardTiles,legalMoves);

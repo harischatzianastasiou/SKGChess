@@ -434,25 +434,5 @@ public abstract class Move {
 	        return this == other || other instanceof QueenSideCastleMove && super.equals(other);
 	    }
 	}
-	
-	public static class BlockingKingSideCastleMove extends NonCapturingMove {
-	    public BlockingKingSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
-	        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
-	    }
-	    @Override
-	    public boolean equals(final Object other) {
-	        return this == other || (other instanceof BlockingKingSideCastleMove && super.equals(other));
-	    }
-	}
-	
-	public static class BlockingQueenSideCastleMove extends NonCapturingMove {
-	    public BlockingQueenSideCastleMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
-	        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
-	    }
-	    @Override
-	    public boolean equals(final Object other) {
-	        return this == other || (other instanceof BlockingQueenSideCastleMove && super.equals(other));
-	    }
-	}
 }
 

@@ -34,95 +34,83 @@ public class King extends Piece  {
     }
     
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer) {
 		final List<Move> legalMoves = new ArrayList<>();
-		int candidateDestinationCoordinate;
-		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
-				candidateDestinationCoordinate = this.pieceCoordinate + candidateOffset;
-	            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)){
-	            	final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
-	            	int rankDifference = Math.abs(BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate,this.pieceCoordinate));
-	                int fileDifference = Math.abs(BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate,this.pieceCoordinate));
-	                if (rankDifference <= 1 && fileDifference <= 1) {
-	                	if(!candidateDestinationTile.isTileOccupied() ) {
-		            		legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
-//		            		System.out.println(candidateDestinationCoordinate);	
-		            	}else {
-		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
-		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
-		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
-		                        legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
-//		                        System.out.println(candidateDestinationCoordinate);
-		                    }		            	    
-		            	}
-	            	} 
-	            }
-		}
+		
+		// Add normal king moves
+		addNormalMoves(boardTiles, legalMoves);
+		
+		// Add potential castling moves without validation
+		addPotentialCastlingMoves(boardTiles, legalMoves);
 		
 		return ImmutableList.copyOf(legalMoves);
     }
-   
-    private Collection<Move> calculateCastlingMoves(final List<Tile> boardTiles, final Collection<Move> opponentMoves, final boolean isKingInCheck) {
-        final List<Move> castlingMoves = new ArrayList<>();
-        // Implement castling logic similar to the previous method, ensuring the path is not under attack
-        // Check for queenside castling
-        if (this.isFirstMove() && !isKingInCheck) {
-            final int rookCoordinate = this.pieceCoordinate - 4;
-            final Tile rookTile = boardTiles.get(rookCoordinate);
-            if (rookTile.isTileOccupied() && rookTile.getPiece() instanceof Rook) {
-                final Rook rook = (Rook) rookTile.getPiece();
-                if (rook.isFirstMove()) {
-                    final int[] betweenCoordinates = {this.pieceCoordinate - 1, this.pieceCoordinate - 2, this.pieceCoordinate - 3};
-                    boolean isPathClear = true;
-                    for (int coordinate : betweenCoordinates) {
-                        if (boardTiles.get(coordinate).isTileOccupied() || isTileUnderAttack(coordinate, opponentMoves)) {
-                            isPathClear = false;
-                            break;
-                        }
-                    }
-                    if (isPathClear) {
-                        castlingMoves.add(new QueenSideCastleMove(boardTiles, this.pieceCoordinate, this.pieceCoordinate - 2, this, rookCoordinate, this.pieceCoordinate - 1, rook));
-                    }
-                }
-            }
-        }
 
-        // Check for kingside castling
-        if (this.isFirstMove() && !isKingInCheck) {
-            final int rookCoordinate = this.pieceCoordinate + 3;
-            final Tile rookTile = boardTiles.get(rookCoordinate);
-            if (rookTile.isTileOccupied() && rookTile.getPiece() instanceof Rook) {
-                final Rook rook = (Rook) rookTile.getPiece();
-                if (rook.isFirstMove()) {
-                    final int[] betweenCoordinates = {this.pieceCoordinate + 1, this.pieceCoordinate + 2};
-                    boolean isPathClear = true;
-                    for (int coordinate : betweenCoordinates) {
-                        if (boardTiles.get(coordinate).isTileOccupied() || isTileUnderAttack(coordinate, opponentMoves)) {
-                            isPathClear = false;
-                            break;
-                        }
-                    }
-                    if (isPathClear) {
-                        castlingMoves.add(new KingSideCastleMove(boardTiles, this.pieceCoordinate, this.pieceCoordinate + 2, this, rookCoordinate, this.pieceCoordinate + 1, rook));
-                    }
-                }
-            }
-        }
+	private void addNormalMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
+		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
+			int candidateDestinationCoordinate = this.pieceCoordinate + candidateOffset;
+			if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)){
+				final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
+				int rankDifference = Math.abs(BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate,this.pieceCoordinate));
+				int fileDifference = Math.abs(BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate,this.pieceCoordinate));
+				if (rankDifference <= 1 && fileDifference <= 1) {
+					if(!candidateDestinationTile.isTileOccupied()) {
+						legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+					} else {
+						final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
+						final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
+						if(this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile) {
+							legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+						}
+					}
+				}
+			}
+		}
+	}
 
-        return castlingMoves;
-    }
+	private void addPotentialCastlingMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
+		if (this.isFirstMove()) {
+			// Add kingside castle if rook is present
+			final Tile kingSideRookTile = boardTiles.get(this.pieceCoordinate + 3);
+			if (kingSideRookTile.isTileOccupied() && kingSideRookTile.getPiece() instanceof Rook) {
+				Rook kingSideRook = (Rook) kingSideRookTile.getPiece();
+				if (kingSideRook.isFirstMove()) {
+					if (!boardTiles.get(this.pieceCoordinate + 1).isTileOccupied() && 
+						!boardTiles.get(this.pieceCoordinate + 2).isTileOccupied()) {
+						legalMoves.add(new KingSideCastleMove(boardTiles,
+															 this.pieceCoordinate,
+															 this.pieceCoordinate + 2,
+															 this,
+															 kingSideRook.getPieceCoordinate(),
+															 this.pieceCoordinate + 1,
+															 kingSideRook));
+					}
+				}
+			}
+
+			// Add queenside castle if rook is present
+			final Tile queenSideRookTile = boardTiles.get(this.pieceCoordinate - 4);
+			if (queenSideRookTile.isTileOccupied() && queenSideRookTile.getPiece() instanceof Rook) {
+				Rook queenSideRook = (Rook) queenSideRookTile.getPiece();
+				if (queenSideRook.isFirstMove()) {
+					if (!boardTiles.get(this.pieceCoordinate - 1).isTileOccupied() &&
+						!boardTiles.get(this.pieceCoordinate - 2).isTileOccupied() &&
+						!boardTiles.get(this.pieceCoordinate - 3).isTileOccupied()) {
+						legalMoves.add(new QueenSideCastleMove(boardTiles,
+															  this.pieceCoordinate,
+															  this.pieceCoordinate - 2,
+															  this,
+															  queenSideRook.getPieceCoordinate(),
+															  this.pieceCoordinate - 1,
+															  queenSideRook));
+					}
+				}
+			}
+		}
+	}
 	
     @Override
     public Piece movePiece(int destinationCoordinate) {
         return new King(destinationCoordinate, this.getPieceAlliance(),false);
     }
-    
-    protected boolean isTileUnderAttack(int coordinate, Collection<Move> opponentMoves) {
-	    for (Move move : opponentMoves) {
-	        if (move.getTargetCoordinate() == coordinate) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
 }

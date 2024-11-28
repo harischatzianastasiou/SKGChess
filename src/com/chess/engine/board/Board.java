@@ -1,18 +1,21 @@
 package com.chess.engine.board;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.BoardUtils;
-import com.chess.engine.pieces.*;
+import com.chess.engine.pieces.Bishop;
+import com.chess.engine.pieces.King;
+import com.chess.engine.pieces.Knight;
+import com.chess.engine.pieces.Pawn;
+import com.chess.engine.pieces.Piece;
+import com.chess.engine.pieces.Queen;
+import com.chess.engine.pieces.Rook;
 import com.chess.engine.player.Player;
 import com.chess.engine.player.PlayerFactory;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 public class Board {
 	

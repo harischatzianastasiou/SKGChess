@@ -1,16 +1,9 @@
 package com.chess.engine.board;
 
-import com.chess.engine.pieces.Piece;
-import com.chess.engine.board.Move.BlockingKingSideCastleMove;
-import com.chess.engine.board.Move.BlockingQueenSideCastleMove;
 import com.chess.engine.board.Move.KingSideCastleMove;
 import com.chess.engine.board.Move.QueenSideCastleMove;
 import com.chess.engine.pieces.King;
 import com.chess.engine.player.Player;
-import com.google.common.collect.ImmutableList;
-
-import java.util.Collection;
-import java.util.List;
 
 public class MoveResult {
     public enum MoveStatus {
@@ -50,8 +43,15 @@ public class MoveResult {
         if (checkIfMovePutsKingIntoCheck(simulatedBoard)) {
             return MoveStatus.ILLEGAL;
         }
-        if (!checkIfKingSideCastleValid(move, simulatedBoard) || !checkIfQueenSideCastleValid(move, simulatedBoard)) {
-            return MoveStatus.ILLEGAL;
+        if(move instanceof KingSideCastleMove){
+            if(!checkIfKingSideCastleValid(move, simulatedBoard)){
+                return MoveStatus.ILLEGAL;
+            }
+        }
+        if(move instanceof QueenSideCastleMove){
+            if(!checkIfQueenSideCastleValid(move, simulatedBoard)){
+                return MoveStatus.ILLEGAL;
+            }
         }
         if (isOpponentKingInCheck(move, simulatedBoard)) {
             return MoveStatus.CHECK;
@@ -73,11 +73,14 @@ public class MoveResult {
 
     private static boolean checkIfKingSideCastleValid(Move move, Board simulatedBoard) {
         Player opponent = simulatedBoard.getCurrentPlayer();
-
-        if (move instanceof KingSideCastleMove) {
-            for (Move opponentMove : opponent.getLegalMoves()) {
-                if (opponentMove instanceof BlockingKingSideCastleMove) {
-                    return false;
+        int kingPosition = move.getSourceCoordinate();
+        int[] castlingPath = {kingPosition, kingPosition + 1, kingPosition + 2}; // include current king position
+        
+        for (Move opponentMove : opponent.getLegalMoves()) {
+            int targetSquare = opponentMove.getTargetCoordinate();
+            for (int pathSquare : castlingPath) {
+                if (targetSquare == pathSquare) {
+                    return false; // castling path or king's position is under attack
                 }
             }
         }
@@ -86,11 +89,14 @@ public class MoveResult {
 
     private static boolean checkIfQueenSideCastleValid(Move move, Board simulatedBoard) {
         Player opponent = simulatedBoard.getCurrentPlayer();
-
-        if (move instanceof QueenSideCastleMove) {
-            for (Move opponentMove : opponent.getLegalMoves()) {
-                if (opponentMove instanceof BlockingQueenSideCastleMove) {
-                    return false;
+        int kingPosition = move.getSourceCoordinate();
+        int[] castlingPath = {kingPosition, kingPosition - 1, kingPosition - 2}; // include current king position
+        
+        for (Move opponentMove : opponent.getLegalMoves()) {
+            int targetSquare = opponentMove.getTargetCoordinate();
+            for (int pathSquare : castlingPath) {
+                if (targetSquare == pathSquare) {
+                    return false; // castling path or king's position is under attack
                 }
             }
         }

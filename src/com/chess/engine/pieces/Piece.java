@@ -1,16 +1,11 @@
 package com.chess.engine.pieces;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Board;
-import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
-import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
-import com.google.common.collect.ImmutableList;
 
 public abstract class Piece {
 
@@ -44,7 +39,7 @@ public abstract class Piece {
 		return isFirstMove;
 	}
 	
-	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath);
+	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer);
 	
 	public abstract Piece movePiece(int destinationCoordinate);
 	

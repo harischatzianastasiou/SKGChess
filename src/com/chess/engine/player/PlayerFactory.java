@@ -1,18 +1,14 @@
 package com.chess.engine.player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.chess.engine.Alliance;
-import com.chess.engine.board.GameHistory;
 import com.chess.engine.board.Move;
-import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.King;
 import com.chess.engine.pieces.Piece;
-import com.chess.engine.player.Player;
 import com.google.common.collect.ImmutableList;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class PlayerFactory {
 	
@@ -32,7 +28,7 @@ public class PlayerFactory {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
-                    legalMoves.addAll(piece.calculateMoves(tiles, oppositeKingCoordinate,oppositeKingSideCastlePath,oppositeQueenSideCastlePath));
+                    legalMoves.addAll(piece.calculateMoves(tiles, alliance));
                 }
             }
         }

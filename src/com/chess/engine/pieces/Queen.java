@@ -5,9 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Board;
 import com.chess.engine.board.Move;
-import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Piece.PieceSymbol;
 import com.google.common.collect.ImmutableList;
@@ -28,9 +26,9 @@ public class Queen extends Piece {
     }
     
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
-        final Collection<Move> equivalentRookMoves =  new Rook(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles,oppositeKingCoordinate,oppositeKingSideCastlePath,oppositeQueenSideCastlePath);
-        final Collection<Move> equivalentBishopMoves = new Bishop(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles,oppositeKingCoordinate,oppositeKingSideCastlePath,oppositeQueenSideCastlePath);
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Alliance currentPlayer) {
+        final Collection<Move> equivalentRookMoves =  new Rook(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles);
+        final Collection<Move> equivalentBishopMoves = new Bishop(this.pieceCoordinate, this.pieceAlliance).calculateMoves(boardTiles);
         final List<Move> legalMoves = new ArrayList<>(equivalentRookMoves);
         legalMoves.addAll(equivalentBishopMoves);
         return ImmutableList.copyOf(legalMoves);
