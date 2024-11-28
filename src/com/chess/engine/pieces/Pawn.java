@@ -53,7 +53,7 @@ public class Pawn extends Piece {
     }
      
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles,final MoveResult moveResult, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final int oppositeKingCoordinate, final int[] oppositeKingSideCastlePath, final int[] oppositeQueenSideCastlePath){
         final List<Move> legalMoves = new ArrayList<>();
     	addNonCapturingMoves(boardTiles,legalMoves);
     	addCaptureMoves(boardTiles,legalMoves);
@@ -67,8 +67,8 @@ public class Pawn extends Piece {
 	        if (!candidateDestinationTile.isTileOccupied()) {
 	            legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
 	            if (currentRank == this.initialRank) {
-	            	System.out.println(" Tile " + this.getPieceCoordinate() +" has rank" + currentRank);
-	 	            System.out.println(" Tile " + this.getPieceCoordinate() +" has initial rank" + initialRank);
+//	            	System.out.println(" Tile " + this.getPieceCoordinate() +" has rank" + currentRank);
+//	 	            System.out.println(" Tile " + this.getPieceCoordinate() +" has initial rank" + initialRank);
 	                addDoubleAdvanceMove(boardTiles,legalMoves, candidateDestinationCoordinate);
 	            }else if (currentRank == this.promotionRank)
 	                addPromotionMove(boardTiles,legalMoves, candidateDestinationCoordinate);

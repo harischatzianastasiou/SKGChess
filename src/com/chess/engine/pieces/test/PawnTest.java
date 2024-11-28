@@ -16,16 +16,15 @@ import java.util.Map;
 
 public class PawnTest {
 
-	public static void testPawnMovesWithStandardBoard(Board board,int coordinate) {
+	public static void testPawnMovesWithStandardBoard(Collection<Move> modifiedCollection,int coordinate) {
 		Alliance alliance = null;
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+			for(Move move : modifiedCollection) {
             	if(move.getPieceToMove() instanceof Pawn && move.getPieceToMove().getPieceCoordinate() == coordinate) {
             		legalMoves.add(move);
             		alliance = move.getPieceToMove().getPieceAlliance();
             	}
             } 
-            System.out.print("Pawn" + alliance.toString() + " has " + legalMoves.size() + " legal moves ");
             if(legalMoves.size() > 0) {
             	System.out.print("--> ");
                 for (Move move : legalMoves) {

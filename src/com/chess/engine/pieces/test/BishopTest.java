@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class BishopTest {
 
-	public static void testBishopMovesWithStandardBoard(Board board,int coordinate) {
+	public static void testBishopMovesWithStandardBoard(Collection<Move> modifiedCollection,int coordinate) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+			for(Move move : modifiedCollection) {
             	if(move.getPieceToMove() instanceof Bishop && move.getPieceToMove().getPieceCoordinate() == coordinate) {
             		legalMoves.add(move);
             	}

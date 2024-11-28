@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.Move;
+import com.chess.engine.board.MoveResult;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Bishop;
 import com.chess.engine.pieces.King;
@@ -39,6 +41,7 @@ import com.chess.engine.pieces.test.KnightTest;
 import com.chess.engine.pieces.test.PawnTest;
 import com.chess.engine.pieces.test.QueenTest;
 import com.chess.engine.pieces.test.RookTest;
+import com.google.common.collect.ImmutableList;
 
 public class ChessTable {
     
@@ -148,38 +151,41 @@ public class ChessTable {
 	                        selectedPiece = sourceTile.getPiece();
 	                        if(selectedPiece== null) {
 	                        	sourceTile = null;
-	                        }else {
-	                            
-	                        	if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
-	                        		
-	                        		if(selectedPiece instanceof Rook) {
-		                            System.out.println("\nTesting Rook Moves:");
-		                            RookTest.testRookMovesWithStandardBoard(chessboard,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof Knight) {
-		                            System.out.println("\nTesting Knight Moves:");
-		                            KnightTest.testKnightMovesWithStandardBoard(chessboard,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof Bishop) {
-		                            System.out.println("\nTesting Bishop Moves:");
-		                            BishopTest.testBishopMovesWithStandardBoard(chessboard,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof Queen) {
-		                            System.out.println("\nTesting Queen Moves:");
-		                            QueenTest.testQueenMovesWithStandardBoard(chessboard,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof King) {
-		                            System.out.println("\nTesting King Moves:");
-		                            KingTest.testKingMovesWithStandardBoard(chessboard,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof Pawn) {
-		                            System.out.println("\nTesting Pawn Moves:");
-		                            PawnTest.testPawnMovesWithStandardBoard(chessboard,selectedPiece.getPieceCoordinate());
-	                        		}
-	                        	}
-	                        	
 	                        }
 	                    //second click
 	                	}else {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
+                               Collection<Move> modifiedCollection = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
 	                           for(Move move : chessboard.getCurrentPlayer().getLegalMoves()) {  
+	                        	   MoveResult moveResult = move.simulate();
+	                        	   if(moveResult.getMoveStatus() == MoveResult.MoveStatus.ILLEGAL) {
+                                       modifiedCollection.remove(move); // remove illegal move from current player's legal moves list.
+                                   }
+	                           }
+	                           if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
+	                        		if(selectedPiece instanceof Rook) {
+		                            System.out.println("\nTesting Rook Moves:");
+		                            RookTest.testRookMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+	                        		}else if(selectedPiece instanceof Knight) {
+		                            System.out.println("\nTesting Knight Moves:");
+		                            KnightTest.testKnightMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+	                        		}else if(selectedPiece instanceof Bishop) {
+		                            System.out.println("\nTesting Bishop Moves:");
+		                            BishopTest.testBishopMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+	                        		}else if(selectedPiece instanceof Queen) {
+		                            System.out.println("\nTesting Queen Moves:");
+		                            QueenTest.testQueenMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+	                        		}else if(selectedPiece instanceof King) {
+		                            System.out.println("\nTesting King Moves:");
+		                            KingTest.testKingMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+	                        		}else if(selectedPiece instanceof Pawn) {
+		                            System.out.println("\nTesting Pawn Moves:");
+		                            PawnTest.testPawnMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+	                        		}
+	                        	}
+	                           for(Move move : modifiedCollection) {  
 	                        	   if(move.getSourceCoordinate() == sourceTile.getTileCoordinate() && 
 	                        	      move.getTargetCoordinate() == targetTile.getTileCoordinate()) {
 	                        		   chessboard = move.execute();

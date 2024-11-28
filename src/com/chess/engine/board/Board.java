@@ -22,14 +22,14 @@ public class Board {
     
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
-        this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance,MoveResult.getDefaultInstance());
-        this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(),MoveResult.getDefaultInstance());
+        this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
+        this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
 	}
 	
-	private Board(final Builder builder, final Move move, final MoveResult lastMoveResult) {// called when a move is made, create a new board and add to GameHistory
+	private Board(final Builder builder, final Move move) {// called when a move is made, create a new board and add to GameHistory
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance, lastMoveResult);
-	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance(), lastMoveResult);
+		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
+	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
         GameHistory.getInstance().addBoardState(this);
         GameHistory.getInstance().addMove(move);
 	}
@@ -38,13 +38,10 @@ public class Board {
 	    final List<Tile> tiles = new ArrayList<>(BoardUtils.NUM_TILES);
 	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
 	        Piece piece = builder.pieces.get(i);
-	        System.out.println("Coordinate" + i + "has piece: " + piece);
 	        if (builder.pieces.containsKey(i) && piece != null) {
 	            tiles.add(Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), piece));
-	            System.out.println("Tile " + i + " is occupied by " + piece);
 	        } else {
 	            tiles.add(Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), null));
-	            System.out.println("Tile " + i + " is empty");
 	        }
 	    }
 	    return ImmutableList.copyOf(tiles);
@@ -113,8 +110,8 @@ public class Board {
             return Board.createBoard(this);
         }
         
-        public Board build(Move move, MoveResult moveResult) {//build a new board everytime a move is executed
-            return Board.createBoard(this, move, moveResult);
+        public Board build(Move move) {//build a new board everytime a move is executed
+            return Board.createBoard(this, move);
         }
 	}
 	
@@ -122,8 +119,8 @@ public class Board {
         return new Board(builder);
     }
     
-    private static Board createBoard(Builder builder, Move move, MoveResult moveResult) {
-        return new Board(builder, move, moveResult);
+    private static Board createBoard(Builder builder, Move move) {
+        return new Board(builder, move);
     }
    
 	public List<Tile> getTiles() {

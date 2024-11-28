@@ -16,7 +16,7 @@ import java.util.List;
 
 public class PlayerFactory {
 	
-    public static Player createPlayer(final List<Tile> tiles, Alliance alliance, MoveResult moveResult) {
+    public static Player createPlayer(final List<Tile> tiles, Alliance alliance) {
         final List<Piece> activePieces = new ArrayList<>();
         final List<Move> legalMoves = new ArrayList<>();
         final int kingCoordinate = getKingCoordinate(tiles, alliance);
@@ -25,24 +25,24 @@ public class PlayerFactory {
         final int[] oppositeQueenSideCastlePath = getOppositeQueenSideCastlingPath(oppositeKingCoordinate, alliance);
         
         for (final Tile tile : tiles) {
-        	System.out.println("Checking tile " + tile.getTileCoordinate());
-        	System.out.println("Piece at tile " + tile.getTileCoordinate() + ": " + tile.getPiece());
+//        	System.out.println("Checking tile " + tile.getTileCoordinate());
+//        	System.out.println("Piece at tile " + tile.getTileCoordinate() + ": " + tile.getPiece());
             if (tile.isTileOccupied()) {
 //            	System.out.println("Tile " + tile.getTileCoordinate() + " is occupied. Adding move.");
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                 	activePieces.add(piece);
-                    legalMoves.addAll(piece.calculateMoves(tiles,moveResult, oppositeKingCoordinate,oppositeKingSideCastlePath,oppositeQueenSideCastlePath));
+                    legalMoves.addAll(piece.calculateMoves(tiles, oppositeKingCoordinate,oppositeKingSideCastlePath,oppositeQueenSideCastlePath));
                 }
             }
         }
 
-        if (moveResult.getMoveStatus() == MoveResult.MoveStatus.CHECK && legalMoves.isEmpty()) {
-            System.out.println("Checkmate");
-        }
-        if (legalMoves.isEmpty()) {
-            System.out.println("Stalemate");
-        }        
+//        if (moveResult.getMoveStatus() == MoveResult.MoveStatus.CHECK && legalMoves.isEmpty()) {
+//            System.out.println("Checkmate");
+//        }
+//        if (legalMoves.isEmpty()) {
+//            System.out.println("Stalemate");
+//        }        
         return new Player(tiles, ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance);
     }
 		

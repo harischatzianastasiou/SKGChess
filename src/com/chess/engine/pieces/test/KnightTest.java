@@ -16,9 +16,9 @@ import java.util.Map;
 
 public class KnightTest {
 
-	public static void testKnightMovesWithStandardBoard(Board board,int coordinate) {
+	public static void testKnightMovesWithStandardBoard(Collection<Move> modifiedCollection,int coordinate) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+			for(Move move : modifiedCollection) {
             	if(move.getPieceToMove() instanceof Knight && move.getPieceToMove().getPieceCoordinate() == coordinate) {
             		legalMoves.add(move);
             	}

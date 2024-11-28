@@ -143,12 +143,7 @@ public abstract class Move {
         
         @Override
         public Board execute() {
-        	 MoveResult simulateResult = simulate();
-        	 if(simulateResult.getMoveStatus() != MoveResult.MoveStatus.ILLEGAL) {
-        		 return super.createBuilderAfterNonCapturingMove().build(this, simulateResult);
-        	 }
-        	 System.out.println("Illegal move: " + this);
-        	 return null;
+        	 return super.createBuilderAfterNonCapturingMove().build(this);
         }
         
         @Override
@@ -219,36 +214,32 @@ public abstract class Move {
         
 		@Override
         public Board execute() {
-			MoveResult simulateResult = simulate();
-       	    if(simulateResult.getMoveStatus() != MoveResult.MoveStatus.ILLEGAL) {
-		        // Create a new board builder
-		        Board.Builder builder = new Board.Builder();
-	
-		        for (final Tile tile : this.boardTiles) {
-		            if (tile.isTileOccupied()) {
-		                final Piece piece = tile.getPiece();
-		                // Iterate over all current player pieces on the board
-		                if (!this.getPieceToMove().equals(piece)) {
-		                    builder.setPiece(piece);
-		                }
-		            }
-		        }
-	
-		        // Let the user select a new piece
-		        System.out.println("Select a new piece for the pawn (Queen, Rook, Bishop, Knight): ");
-		        // Assume user input is handled elsewhere and stored in newPieceType
-		        String newPieceType = "QUEEN"; // Replace with actual user input
-	
-		        // Create the promoted piece on the new board
-		        Piece promotedPiece = ((Pawn) this.getPieceToMove()).promotePawn(targetCoordinate, newPieceType);
-		        builder.setPiece(promotedPiece);
-	
-		        // Set the next player's alliance
-		        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-	
-		        return builder.build(this, simulate());
-       	    }
-       	    return null;
+	        // Create a new board builder
+	        Board.Builder builder = new Board.Builder();
+
+	        for (final Tile tile : this.boardTiles) {
+	            if (tile.isTileOccupied()) {
+	                final Piece piece = tile.getPiece();
+	                // Iterate over all current player pieces on the board
+	                if (!this.getPieceToMove().equals(piece)) {
+	                    builder.setPiece(piece);
+	                }
+	            }
+	        }
+
+	        // Let the user select a new piece
+	        System.out.println("Select a new piece for the pawn (Queen, Rook, Bishop, Knight): ");
+	        // Assume user input is handled elsewhere and stored in newPieceType
+	        String newPieceType = "QUEEN"; // Replace with actual user input
+
+	        // Create the promoted piece on the new board
+	        Piece promotedPiece = ((Pawn) this.getPieceToMove()).promotePawn(targetCoordinate, newPieceType);
+	        builder.setPiece(promotedPiece);
+
+	        // Set the next player's alliance
+	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+
+	        return builder.build(this);
 	    }
 		@Override
 	    public boolean equals(final Object other) {
@@ -270,11 +261,7 @@ public abstract class Move {
         
         @Override
         public Board execute() {
-        	MoveResult simulateResult = simulate();
-       	    if(simulateResult.getMoveStatus() != MoveResult.MoveStatus.ILLEGAL) {
-       	    	return super.createBuilderAfterCapturingMove().build(this,simulate());
-       	    }
-       	    return null;
+        	return super.createBuilderAfterCapturingMove().build(this);
 	    }
 		
 		@Override
@@ -345,33 +332,29 @@ public abstract class Move {
 	    
 	    @Override
         public Board execute() {
-	    	MoveResult simulateResult = simulate();
-       	    if(simulateResult.getMoveStatus() != MoveResult.MoveStatus.ILLEGAL) {
-		        final Board.Builder builder = new Board.Builder();
-		        
-		        for (final Tile tile : this.boardTiles) {
-		            if (tile.isTileOccupied()) {
-		                final Piece piece = tile.getPiece();
-		                if (!this.getPieceToMove().equals(piece) && !this.rook.equals(piece)) {
-		                    builder.setPiece(piece);
-		                }
-		            }
-		        }
-	
-		        // Move the king
-		        final Piece movedKing = this.getPieceToMove().movePiece(this.getTargetCoordinate());
-		        builder.setPiece(movedKing);
-	
-		        // Move the rook
-		        final Piece movedRook = this.rook.movePiece(this.rookTargetCoordinate);
-		        builder.setPiece(movedRook);
-	
-		        // Set the next player's alliance
-		        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-		        
-		        return builder.build(this, simulate());
-       	    }
-       	    return null;
+	        final Board.Builder builder = new Board.Builder();
+	        
+	        for (final Tile tile : this.boardTiles) {
+	            if (tile.isTileOccupied()) {
+	                final Piece piece = tile.getPiece();
+	                if (!this.getPieceToMove().equals(piece) && !this.rook.equals(piece)) {
+	                    builder.setPiece(piece);
+	                }
+	            }
+	        }
+
+	        // Move the king
+	        final Piece movedKing = this.getPieceToMove().movePiece(this.getTargetCoordinate());
+	        builder.setPiece(movedKing);
+
+	        // Move the rook
+	        final Piece movedRook = this.rook.movePiece(this.rookTargetCoordinate);
+	        builder.setPiece(movedRook);
+
+	        // Set the next player's alliance
+	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+	        
+	        return builder.build(this); 
 	    }
 
 	    @Override
@@ -421,33 +404,29 @@ public abstract class Move {
 	    
 	    @Override
 	    public Board execute() {
-	    	MoveResult simulateResult = simulate();
-       	    if(simulateResult.getMoveStatus() != MoveResult.MoveStatus.ILLEGAL) {
-		        final Board.Builder builder = new Board.Builder();
-		        
-		        for (final Tile tile : this.boardTiles) {
-		            if (tile.isTileOccupied()) {
-		                final Piece piece = tile.getPiece();
-		                if (!this.getPieceToMove().equals(piece) && !this.rook.equals(piece)) {
-		                    builder.setPiece(piece);
-		                }
-		            }
-		        }
-	
-		        // Move the king
-		        final Piece movedKing = this.getPieceToMove().movePiece(this.getTargetCoordinate());
-		        builder.setPiece(movedKing);
-	
-		        // Move the rook
-		        final Piece movedRook = this.rook.movePiece(this.rookTargetCoordinate);
-		        builder.setPiece(movedRook);
-	
-		        // Set the next player's alliance
-		        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
-		        
-		        return builder.build(this, simulate());
-       	    }
-       	    return null;
+	        final Board.Builder builder = new Board.Builder();
+	        
+	        for (final Tile tile : this.boardTiles) {
+	            if (tile.isTileOccupied()) {
+	                final Piece piece = tile.getPiece();
+	                if (!this.getPieceToMove().equals(piece) && !this.rook.equals(piece)) {
+	                    builder.setPiece(piece);
+	                }
+	            }
+	        }
+
+	        // Move the king
+	        final Piece movedKing = this.getPieceToMove().movePiece(this.getTargetCoordinate());
+	        builder.setPiece(movedKing);
+
+	        // Move the rook
+	        final Piece movedRook = this.rook.movePiece(this.rookTargetCoordinate);
+	        builder.setPiece(movedRook);
+
+	        // Set the next player's alliance
+	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+	        
+	        return builder.build(this);
 	    }
 
 	    @Override

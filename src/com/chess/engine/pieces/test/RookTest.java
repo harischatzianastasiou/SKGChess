@@ -19,9 +19,9 @@ import java.util.Random;
 
 public class RookTest {
 
-	public static void testRookMovesWithStandardBoard(Board board,int coordinate) {
+	public static void testRookMovesWithStandardBoard(Collection<Move> modifiedCollection,int coordinate) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+			for(Move move : modifiedCollection) {
             	if(move.getPieceToMove() instanceof Rook && move.getPieceToMove().getPieceCoordinate() == coordinate) {
             		legalMoves.add(move);
             	}

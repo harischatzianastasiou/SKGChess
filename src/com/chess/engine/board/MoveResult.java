@@ -23,18 +23,15 @@ public class MoveResult {
 
     private final Board simulatedBoard;
     private final MoveStatus moveStatus;
-    private final Collection<Move> opponentLegalMoves;
 
     private MoveResult(Move move, Board simulatedBoard) {
         this.simulatedBoard = simulatedBoard;
         this.moveStatus = determineMoveStatus(move, simulatedBoard);
-        this.opponentLegalMoves = getOpponentLegalMoves();
     }
 
     private MoveResult() { // 1st move of each player
         this.simulatedBoard = null;
         this.moveStatus = MoveStatus.LEGAL;
-        this.opponentLegalMoves = null;
     }
 
     public static MoveResult getDefaultInstance() {
@@ -48,13 +45,6 @@ public class MoveResult {
     public MoveStatus getMoveStatus() {
         return moveStatus;
     }
-    
-	public Collection<Move> getOpponentLegalMoves() {
-	    if (simulatedBoard == null || simulatedBoard.getOpponentPlayer() == null) {
-	        return ImmutableList.of(); // Return an empty list instead of null
-	    }
-	    return simulatedBoard.getCurrentPlayer().getLegalMoves();
-	}
 
     private static MoveStatus determineMoveStatus(Move move, Board simulatedBoard) {
         if (checkIfMovePutsKingIntoCheck(simulatedBoard)) {

@@ -19,9 +19,9 @@ import java.util.Random;
 
 public class KingTest {
 
-	public static void testKingMovesWithStandardBoard(Board board,int coordinate) {
+	public static void testKingMovesWithStandardBoard(Collection<Move> modifiedCollection,int coordinate) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+			for(Move move : modifiedCollection) {
             	if(move.getPieceToMove() instanceof King && move.getPieceToMove().getPieceCoordinate() == coordinate) {
             		legalMoves.add(move);
             	}
