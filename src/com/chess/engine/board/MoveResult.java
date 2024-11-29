@@ -45,7 +45,7 @@ public class MoveResult {
         }
         return false;
     }
-
+// name the players around the moves?? for example moveMaker is always the current player in current board, and the opponent in the newly created board.
     private static boolean canKingCastleKingSide(Move move, Board simulatedBoard) {
         int newOpponentKingPositionBeforeCastling = move.getSourceCoordinate();// on previous board, current player's king position before castling
         int[] castlingPath = {newOpponentKingPositionBeforeCastling, newOpponentKingPositionBeforeCastling + 1, newOpponentKingPositionBeforeCastling + 2}; // include current king position
