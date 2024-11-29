@@ -49,12 +49,12 @@ public class MoveResult {
         }
         if(move instanceof KingSideCastleMove){
             if(!isKingSideCastleValid(move, simulatedBoard)){
-                return MoveStatus.ILLEGAL;
+                return MoveStatus.CASTLE_ILLEGAL;
             }
         }
         if(move instanceof QueenSideCastleMove){
             if(!isQueenSideCastleValid(move, simulatedBoard)){
-                return MoveStatus.ILLEGAL;
+                return MoveStatus.CASTLE_ILLEGAL;
             }
         }
         return MoveStatus.LEGAL;
@@ -66,11 +66,6 @@ public class MoveResult {
         King currentPlayerKing = simulatedBoard.getOpponentPlayer().getKing();
         for (Move opponentMove : opponent.getLegalMoves()) {
             if (opponentMove.getTargetCoordinate() == currentPlayerKing.getPieceCoordinate()) {
-                System.out.println("Found attacking move: " + opponentMove.getPieceToMove() + 
-                                 " from " + opponentMove.getSourceCoordinate() + 
-                                 " to " + opponentMove.getTargetCoordinate());
-                System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\");
-                System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\");
                 return true;
             }
         }
