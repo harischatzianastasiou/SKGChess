@@ -159,57 +159,59 @@ public class ChessTable {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
-	                            Collection<Move> modifiedCollection = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
-                                MoveResult moveResult = null;
-                                for(Move move : chessboard.getCurrentPlayer().getLegalMoves()) {  
-                                    moveResult = move.simulate();
-                                    if(moveResult.getMoveStatus() == MoveResult.MoveStatus.CHECKMATE || moveResult.getMoveStatus() == MoveResult.MoveStatus.CASTLE_ILLEGAL) { // Simulate all potential moves of current player to find out which moves cannot be played due to opponent blocking them ( Moves like moving into check, moving a pinned piece etc are illegal and are checked here. Until this point current player only knew where his pieces could go, without taking account chess rules).
-                                        modifiedCollection.remove(move); // Remove illegal moves from current player's legal moves list.
+	                            Collection<Move> potentialLegalMoves = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
+                                MoveResult simulationMoveResult = null;
+                                for(Move simulationMove : chessboard.getCurrentPlayer().getLegalMoves()) {  
+                                    simulationMoveResult = simulationMove.simulate();
+                                    if(simulationMoveResult.getMoveStatus() == MoveResult.MoveStatus.CHECKMATE || simulationMoveResult.getMoveStatus() == MoveResult.MoveStatus.CASTLE_ILLEGAL) { // Simulate all potential moves of current player to find out which moves cannot be played due to opponent blocking them ( Moves like moving into check, moving a pinned piece etc are illegal and are checked here. Until this point current player only knew where his pieces could go, without taking account chess rules).
+                                        potentialLegalMoves.remove(simulationMove); // Remove illegal moves from current player's potential legal moves list.
                                     }
 
                                 }
+                                Collection<Move> validLegalMoves = potentialLegalMoves;
   
 	                           if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
 	                        		if(selectedPiece instanceof Rook) {
 		                            System.out.println("\nTesting Rook Moves:");
-		                            RookTest.testRookMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+		                            RookTest.testRookMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
 	                        		}else if(selectedPiece instanceof Knight) {
 		                            System.out.println("\nTesting Knight Moves:");
-		                            KnightTest.testKnightMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+		                            KnightTest.testKnightMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
 	                        		}else if(selectedPiece instanceof Bishop) {
 		                            System.out.println("\nTesting Bishop Moves:");
-		                            BishopTest.testBishopMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+		                            BishopTest.testBishopMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
 	                        		}else if(selectedPiece instanceof Queen) {
 		                            System.out.println("\nTesting Queen Moves:");
-		                            QueenTest.testQueenMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+		                            QueenTest.testQueenMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
 	                        		}else if(selectedPiece instanceof King) {
 		                            System.out.println("\nTesting King Moves:");
-		                            KingTest.testKingMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+		                            KingTest.testKingMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
 	                        		}else if(selectedPiece instanceof Pawn) {
 		                            System.out.println("\nTesting Pawn Moves:");
-		                            PawnTest.testPawnMovesWithStandardBoard(modifiedCollection,selectedPiece.getPieceCoordinate());
+		                            PawnTest.testPawnMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
 	                        		}
 	                        	}
-	                           for(Move move : modifiedCollection) {  
-	                        	   if(move.getSourceCoordinate() == sourceTile.getTileCoordinate() && 
-	                        	      move.getTargetCoordinate() == targetTile.getTileCoordinate()) {
-                                       GameHistory.getInstance().addBoardState(chessboard);
-                                       GameHistory.getInstance().addMove(move);
-                                       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                       /// // With each move a new board is created to represent the new state of the tiles and the turn of the next players.//           //                               //
-                                       /// // At least one tile has now changed to occupied or empty (tiles hold pieces).                                    //                                          //
-                                       /// // Also Current and Opponent player have changed.                                                                 //
-                                       /// // The new current player gets the opposite color of the previous current player. Same applies for the opponent.  //
-                                       /// // Tiles, current player and opponent player are created with the board, and are immutable afterwards.            //
-	                        		   chessboard = move.execute();                                                                                          //
-                                       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                       int currentKingCoordinate = chessboard.getCurrentPlayer().getKing().getPieceCoordinate();// 
+	                           for(Move validLegalMove : validLegalMoves) {  
+	                        	   if(validLegalMove.getSourceCoordinate() == sourceTile.getTileCoordinate() && validLegalMove.getTargetCoordinate() == targetTile.getTileCoordinate()) {
+                                    
+                                        GameHistory.getInstance().addBoardState(chessboard);
+                                        GameHistory.getInstance().addMove(validLegalMove);
+
+                                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                ///   With each move a new board is created to represent the new state of the tiles and the turn of the next players.     //           
+                                ///   At least one tile has now changed to occupied or empty (tiles hold pieces).                                         // 
+                                ///   Also Current and Opponent player have changed.                                                                      //
+                                ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
+                                ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
+                                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	                        		    chessboard = validLegalMove.execute(); 
                                
-                                       for (Move opponentMove : chessboard.getOpponentPlayer().getLegalMoves()) {// Opponent was the current player right before move.execute() was called. If white executed the move, since it is now black's turn, opponent is white.
-                                           if(opponentMove.getTargetCoordinate() == currentKingCoordinate){ // Effectively, we are checking if a move of the previously current player(in the new board --> getOpponentPlayer() ) resulted in checking the new current player.
+                                        for (Move opponentPotentialLegalMove : chessboard.getOpponentPlayer().getLegalMoves()) {// Opponent was the current player right before move.execute() was called. If white executed the move, since it is now black's turn, opponent is white.
+                                           if(opponentPotentialLegalMove.getTargetCoordinate() == chessboard.getCurrentPlayer().getKing().getPieceCoordinate()){ // Effectively, we are checking if a move of the previously current player(in the new board --> getOpponentPlayer() ) resulted in checking the new current player. Here we do not need to validate legal moves, because we are looking for a move that results in check. Validation of legal moves is done when we need to guarantee that a move does not result in immediate checkmate or invalid castling.(**can also check for invalid castle here actually, moveresult makes sense specifically for preventing checkmate**)
                                                 isCurrentPlayerInCheck = true;
                                                 for(Move currentPlayerPotentialMove  : chessboard.getCurrentPlayer().getLegalMoves()) { 
-                                                    MoveResult currentPlayerPotentialMoveResult = move.simulate(); // If new current player is in check, get all potential moves and simulate their execution to identify those that can either block the check or capture the checking piece(if checking piece = 1) or move out of check (if checking piece > = 1 and king has escape moves).
+                                                    MoveResult currentPlayerPotentialMoveResult = currentPlayerPotentialMove.simulate(); // If new current player is in check, get all potential moves and simulate their execution to identify those that can either block the check or capture the checking piece(if checking piece = 1) or move out of check (if checking piece > = 1 and king has escape moves).
                                                     if(currentPlayerPotentialMoveResult.getMoveStatus() == MoveResult.MoveStatus.CHECKMATE) { //If any move can be played to get out of check, current player is not in checkmate.
                                                         isCurrentPlayerInCheckmate = false;
                                                     }else {// If no move can be played to get out of check, current player is in checkmate.
