@@ -14,7 +14,6 @@ import com.chess.engine.pieces.Piece;
 import com.chess.engine.pieces.Queen;
 import com.chess.engine.pieces.Rook;
 import com.chess.engine.player.Player;
-import com.chess.engine.player.PlayerFactory;
 import com.google.common.collect.ImmutableList;
 
 public class Board {
@@ -25,14 +24,14 @@ public class Board {
     
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
-        this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
-        this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
+        this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance);
+        this.opponentPlayer = Player.createPlayer(tiles, currentPlayer.getOpponentAlliance());
 	}
 	
 	private Board(final Builder builder, final Move move) {
 		this.tiles = createTiles(builder);
-		this.currentPlayer = PlayerFactory.createPlayer(tiles, builder.currentPlayerAlliance);
-	    this.opponentPlayer = PlayerFactory.createPlayer(tiles, currentPlayer.getOpponentAlliance());
+		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance);
+	    this.opponentPlayer = Player.createPlayer(tiles, currentPlayer.getOpponentAlliance());
 	}
 	
 	private static List<Tile> createTiles(final Builder builder) {

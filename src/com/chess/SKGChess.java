@@ -1,33 +1,25 @@
 package com.chess;
 
-import com.chess.engine.board.Board;
-import com.chess.engine.pieces.test.BishopTest;
-import com.chess.engine.pieces.test.KingTest;
-import com.chess.engine.pieces.test.KnightTest;
-import com.chess.engine.pieces.test.PawnTest;
-import com.chess.engine.pieces.test.QueenTest;
-import com.chess.engine.pieces.test.RookTest;
 import com.chess.gui.ChessTable;
 
 public class SKGChess {
 
     public static void main(String[] args) {
         
-	Board chessboard = Board.createStandardBoard();
-	System.out.println(chessboard);
-	System.out.println("\nTesting Rook Moves:");
-	RookTest.testRookMovesWithStandardBoard(chessboard);
-	System.out.println("\nTesting Knight Moves:");
-	KnightTest.testKnightMovesWithStandardBoard(chessboard);
-	System.out.println("\nTesting Bishop Moves:");
-	BishopTest.testBishopMovesWithStandardBoard(chessboard);
-	System.out.println("\nTesting Queen Moves:");
-	QueenTest.testQueenMovesWithStandardBoard(chessboard);
-	System.out.println("\nTesting King Moves:");
-	KingTest.testKingMovesWithStandardBoard(chessboard);
-	System.out.println("\nTesting Pawn Moves:");
-	PawnTest.testPawnMovesWithStandardBoard(chessboard);
-//    		
+	// Board chessboard = Board.createStandardBoard();
+	// System.out.println(chessboard);
+	// System.out.println("\nTesting Rook Moves:");
+	// RookTest.testRookMovesWithStandardBoard(chessboard);
+	// System.out.println("\nTesting Knight Moves:");
+	// KnightTest.testKnightMovesWithStandardBoard(chessboard);
+	// System.out.println("\nTesting Bishop Moves:");
+	// BishopTest.testBishopMovesWithStandardBoard(chessboard);
+	// System.out.println("\nTesting Queen Moves:");
+	// QueenTest.testQueenMovesWithStandardBoard(chessboard);
+	// System.out.println("\nTesting King Moves:");
+	// KingTest.testKingMovesWithStandardBoard(chessboard);
+	// System.out.println("\nTesting Pawn Moves:");
+	// PawnTest.testPawnMovesWithStandardBoard(chessboard);  		
     	
 	ChessTable chesstable = new ChessTable();
     }

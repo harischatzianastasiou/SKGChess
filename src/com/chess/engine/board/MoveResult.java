@@ -1,69 +1,47 @@
 package com.chess.engine.board;
 
-import com.chess.engine.board.Move.KingSideCastleMove;
-import com.chess.engine.board.Move.QueenSideCastleMove;
-
 public class MoveResult {
 
-    public enum MoveStatus {
-        LEGAL,
-        CASTLE_ILLEGAL,
-        CHECKMATE
-    }
-
-    private static final MoveResult DEFAULT_INSTANCE = new MoveResult();
     private final Board simulatedBoard;
-    private final MoveStatus moveStatus;
+    private final Move simulationMove;
+    private final boolean isCheckmate;
+    private final boolean isCheck;
+    private final boolean isCastleKingSideLegal;
+    private final boolean isCastleQueenSideLegal;
 
     private MoveResult(Move move, Board simulatedBoard) {
         this.simulatedBoard = simulatedBoard;
-        this.moveStatus = determineMoveStatus(move, simulatedBoard);
-    }
-
-    private MoveResult() { // 1st move of each player
-        this.simulatedBoard = null;
-        this.moveStatus = MoveStatus.LEGAL;
-    }
-
-    public static MoveResult getDefaultInstance() {
-        return DEFAULT_INSTANCE;
+        this.simulationMove = move;
+        this.isCheckmate = putsSelfInCheckmate(simulatedBoard);
+        this.isCheck = checksOpponent(simulatedBoard);
+        this.isCastleKingSideLegal = canKingCastleKingSide(move, simulatedBoard);
+        this.isCastleQueenSideLegal = canKingCastleQueenSide(move, simulatedBoard); 
     }
 
     public static MoveResult create(Move move, Board simulatedBoard) {
         return new MoveResult(move, simulatedBoard);
     }
 
-    public MoveStatus getMoveStatus() {
-        return moveStatus;
-    }
-
     public Board getSimulatedBoard() {
         return simulatedBoard;
     }
 
-    private static MoveStatus determineMoveStatus(Move move, Board simulatedBoard) {
-        if (isKingInCheck(simulatedBoard)) {// If after executing the move, the king is in check, then it is checkmate.
-            return MoveStatus.CHECKMATE;
-        }
-        if(move instanceof KingSideCastleMove){
-            if(!canKingCastleKingSide(move, simulatedBoard)){
-                return MoveStatus.CASTLE_ILLEGAL;
-            }
-        }
-        if(move instanceof QueenSideCastleMove){
-            if(!canKingCastleQueenSide(move, simulatedBoard)){
-                return MoveStatus.CASTLE_ILLEGAL;
-            }
-        }
-        return MoveStatus.LEGAL;
-    }
-
-    private static boolean isKingInCheck(Board simulatedBoard) {
-        //preventing king from moving to a square that is under attack, and other pieces from moving to a square that does not prevent checkmate.
+    private static boolean putsSelfInCheckmate(Board simulatedBoard) {//where current player is the player that made the move, so getOpponentPlayer() in the simulatedBoard.
         for (Move newCurrentPlayerPotentialMove : simulatedBoard.getCurrentPlayer().getLegalMoves()) {
             if (newCurrentPlayerPotentialMove.getTargetCoordinate() == simulatedBoard.getOpponentPlayer().getKing().getPieceCoordinate()) {
                 return true;
             }
+        }
+        return false;
+    }
+
+    private static boolean checksOpponent(Board simulatedBoard) {
+        for (Move opponentPotentialLegalMove : simulatedBoard.getOpponentPlayer().getLegalMoves()) {
+            // Check if the opponent's potential move does not result in current player checkmate
+                if (opponentPotentialLegalMove.getTargetCoordinate() == simulatedBoard.getCurrentPlayer().getKing().getPieceCoordinate()) {
+                    
+                    return true;
+                }
         }
         return false;
     }
@@ -96,5 +74,25 @@ public class MoveResult {
             }
         }
         return true;
+    }
+
+    public Move getSimulationMove() {
+        return simulationMove;
+    }
+    
+    public boolean putsSelfInCheckmate() {
+        return isCheckmate;
+    }
+
+    public boolean checksOpponent() {
+        return isCheck;
+    }
+
+    public boolean isCastleKingSideLegal() {
+        return isCastleKingSideLegal;
+    }
+
+    public boolean isCastleQueenSideLegal() {
+        return isCastleQueenSideLegal;
     }
 }
