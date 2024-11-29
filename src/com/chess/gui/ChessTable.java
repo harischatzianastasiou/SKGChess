@@ -50,7 +50,8 @@ public class ChessTable {
     private Tile sourceTile;
     private Tile targetTile;
     private Piece selectedPiece;
-    
+    boolean isCheckmate;
+
     private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(600, 600);
     private final static Dimension BOARD_PANEL_DIMENSION = new Dimension (400, 350);
     private final static Dimension TILE_PANEL_DIMENSION = new Dimension (70, 70); // Increased size
@@ -67,6 +68,7 @@ public class ChessTable {
         this.boardPanel = new BoardPanel();
         this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.gameFrame.setVisible(true);
+        this.isCheckmate = false;
     }
 
     private JMenuBar createChessTableMenuBar() {
@@ -132,6 +134,10 @@ public class ChessTable {
             addMouseListener(new MouseListener() {
 	        	@Override
 	            public void mouseClicked(MouseEvent e) {
+                    Collection<Move> modifiedCollection = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
+                    Collection<Move> checkingMoves = new ArrayList<>();
+                    boolean isCurrentPlayerInCheck = false;
+                    boolean isCurrentPlayerInCheckmate = false;
                     if (chessboard == null) {
                         JOptionPane.showMessageDialog(null, "Chessboard is not initialized. Please restart the game.");
                         return;
@@ -150,23 +156,19 @@ public class ChessTable {
 	                        if(selectedPiece== null) {
 	                        	sourceTile = null;
 	                        }
-	                    	                    //second click
+	                    //second click
 	                	}else {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
-                               Collection<Move> modifiedCollection = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
-                               Collection<Move> checkingMoves = new ArrayList<>();
-                               MoveResult moveResult = null;
-	                           for(Move move : chessboard.getCurrentPlayer().getLegalMoves()) {  
-	                        	   moveResult = move.simulate();
-	                        	   if(moveResult.getMoveStatus() == MoveResult.MoveStatus.ILLEGAL) {
-                                       modifiedCollection.remove(move); // remove illegal move from current player's legal moves list.
-                                   }
-                                   if(moveResult.getMoveStatus() == MoveResult.MoveStatus.CHECKMATE) {
-                                    checkingMoves.add(move); // add check move to current player's legal moves list.
+                                MoveResult moveResult = null;
+                                for(Move move : chessboard.getCurrentPlayer().getLegalMoves()) {  
+                                    moveResult = move.simulate();
+                                    if(moveResult.getMoveStatus() == MoveResult.MoveStatus.CHECKMATE || moveResult.getMoveStatus() == MoveResult.MoveStatus.CASTLE_ILLEGAL) { // Simulate all potential moves of current player to find out which moves cannot be played due to opponent blocking them ( Moves like moving into check, moving a pinned piece etc are illegal and are checked here. Until this point current player only knew where his pieces could go, without taking account chess rules).
+                                        modifiedCollection.remove(move); // Remove illegal moves from current player's legal moves list.
+                                    }
+
                                 }
-	                           }
   
 	                           if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
 	                        		if(selectedPiece instanceof Rook) {
@@ -194,11 +196,32 @@ public class ChessTable {
 	                        	      move.getTargetCoordinate() == targetTile.getTileCoordinate()) {
                                        GameHistory.getInstance().addBoardState(chessboard);
                                        GameHistory.getInstance().addMove(move);
-	                        		   chessboard = move.execute();
-                                       if(checkingMoves.contains(move)) {
-                                           JOptionPane.showMessageDialog(null, "CHECKMATE!");
-                                       }
-                                       break;
+                                       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                       /// // With each move a new board is created to represent the new state of the tiles and the turn of the next players.//           //                               //
+                                       /// // At least one tile has now changed to occupied or empty (tiles hold pieces).                                    //                                          //
+                                       /// // Also Current and Opponent player have changed.                                                                 //
+                                       /// // The new current player gets the opposite color of the previous current player. Same applies for the opponent.  //
+                                       /// // Tiles, current player and opponent player are created with the board, and are immutable afterwards.            //
+	                        		   chessboard = move.execute();                                                                                          //
+                                       ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                       int currentKingCoordinate = chessboard.getCurrentPlayer().getKing().getPieceCoordinate();// 
+                               
+                                       for (Move opponentMove : chessboard.getOpponentPlayer().getLegalMoves()) {// Opponent was the current player right before move.execute() was called. If white executed the move, since it is now black's turn, opponent is white.
+                                           if(opponentMove.getTargetCoordinate() == currentKingCoordinate){ // Effectively, we are checking if a move of the previously current player(in the new board --> getOpponentPlayer() ) resulted in checking the new current player.
+                                                isCurrentPlayerInCheck = true;
+                                                for(Move currentPlayerPotentialMove  : chessboard.getCurrentPlayer().getLegalMoves()) { 
+                                                    MoveResult currentPlayerPotentialMoveResult = move.simulate(); // If new current player is in check, get all potential moves and simulate their execution to identify those that can either block the check or capture the checking piece(if checking piece = 1) or move out of check (if checking piece > = 1 and king has escape moves).
+                                                    if(currentPlayerPotentialMoveResult.getMoveStatus() == MoveResult.MoveStatus.CHECKMATE) { //If any move can be played to get out of check, current player is not in checkmate.
+                                                        isCurrentPlayerInCheckmate = false;
+                                                    }else {// If no move can be played to get out of check, current player is in checkmate.
+                                                        isCheckmate = true;
+                                                    }
+                                                    // We only need to find one move that avoids checkmate.
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        break;
 	                        	   }
                                 }
 	                        }
@@ -214,6 +237,10 @@ public class ChessTable {
 	                		public void run() {
 	                			if(chessboard!= null) {
 	                				boardPanel.drawBoard(chessboard);
+                                    if(isCheckmate) {
+                                        JOptionPane.showMessageDialog(null, "Checkmate! " + chessboard.getOpponentPlayer().getAlliance().toString() + " wins.");
+                                        System.exit(0);
+                                    }
 	                			}
                             }
 	                	});

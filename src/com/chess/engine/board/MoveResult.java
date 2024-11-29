@@ -8,9 +8,8 @@ import com.chess.engine.player.Player;
 public class MoveResult {
 
     public enum MoveStatus {
-        ILLEGAL,
         LEGAL,
-        CHECK,
+        CASTLE_ILLEGAL,
         CHECKMATE
     }
 
@@ -46,7 +45,7 @@ public class MoveResult {
 
     private static MoveStatus determineMoveStatus(Move move, Board simulatedBoard) {
         if (isMoveLeavingKingOpenForCheckmate(simulatedBoard)) {
-            return MoveStatus.ILLEGAL;
+            return MoveStatus.CHECKMATE;
         }
         if(move instanceof KingSideCastleMove){
             if(!isKingSideCastleValid(move, simulatedBoard)){
@@ -58,23 +57,20 @@ public class MoveResult {
                 return MoveStatus.ILLEGAL;
             }
         }
-        
-        if (isMoveCheckingOpponentKing(move, simulatedBoard)) {
-            return MoveStatus.CHECK;
-        }
-        if(isCheckmate(move, simulatedBoard)){
-            return MoveStatus.CHECKMATE;
-        }
         return MoveStatus.LEGAL;
     }
 
     private static boolean isMoveLeavingKingOpenForCheckmate(Board simulatedBoard) {
         //preventing king from moving to a square that is under attack, and other pieces from moving to a square that does not prevent checkmate.
         Player opponent = simulatedBoard.getCurrentPlayer();
-        King king = simulatedBoard.getOpponentPlayer().getKing();
-
+        King currentPlayerKing = simulatedBoard.getOpponentPlayer().getKing();
         for (Move opponentMove : opponent.getLegalMoves()) {
-            if (opponentMove.getTargetCoordinate() == king.getPieceCoordinate()) {
+            if (opponentMove.getTargetCoordinate() == currentPlayerKing.getPieceCoordinate()) {
+                System.out.println("Found attacking move: " + opponentMove.getPieceToMove() + 
+                                 " from " + opponentMove.getSourceCoordinate() + 
+                                 " to " + opponentMove.getTargetCoordinate());
+                System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\");
+                System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\");
                 return true;
             }
         }
@@ -111,10 +107,5 @@ public class MoveResult {
             }
         }
         return true;
-    }
-
-    private static boolean isOpponentKingInCheck(Move move, Board simulatedBoard) {
-        King king = simulatedBoard.getCurrentPlayer().getKing();
-        return move.getTargetCoordinate() == king.getPieceCoordinate();
     }
 }
