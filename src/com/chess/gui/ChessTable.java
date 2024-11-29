@@ -134,8 +134,6 @@ public class ChessTable {
             addMouseListener(new MouseListener() {
 	        	@Override
 	            public void mouseClicked(MouseEvent e) {
-                    Collection<Move> modifiedCollection = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
-                    Collection<Move> checkingMoves = new ArrayList<>();
                     boolean isCurrentPlayerInCheck = false;
                     boolean isCurrentPlayerInCheckmate = false;
                     if (chessboard == null) {
@@ -161,6 +159,7 @@ public class ChessTable {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
+	                            Collection<Move> modifiedCollection = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
                                 MoveResult moveResult = null;
                                 for(Move move : chessboard.getCurrentPlayer().getLegalMoves()) {  
                                     moveResult = move.simulate();
