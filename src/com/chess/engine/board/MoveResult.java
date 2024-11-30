@@ -1,56 +1,63 @@
 package com.chess.engine.board;
 
+import com.chess.engine.pieces.Piece;
 public class MoveResult {
 
-    private final Board simulatedBoard;
+    private final Board postSimulationMoveBoard;
     private final Move simulationMove;
-    private final boolean isCheckmate;
+    private final boolean putsSelfInCheckmate;
     private final boolean isCheck;
     private final boolean isCastleKingSideLegal;
     private final boolean isCastleQueenSideLegal;
 
-    private MoveResult(Move move, Board simulatedBoard) {
-        this.simulatedBoard = simulatedBoard;
-        this.simulationMove = move;
-        this.isCheckmate = putsSelfInCheckmate(simulatedBoard);
-        this.isCheck = checksOpponent(simulatedBoard);
-        this.isCastleKingSideLegal = canKingCastleKingSide(move, simulatedBoard);
-        this.isCastleQueenSideLegal = canKingCastleQueenSide(move, simulatedBoard); 
+    private MoveResult(Move simulationMove, Board postSimulationMoveBoard) {
+        this.postSimulationMoveBoard = postSimulationMoveBoard;
+        this.simulationMove = simulationMove;
+        this.putsSelfInCheckmate = putsSelfInCheckmate(postSimulationMoveBoard);
+        this.isCheck = isCheck(postSimulationMoveBoard);
+        this.isCastleKingSideLegal = canKingCastleKingSide(simulationMove, postSimulationMoveBoard);
+        this.isCastleQueenSideLegal = canKingCastleQueenSide(simulationMove, postSimulationMoveBoard); 
     }
 
-    public static MoveResult create(Move move, Board simulatedBoard) {
-        return new MoveResult(move, simulatedBoard);
+    public static MoveResult create(Move simulationMove, Board postSimulationMoveBoard) {
+        return new MoveResult(simulationMove, postSimulationMoveBoard);
     }
 
-    public Board getSimulatedBoard() {
-        return simulatedBoard;
+    public Board getpostSimulationMoveBoard() {
+        return postSimulationMoveBoard;
     }
 
-    private static boolean putsSelfInCheckmate(Board simulatedBoard) {//where current player is the player that made the move, so getOpponentPlayer() in the simulatedBoard.
-        for (Move newCurrentPlayerPotentialMove : simulatedBoard.getCurrentPlayer().getLegalMoves()) {
-            if (newCurrentPlayerPotentialMove.getTargetCoordinate() == simulatedBoard.getOpponentPlayer().getKing().getPieceCoordinate()) {
+    private static boolean putsSelfInCheckmate(Board postSimulationMoveBoard) {//where current player is the player that made the move, so getOpponentPlayer() in the postSimulationMoveBoard.
+        for (Move newCurrentPlayerPotentialMove : postSimulationMoveBoard.getCurrentPlayer().getLegalMoves()) {
+            if (newCurrentPlayerPotentialMove.getTargetCoordinate() == postSimulationMoveBoard.getOpponentPlayer().getKing().getPieceCoordinate()) {
                 return true;
             }
         }
         return false;
     }
 
-    private static boolean checksOpponent(Board simulatedBoard) {
-        for (Move opponentPotentialLegalMove : simulatedBoard.getOpponentPlayer().getLegalMoves()) {
-            // Check if the opponent's potential move does not result in current player checkmate
-                if (opponentPotentialLegalMove.getTargetCoordinate() == simulatedBoard.getCurrentPlayer().getKing().getPieceCoordinate()) {
-                    
+    private boolean isCheck(Board postSimulationMoveBoard) {
+        // Get the piece that was just moved
+        Piece movedPiece = simulationMove.getPieceToMove();
+        
+        // Iterate over the move maker's new legal moves, after the move is made ( move maker is the opponent in the postSimulationMoveBoard)
+        for (Move newOpponentPotentialLegalMove : postSimulationMoveBoard.getOpponentPlayer().getLegalMoves()) {
+            // Find the piece that was just moved
+            // if (newOpponentPotentialLegalMove.getPieceToMove().equals(movedPiece)) {//equals doesnt work, fix later
+                // Check if the piece that was just moved is attacking the new current player's king
+                if (newOpponentPotentialLegalMove.getTargetCoordinate() == postSimulationMoveBoard.getCurrentPlayer().getKing().getPieceCoordinate()) {
                     return true;
                 }
+            // }
         }
         return false;
     }
-// name the players around the moves?? for example moveMaker is always the current player in current board, and the opponent in the newly created board.
-    private static boolean canKingCastleKingSide(Move move, Board simulatedBoard) {
-        int newOpponentKingPositionBeforeCastling = move.getSourceCoordinate();// on previous board, current player's king position before castling
+
+    private boolean canKingCastleKingSide(Move simulationMove, Board postSimulationMoveBoard) {
+        int newOpponentKingPositionBeforeCastling = simulationMove.getSourceCoordinate();// on previous board, current player's king position before castling
         int[] castlingPath = {newOpponentKingPositionBeforeCastling, newOpponentKingPositionBeforeCastling + 1, newOpponentKingPositionBeforeCastling + 2}; // include current king position
         
-        for (Move newCurrentPlayerPotentialMove : simulatedBoard.getCurrentPlayer().getLegalMoves()) {
+        for (Move newCurrentPlayerPotentialMove : postSimulationMoveBoard.getCurrentPlayer().getLegalMoves()) {
             int targetSquare = newCurrentPlayerPotentialMove.getTargetCoordinate();
             for (int pathSquare : castlingPath) {
                 if (targetSquare == pathSquare) {
@@ -61,11 +68,11 @@ public class MoveResult {
         return true;
     }
 
-    private static boolean canKingCastleQueenSide(Move move, Board simulatedBoard) {
-        int newOpponentKingPositionBeforeCastling = move.getSourceCoordinate();
+    private boolean canKingCastleQueenSide(Move simulationMove, Board postSimulationMoveBoard) {
+        int newOpponentKingPositionBeforeCastling = simulationMove.getSourceCoordinate();
         int[] castlingPath = {newOpponentKingPositionBeforeCastling, newOpponentKingPositionBeforeCastling - 1, newOpponentKingPositionBeforeCastling - 2}; // include current king position
         
-        for (Move newCurrentPlayerPotentialMove : simulatedBoard.getCurrentPlayer().getLegalMoves()) {
+        for (Move newCurrentPlayerPotentialMove : postSimulationMoveBoard.getCurrentPlayer().getLegalMoves()) {
             int targetSquare = newCurrentPlayerPotentialMove.getTargetCoordinate();
             for (int pathSquare : castlingPath) {
                 if (targetSquare == pathSquare) {
@@ -81,10 +88,10 @@ public class MoveResult {
     }
     
     public boolean putsSelfInCheckmate() {
-        return isCheckmate;
+        return putsSelfInCheckmate;
     }
 
-    public boolean checksOpponent() {
+    public boolean isCheck() {
         return isCheck;
     }
 

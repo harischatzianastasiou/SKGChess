@@ -166,13 +166,22 @@ public class ChessTable {
                                 MoveResult simulationMoveResult = null;
                                 for(Move simulationMove : chessboard.getCurrentPlayer().getLegalMoves()) {  
                                     simulationMoveResult = simulationMove.simulate();
-                                    if(simulationMove instanceof KingSideCastleMove && !simulationMoveResult.isCastleKingSideLegal()){
-                                        potentialLegalMoves.remove(simulationMove);
-                                    }else if(simulationMove instanceof QueenSideCastleMove && !simulationMoveResult.isCastleQueenSideLegal()){
-                                        potentialLegalMoves.remove(simulationMove);
-                                    }else if(simulationMoveResult.putsSelfInCheckmate()) { // Simulate all potential moves of current player to find out which moves cannot be played due to opponent blocking them ( Moves like moving into check, moving a pinned piece etc are illegal and are checked here. Until this point current player only knew where his pieces could go, without taking account chess rules).
+									
+                                    if(simulationMove instanceof KingSideCastleMove){
+										if(!simulationMoveResult.isCastleKingSideLegal()){
+                                        	potentialLegalMoves.remove(simulationMove);
+										}
+                                    }else if(simulationMove instanceof QueenSideCastleMove){
+										if(!simulationMoveResult.isCastleQueenSideLegal()){
+                                            potentialLegalMoves.remove(simulationMove);
+										}
+                                    }
+									
+									if(simulationMoveResult.putsSelfInCheckmate()) { // Simulate all potential moves of current player to find out which moves cannot be played due to opponent blocking them ( Moves like moving into check, moving a pinned piece etc are illegal and are checked here. Until this point current player only knew where his pieces could go, without taking account opponent's moves).
                                         potentialLegalMoves.remove(simulationMove); // Remove illegal moves from current player's potential legal moves list.
-                                    }else if(simulationMoveResult.checksOpponent()){
+                                    }
+									
+									if(simulationMoveResult.isCheck()){
                                         checkingMoveResults.add(simulationMoveResult);
                                     }
                                     
@@ -204,7 +213,7 @@ public class ChessTable {
 	                           for(Move validLegalMove : validLegalMoves) {  
 	                        	   if(validLegalMove.getSourceCoordinate() == sourceTile.getTileCoordinate() && validLegalMove.getTargetCoordinate() == targetTile.getTileCoordinate()) {
                                     
-                                        GameHistory.getInstance().addBoardState(chessboard);
+                                        GameHistory.getInstance().addBoard(chessboard);
                                         GameHistory.getInstance().addMove(validLegalMove);
 
                                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

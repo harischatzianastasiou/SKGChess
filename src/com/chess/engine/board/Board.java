@@ -27,12 +27,10 @@ public class Board {
         this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance);
         this.opponentPlayer = Player.createPlayer(tiles, currentPlayer.getOpponentAlliance());
 	}
-	
-	private Board(final Builder builder, final Move move) {
-		this.tiles = createTiles(builder);
-		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance);
-	    this.opponentPlayer = Player.createPlayer(tiles, currentPlayer.getOpponentAlliance());
-	}
+
+	private static Board createBoard(Builder builder) {
+        return new Board(builder);
+    }
 	
 	private static List<Tile> createTiles(final Builder builder) {
 	    final List<Tile> tiles = new ArrayList<>(BoardUtils.NUM_TILES);
@@ -46,90 +44,18 @@ public class Board {
 	    }
 	    return ImmutableList.copyOf(tiles);
 	}
-	
-	public static Board createStandardBoard() {
-		// create white and black player here once
-	    final Builder builder = new Builder();
-	    
-	    // Set up White pieces
-	    builder.setPiece(new Rook  (0, Alliance.BLACK));
-	    builder.setPiece(new Knight(1, Alliance.BLACK));
-	    builder.setPiece(new Bishop(2, Alliance.BLACK));
-	    builder.setPiece(new Queen (3, Alliance.BLACK));
-	    builder.setPiece(new King  (4, Alliance.BLACK));
-	    builder.setPiece(new Bishop(5, Alliance.BLACK));
-	    builder.setPiece(new Knight(6, Alliance.BLACK));
-	    builder.setPiece(new Rook  (7, Alliance.BLACK));
-	    for(int coordinate = 8; coordinate < 16; coordinate++) {
-	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
-	    }
-	    
-	    // Set up Black pieces
-	    builder.setPiece(new Rook  (56, Alliance.WHITE));
-	    builder.setPiece(new Knight(57, Alliance.WHITE));
-	    builder.setPiece(new Bishop(58, Alliance.WHITE));
-		builder.setPiece(new Queen  (59, Alliance.WHITE));
-		builder.setPiece(new King  (60, Alliance.WHITE));
-	    builder.setPiece(new Bishop(61, Alliance.WHITE));
-	    builder.setPiece(new Knight(62, Alliance.WHITE));
-	    builder.setPiece(new Rook  (63, Alliance.WHITE));
-	    for(int coordinate = 48; coordinate < 56; coordinate++) {
-	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
-	    }
-	    
-	    // Set up next player
-	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
 
-	    return createBoard(builder);
-	}
-	
-	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.
-		
-		private Map<Integer, Piece> pieces;
-		private Alliance currentPlayerAlliance;
-
-		public Builder() {
-			this.pieces = new HashMap<>(32, 1.0f);
-        }
-		
-		public Builder setPiece(final Piece piece) {
-			this.pieces.put(piece.getPieceCoordinate(), piece);
-			return this;
-		}
-		
-		public Builder setCurrentPlayerAlliance(final Alliance currentPlayerAlliance) {
-            this.currentPlayerAlliance = currentPlayerAlliance;
-            return this;
-        }
-		
-		public Map<Integer,Piece> getPieces() {
-			return pieces;
-		}
-		
-        public Board build() {// build the 1st board
-            return Board.createBoard(this);
-        }
-        
-        public Board build(Move move) {//build a new board everytime a move is executed
-            return Board.createBoard(this, move);
-        }
-	}
-	
-    private static Board createBoard(Builder builder) {
-        return new Board(builder);
-    }
-    
-    private static Board createBoard(Builder builder, Move move) {
-        return new Board(builder, move);
-    }
-   
 	public List<Tile> getTiles() {
 		return ImmutableList.copyOf(tiles);
 	}
-	
+
 	public Tile getTile(final int tileCoordinate) {
+        if (!BoardUtils.isValidTileCoordinate(tileCoordinate)) {
+            throw new IllegalArgumentException("Invalid tile coordinate: " + tileCoordinate);
+        }
         return tiles.get(tileCoordinate);
     }
+
 	public Player getCurrentPlayer() {
 		return this.currentPlayer;
 	}
@@ -137,6 +63,7 @@ public class Board {
 	public Player getOpponentPlayer() {
         return this.opponentPlayer;
     }
+
 	
 	@Override
 	public String toString() {
@@ -156,5 +83,65 @@ public class Board {
 	        }
 	    }
 	    return builder.toString();
+	}
+
+	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.
+		
+		private Map<Integer, Piece> pieces;
+		private Alliance currentPlayerAlliance;
+
+		public Builder() {
+			this.pieces = new HashMap<>(32, 1.0f);
+        }
+		
+		public Builder setPiece(final Piece piece) {
+			this.pieces.put(piece.getPieceCoordinate(), piece);
+			return this;
+		}
+		
+		public Builder setCurrentPlayerAlliance(final Alliance currentPlayerAlliance) {
+            this.currentPlayerAlliance = currentPlayerAlliance;
+            return this;
+        }
+        
+        public Board build() {//build a new board everytime a move is executed.
+            return Board.createBoard(this);
+        }
+	}
+	
+	public static Board createStandardBoard() {
+		// create white and black player here once
+	    final Builder builder = new Builder();
+	    
+	    // Set up Black pieces
+	    builder.setPiece(new Rook  (0, Alliance.BLACK));
+	    builder.setPiece(new Knight(1, Alliance.BLACK));
+	    builder.setPiece(new Bishop(2, Alliance.BLACK));
+	    builder.setPiece(new Queen (3, Alliance.BLACK));
+	    builder.setPiece(new King  (4, Alliance.BLACK));
+	    builder.setPiece(new Bishop(5, Alliance.BLACK));
+	    builder.setPiece(new Knight(6, Alliance.BLACK));
+	    builder.setPiece(new Rook  (7, Alliance.BLACK));
+	    for(int coordinate = 8; coordinate < 16; coordinate++) {
+	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
+	    }
+	    
+	    // Set up White pieces
+	    builder.setPiece(new Rook  (56, Alliance.WHITE));
+	    builder.setPiece(new Knight(57, Alliance.WHITE));
+	    builder.setPiece(new Bishop(58, Alliance.WHITE));
+		builder.setPiece(new Queen (59, Alliance.WHITE));
+		builder.setPiece(new King  (60, Alliance.WHITE));
+	    builder.setPiece(new Bishop(61, Alliance.WHITE));
+	    builder.setPiece(new Knight(62, Alliance.WHITE));
+	    builder.setPiece(new Rook  (63, Alliance.WHITE));
+	    for(int coordinate = 48; coordinate < 56; coordinate++) {
+	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
+	    }
+	    
+	    // Set up current player's color
+	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
+
+	    return createBoard(builder);
 	}
 }

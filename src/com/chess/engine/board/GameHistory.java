@@ -6,11 +6,11 @@ import java.util.List;
 public class GameHistory {
 
     private static GameHistory instance;
-    private final List<Board> boardStates;
+    private final List<Board> boards;
     private final List<Move> moveHistory;
 
     private GameHistory() {
-        this.boardStates = new ArrayList<>();
+        this.boards = new ArrayList<>();
         this.moveHistory = new ArrayList<>();
     }
     
@@ -26,21 +26,21 @@ public class GameHistory {
     	this.moveHistory.add(move);
     }
 
-    public void addBoardState(Board board) {
-        this.boardStates.add(board);
+    public void addBoard(Board board) {
+        this.boards.add(board);
     }
 
-    public List<Board> getBoardStates() {
-        return new ArrayList<>(this.boardStates);
+    public List<Board> getBoards() {
+        return new ArrayList<>(this.boards);
     }
 
     public List<Move> getMoveHistory() {
         return new ArrayList<>(this.moveHistory);
     }
 
-    public Board getLastBoardState() {
-        if (!boardStates.isEmpty()) {
-            return boardStates.get(boardStates.size() - 1);
+    public Board getLastBoard() {
+        if (!boards.isEmpty()) {
+            return boards.get(boards.size() - 1);
         }
         return null;
     }

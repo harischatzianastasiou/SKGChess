@@ -136,7 +136,7 @@ public abstract class Move {
         
         @Override
         public Board execute() {
-        	 return super.createBuilderAfterNonCapturingMove().build(this);
+        	 return super.createBuilderAfterNonCapturingMove().build();
         }
         
         @Override
@@ -232,7 +232,7 @@ public abstract class Move {
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
 
-	        return builder.build(this);
+	        return builder.build();
 	    }
 		@Override
 	    public boolean equals(final Object other) {
@@ -254,7 +254,7 @@ public abstract class Move {
         
         @Override
         public Board execute() {
-        	return super.createBuilderAfterCapturingMove().build(this);
+        	return super.createBuilderAfterCapturingMove().build();
 	    }
 		
 		@Override
@@ -350,7 +350,7 @@ public abstract class Move {
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
 	        
-	        return builder.build(this); 
+	        return builder.build(); 
 	    }
 
 	    @Override
@@ -422,7 +422,7 @@ public abstract class Move {
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
 	        
-	        return builder.build(this);
+	        return builder.build();
 	    }
 
 	    @Override

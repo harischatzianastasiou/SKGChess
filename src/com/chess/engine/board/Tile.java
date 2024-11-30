@@ -20,7 +20,7 @@ public abstract class Tile {
         }
         return ImmutableMap.copyOf(emptyTiles);
 	}
-	// factory method, used for a single point of creation for tiles
+	
 	public static Tile createTile(final int tileCoordinate,final Alliance alliance, final Piece piece) {
 		return piece != null? new OccupiedTile(tileCoordinate, alliance, piece) : EMPTY_TILES_CACHE.get(tileCoordinate);
 	}
