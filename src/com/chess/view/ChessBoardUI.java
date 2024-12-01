@@ -42,13 +42,14 @@ import com.chess.test.PawnTest;
 import com.chess.test.QueenTest;
 import com.chess.test.RookTest;
 import com.chess.util.GameHistory;
+import com.chess.controller.GameController;
 
 public class ChessBoardUI {
     
     private final JFrame gameFrame;
     private final BoardPanel boardPanel;
     private Board chessboard;
-    
+    private GameController gameController;
     private Tile sourceTile;
     private Tile targetTile;
     private Piece selectedPiece;
@@ -61,7 +62,10 @@ public class ChessBoardUI {
     private final Color lightTileColor = Color.decode("#eeeed2");
     private final Color darkTileColor = Color.decode("#769656");
     
-    public ChessBoardUI() {
+    
+    
+    public ChessBoardUI(GameController gameController) {
+        this.gameController = gameController;
         this.gameFrame = new JFrame("SKGChess");
         this.gameFrame.setLayout(new BorderLayout());
         this.gameFrame.setJMenuBar(createChessTableMenuBar());
@@ -136,8 +140,6 @@ public class ChessBoardUI {
             addMouseListener(new MouseListener() {
 	        	@Override
 	            public void mouseClicked(MouseEvent e) {
-                    boolean isCurrentPlayerInCheck = false;
-                    boolean isCurrentPlayerInCheckmate = false;
                     if (chessboard == null) {
                         JOptionPane.showMessageDialog(null, "Chessboard is not initialized. Please restart the game.");
                         return;
@@ -161,84 +163,8 @@ public class ChessBoardUI {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
-	                            Collection<Move> potentialLegalMoves = new ArrayList<>(chessboard.getCurrentPlayer().getPotentialLegalMoves());
-                                Collection<MoveResult> checkingMoveResults = new ArrayList<>();
-                                MoveResult simulationMoveResult = null;
-                                for(Move simulationMove : chessboard.getCurrentPlayer().getPotentialLegalMoves()) {  
-                                    simulationMoveResult = simulationMove.simulate();
-									
-                                    if(simulationMove instanceof KingSideCastleMove){
-										if(!simulationMoveResult.isCastleKingSideLegal()){
-                                        	potentialLegalMoves.remove(simulationMove);
-										}
-                                    }else if(simulationMove instanceof QueenSideCastleMove){
-										if(!simulationMoveResult.isCastleQueenSideLegal()){
-                                            potentialLegalMoves.remove(simulationMove);
-										}
-                                    }
-									
-									if(simulationMoveResult.putsSelfInCheckmate()) { // Simulate all potential moves of current player to find out which moves cannot be played due to opponent blocking them ( Moves like moving into check, moving a pinned piece etc are illegal and are checked here. Until this point current player only knew where his pieces could go, without taking account opponent's moves).
-                                        potentialLegalMoves.remove(simulationMove); // Remove illegal moves from current player's potential legal moves list.
-                                    }
-									
-									if(simulationMoveResult.isCheck()){
-                                        checkingMoveResults.add(simulationMoveResult);
-                                    }
-                                    
-                                }
-
-                                Collection<Move> validLegalMoves = potentialLegalMoves;
-  
-	                           if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
-	                        		if(selectedPiece instanceof Rook) {
-		                            System.out.println("\nTesting Rook Moves:");
-		                            RookTest.testRookMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof Knight) {
-		                            System.out.println("\nTesting Knight Moves:");
-		                            KnightTest.testKnightMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof Bishop) {
-		                            System.out.println("\nTesting Bishop Moves:");
-		                            BishopTest.testBishopMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof Queen) {
-		                            System.out.println("\nTesting Queen Moves:");
-		                            QueenTest.testQueenMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof King) {
-		                            System.out.println("\nTesting King Moves:");
-		                            KingTest.testKingMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
-	                        		}else if(selectedPiece instanceof Pawn) {
-		                            System.out.println("\nTesting Pawn Moves:");
-		                            PawnTest.testPawnMovesWithStandardBoard(validLegalMoves,selectedPiece.getPieceCoordinate());
-	                        		}
-	                        	}
-	                           for(Move validLegalMove : validLegalMoves) {  
-	                        	   if(validLegalMove.getSourceCoordinate() == sourceTile.getTileCoordinate() && validLegalMove.getTargetCoordinate() == targetTile.getTileCoordinate()) {
-                                    
-                                        GameHistory.getInstance().addBoard(chessboard);
-                                        GameHistory.getInstance().addMove(validLegalMove);
-
-                                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                ///   With each move a new board is created to represent the new state of the tiles and the turn of the next players.     //           
-                                ///   At least one tile has now changed to occupied or empty (tiles hold pieces).                                         // 
-                                ///   Also Current and Opponent player have changed.                                                                      //
-                                ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
-                                ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
-                                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                
-                                        System.out.println(checkingMoveResults.toString());
-	                        		    chessboard = validLegalMove.execute(); 
-                                        if(checkingMoveResults.stream().anyMatch(moveResult -> moveResult.getSimulationMove().getSourceCoordinate() == validLegalMove.getSourceCoordinate() && 
-                                                                                          moveResult.getSimulationMove().getTargetCoordinate() == validLegalMove.getTargetCoordinate())) {
-	                                        isCheckmate = true; // Assume checkmate until proven otherwise
-	                                        for(Move currentPlayerPotentialMove  : chessboard.getCurrentPlayer().getPotentialLegalMoves()) { 
-	                                            MoveResult currentPlayerPotentialMoveResult = currentPlayerPotentialMove.simulate(); 
-	                                            if (!currentPlayerPotentialMoveResult.putsSelfInCheckmate()) {
-	                                                isCheckmate = false; // Found a move that prevents checkmate
-	                                                break; // Exit loop as we found a valid move
-	                                            }
-	                                        }
-                                        }
-	                        	   }
-                                }
+	                           chessboard = gameController.executeMove(chessboard, ChessBoardUI.this);
+							   isCheckmate = gameController.isCheckmate();
 	                        }
 	                        sourceTile = null;
 	                        targetTile = null;
@@ -315,4 +241,22 @@ public class ChessBoardUI {
         	}
         }
     }
+
+    public void updateBoard(Board board) {
+        boardPanel.drawBoard(board);
+    }
+
+    public void displayCheckmateMessage(Alliance winningAlliance) {
+        JOptionPane.showMessageDialog(null, "Checkmate! " + winningAlliance.toString() + " wins.");
+        System.exit(0);
+    }
+
+	public Tile getSourceTile() {
+		return sourceTile;
+	}
+
+	public Tile getTargetTile() {
+		return targetTile;
+	}
+
 }
