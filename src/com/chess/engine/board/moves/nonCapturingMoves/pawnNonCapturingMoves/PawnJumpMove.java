@@ -1,8 +1,8 @@
 package com.chess.engine.board.moves.nonCapturingMoves.pawnNonCapturingMoves;
 
 import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
+import com.chess.engine.board.tiles.Tile;
 import com.chess.engine.pieces.Piece;
-import com.chess.engine.tiles.Tile;
 
 import java.util.List;
 

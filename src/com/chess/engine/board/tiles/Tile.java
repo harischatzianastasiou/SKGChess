@@ -1,4 +1,4 @@
-package com.chess.engine.tiles;
+package com.chess.engine.board.tiles;
 
 import java.util.Map;
 

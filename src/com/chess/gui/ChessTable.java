@@ -27,6 +27,7 @@ import com.chess.engine.board.GameHistory;
 import com.chess.engine.board.moves.Move;
 import com.chess.engine.board.moves.nonCapturingMoves.castleMoves.KingSideCastleMove;
 import com.chess.engine.board.moves.nonCapturingMoves.castleMoves.QueenSideCastleMove;
+import com.chess.engine.board.tiles.Tile;
 import com.chess.engine.board.moves.MoveResult;
 import com.chess.engine.pieces.Bishop;
 import com.chess.engine.pieces.King;
@@ -41,7 +42,6 @@ import com.chess.engine.pieces.test.KnightTest;
 import com.chess.engine.pieces.test.PawnTest;
 import com.chess.engine.pieces.test.QueenTest;
 import com.chess.engine.pieces.test.RookTest;
-import com.chess.engine.tiles.Tile;
 
 public class ChessTable {
     

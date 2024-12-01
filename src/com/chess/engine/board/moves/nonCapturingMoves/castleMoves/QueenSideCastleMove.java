@@ -2,10 +2,10 @@ package com.chess.engine.board.moves.nonCapturingMoves.castleMoves;
 
 import com.chess.engine.board.moves.MoveResult;
 import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
+import com.chess.engine.board.tiles.Tile;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.pieces.Rook;
-import com.chess.engine.tiles.Tile;
 import com.chess.engine.pieces.Piece;
 
 import java.util.List;

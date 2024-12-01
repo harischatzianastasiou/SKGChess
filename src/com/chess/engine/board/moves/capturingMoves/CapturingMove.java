@@ -2,11 +2,11 @@ package com.chess.engine.board.moves.capturingMoves;
 
 import com.chess.engine.board.moves.Move;
 import com.chess.engine.board.moves.MoveResult;
+import com.chess.engine.board.tiles.Tile;
 import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.Board.Builder;
 import com.chess.engine.pieces.Piece;
-import com.chess.engine.tiles.Tile;
 
 import java.util.List;
 
