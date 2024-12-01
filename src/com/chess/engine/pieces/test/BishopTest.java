@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.chess.engine.board.Board;
-import com.chess.engine.board.Move;
+import com.chess.engine.board.moves.Move;
 import com.chess.engine.pieces.Bishop;
 
 public class BishopTest {
@@ -28,7 +28,7 @@ public class BishopTest {
 	
 	public static void testBishopMovesWithStandardBoard(Board board) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getLegalMoves()) {
+			for(Move move : board.getCurrentPlayer().getPotentialLegalMoves()) {
             	if(move.getPieceToMove() instanceof Bishop) {
             		legalMoves.add(move);
             	}

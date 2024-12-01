@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Move;
+import com.chess.engine.board.moves.Move;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.King;
 import com.chess.engine.pieces.Piece;
@@ -13,21 +13,37 @@ import com.google.common.collect.ImmutableList;
 
 public class Player {
 	private final Collection<Piece>	pieces;
-	protected final Collection<Move> legalMoves;
+	protected final Collection<Move> potentialLegalMoves;
 	private final Alliance alliance;
 	
-	protected Player(final Collection<Piece> pieces,final Collection<Move> legalMoves,final Alliance alliance) {
+	protected Player(final Collection<Piece> pieces,final Collection<Move> potentialLegalMoves,final Alliance alliance) {
 		this.pieces = pieces;
-        this.legalMoves = legalMoves;
+        this.potentialLegalMoves = potentialLegalMoves;
         this.alliance = alliance;
 	}
+
+	public static Player createPlayer(final List<Tile> tiles, Alliance alliance) {
+		final List<Piece> activePieces = new ArrayList<>();
+		final List<Move> potentialLegalMoves = new ArrayList<>();
+	  
+	  for (final Tile tile : tiles) {
+		  if (tile.isTileOccupied()) {
+			  final Piece piece = tile.getPiece();
+			  if (piece.getPieceAlliance() == alliance) {
+				  activePieces.add(piece);
+				  potentialLegalMoves.addAll(piece.calculatePotentialLegalMoves(tiles));
+			  }
+		  }
+	  }      
+	  return new Player(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance);
+  }
 
 	public Collection<Piece> getPieces(){
 		return ImmutableList.copyOf(this.pieces);
 	}
 	
-	public Collection<Move> getLegalMoves() {
-        return ImmutableList.copyOf(legalMoves);
+	public Collection<Move> getPotentialLegalMoves() {
+        return ImmutableList.copyOf(potentialLegalMoves);
     }
 	
 	public Alliance getAlliance() {
@@ -46,21 +62,4 @@ public class Player {
 	    }
 	    throw new RuntimeException("No king found for this player");
 	}
-
-	public static Player createPlayer(final List<Tile> tiles, Alliance alliance) {
-		  final List<Piece> activePieces = new ArrayList<>();
-	      final List<Move> legalMoves = new ArrayList<>();
-		
-		for (final Tile tile : tiles) {
-            if (tile.isTileOccupied()) {
-                final Piece piece = tile.getPiece();
-                if (piece.getPieceAlliance() == alliance) {
-                	activePieces.add(piece);
-                    legalMoves.addAll(piece.calculateMoves(tiles));
-                }
-            }
-        }      
-        return new Player(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(legalMoves), alliance);
-    }
-
 }

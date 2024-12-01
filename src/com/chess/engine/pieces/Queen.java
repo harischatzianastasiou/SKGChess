@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.BoardUtils;
-import com.chess.engine.board.Move;
-import com.chess.engine.board.Move.CapturingMove;
-import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.board.moves.Move;
+import com.chess.engine.board.moves.capturingMoves.CapturingMove;
+import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
 import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -32,15 +32,15 @@ public class Queen extends Piece {
     }
 
     @Override
-    public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
-        final List<Move> legalMoves = new ArrayList<>();
-        legalMoves.addAll(calculateMovesForRook(boardTiles));
-        legalMoves.addAll(calculateMovesForBishop(boardTiles));
-        return ImmutableList.copyOf(legalMoves);
+    public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles) {
+        final List<Move> queenPotentialLegalMoves = new ArrayList<>();
+        queenPotentialLegalMoves.addAll(calculatePotentialLegalMovesForRook(boardTiles));
+        queenPotentialLegalMoves.addAll(calculatePotentialLegalMovesForBishop(boardTiles));
+        return ImmutableList.copyOf(queenPotentialLegalMoves);
     }
 
-    public Collection<Move> calculateMovesForRook(final List<Tile> boardTiles) {
-		final List<Move> legalMoves = new ArrayList<>();
+    public Collection<Move> calculatePotentialLegalMovesForRook(final List<Tile> boardTiles) {
+		final List<Move> rookPotentialLegalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : ROOK_MOVE_OFFSETS) {
 			for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
@@ -52,12 +52,12 @@ public class Queen extends Piece {
                     if (rankDifference == 0 || fileDifference == 0) {
                         final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
                         if (!candidateDestinationTile.isTileOccupied()) {
-	            		    legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+	            		    rookPotentialLegalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
-		                        legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+		                        rookPotentialLegalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}
@@ -65,11 +65,11 @@ public class Queen extends Piece {
 	            }
 			}
 		}
-		return ImmutableList.copyOf(legalMoves);
+		return ImmutableList.copyOf(rookPotentialLegalMoves);
     }
 
-    public Collection<Move> calculateMovesForBishop(final List<Tile> boardTiles) {
-		final List<Move> legalMoves = new ArrayList<>();
+    public Collection<Move> calculatePotentialLegalMovesForBishop(final List<Tile> boardTiles) {
+		final List<Move> bishopPotentialLegalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : BISHOP_MOVE_OFFSETS) {
 			for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
@@ -82,12 +82,12 @@ public class Queen extends Piece {
 	            	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
 	            	if (allianceOfCandidateDestinationTile == allianceOfCurrentTile) {
 	            		if (!candidateDestinationTile.isTileOccupied()) { 
-	            		    	legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+							bishopPotentialLegalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile ){
-		                        legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+		                        bishopPotentialLegalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}
@@ -97,7 +97,7 @@ public class Queen extends Piece {
 	            else break;//If the candidateTargetCoordinate is out of boundaries, stop further checking in this direction.
 			} 
 		}
-		return ImmutableList.copyOf(legalMoves);
+		return ImmutableList.copyOf(bishopPotentialLegalMoves);
     }
 
     @Override

@@ -45,26 +45,6 @@ public class Board {
 	    return ImmutableList.copyOf(tiles);
 	}
 
-	public List<Tile> getTiles() {
-		return ImmutableList.copyOf(tiles);
-	}
-
-	public Tile getTile(final int tileCoordinate) {
-        if (!BoardUtils.isValidTileCoordinate(tileCoordinate)) {
-            throw new IllegalArgumentException("Invalid tile coordinate: " + tileCoordinate);
-        }
-        return tiles.get(tileCoordinate);
-    }
-
-	public Player getCurrentPlayer() {
-		return this.currentPlayer;
-	}
-	
-	public Player getOpponentPlayer() {
-        return this.opponentPlayer;
-    }
-
-	
 	@Override
 	public String toString() {
 	    StringBuilder builder = new StringBuilder();
@@ -83,6 +63,25 @@ public class Board {
 	        }
 	    }
 	    return builder.toString();
+	}
+
+	public List<Tile> getTiles() {
+		return ImmutableList.copyOf(tiles);
+	}
+
+	public Tile getTile(final int tileCoordinate) {
+        if (!BoardUtils.isValidTileCoordinate(tileCoordinate)) {
+            throw new IllegalArgumentException("Invalid tile coordinate: " + tileCoordinate);
+        }
+        return tiles.get(tileCoordinate);
+    }
+
+	public Player getCurrentPlayer() {
+		return this.currentPlayer;
+	}
+	
+	public Player getOpponentPlayer() {
+        return this.opponentPlayer;
 	}
 
 	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.

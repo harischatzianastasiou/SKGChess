@@ -2,6 +2,7 @@ package com.chess.engine.board;
 
 import java.util.ArrayList;
 import java.util.List;
+import com.chess.engine.board.moves.Move;
 
 public class GameHistory {
 

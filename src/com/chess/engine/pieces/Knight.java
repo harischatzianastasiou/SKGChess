@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.BoardUtils;
-import com.chess.engine.board.Move;
-import com.chess.engine.board.Move.CapturingMove;
-import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.board.moves.Move;
+import com.chess.engine.board.moves.capturingMoves.CapturingMove;
+import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
 import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -30,8 +30,8 @@ public class Knight extends Piece {
     }
 	
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
-		final List<Move> legalMoves = new ArrayList<>();
+	public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles) {
+		final List<Move> knightPotentialLegalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 	    // Iterate over all possible L-shaped moves for a knight
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
@@ -43,19 +43,18 @@ public class Knight extends Piece {
             	final Alliance allianceOfCurrentTile = currentTile.getTileAlliance();
             	if (allianceOfCandidateDestinationTile != allianceOfCurrentTile) {
             		if (!candidateDestinationTile.isTileOccupied()) {
-            		    legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+            		    knightPotentialLegalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
 	            	}else {
 	            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 	            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 	            		if(this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
-	                        legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
-//	                        System.out.println(candidateDestinationCoordinate);
+	                        knightPotentialLegalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 	                    }
 	            	}
             	}
             }
         } 
-        return ImmutableList.copyOf(legalMoves);
+        return ImmutableList.copyOf(knightPotentialLegalMoves);
 	}
 	
     @Override

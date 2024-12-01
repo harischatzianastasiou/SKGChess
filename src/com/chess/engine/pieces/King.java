@@ -6,11 +6,11 @@ import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.BoardUtils;
-import com.chess.engine.board.Move;
-import com.chess.engine.board.Move.CapturingMove;
-import com.chess.engine.board.Move.KingSideCastleMove;
-import com.chess.engine.board.Move.NonCapturingMove;
-import com.chess.engine.board.Move.QueenSideCastleMove;
+import com.chess.engine.board.moves.Move;
+import com.chess.engine.board.moves.capturingMoves.CapturingMove;
+import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
+import com.chess.engine.board.moves.nonCapturingMoves.castleMoves.KingSideCastleMove;
+import com.chess.engine.board.moves.nonCapturingMoves.castleMoves.QueenSideCastleMove;
 import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -32,19 +32,19 @@ public class King extends Piece  {
     }
     
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
-		final List<Move> legalMoves = new ArrayList<>();
+	public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles) {
+		final List<Move> kingPotentialLegalMoves = new ArrayList<>();
 		
 		// Add normal king moves
-		addNormalMoves(boardTiles, legalMoves);
+		addPotentialNormalMoves(boardTiles, kingPotentialLegalMoves);
 		
 		// Add potential castling moves without validation
-		addPotentialCastlingMoves(boardTiles, legalMoves);
+		addPotentialCastlingMoves(boardTiles, kingPotentialLegalMoves);
 		
-		return ImmutableList.copyOf(legalMoves);
+		return ImmutableList.copyOf(kingPotentialLegalMoves);
     }
 
-	private void addNormalMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
+	private void addPotentialNormalMoves(final List<Tile> boardTiles, final List<Move> kingPotentialLegalMoves) {
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
 			int candidateDestinationCoordinate = this.pieceCoordinate + candidateOffset;
 			if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)){
@@ -53,12 +53,12 @@ public class King extends Piece  {
 				int fileDifference = Math.abs(BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate,this.pieceCoordinate));
 				if (rankDifference <= 1 && fileDifference <= 1) {
 					if(!candidateDestinationTile.isTileOccupied()) {
-						legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+						kingPotentialLegalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
 					} else {
 						final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 						final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 						if(this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile) {
-							legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+							kingPotentialLegalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 						}
 					}
 				}
@@ -66,7 +66,7 @@ public class King extends Piece  {
 		}
 	}
 
-	private void addPotentialCastlingMoves(final List<Tile> boardTiles, final List<Move> legalMoves) {
+	private void addPotentialCastlingMoves(final List<Tile> boardTiles, final List<Move> kingPotentialLegalMoves) {
 		if (this.isFirstMove()) {
 			// Add kingside castle if rook is present
 			final Tile kingSideRookTile = boardTiles.get(this.pieceCoordinate + 3);
@@ -75,7 +75,7 @@ public class King extends Piece  {
 				if (kingSideRook.isFirstMove()) {
 					if (!boardTiles.get(this.pieceCoordinate + 1).isTileOccupied() && 
 						!boardTiles.get(this.pieceCoordinate + 2).isTileOccupied()) {
-						legalMoves.add(new KingSideCastleMove(boardTiles,
+							kingPotentialLegalMoves.add(new KingSideCastleMove(boardTiles,
 															 this.pieceCoordinate,
 															 this.pieceCoordinate + 2,
 															 this,
@@ -94,7 +94,7 @@ public class King extends Piece  {
 					if (!boardTiles.get(this.pieceCoordinate - 1).isTileOccupied() &&
 						!boardTiles.get(this.pieceCoordinate - 2).isTileOccupied() &&
 						!boardTiles.get(this.pieceCoordinate - 3).isTileOccupied()) {
-						legalMoves.add(new QueenSideCastleMove(boardTiles,
+							kingPotentialLegalMoves.add(new QueenSideCastleMove(boardTiles,
 															  this.pieceCoordinate,
 															  this.pieceCoordinate - 2,
 															  this,

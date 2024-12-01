@@ -24,10 +24,10 @@ import com.chess.engine.Alliance;
 import com.chess.engine.board.Board;
 import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.GameHistory;
-import com.chess.engine.board.Move;
-import com.chess.engine.board.Move.KingSideCastleMove;
-import com.chess.engine.board.Move.QueenSideCastleMove;
-import com.chess.engine.board.MoveResult;
+import com.chess.engine.board.moves.Move;
+import com.chess.engine.board.moves.nonCapturingMoves.castleMoves.KingSideCastleMove;
+import com.chess.engine.board.moves.nonCapturingMoves.castleMoves.QueenSideCastleMove;
+import com.chess.engine.board.moves.MoveResult;
 import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Bishop;
 import com.chess.engine.pieces.King;
@@ -161,10 +161,10 @@ public class ChessTable {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
-	                            Collection<Move> potentialLegalMoves = new ArrayList<>(chessboard.getCurrentPlayer().getLegalMoves());
+	                            Collection<Move> potentialLegalMoves = new ArrayList<>(chessboard.getCurrentPlayer().getPotentialLegalMoves());
                                 Collection<MoveResult> checkingMoveResults = new ArrayList<>();
                                 MoveResult simulationMoveResult = null;
-                                for(Move simulationMove : chessboard.getCurrentPlayer().getLegalMoves()) {  
+                                for(Move simulationMove : chessboard.getCurrentPlayer().getPotentialLegalMoves()) {  
                                     simulationMoveResult = simulationMove.simulate();
 									
                                     if(simulationMove instanceof KingSideCastleMove){
@@ -229,7 +229,7 @@ public class ChessTable {
                                         if(checkingMoveResults.stream().anyMatch(moveResult -> moveResult.getSimulationMove().getSourceCoordinate() == validLegalMove.getSourceCoordinate() && 
                                                                                           moveResult.getSimulationMove().getTargetCoordinate() == validLegalMove.getTargetCoordinate())) {
 	                                        isCheckmate = true; // Assume checkmate until proven otherwise
-	                                        for(Move currentPlayerPotentialMove  : chessboard.getCurrentPlayer().getLegalMoves()) { 
+	                                        for(Move currentPlayerPotentialMove  : chessboard.getCurrentPlayer().getPotentialLegalMoves()) { 
 	                                            MoveResult currentPlayerPotentialMoveResult = currentPlayerPotentialMove.simulate(); 
 	                                            if (!currentPlayerPotentialMoveResult.putsSelfInCheckmate()) {
 	                                                isCheckmate = false; // Found a move that prevents checkmate

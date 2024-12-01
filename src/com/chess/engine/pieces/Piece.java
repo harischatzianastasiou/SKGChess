@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.chess.engine.Alliance;
-import com.chess.engine.board.Move;
+import com.chess.engine.board.moves.Move;
 import com.chess.engine.board.Tile;
 
 public abstract class Piece {
@@ -15,43 +15,14 @@ public abstract class Piece {
 	private final boolean isFirstMove;
 	private final int cachedHashCode;
 	
-	Piece(final PieceSymbol pieceSymbol, final int piecePosition,  final Alliance pieceAlliance, final boolean isFirstMove) {
+	Piece(final PieceSymbol pieceSymbol, final int pieceCoordinate,  final Alliance pieceAlliance, final boolean isFirstMove) {
         this.pieceSymbol = pieceSymbol;
-        this.pieceCoordinate = piecePosition;
+        this.pieceCoordinate = pieceCoordinate;
         this.pieceAlliance = pieceAlliance;
         this.isFirstMove = isFirstMove;
         this.cachedHashCode = computeHashCode();
     }
-	
-	public PieceSymbol getPieceSymbol() {
-		return pieceSymbol;
-	}
-	
-	public int getPieceCoordinate() {
-		return this.pieceCoordinate;     
-	}
-	
-	public Alliance getPieceAlliance() {
-		return this.pieceAlliance;
-	}
-	
-	public boolean isFirstMove() {
-		return isFirstMove;
-	}
-	
-	public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles);
-	
-	public abstract Piece movePiece(int destinationCoordinate);
-	
-	protected boolean isTileUnderAttack(int coordinate, Collection<Move> opponentMoves) {
-	    for (Move move : opponentMoves) {
-	        if (move.getTargetCoordinate() == coordinate) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
-	
+
 	@Override
     public boolean equals(final Object other) {
         if (this == other) {
@@ -77,7 +48,35 @@ public abstract class Piece {
         result = 31 * result + (this.isFirstMove ? 1 : 0);
         return result;
     }
-
+	
+	public PieceSymbol getPieceSymbol() {
+		return pieceSymbol;
+	}
+	
+	public int getPieceCoordinate() {
+		return this.pieceCoordinate;     
+	}
+	
+	public Alliance getPieceAlliance() {
+		return this.pieceAlliance;
+	}
+	
+	public boolean isFirstMove() {
+		return isFirstMove;
+	}
+	
+	public abstract Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles);
+	
+	public abstract Piece movePiece(int destinationCoordinate);
+	
+	protected boolean isTileUnderAttack(int coordinate, Collection<Move> opponentMoves) {
+	    for (Move move : opponentMoves) {
+	        if (move.getTargetCoordinate() == coordinate) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
 	
 	public enum PieceSymbol {
 		PAWN("P"), 

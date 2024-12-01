@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.BoardUtils;
-import com.chess.engine.board.Move;
-import com.chess.engine.board.Move.CapturingMove;
-import com.chess.engine.board.Move.NonCapturingMove;
+import com.chess.engine.board.moves.Move;
+import com.chess.engine.board.moves.capturingMoves.CapturingMove;
+import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
 import com.chess.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -31,8 +31,8 @@ public class Rook extends Piece {
     }
 	
     @Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles) {
-		final List<Move> legalMoves = new ArrayList<>();
+	public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles) {
+		final List<Move> rookPotentialLegalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
 			for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
@@ -44,13 +44,12 @@ public class Rook extends Piece {
                     if (rankDifference == 0 || fileDifference == 0) {
                         final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
                         if (!candidateDestinationTile.isTileOccupied()) {
-	            		    legalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+	            		    rookPotentialLegalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
 		            	}else {
 		            		final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
 		            		final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
 		            		if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile){
-		                        legalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
-//		                        System.out.println(candidateDestinationCoordinate);
+		                        rookPotentialLegalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
 		                    }
 		            		break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 		            	}
@@ -58,7 +57,7 @@ public class Rook extends Piece {
 	            }
 			}
 		}
-		return ImmutableList.copyOf(legalMoves);
+		return ImmutableList.copyOf(rookPotentialLegalMoves);
     }
         
     @Override
