@@ -1,6 +1,6 @@
 package com.chess;
 
-import com.chess.gui.ChessTable;
+import com.chess.view.ChessBoardUI;
 
 public class SKGChess {
 
@@ -21,6 +21,6 @@ public class SKGChess {
 	// System.out.println("\nTesting Pawn Moves:");
 	// PawnTest.testPawnMovesWithStandardBoard(chessboard);  		
     	
-	ChessTable chesstable = new ChessTable();
+	ChessBoardUI chessboardUI = new ChessBoardUI();
     }
 }
