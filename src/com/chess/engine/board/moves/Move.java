@@ -2,8 +2,8 @@ package com.chess.engine.board.moves;
 
 import java.util.List;
 import com.chess.engine.pieces.Piece;
+import com.chess.engine.tiles.Tile;
 import com.google.common.collect.ImmutableList;
-import com.chess.engine.board.Tile;
 import com.chess.engine.board.Board;
 
 public abstract class Move {

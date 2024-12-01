@@ -1,9 +1,9 @@
 package com.chess.engine.board.moves.capturingMoves;
 
 import com.chess.engine.board.Board;
-import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.Piece;
-import com.chess.engine.board.moves.capturingMoves.PawnAttackMove;
+import com.chess.engine.tiles.Tile;
+
 import java.util.List;
 
 public class PawnEnPassantAttack extends CapturingMove {

@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.moves.Move;
-import com.chess.engine.board.Tile;
+import com.chess.engine.tiles.Tile;
 
 public abstract class Piece {
 

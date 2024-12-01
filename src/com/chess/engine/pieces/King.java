@@ -11,7 +11,7 @@ import com.chess.engine.board.moves.capturingMoves.CapturingMove;
 import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
 import com.chess.engine.board.moves.nonCapturingMoves.castleMoves.KingSideCastleMove;
 import com.chess.engine.board.moves.nonCapturingMoves.castleMoves.QueenSideCastleMove;
-import com.chess.engine.board.Tile;
+import com.chess.engine.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
 public class King extends Piece  {

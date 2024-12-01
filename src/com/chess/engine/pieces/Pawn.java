@@ -12,7 +12,7 @@ import com.chess.engine.board.moves.capturingMoves.CapturingMove;
 import com.chess.engine.board.moves.capturingMoves.PawnEnPassantAttack;
 import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
 import com.chess.engine.board.moves.nonCapturingMoves.pawnNonCapturingMoves.*;
-import com.chess.engine.board.Tile;
+import com.chess.engine.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
 public class Pawn extends Piece {

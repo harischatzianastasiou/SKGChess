@@ -9,7 +9,7 @@ import com.chess.engine.board.BoardUtils;
 import com.chess.engine.board.moves.Move;
 import com.chess.engine.board.moves.capturingMoves.CapturingMove;
 import com.chess.engine.board.moves.nonCapturingMoves.NonCapturingMove;
-import com.chess.engine.board.Tile;
+import com.chess.engine.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
 public class Rook extends Piece {

@@ -6,9 +6,9 @@ import java.util.List;
 
 import com.chess.engine.Alliance;
 import com.chess.engine.board.moves.Move;
-import com.chess.engine.board.Tile;
 import com.chess.engine.pieces.King;
 import com.chess.engine.pieces.Piece;
+import com.chess.engine.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
 public class Player {
