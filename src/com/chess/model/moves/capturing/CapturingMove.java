@@ -6,10 +6,10 @@ import com.chess.model.Alliance;
 import com.chess.model.board.Board;
 import com.chess.model.board.Board.Builder;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveResult;
+import com.chess.model.moves.MoveValidation;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
-
+import java.util.Collection;
 public class CapturingMove extends Move {
     private final Piece capturedPiece;
 
@@ -43,11 +43,6 @@ public class CapturingMove extends Move {
         // Set the next player's alliance
         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
         return builder;
-    }
-
-    @Override
-    public MoveResult simulate() {
-        return MoveResult.create(this,createBuilderAfterCapturingMove().build());
     }
 
     @Override

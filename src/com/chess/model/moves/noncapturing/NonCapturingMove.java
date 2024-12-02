@@ -1,14 +1,13 @@
 package com.chess.model.moves.noncapturing;
 
+import java.util.List;
+
 import com.chess.model.Alliance;
 import com.chess.model.board.Board;
 import com.chess.model.board.Board.Builder;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveResult;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
-
-import java.util.List;
 
 public class NonCapturingMove extends Move {
     public NonCapturingMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
@@ -41,10 +40,7 @@ public class NonCapturingMove extends Move {
         return builder;
     }
 
-    @Override
-    public MoveResult simulate() {
-        return MoveResult.create(this,createBuilderAfterNonCapturingMove().build());
-    }
+
     @Override
     public Board execute() {
         return this.createBuilderAfterNonCapturingMove().build();

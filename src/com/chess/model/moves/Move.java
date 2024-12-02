@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.chess.model.board.Board;
 import com.chess.model.pieces.Piece;
+import com.chess.model.player.Player;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -60,7 +61,10 @@ public abstract class Move {
 
     public abstract Piece getCapturedPiece();
         
-    public abstract MoveResult simulate();
+    
+    public MoveValidation validate(Player currentPlayer, Player opponentPlayer) {
+        return MoveValidation.create(this,currentPlayer, opponentPlayer);
+    }
 
     public abstract Board execute();    
     

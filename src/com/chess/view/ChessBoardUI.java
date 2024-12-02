@@ -24,7 +24,6 @@ import com.chess.model.Alliance;
 import com.chess.model.board.Board;
 import com.chess.model.board.BoardUtils;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveResult;
 import com.chess.model.moves.noncapturing.KingSideCastleMove;
 import com.chess.model.moves.noncapturing.QueenSideCastleMove;
 import com.chess.model.pieces.Bishop;
@@ -157,14 +156,36 @@ public class ChessBoardUI {
 	                        selectedPiece = sourceTile.getPiece();
 	                        if(selectedPiece== null) {
 	                        	sourceTile = null;
-	                        }
+	                        }else{
+                                Collection<Move> testValidLegalMoves = chessboard.getCurrentPlayer().getPotentialLegalMoves();
+                                if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
+                                    if(selectedPiece instanceof Rook) {
+                                    System.out.println("\nTesting Rook Moves:");
+                                    RookTest.testRookMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+                                    }else if(selectedPiece instanceof Knight) {
+                                    System.out.println("\nTesting Knight Moves:");
+                                    KnightTest.testKnightMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+                                    }else if(selectedPiece instanceof Bishop) {
+                                    System.out.println("\nTesting Bishop Moves:");
+                                    BishopTest.testBishopMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+                                    }else if(selectedPiece instanceof Queen) {
+                                    System.out.println("\nTesting Queen Moves:");
+                                    QueenTest.testQueenMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+                                    }else if(selectedPiece instanceof King) {
+                                    System.out.println("\nTesting King Moves:");
+                                    KingTest.testKingMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+                                    }else if(selectedPiece instanceof Pawn) {
+                                    System.out.println("\nTesting Pawn Moves:");
+                                    PawnTest.testPawnMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+                                    }
+                                }
+                            }
 	                    //second click
 	                	}else {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
 	                        if(sourceTile!= null && targetTile!= null) {
 	                           chessboard = gameController.executeMove(chessboard, ChessBoardUI.this);
-							   isCheckmate = gameController.isCheckmate();
 	                        }
 	                        sourceTile = null;
 	                        targetTile = null;
@@ -178,7 +199,7 @@ public class ChessBoardUI {
 	                		public void run() {
 	                			if(chessboard!= null) {
 	                				boardPanel.drawBoard(chessboard);
-                                    if(isCheckmate) {
+                                    if(gameController.isCheckmate()) {
                                         JOptionPane.showMessageDialog(null, "Checkmate! " + chessboard.getOpponentPlayer().getAlliance().toString() + " wins.");
                                         System.exit(0);
                                     }

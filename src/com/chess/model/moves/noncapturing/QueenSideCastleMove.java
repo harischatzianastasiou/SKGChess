@@ -1,13 +1,12 @@
 package com.chess.model.moves.noncapturing;
 
+import java.util.List;
+
 import com.chess.model.Alliance;
 import com.chess.model.board.Board;
-import com.chess.model.moves.MoveResult;
 import com.chess.model.pieces.Piece;
 import com.chess.model.pieces.Rook;
 import com.chess.model.tiles.Tile;
-
-import java.util.List;
 
 public class QueenSideCastleMove extends NonCapturingMove {
     protected final int rookSourceCoordinate;
@@ -21,7 +20,7 @@ public class QueenSideCastleMove extends NonCapturingMove {
         this.rook = rook;
     }
     
-@Override
+	@Override
 	    public Board execute() {
 	        final Board.Builder builder = new Board.Builder();
 	        

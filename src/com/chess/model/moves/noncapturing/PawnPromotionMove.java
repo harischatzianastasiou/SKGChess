@@ -1,13 +1,12 @@
 package com.chess.model.moves.noncapturing;
 
+import java.util.List;
+
 import com.chess.model.Alliance;
 import com.chess.model.board.Board;
-import com.chess.model.moves.MoveResult;
 import com.chess.model.pieces.Pawn;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
-
-import java.util.List;
 
 public class PawnPromotionMove extends NonCapturingMove {
     public PawnPromotionMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {

@@ -1,33 +1,17 @@
 package com.chess.controller;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import com.chess.model.board.Board;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveResult;
-import com.chess.model.moves.noncapturing.KingSideCastleMove;
-import com.chess.model.moves.noncapturing.QueenSideCastleMove;
-import com.chess.model.pieces.Bishop;
-import com.chess.model.pieces.King;
-import com.chess.model.pieces.Knight;
-import com.chess.model.pieces.Pawn;
 import com.chess.model.pieces.Piece;
-import com.chess.model.pieces.Queen;
-import com.chess.model.pieces.Rook;
-import com.chess.model.tiles.Tile;
-import com.chess.test.BishopTest;
-import com.chess.test.KingTest;
-import com.chess.test.KnightTest;
-import com.chess.test.PawnTest;
-import com.chess.test.QueenTest;
-import com.chess.test.RookTest;
 import com.chess.util.GameHistory;
 import com.chess.view.ChessBoardUI;
 
 public class GameController {
 
     private boolean isCheckmate = false;
+    private boolean isCheck = false;
     private static GameController instance;
 
     private GameController() {}
@@ -40,13 +24,47 @@ public class GameController {
     }
 
     public Board executeMove(Board chessboard, ChessBoardUI chessBoardUI) {
-        MoveValidator moveValidator = new MoveValidator(chessboard,chessBoardUI);
-        Board updatedBoard = moveValidator.validateMove();
-        this.isCheckmate = moveValidator.isCheckmate();
-        return updatedBoard;
+        Collection<Move> validLegalMoves = chessboard.getCurrentPlayerValidMoves();
+        for (Move validLegalMove : validLegalMoves) {
+            if (validLegalMove.getSourceCoordinate() == chessBoardUI.getSourceTile().getTileCoordinate() &&
+                validLegalMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
+
+                GameHistory.getInstance().addBoard(chessboard);
+                GameHistory.getInstance().addMove(validLegalMove);
+
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///   With each move a new board is created to represent the new state of the tiles and the turn of the next players.     //           
+                ///   At least one tile has now changed to occupied or empty (tiles hold pieces).                                         // 
+                ///   Also Current and Opponent player have changed.                                                                      //
+                ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
+                ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                chessboard = validLegalMove.execute();
+                Piece movedPiece = chessboard.getTile(validLegalMove.getTargetCoordinate()).getPiece();
+                Collection<Move> movedPieceNewMoves = movedPiece.calculatePotentialLegalMoves(chessboard.getTiles());
+                // Iterate over the move maker's new legal moves, after the move is made ( move maker is the opponent in the postSimulationMoveBoard)
+                for (Move movedPieceNewMove : movedPieceNewMoves) {
+                    // Check if the piece that was just moved is attacking the new current player's king
+                    if (movedPieceNewMove.getTargetCoordinate() == chessboard.getCurrentPlayer().getKing().getPieceCoordinate()) {
+                        isCheck = true;
+                    }
+                }
+
+                Collection<Move> currentPlayerValidMoves = chessboard.getCurrentPlayerValidMoves();
+                if (isCheck && currentPlayerValidMoves.isEmpty()) {
+                    this.isCheckmate = true;
+                }
+                break;
+            }
+        }
+        return chessboard;
     }
 
     public boolean isCheckmate() {
         return this.isCheckmate;
+    }
+
+    public boolean isCheck() {
+        return this.isCheck;
     }
 }

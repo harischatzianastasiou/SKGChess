@@ -1,11 +1,16 @@
 package com.chess.model.board;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.chess.model.Alliance;
+import com.chess.model.moves.Move;
+import com.chess.model.moves.MoveValidation;
+import com.chess.model.moves.noncapturing.KingSideCastleMove;
+import com.chess.model.moves.noncapturing.QueenSideCastleMove;
 import com.chess.model.pieces.Bishop;
 import com.chess.model.pieces.King;
 import com.chess.model.pieces.Knight;
@@ -16,7 +21,6 @@ import com.chess.model.pieces.Rook;
 import com.chess.model.player.Player;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
-
 public class Board {
 	
 	private final List<Tile> tiles;
@@ -144,4 +148,26 @@ public class Board {
 
 	    return createBoard(builder);
 	}
+
+	public Collection<Move> getCurrentPlayerValidMoves() {
+        Collection<Move> validLegalMoves = new ArrayList<>(this.getCurrentPlayer().getPotentialLegalMoves());
+		for (Move move : this.getCurrentPlayer().getPotentialLegalMoves()) {
+            MoveValidation simulationMoveResult = move.validate(this.currentPlayer,this.opponentPlayer);
+            if(move instanceof KingSideCastleMove){
+                if(!simulationMoveResult.isCastleKingSideLegal()){
+                    validLegalMoves.remove(move);
+                }
+            }else if(move instanceof QueenSideCastleMove){
+                if(!simulationMoveResult.isCastleQueenSideLegal()){
+                    validLegalMoves.remove(move);
+                }
+            }
+            if(simulationMoveResult.putsSelfInCheckmate()) { // Simulate all potential moves of current player to find out which moves cannot be played due to opponent blocking them ( Moves like moving into check, moving a pinned piece etc are illegal and are checked here. Until this point current player only knew where his pieces could go, without taking account opponent's moves).
+				validLegalMoves.remove(move); // Remove illegal moves from current player's potential legal moves list.
+            }
+        }
+        return validLegalMoves;
+    }
+
+	
 }
