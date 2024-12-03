@@ -26,13 +26,23 @@ public class Board {
 	private final List<Tile> tiles;
     private final Player currentPlayer;
     private final Player opponentPlayer;
-    
+	private final boolean isInCheck;
+
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
         this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance);
         this.opponentPlayer = Player.createPlayer(tiles, currentPlayer.getOpponentAlliance());
+		this.isInCheck = this.isCurrentPlayerInCheck();
 	}
 
+	public boolean isCurrentPlayerInCheck() {
+		for( Move move : this.getOpponentPlayer().getPotentialLegalMoves()){
+			 if(move.getTargetCoordinate() == this.getCurrentPlayer().getKing().getPieceCoordinate()){
+				 return true;
+			 }
+		}
+		return false;
+	 }
 	private static Board createBoard(Builder builder) {
         return new Board(builder);
     }
@@ -162,12 +172,22 @@ public class Board {
                     validLegalMoves.remove(move);
                 }
             }
-            if(simulationMoveResult.putsSelfInCheckmate()) { // Simulate all potential moves of current player to find out which moves cannot be played due to opponent blocking them ( Moves like moving into check, moving a pinned piece etc are illegal and are checked here. Until this point current player only knew where his pieces could go, without taking account opponent's moves).
-				validLegalMoves.remove(move); // Remove illegal moves from current player's potential legal moves list.
+			if(move.getPieceToMove() instanceof King){
+				if(simulationMoveResult.putsKingInCheck()){
+					validLegalMoves.remove(move);
+				}
             }
+
+			if(this.isInCheck){
+				if(simulationMoveResult.doe)){
+					validLegalMoves.remove(move);
+				}
+			}
+
         }
         return validLegalMoves;
     }
 
-	
+
+
 }
