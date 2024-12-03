@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import com.chess.model.board.Board;
 import com.chess.model.moves.Move;
-import com.chess.model.pieces.Piece;
 import com.chess.util.GameHistory;
 import com.chess.view.ChessBoardUI;
 
@@ -40,15 +39,6 @@ public class GameController {
                 ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 chessboard = validLegalMove.execute();
-                Piece movedPiece = chessboard.getTile(validLegalMove.getTargetCoordinate()).getPiece();
-                Collection<Move> movedPieceNewMoves = movedPiece.calculatePotentialLegalMoves(chessboard.getTiles());
-                // Iterate over the move maker's new legal moves, after the move is made ( move maker is the opponent in the postSimulationMoveBoard)
-                for (Move movedPieceNewMove : movedPieceNewMoves) {
-                    // Check if the piece that was just moved is attacking the new current player's king
-                    if (movedPieceNewMove.getTargetCoordinate() == chessboard.getCurrentPlayer().getKing().getPieceCoordinate()) {
-                        isCheck = true;
-                    }
-                }
 
                 Collection<Move> currentPlayerValidMoves = chessboard.getCurrentPlayerValidMoves();
                 if (isCheck && currentPlayerValidMoves.isEmpty()) {

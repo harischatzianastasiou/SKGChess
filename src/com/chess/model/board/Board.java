@@ -26,23 +26,22 @@ public class Board {
 	private final List<Tile> tiles;
     private final Player currentPlayer;
     private final Player opponentPlayer;
-	private final boolean isInCheck;
 
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
-        this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance);
-        this.opponentPlayer = Player.createPlayer(tiles, currentPlayer.getOpponentAlliance());
-		this.isInCheck = this.isCurrentPlayerInCheck();
+		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),false);
+        this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, isCurrentPlayerInCheck(builder.getCurrentPlayerKing()));
 	}
 
-	public boolean isCurrentPlayerInCheck() {
-		for( Move move : this.getOpponentPlayer().getPotentialLegalMoves()){
-			 if(move.getTargetCoordinate() == this.getCurrentPlayer().getKing().getPieceCoordinate()){
+	public final boolean isCurrentPlayerInCheck(King king) {
+		for( Move move : this.getOpponentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
+			 if(move.getTargetCoordinate() == king.getPieceCoordinate()){
 				 return true;
 			 }
 		}
 		return false;
-	 }
+	}
+
 	private static Board createBoard(Builder builder) {
         return new Board(builder);
     }
@@ -121,6 +120,15 @@ public class Board {
         public Board build() {//build a new board everytime a move is executed.
             return Board.createBoard(this);
         }
+
+		public King getCurrentPlayerKing() {
+			for (Piece piece : this.pieces.values()) {
+				if (piece instanceof King king && piece.getPieceAlliance() == this.currentPlayerAlliance) {
+					return king;
+				}
+			}
+			throw new RuntimeException("No king found for this player");
+		}
 	}
 	
 	public static Board createStandardBoard() {
@@ -163,6 +171,7 @@ public class Board {
         Collection<Move> validLegalMoves = new ArrayList<>(this.getCurrentPlayer().getPotentialLegalMoves());
 		for (Move move : this.getCurrentPlayer().getPotentialLegalMoves()) {
             MoveValidation simulationMoveResult = move.validate(this.currentPlayer,this.opponentPlayer);
+			
             if(move instanceof KingSideCastleMove){
                 if(!simulationMoveResult.isCastleKingSideLegal()){
                     validLegalMoves.remove(move);
@@ -172,22 +181,11 @@ public class Board {
                     validLegalMoves.remove(move);
                 }
             }
-			if(move.getPieceToMove() instanceof King){
-				if(simulationMoveResult.putsKingInCheck()){
-					validLegalMoves.remove(move);
-				}
-            }
 
-			if(this.isInCheck){
-				if(simulationMoveResult.doe)){
-					validLegalMoves.remove(move);
-				}
+			if(simulationMoveResult.selfInCheck()){
+				validLegalMoves.remove(move);
 			}
-
         }
         return validLegalMoves;
     }
-
-
-
 }
