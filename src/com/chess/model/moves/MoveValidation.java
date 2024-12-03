@@ -34,9 +34,9 @@ public class MoveValidation {
 
     private static boolean selfInCheck(Move simulationMove, Player currentPlayer, Player opponentPlayer) {//where current player is the player that made the move, so getOpponentPlayer() in the postSimulationMoveBoard.
         Board board = simulationMove.execute();
-        for (Move currentPlayerPotentialMove : currentPlayer.getPotentialLegalMoves()) {
+        for (Move currentPlayerPotentialMove : board.getCurrentPlayer().getPotentialLegalMoves()) {
             if(!(simulationMove.getPieceToMove() instanceof King)){
-                if (currentPlayerPotentialMove.getTargetCoordinate() == opponentPlayer.getKing().getPieceCoordinate()) { // game controlller ischeck will be better
+                if (currentPlayerPotentialMove.getTargetCoordinate() == board.getCurrentPlayer().getKing().getPieceCoordinate()) { // game controlller ischeck will be better
                     return true;
                 }
             }
