@@ -2,8 +2,8 @@ package com.chess.model.moves;
 
 import com.chess.model.board.Board;
 import com.chess.model.moves.noncapturing.KingSideCastleMove;
-import com.chess.model.pieces.King;
 import com.chess.model.player.Player;
+
 public class MoveValidation {
 
     private final boolean selfInCheck;
@@ -34,19 +34,7 @@ public class MoveValidation {
 
     private static boolean selfInCheck(Move simulationMove, Player currentPlayer, Player opponentPlayer) {//where current player is the player that made the move, so getOpponentPlayer() in the postSimulationMoveBoard.
         Board board = simulationMove.execute();
-        for (Move currentPlayerPotentialMove : board.getCurrentPlayer().getPotentialLegalMoves()) {
-            if(!(simulationMove.getPieceToMove() instanceof King)){
-                if (currentPlayerPotentialMove.getTargetCoordinate() == board.getCurrentPlayer().getKing().getPieceCoordinate()) { // game controlller ischeck will be better
-                    return true;
-                }
-            }
-            else{
-                if (currentPlayerPotentialMove.getTargetCoordinate() == simulationMove.getTargetCoordinate()) { // game controlller ischeck will be better
-                    return true;
-                }
-            }
-        }
-        return false;
+        return board.isOpponentPlayerInCheck(currentPlayer.getKing());
     }
 
     private boolean canKingCastleKingSide(Move simulationMove, Player opponentPlayer) {

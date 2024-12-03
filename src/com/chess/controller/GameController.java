@@ -10,7 +10,6 @@ import com.chess.view.ChessBoardUI;
 public class GameController {
 
     private boolean isCheckmate = false;
-    private boolean isCheck = false;
     private static GameController instance;
 
     private GameController() {}
@@ -41,7 +40,7 @@ public class GameController {
                 chessboard = validLegalMove.execute();
 
                 Collection<Move> currentPlayerValidMoves = chessboard.getCurrentPlayerValidMoves();
-                if (isCheck && currentPlayerValidMoves.isEmpty()) {
+                if (chessboard.isCheckmate()) {
                     this.isCheckmate = true;
                 }
                 break;
@@ -52,9 +51,5 @@ public class GameController {
 
     public boolean isCheckmate() {
         return this.isCheckmate;
-    }
-
-    public boolean isCheck() {
-        return this.isCheck;
     }
 }

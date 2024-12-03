@@ -26,11 +26,13 @@ public class Board {
 	private final List<Tile> tiles;
     private final Player currentPlayer;
     private final Player opponentPlayer;
+	private final boolean isCheckmate;
 
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
 		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),false);
         this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, isCurrentPlayerInCheck(builder.getCurrentPlayerKing()));
+		this.isCheckmate = isCheckmate();
 	}
 
 	public final boolean isCurrentPlayerInCheck(King king) {
@@ -188,4 +190,20 @@ public class Board {
         }
         return validLegalMoves;
     }
+
+	public boolean isCheckmate() {
+		if(this.getCurrentPlayer().isInCheck() && this.getCurrentPlayerValidMoves().isEmpty()){
+			return true;
+		}
+		return false;
+	}
+
+	public final boolean isOpponentPlayerInCheck(King king) {
+		for( Move move : this.getCurrentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
+			 if(move.getTargetCoordinate() == this.getOpponentPlayer().getKing().getPieceCoordinate()){
+				 return true;
+			 }
+		}
+		return false;
+	}
 }
