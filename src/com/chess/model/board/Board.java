@@ -3,6 +3,8 @@ package com.chess.model.board;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -150,23 +152,17 @@ public class Board {
 	}
 
 	public Collection<Move> getCurrentPlayerValidMoves() {
-        Collection<Move> validLegalMoves = new ArrayList<>(this.getCurrentPlayer().getPotentialLegalMoves());
-		for (Move move : this.getCurrentPlayer().getPotentialLegalMoves()) {
-            MoveValidation simulationMoveResult = move.validate(this.currentPlayer,this.opponentPlayer);
-			
-            if(move instanceof KingSideCastleMove){
-                if(!simulationMoveResult.isCastleKingSideLegal()){
-                    validLegalMoves.remove(move);
-                }
-            }else if(move instanceof QueenSideCastleMove){
-                if(!simulationMoveResult.isCastleQueenSideLegal()){
-                    validLegalMoves.remove(move);
-                }
-            }
+        Collection<Move> validLegalMoves = new HashSet<>(this.getCurrentPlayer().getPotentialLegalMoves());
+        
+        for (Iterator<Move> iterator = validLegalMoves.iterator(); iterator.hasNext();) {
+            Move move = iterator.next();
+            MoveValidation simulationMoveResult = move.validate(this.currentPlayer, this.opponentPlayer);
 
-			if(simulationMoveResult.selfInCheck()){
-				validLegalMoves.remove(move);
-			}
+            if ((move instanceof KingSideCastleMove && !simulationMoveResult.isCastleKingSideLegal()) ||
+                (move instanceof QueenSideCastleMove && !simulationMoveResult.isCastleQueenSideLegal()) ||
+                simulationMoveResult.selfInCheck()) {
+                iterator.remove();
+            }
         }
         return validLegalMoves;
     }

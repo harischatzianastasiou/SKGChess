@@ -10,7 +10,7 @@ public class MoveValidation {
     private final boolean isCastleQueenSideLegal;
 
     private MoveValidation(Move simulationMove, Player currentPlayer, Player opponentPlayer) {
-        this.selfInCheck = selfInCheck(simulationMove, currentPlayer, opponentPlayer);
+        this.selfInCheck = selfInCheck(simulationMove);
         this.isCastleKingSideLegal = canKingCastleKingSide(simulationMove, opponentPlayer);
         this.isCastleQueenSideLegal = canKingCastleQueenSide(simulationMove, opponentPlayer); 
     }
@@ -31,7 +31,7 @@ public class MoveValidation {
         return isCastleQueenSideLegal;
     }
 
-    private static boolean selfInCheck(Move simulationMove, Player currentPlayer, Player opponentPlayer) {//where current player is the player that made the move, so getOpponentPlayer() in the postSimulationMoveBoard.
+    private static boolean selfInCheck(Move simulationMove) {//where current player is the player that made the move, so getOpponentPlayer() in the postSimulationMoveBoard.
     Board board = simulationMove.execute();
     return board.isOpponentPlayerInCheck();    
     }
