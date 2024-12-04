@@ -26,22 +26,11 @@ public class Board {
 	private final List<Tile> tiles;
     private final Player currentPlayer;
     private final Player opponentPlayer;
-	private final boolean isCheckmate;
 
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
-		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),false);
-        this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, isCurrentPlayerInCheck(builder.getCurrentPlayerKing()));
-		this.isCheckmate = isCheckmate();
-	}
-
-	public final boolean isCurrentPlayerInCheck(King king) {
-		for( Move move : this.getOpponentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
-			 if(move.getTargetCoordinate() == king.getPieceCoordinate()){
-				 return true;
-			 }
-		}
-		return false;
+		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance);
+		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite());
 	}
 
 	private static Board createBoard(Builder builder) {
@@ -122,15 +111,6 @@ public class Board {
         public Board build() {//build a new board everytime a move is executed.
             return Board.createBoard(this);
         }
-
-		public King getCurrentPlayerKing() {
-			for (Piece piece : this.pieces.values()) {
-				if (piece instanceof King king && piece.getPieceAlliance() == this.currentPlayerAlliance) {
-					return king;
-				}
-			}
-			throw new RuntimeException("No king found for this player");
-		}
 	}
 	
 	public static Board createStandardBoard() {
@@ -191,18 +171,27 @@ public class Board {
         return validLegalMoves;
     }
 
-	public boolean isCheckmate() {
-		if(this.getCurrentPlayer().isInCheck() && this.getCurrentPlayerValidMoves().isEmpty()){
-			return true;
+	public final boolean isCurrentPlayerInCheck() {
+		for( Move move : this.getOpponentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
+			 if(move.getTargetCoordinate() == this.getCurrentPlayer().getKing().getPieceCoordinate()){
+				 return true;
+			 }
 		}
 		return false;
 	}
 
-	public final boolean isOpponentPlayerInCheck(King king) {
+	public final boolean isOpponentPlayerInCheck() {
 		for( Move move : this.getCurrentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
 			 if(move.getTargetCoordinate() == this.getOpponentPlayer().getKing().getPieceCoordinate()){
 				 return true;
 			 }
+		}
+		return false;
+	}
+
+	public boolean isCheckmate() {
+		if(this.isCurrentPlayerInCheck() && this.getCurrentPlayerValidMoves().isEmpty()){
+			return true;
 		}
 		return false;
 	}

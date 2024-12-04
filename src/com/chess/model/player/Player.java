@@ -15,16 +15,14 @@ public class Player {
 	private final Collection<Piece>	pieces;
 	protected final Collection<Move> potentialLegalMoves;
 	private final Alliance alliance;
-	private final boolean isInCheck;
 	
-	protected Player(final Collection<Piece> pieces,final Collection<Move> potentialLegalMoves,final Alliance alliance,final boolean isInCheck) {
+	protected Player(final Collection<Piece> pieces,final Collection<Move> potentialLegalMoves,final Alliance alliance) {
 		this.pieces = pieces;
         this.potentialLegalMoves = potentialLegalMoves;
-        this.alliance = alliance;
-		this.isInCheck = isInCheck;
+		this.alliance = alliance;
 	}
 
-	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance,final boolean isInCheck) {
+	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance) {
 		final List<Piece> activePieces = new ArrayList<>();
 		final List<Move> potentialLegalMoves = new ArrayList<>();
 	  
@@ -37,7 +35,7 @@ public class Player {
 			  }
 		  }
 	  }      
-	  return new Player(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance, isInCheck);
+	  return new Player(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance);
   }
 
 	public Collection<Piece> getPieces(){
@@ -55,11 +53,7 @@ public class Player {
 	public Alliance getOpponentAlliance() {
         return this.alliance == Alliance.WHITE ? Alliance.BLACK : Alliance.WHITE;
     }
-
-	public boolean isInCheck() {
-		return this.isInCheck;
-	}
-
+	
 	public King getKing() {
 	    for (Piece piece : this.pieces) {
 	        if (piece instanceof King king) {
