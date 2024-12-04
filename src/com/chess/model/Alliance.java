@@ -4,7 +4,7 @@ public enum Alliance {
 	WHITE{
 		@Override
         public int getMovingDirection() {
-            return -1; // make clear that this is for pieces
+            return -1; // White pieces are on the down side of the board and they move upwards 
         }
         @Override
         public boolean isWhite() {
@@ -22,7 +22,7 @@ public enum Alliance {
 	BLACK{
 		@Override
         public int getMovingDirection() {
-            return 1; // make clear that this is for pieces
+            return 1; // Black pieces are on the upper side of the board and they move downwards
         }
         @Override
         public boolean isWhite() {

@@ -65,19 +65,6 @@ public abstract class Piece {
 		return isFirstMove;
 	}
 	
-	public abstract Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles);
-	
-	public abstract Piece movePiece(int destinationCoordinate);
-	
-	protected boolean isTileUnderAttack(int coordinate, Collection<Move> opponentMoves) {
-	    for (Move move : opponentMoves) {
-	        if (move.getTargetCoordinate() == coordinate) {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
-	
 	public enum PieceSymbol {
 		PAWN("P"), 
 		KNIGHT("N"),
@@ -97,4 +84,35 @@ public abstract class Piece {
             return this.symbol;
         }
 	}
+
+    public enum PieceType {
+        PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
+    }
+
+    public static Piece createPiece(PieceType pieceType, int pieceCoordinate, Alliance pieceAlliance, boolean isFirstMove) {
+        return switch (pieceType) {
+            case PAWN -> new Pawn(pieceCoordinate, pieceAlliance, isFirstMove);
+            case KNIGHT -> new Knight(pieceCoordinate, pieceAlliance, isFirstMove);
+            case BISHOP -> new Bishop(pieceCoordinate, pieceAlliance, isFirstMove);
+            case ROOK -> new Rook(pieceCoordinate, pieceAlliance, isFirstMove);
+            case QUEEN -> new Queen(pieceCoordinate, pieceAlliance, isFirstMove);
+            case KING -> new King(pieceCoordinate, pieceAlliance, isFirstMove);
+        };
+    }
+
+    public abstract Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles);
+	
+	public abstract Piece movePiece(int destinationCoordinate);
+	
 }
+
+
+
+
+// 1. Code Duplication: There is some code duplication, especially in the calculatePotentialLegalMoves methods across different piece classes. Consider using a more generic approach or utility methods to reduce redundancy.
+// 2. Magic Numbers: There are several magic numbers, such as -9, -7, 7, 9 in the piece classes. These should be replaced with named constants to improve readability.
+// 3. User Input Handling: The PawnPromotionMove class assumes user input for pawn promotion, which is not implemented. This could lead to runtime errors. Consider implementing a proper user input mechanism or interface.
+// 4. Testing: There is no mention of unit tests. Given the complexity of a chess game, comprehensive testing is crucial to ensure correctness. Consider adding unit tests for critical components and game scenarios.
+// 5. Performance Considerations: The use of new keyword in move execution (e.g., creating new Board and Piece objects) could be optimized. Consider using object pooling or other techniques if performance becomes an issue.	
+
+// Design Patterns: While the code uses some design patterns effectively, there might be opportunities to apply others, such as the Strategy pattern for move validation or the Factory pattern for piece creation.

@@ -60,11 +60,6 @@ public abstract class Move {
     }
 
     public abstract Piece getCapturedPiece();
-        
-    
-    public MoveValidation validate(Player opponentPlayer) {
-        return MoveValidation.create(this, opponentPlayer);
-    }
 
     public abstract Board execute();    
     
@@ -78,5 +73,9 @@ public abstract class Move {
         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance());
 
         return builder.build();
+    }
+
+    public MoveValidation validate(Player opponentPlayer) {
+        return MoveValidation.create(this, opponentPlayer);//can use better here. movevalidation seems kinda dummy
     }
 } 

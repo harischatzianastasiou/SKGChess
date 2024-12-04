@@ -32,9 +32,14 @@ public class MoveValidation {
     }
 
     private static boolean selfInCheck(Move simulationMove) {//where current player is the player that made the move, so getOpponentPlayer() in the postSimulationMoveBoard.
-    Board board = simulationMove.execute();
-    return board.isOpponentPlayerInCheck();    
-    }
+        Board board = simulationMove.execute();
+        for( Move move : board.getCurrentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
+            if(move.getTargetCoordinate() == board.getOpponentPlayer().getKing().getPieceCoordinate()){
+                return true;
+            }
+        }
+    return false;   
+ }
 
     private boolean canKingCastleKingSide(Move simulationMove, Player opponentPlayer) {
         int currentPlayerKingPositionBeforeCastling = simulationMove.getSourceCoordinate();// on previous board, current player's king position before castling

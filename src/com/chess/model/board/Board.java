@@ -39,7 +39,7 @@ public class Board {
         return new Board(builder);
     }
 	
-	private static List<Tile> createTiles(final Builder builder) {
+	private static List<Tile> createTiles(final Builder builder) {// list of 64 tiles. each occupied tile gets a piece mapped from the builder. if not mapped the tile is empty
 	    final List<Tile> tiles = new ArrayList<>(BoardUtils.NUM_TILES);
 	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
 	        Piece piece = builder.pieces.get(i);
@@ -91,7 +91,7 @@ public class Board {
         return this.opponentPlayer;
 	}
 
-	public static class Builder{//Set mutable fields in Builder and once we call build(), we get an immutable Board object.
+	public static class Builder{// Each time a Move is executed, we create a new Builder and build a new Board. --> Set mutable fields in Builder and once we call build(), we get an immutable Board object.
 		
 		private Map<Integer, Piece> pieces;
 		private Alliance currentPlayerAlliance;
@@ -115,7 +115,7 @@ public class Board {
         }
 	}
 	
-	public static Board createStandardBoard() {
+	public static Board createStandardBoard() {//Create initial board
 		// create white and black player here once
 	    final Builder builder = new Builder();
 	    
@@ -151,7 +151,7 @@ public class Board {
 	    return createBoard(builder);
 	}
 
-	public Collection<Move> getCurrentPlayerValidMoves() {
+	public Collection<Move> getCurrentPlayerValidMoves() {//get all legal moves for the current player
         Collection<Move> validLegalMoves = new HashSet<>(this.getCurrentPlayer().getPotentialLegalMoves());
         
         for (Iterator<Move> iterator = validLegalMoves.iterator(); iterator.hasNext();) {
@@ -167,28 +167,19 @@ public class Board {
         return validLegalMoves;
     }
 
-	public final boolean isCurrentPlayerInCheck() {
+	public final boolean isCurrentPlayerInCheck() {//check if the current player is in check
 		for( Move move : this.getOpponentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
 			 if(move.getTargetCoordinate() == this.getCurrentPlayer().getKing().getPieceCoordinate()){
 				 return true;
 			 }
-		}
-		return false;// make this through the builder
-	}
-
-	public final boolean isOpponentPlayerInCheck() {
-		for( Move move : this.getCurrentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
-			 if(move.getTargetCoordinate() == this.getOpponentPlayer().getKing().getPieceCoordinate()){
-				 return true;
-			 }
-		}
+		}//could add these in the constructor
 		return false;
 	}
 
-	public boolean isCheckmate() {
+	public final boolean isCheckmate() {
 		if(this.isCurrentPlayerInCheck() && this.getCurrentPlayerValidMoves().isEmpty()){
 			return true;
 		}
-		return false;
+		return false;//are these supposed to be in board class??
 	}
 }

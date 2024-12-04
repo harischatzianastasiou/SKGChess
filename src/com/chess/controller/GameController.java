@@ -22,7 +22,7 @@ public class GameController {
     }
 
     public Board executeMove(Board chessboard, ChessBoardUI chessBoardUI) {
-        Collection<Move> validLegalMoves = chessboard.getCurrentPlayerValidMoves();
+        Collection<Move> validLegalMoves = chessboard.getCurrentPlayerValidMoves();//each move is being validated, to ensure that it is a legal move
         for (Move validLegalMove : validLegalMoves) {
             if (validLegalMove.getSourceCoordinate() == chessBoardUI.getSourceTile().getTileCoordinate() &&
                 validLegalMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
