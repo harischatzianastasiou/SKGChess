@@ -22,28 +22,29 @@ public class GameController {
     }
 
     public Board executeMove(Board chessboard, ChessBoardUI chessBoardUI) {
-        Collection<Move> validLegalMoves = chessboard.getCurrentPlayerValidMoves();//each move is being validated, to ensure that it is a legal move
+        Collection<Move> validLegalMoves = chessboard.getCurrentPlayerValidMoves();
+
         for (Move validLegalMove : validLegalMoves) {
             if (validLegalMove.getSourceCoordinate() == chessBoardUI.getSourceTile().getTileCoordinate() &&
                 validLegalMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
 
-                GameHistory.getInstance().addBoard(chessboard);
-                GameHistory.getInstance().addMove(validLegalMove);
-
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                ///   With each move a new board is created to represent the new state of the tiles and the turn of the next players.     //           
-                ///   At least one tile has now changed to occupied or empty (tiles hold pieces).                                         // 
-                ///   Also Current and Opponent player have changed.                                                                      //
-                ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
-                ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                chessboard = validLegalMove.execute();
+                    GameHistory.getInstance().addBoard(chessboard);
+                    GameHistory.getInstance().addMove(validLegalMove);
+    
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    ///   With each move a new board is created to represent the new state of the tiles and the turn of the next players.     //           
+                    ///   At least one tile has now changed to occupied or empty (tiles hold pieces).                                         // 
+                    ///   Also Current and Opponent player have changed.                                                                      //
+                    ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
+                    ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    chessboard = validLegalMove.execute();         
 
                 if (chessboard.isCheckmate()) {
                     this.isCheckmate = true;
                 }
-                break;
-            }
+                    break;
+                }
         }
         return chessboard;
     }
@@ -51,4 +52,5 @@ public class GameController {
     public boolean isCheckmate() {
         return this.isCheckmate;
     }
+
 }

@@ -9,10 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.chess.model.Alliance;
+import com.chess.model.board.validation.CastlingKingSideValidation;
+import com.chess.model.board.validation.CastlingQueenSideValidation;
+import com.chess.model.board.validation.MoveValidation;
+import com.chess.model.board.validation.SelfNotOpenForCheckmateValidation;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveValidation;
-import com.chess.model.moves.noncapturing.KingSideCastleMove;
-import com.chess.model.moves.noncapturing.QueenSideCastleMove;
 import com.chess.model.pieces.Bishop;
 import com.chess.model.pieces.King;
 import com.chess.model.pieces.Knight;
@@ -156,11 +157,8 @@ public class Board {
         
         for (Iterator<Move> iterator = validLegalMoves.iterator(); iterator.hasNext();) {
             Move move = iterator.next();
-            MoveValidation simulationMoveResult = move.validate(this.opponentPlayer);
-
-            if ((move instanceof KingSideCastleMove && !simulationMoveResult.isCastleKingSideLegal()) ||
-                (move instanceof QueenSideCastleMove && !simulationMoveResult.isCastleQueenSideLegal()) ||
-                simulationMoveResult.selfInCheck()) {
+        	MoveValidation moveValidation = new MoveValidation(List.of(new SelfNotOpenForCheckmateValidation(), new CastlingKingSideValidation(), new CastlingQueenSideValidation()));
+            if (!moveValidation.validate(move, this.getOpponentPlayer())) {
                 iterator.remove();
             }
         }

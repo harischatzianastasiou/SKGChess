@@ -19,7 +19,7 @@ public class Player {
 	protected Player(final Collection<Piece> pieces,final Collection<Move> potentialLegalMoves,final Alliance alliance) {
 		this.pieces = pieces;
         this.potentialLegalMoves = potentialLegalMoves;
-		this.alliance = alliance;
+		this.alliance = alliance;//could use incheck here?
 	}
 
 	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance) {

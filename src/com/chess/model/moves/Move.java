@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.chess.model.board.Board;
 import com.chess.model.pieces.Piece;
-import com.chess.model.player.Player;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -73,9 +72,5 @@ public abstract class Move {
         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance());
 
         return builder.build();
-    }
-
-    public MoveValidation validate(Player opponentPlayer) {
-        return MoveValidation.create(this, opponentPlayer);//can use better here. movevalidation seems kinda dummy
     }
 } 
