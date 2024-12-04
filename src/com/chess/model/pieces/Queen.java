@@ -71,19 +71,19 @@ public class Queen extends Piece {
 				attackPath.addAll(potentialAttackPath);
 			}
 		}
-        queenPotentialLegalMoves.addAll(calculatePotentialLegalMovesForRook(boardTiles, checkingMoves, attackPath));
-        queenPotentialLegalMoves.addAll(calculatePotentialLegalMovesForBishop(boardTiles, checkingMoves, attackPath));
+        queenPotentialLegalMoves.addAll(calculatePotentialLegalMovesForRook(boardTiles, checkingMovesToUse, attackPath));
+        queenPotentialLegalMoves.addAll(calculatePotentialLegalMovesForBishop(boardTiles, checkingMovesToUse, attackPath));
         return ImmutableList.copyOf(queenPotentialLegalMoves);
     }
 
-    public Collection<Move> calculatePotentialLegalMovesForRook(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final List<Integer> attackPath) {
+    public Collection<Move> calculatePotentialLegalMovesForRook(final List<Tile> boardTiles, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath) {
 		final List<Move> rookPotentialLegalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : ROOK_MOVE_OFFSETS) {
 			for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
 				int total_offset = candidateOffset * squaresMoved;
 				candidateDestinationCoordinate = this.pieceCoordinate + total_offset;
-				if (checkingMoves.size() == 1 && !attackPath.contains(candidateDestinationCoordinate)) {
+				if (checkingMovesToUse.size() == 1 && !attackPath.contains(candidateDestinationCoordinate)) {
 					return ImmutableList.copyOf(rookPotentialLegalMoves);
 				}
 	            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)){
@@ -108,14 +108,14 @@ public class Queen extends Piece {
 		return ImmutableList.copyOf(rookPotentialLegalMoves);
     }
 
-    public Collection<Move> calculatePotentialLegalMovesForBishop(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final List<Integer> attackPath) {
+    public Collection<Move> calculatePotentialLegalMovesForBishop(final List<Tile> boardTiles, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath) {
 		final List<Move> bishopPotentialLegalMoves = new ArrayList<>();
 		int candidateDestinationCoordinate;
 		for (final int candidateOffset : BISHOP_MOVE_OFFSETS) {
 			for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
 				int total_offset = candidateOffset * squaresMoved;
 				candidateDestinationCoordinate = this.pieceCoordinate + total_offset;
-				if (checkingMoves.size() == 1 && !attackPath.contains(candidateDestinationCoordinate)) {
+				if (checkingMovesToUse.size() == 1 && !attackPath.contains(candidateDestinationCoordinate)) {
 					return ImmutableList.copyOf(bishopPotentialLegalMoves);
 				}
 				if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {

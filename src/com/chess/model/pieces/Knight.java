@@ -73,7 +73,7 @@ public class Knight extends Piece {
 	    // Iterate over all possible L-shaped moves for a knight
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
 			candidateDestinationCoordinate = this.pieceCoordinate + candidateOffset;
-			if (checkingMoves.size() == 1 && !attackPath.contains(candidateDestinationCoordinate)) {
+			if (checkingMovesToUse.size() == 1 && !attackPath.contains(candidateDestinationCoordinate)) {
 				return ImmutableList.copyOf(knightPotentialLegalMoves);
 			}
             if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
