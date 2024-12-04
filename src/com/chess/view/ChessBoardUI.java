@@ -152,7 +152,7 @@ public class ChessBoardUI {
 	                        if(selectedPiece== null) {
 	                        	sourceTile = null;
 	                        }else{
-                                Collection<Move> testValidLegalMoves = chessboard.getCurrentPlayer().getPotentialLegalMoves();
+                                Collection<Move> testValidLegalMoves = chessboard.getCurrentPlayer().getMoves();
                                 if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
                                     if(selectedPiece instanceof Rook) {
                                     System.out.println("\nTesting Rook Moves:");

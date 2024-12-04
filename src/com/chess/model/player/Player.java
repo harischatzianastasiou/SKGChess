@@ -1,6 +1,5 @@
 package com.chess.model.player;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -11,46 +10,34 @@ import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
-public class Player {
-	private final Collection<Piece>	pieces;
-	protected final Collection<Move> potentialLegalMoves;
-	private final Alliance alliance;
+public abstract class Player {
+	protected final Collection<Piece>	pieces;
+	protected final Collection<Move> moves;
+	protected final Alliance alliance;
 	
-	protected Player(final Collection<Piece> pieces,final Collection<Move> potentialLegalMoves,final Alliance alliance) {
+	protected Player(final Collection<Piece> pieces,final Collection<Move> moves, final Alliance alliance) {
 		this.pieces = pieces;
-        this.potentialLegalMoves = potentialLegalMoves;
+        this.moves = moves;
 		this.alliance = alliance;//could use incheck here?
 	}
 
-	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance) {
-		final List<Piece> activePieces = new ArrayList<>();
-		final List<Move> potentialLegalMoves = new ArrayList<>();
-	  
-	  for (final Tile tile : tiles) {
-		  if (tile.isTileOccupied()) {
-			  final Piece piece = tile.getPiece();
-			  if (piece.getPieceAlliance() == alliance) {
-				  activePieces.add(piece);
-				  potentialLegalMoves.addAll(piece.calculatePotentialLegalMoves(tiles));
-			  }
-		  }
-	  }      
-	  return new Player(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance);
+	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance,final Collection<Move> oppositePlayerMoves) {
+	  return oppositePlayerMoves != null ? CurrentPlayer.createCurrentPlayer(tiles, alliance, oppositePlayerMoves) : OpponentPlayer.createOpponentPlayer(tiles, alliance);
   }
 
 	public Collection<Piece> getPieces(){
 		return ImmutableList.copyOf(this.pieces);
 	}
 	
-	public Collection<Move> getPotentialLegalMoves() {
-        return ImmutableList.copyOf(potentialLegalMoves);
+	public Collection<Move> getMoves() {
+        return ImmutableList.copyOf(moves);
     }
 	
 	public Alliance getAlliance() {
 		return this.alliance;
 	}
 	
-	public Alliance getOpponentAlliance() {
+	public Alliance getOppositeAlliance() {
         return this.alliance == Alliance.WHITE ? Alliance.BLACK : Alliance.WHITE;
     }
 	
@@ -62,4 +49,6 @@ public class Player {
 	    }
 	    throw new RuntimeException("No king found for this player");
 	}
+
+	public abstract boolean isCheckmate();
 }

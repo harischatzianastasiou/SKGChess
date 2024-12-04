@@ -28,7 +28,7 @@ public class KingTest {
 	
 	public static void testKingMovesWithStandardBoard(Board board) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getPotentialLegalMoves()) {
+			for(Move move : board.getCurrentPlayer().getMoves()) {
             	if(move.getPieceToMove() instanceof King) {
             		legalMoves.add(move);
             	}

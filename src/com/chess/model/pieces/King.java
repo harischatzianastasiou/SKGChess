@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import com.chess.model.board.BoardUtils;
-import com.chess.model.tiles.Tile;
 import com.chess.model.Alliance;
+import com.chess.model.board.BoardUtils;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.capturing.CapturingMove;
 import com.chess.model.moves.noncapturing.KingSideCastleMove;
 import com.chess.model.moves.noncapturing.NonCapturingMove;
 import com.chess.model.moves.noncapturing.QueenSideCastleMove;
+import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
 public class King extends Piece  {
@@ -32,7 +32,7 @@ public class King extends Piece  {
     }
     
     @Override
-	public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles) {
+	public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves) {
 		final List<Move> kingPotentialLegalMoves = new ArrayList<>();
 		
 		// Add normal king moves

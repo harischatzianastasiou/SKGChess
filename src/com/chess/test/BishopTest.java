@@ -28,7 +28,7 @@ public class BishopTest {
 	
 	public static void testBishopMovesWithStandardBoard(Board board) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getPotentialLegalMoves()) {
+			for(Move move : board.getCurrentPlayer().getMoves()) {
             	if(move.getPieceToMove() instanceof Bishop) {
             		legalMoves.add(move);
             	}

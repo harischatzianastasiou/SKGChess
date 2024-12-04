@@ -1,24 +1,26 @@
 package com.chess.model.board.validation;
 
+import java.util.Collection;
+
 import com.chess.model.moves.Move;
 import com.chess.model.moves.noncapturing.QueenSideCastleMove;
-import com.chess.model.player.Player;
+
 
 public class CastlingQueenSideValidation implements MoveValidationStrategy {
     
     @Override
-    public boolean validate(Move move, Player opponentPlayer) {
+    public boolean validate(Move move, Collection<Move> opponentPlayerMoves) {
         if (move instanceof QueenSideCastleMove) {
-           return checkCastleQueenSide(move, opponentPlayer);
+           return checkCastleQueenSide(move, opponentPlayerMoves);
         } 
         return true; // Placeholder
     }
     
-    private boolean checkCastleQueenSide(Move simulationMove, Player opponentPlayer) {
+    private boolean checkCastleQueenSide(Move simulationMove, Collection<Move> opponentPlayerMoves) {
         int currentPlayerKingPositionBeforeCastling = simulationMove.getSourceCoordinate();
         int[] castlingPath = {currentPlayerKingPositionBeforeCastling, currentPlayerKingPositionBeforeCastling - 1, currentPlayerKingPositionBeforeCastling - 2}; // include current king position
         
-        for (Move newCurrentPlayerPotentialMove :opponentPlayer.getPotentialLegalMoves()) {
+        for (Move newCurrentPlayerPotentialMove :opponentPlayerMoves) {
             int targetSquare = newCurrentPlayerPotentialMove.getTargetCoordinate();
             for (int pathSquare : castlingPath) {
                 if (targetSquare == pathSquare) {

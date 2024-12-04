@@ -1,19 +1,11 @@
 package com.chess.model.board;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.chess.model.Alliance;
-import com.chess.model.board.validation.CastlingKingSideValidation;
-import com.chess.model.board.validation.CastlingQueenSideValidation;
-import com.chess.model.board.validation.MoveValidation;
-import com.chess.model.board.validation.SelfNotOpenForCheckmateValidation;
-import com.chess.model.moves.Move;
 import com.chess.model.pieces.Bishop;
 import com.chess.model.pieces.King;
 import com.chess.model.pieces.Knight;
@@ -32,8 +24,8 @@ public class Board {
 
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
-		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance);
-		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite());
+		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(), null);
+		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer.getMoves());
 	}
 
 	private static Board createBoard(Builder builder) {
@@ -150,34 +142,5 @@ public class Board {
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
 
 	    return createBoard(builder);
-	}
-
-	public Collection<Move> getCurrentPlayerValidMoves() {//get all legal moves for the current player
-        Collection<Move> validLegalMoves = new HashSet<>(this.getCurrentPlayer().getPotentialLegalMoves());
-        
-        for (Iterator<Move> iterator = validLegalMoves.iterator(); iterator.hasNext();) {
-            Move move = iterator.next();
-        	MoveValidation moveValidation = new MoveValidation(List.of(new SelfNotOpenForCheckmateValidation(), new CastlingKingSideValidation(), new CastlingQueenSideValidation()));
-            if (!moveValidation.validate(move, this.getOpponentPlayer())) {
-                iterator.remove();
-            }
-        }
-        return validLegalMoves;
-    }
-
-	public final boolean isCurrentPlayerInCheck() {//check if the current player is in check
-		for( Move move : this.getOpponentPlayer().getPotentialLegalMoves()){//even better to check in inside execute and builder
-			 if(move.getTargetCoordinate() == this.getCurrentPlayer().getKing().getPieceCoordinate()){
-				 return true;
-			 }
-		}//could add these in the constructor
-		return false;
-	}
-
-	public final boolean isCheckmate() {
-		if(this.isCurrentPlayerInCheck() && this.getCurrentPlayerValidMoves().isEmpty()){
-			return true;
-		}
-		return false;//are these supposed to be in board class??
 	}
 }

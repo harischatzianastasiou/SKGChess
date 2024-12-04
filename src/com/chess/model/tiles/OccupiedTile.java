@@ -17,22 +17,12 @@ public final class OccupiedTile extends Tile {
         }
         
         @Override
-        public boolean isTileOccupied() {
-            return true;
-        }
-        
-		@Override
-		public int getTileCoordinate() {
-            return this.tileCoordinate;
-        }
-        
-        @Override
-        public Alliance getTileAlliance() {
-            return this.tileAlliance;
-        }
-        
-        @Override
         public Piece getPiece() {
             return this.pieceOnTile;
+        }
+
+        @Override
+        public boolean isTileOccupied() {
+            return true;
         }
 	}

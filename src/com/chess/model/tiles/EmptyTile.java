@@ -23,22 +23,14 @@ public final class EmptyTile extends Tile  {
     }
     
     @Override
+    public Piece getPiece() {
+        return null;
+    }
+    
+    @Override
     public boolean isTileOccupied() {
         return false;
     }
     
-    @Override
-    public int getTileCoordinate() {
-        return this.tileCoordinate;
-    }
-    
-    @Override
-    public Alliance getTileAlliance() {
-        return this.tileAlliance;
-    }	
-    
-    @Override
-    public Piece getPiece() {
-        return null;
-    }
+
 }

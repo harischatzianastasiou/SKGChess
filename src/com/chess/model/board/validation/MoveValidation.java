@@ -1,9 +1,9 @@
 package com.chess.model.board.validation;
 
+import java.util.Collection;
 import java.util.List;
 
 import com.chess.model.moves.Move;
-import com.chess.model.player.Player;
 
 public class MoveValidation {
 
@@ -13,9 +13,9 @@ public class MoveValidation {
         this.strategies = strategies;
     }
 
-    public boolean validate(Move move, Player opponentPlayer) {
+    public boolean validate(Move move, Collection<Move> opponentPlayerMoves) {
         for (MoveValidationStrategy strategy : strategies) {
-            if (!strategy.validate(move, opponentPlayer)) {
+            if (!strategy.validate(move, opponentPlayerMoves)) {
                 return false;
             }
         }

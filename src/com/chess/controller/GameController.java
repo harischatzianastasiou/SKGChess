@@ -22,14 +22,14 @@ public class GameController {
     }
 
     public Board executeMove(Board chessboard, ChessBoardUI chessBoardUI) {
-        Collection<Move> validLegalMoves = chessboard.getCurrentPlayerValidMoves();
+        Collection<Move> currentPlayerMoves = chessboard.getCurrentPlayer().getMoves();
 
-        for (Move validLegalMove : validLegalMoves) {
-            if (validLegalMove.getSourceCoordinate() == chessBoardUI.getSourceTile().getTileCoordinate() &&
-                validLegalMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
+        for (Move currentPlayerMove : currentPlayerMoves) {
+            if (currentPlayerMove.getSourceCoordinate() == chessBoardUI.getSourceTile().getTileCoordinate() &&
+             currentPlayerMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
 
                     GameHistory.getInstance().addBoard(chessboard);
-                    GameHistory.getInstance().addMove(validLegalMove);
+                    GameHistory.getInstance().addMove(currentPlayerMove);
     
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     ///   With each move a new board is created to represent the new state of the tiles and the turn of the next players.     //           
@@ -38,9 +38,9 @@ public class GameController {
                     ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
                     ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    chessboard = validLegalMove.execute();         
+                    chessboard = currentPlayerMove.execute();         
 
-                if (chessboard.isCheckmate()) {
+                if (chessboard.getCurrentPlayer().isCheckmate()) {
                     this.isCheckmate = true;
                 }
                     break;

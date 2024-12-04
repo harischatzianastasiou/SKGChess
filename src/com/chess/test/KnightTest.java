@@ -28,7 +28,7 @@ public class KnightTest {
 	
 	public static void testKnightMovesWithStandardBoard(Board board) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getPotentialLegalMoves()) {
+			for(Move move : board.getCurrentPlayer().getMoves()) {
             	if(move.getPieceToMove() instanceof Knight) {
             		legalMoves.add(move);
             	}

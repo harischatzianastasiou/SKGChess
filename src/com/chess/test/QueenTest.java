@@ -28,7 +28,7 @@ public class QueenTest {
 	
 	public static void testQueenMovesWithStandardBoard(Board board) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getPotentialLegalMoves()) {
+			for(Move move : board.getCurrentPlayer().getMoves()) {
             	if(move.getPieceToMove() instanceof Queen) {
             		legalMoves.add(move);
             	}

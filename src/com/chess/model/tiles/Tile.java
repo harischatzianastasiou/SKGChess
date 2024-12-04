@@ -15,14 +15,18 @@ public abstract class Tile {
 		return piece != null? OccupiedTile.createOccupiedTile(tileCoordinate, alliance, piece) : EMPTY_TILES_CACHE.get(tileCoordinate);
 	}
 	
-	Tile(final int tileCoordinate,  final Alliance tileAlliance) {
+	protected Tile(final int tileCoordinate,  final Alliance tileAlliance) {
 		this.tileCoordinate = tileCoordinate;
 		this.tileAlliance = tileAlliance;
 	}
 	
-	public abstract int getTileCoordinate();
-	
-	public abstract Alliance getTileAlliance();
+    public int getTileCoordinate() {
+		return this.tileCoordinate;
+	}
+
+	public Alliance getTileAlliance() {
+		return this.tileAlliance;
+	}
 	
 	public abstract Piece getPiece();
 

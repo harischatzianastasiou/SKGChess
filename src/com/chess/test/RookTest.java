@@ -28,7 +28,7 @@ public class RookTest {
 	
 	public static void testRookMovesWithStandardBoard(Board board) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getPotentialLegalMoves()) {
+			for(Move move : board.getCurrentPlayer().getMoves()) {
             	if(move.getPieceToMove() instanceof Rook) {
             		legalMoves.add(move);
             	}

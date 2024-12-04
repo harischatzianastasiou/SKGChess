@@ -85,23 +85,8 @@ public abstract class Piece {
         }
 	}
 
-    public enum PieceType {
-        PAWN, KNIGHT, BISHOP, ROOK, QUEEN, KING
-    }
+    public abstract Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves);
 
-    public static Piece createPiece(PieceType pieceType, int pieceCoordinate, Alliance pieceAlliance, boolean isFirstMove) {
-        return switch (pieceType) {
-            case PAWN -> new Pawn(pieceCoordinate, pieceAlliance, isFirstMove);
-            case KNIGHT -> new Knight(pieceCoordinate, pieceAlliance, isFirstMove);
-            case BISHOP -> new Bishop(pieceCoordinate, pieceAlliance, isFirstMove);
-            case ROOK -> new Rook(pieceCoordinate, pieceAlliance, isFirstMove);
-            case QUEEN -> new Queen(pieceCoordinate, pieceAlliance, isFirstMove);
-            case KING -> new King(pieceCoordinate, pieceAlliance, isFirstMove);
-        };
-    }
-
-    public abstract Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles);
-	
 	public abstract Piece movePiece(int destinationCoordinate);
 	
 }

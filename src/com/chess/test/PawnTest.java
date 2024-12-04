@@ -27,7 +27,7 @@ public class PawnTest {
 	
 	public static void testPawnMovesWithStandardBoard(Board board) {
 		Collection<Move> legalMoves = new ArrayList<>();
-			for(Move move : board.getCurrentPlayer().getPotentialLegalMoves()) {
+			for(Move move : board.getCurrentPlayer().getMoves()) {
             	if(move.getPieceToMove() instanceof Pawn) {
             		legalMoves.add(move);
             	}
