@@ -6,10 +6,8 @@ import com.chess.model.Alliance;
 import com.chess.model.board.Board;
 import com.chess.model.board.Board.Builder;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.MoveValidation;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
-import java.util.Collection;
 public class CapturingMove extends Move {
     private final Piece capturedPiece;
 

@@ -7,6 +7,6 @@ public class SKGChess {
 
     public static void main(String[] args) {	
 		GameController gameController = GameController.getInstance();	
-		ChessBoardUI chessboardUI = new ChessBoardUI(gameController);
+		new ChessBoardUI(gameController);
     }
 }

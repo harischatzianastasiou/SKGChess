@@ -62,8 +62,8 @@ public abstract class Move {
     public abstract Piece getCapturedPiece();
         
     
-    public MoveValidation validate(Player currentPlayer, Player opponentPlayer) {
-        return MoveValidation.create(this,currentPlayer, opponentPlayer);
+    public MoveValidation validate(Player opponentPlayer) {
+        return MoveValidation.create(this, opponentPlayer);
     }
 
     public abstract Board execute();    

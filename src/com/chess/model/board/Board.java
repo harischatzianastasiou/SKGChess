@@ -156,7 +156,7 @@ public class Board {
         
         for (Iterator<Move> iterator = validLegalMoves.iterator(); iterator.hasNext();) {
             Move move = iterator.next();
-            MoveValidation simulationMoveResult = move.validate(this.currentPlayer, this.opponentPlayer);
+            MoveValidation simulationMoveResult = move.validate(this.opponentPlayer);
 
             if ((move instanceof KingSideCastleMove && !simulationMoveResult.isCastleKingSideLegal()) ||
                 (move instanceof QueenSideCastleMove && !simulationMoveResult.isCastleQueenSideLegal()) ||
@@ -173,7 +173,7 @@ public class Board {
 				 return true;
 			 }
 		}
-		return false;
+		return false;// make this through the builder
 	}
 
 	public final boolean isOpponentPlayerInCheck() {

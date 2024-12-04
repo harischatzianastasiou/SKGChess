@@ -24,8 +24,6 @@ import com.chess.model.Alliance;
 import com.chess.model.board.Board;
 import com.chess.model.board.BoardUtils;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.noncapturing.KingSideCastleMove;
-import com.chess.model.moves.noncapturing.QueenSideCastleMove;
 import com.chess.model.pieces.Bishop;
 import com.chess.model.pieces.King;
 import com.chess.model.pieces.Knight;
@@ -40,7 +38,6 @@ import com.chess.test.KnightTest;
 import com.chess.test.PawnTest;
 import com.chess.test.QueenTest;
 import com.chess.test.RookTest;
-import com.chess.util.GameHistory;
 import com.chess.controller.GameController;
 
 public class ChessBoardUI {
@@ -52,7 +49,6 @@ public class ChessBoardUI {
     private Tile sourceTile;
     private Tile targetTile;
     private Piece selectedPiece;
-    boolean isCheckmate;
 
     private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(600, 600);
     private final static Dimension BOARD_PANEL_DIMENSION = new Dimension (400, 350);
@@ -73,7 +69,6 @@ public class ChessBoardUI {
         this.boardPanel = new BoardPanel();
         this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.gameFrame.setVisible(true);
-        this.isCheckmate = false;
     }
 
     private JMenuBar createChessTableMenuBar() {

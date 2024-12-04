@@ -9,14 +9,14 @@ public class MoveValidation {
     private final boolean isCastleKingSideLegal;
     private final boolean isCastleQueenSideLegal;
 
-    private MoveValidation(Move simulationMove, Player currentPlayer, Player opponentPlayer) {
+    private MoveValidation(Move simulationMove, Player opponentPlayer) {
         this.selfInCheck = selfInCheck(simulationMove);
         this.isCastleKingSideLegal = canKingCastleKingSide(simulationMove, opponentPlayer);
         this.isCastleQueenSideLegal = canKingCastleQueenSide(simulationMove, opponentPlayer); 
     }
 
-    public static MoveValidation create(Move simulationMove, Player currentPlayer, Player opponentPlayer) {
-        return new MoveValidation(simulationMove, currentPlayer, opponentPlayer);
+    public static MoveValidation create(Move simulationMove, Player opponentPlayer) {
+        return new MoveValidation(simulationMove, opponentPlayer);
     }
     
     public boolean selfInCheck() {

@@ -39,7 +39,6 @@ public class GameController {
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 chessboard = validLegalMove.execute();
 
-                Collection<Move> currentPlayerValidMoves = chessboard.getCurrentPlayerValidMoves();
                 if (chessboard.isCheckmate()) {
                     this.isCheckmate = true;
                 }
