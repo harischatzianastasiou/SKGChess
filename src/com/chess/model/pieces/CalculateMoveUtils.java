@@ -17,6 +17,11 @@ public final class CalculateMoveUtils {
     
     private static final int MAX_SQUARES_MOVED = 7;
 
+    public enum MovementType {
+        STRAIGHT,    // Rook moves
+        DIAGONAL     // Bishop moves
+    }
+
     private CalculateMoveUtils() {
         // Utility class - prevent instantiation
     }
@@ -127,7 +132,7 @@ public final class CalculateMoveUtils {
             final List<Tile> boardTiles,
             final Piece piece,
             final int[] moveOffsets,
-            final boolean isDiagonal,
+            final MovementType movementType,
             final Collection<Move> checkingMoves,
             final Collection<Move> oppositePlayerMoves,
             final boolean validateCheck) {
@@ -157,11 +162,11 @@ public final class CalculateMoveUtils {
             }
 
             // Calculate actual moves with pin/check validation
-            return calculateValidatedMoves(boardTiles, piece, moveOffsets, isDiagonal, 
+            return calculateValidatedMoves(boardTiles, piece, moveOffsets, movementType, 
                     checkingPieceAttackPath, pinningPiecesCoordinates);
         } else {
             // Calculate moves without check validation (for opponent's moves)
-            return calculateValidatedMoves(boardTiles, piece, moveOffsets, isDiagonal, 
+            return calculateValidatedMoves(boardTiles, piece, moveOffsets, movementType, 
                     new ArrayList<>(), new ArrayList<>());
         }
     }
@@ -233,30 +238,35 @@ public final class CalculateMoveUtils {
             final List<Tile> boardTiles,
             final Piece piece,
             final int[] moveOffsets,
-            final boolean isDiagonal,
+            final MovementType movementType,
             final List<Integer> checkingPieceAttackPath,
             final List<Integer> pinningPiecesCoordinates) {
         
         final List<Move> legalMoves = new ArrayList<>();
         
-        for (final int offset : moveOffsets) {
-            for (int squaresMoved = 1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++) {
+        directionLoop:for (final int offset : moveOffsets) {
+            // Check each direction (offset)
+             for (int squaresMoved = 1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++) {
                 final int destinationCoordinate = piece.getPieceCoordinate() + (offset * squaresMoved);
                 
                 if (!BoardUtils.isValidTileCoordinate(destinationCoordinate)) {
-                    break;
+                    break; // Break out of this direction entirely
                 }
 
-                if (!isValidDirection(piece.getPieceCoordinate(), destinationCoordinate, isDiagonal)) {
-                    break;
+                // If we're in check, only allow moves that block the check or capture the checking piece
+                if (!checkingPieceAttackPath.isEmpty()) {
+                    if (!checkingPieceAttackPath.contains(destinationCoordinate)) {
+                        continue; // Skip moves that don't block the check
+                    }
+                } else if (!pinningPiecesCoordinates.isEmpty()) {
+                    // If piece is pinned, it can only move along the pin line
+                    if (destinationCoordinate != pinningPiecesCoordinates.get(0)) {
+                        continue;
+                    }
                 }
 
-                // Check validation
-                if (!checkingPieceAttackPath.isEmpty() && !checkingPieceAttackPath.contains(destinationCoordinate)) {
-                    continue;
-                }
-                if (!pinningPiecesCoordinates.isEmpty() && !pinningPiecesCoordinates.contains(destinationCoordinate)) {
-                    continue;
+                if (!isValidDirection(piece.getPieceCoordinate(), destinationCoordinate, movementType)) {
+                    break; // Break out of this direction entirely
                 }
 
                 final Tile destinationTile = boardTiles.get(destinationCoordinate);
@@ -270,7 +280,7 @@ public final class CalculateMoveUtils {
                         legalMoves.add(new CapturingMove(boardTiles, piece.getPieceCoordinate(),
                                 destinationCoordinate, piece, pieceAtDestination));
                     }
-                    break;
+                    break; // Break out of this direction entirely when we hit any piece
                 }
             }
         }
@@ -280,13 +290,17 @@ public final class CalculateMoveUtils {
 
     private static boolean isValidDirection(final int sourceCoordinate, 
                                          final int targetCoordinate,
-                                         final boolean isDiagonal) {
-        if (isDiagonal) {
-            return true; // Diagonal moves are always valid if they reach this point
-        }
-        // For straight moves (rook/queen), check rank or file alignment
+                                         final MovementType movementType) {
         int rankDifference = BoardUtils.getCoordinateRankDifference(targetCoordinate, sourceCoordinate);
         int fileDifference = BoardUtils.getCoordinateFileDifference(targetCoordinate, sourceCoordinate);
-        return rankDifference == 0 || fileDifference == 0;
+
+        switch(movementType) {
+            case STRAIGHT:
+                return rankDifference == 0 || fileDifference == 0;
+            case DIAGONAL:
+                return Math.abs(rankDifference) == Math.abs(fileDifference);
+            default:
+                return false;
+        }
     }
 }
