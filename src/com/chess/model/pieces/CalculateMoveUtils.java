@@ -1,12 +1,22 @@
 package com.chess.model.pieces;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import com.chess.model.board.BoardUtils;
+import com.chess.model.moves.Move;
+import com.chess.model.moves.capturing.CapturingMove;
+import com.chess.model.moves.noncapturing.NonCapturingMove;
+import com.chess.model.pieces.Piece.PieceSymbol;
+import com.chess.model.player.CurrentPlayer;
 import com.chess.model.tiles.Tile;
 
 public final class CalculateMoveUtils {
     
+    private static final int MAX_SQUARES_MOVED = 7;
+
     private CalculateMoveUtils() {
         // Utility class - prevent instantiation
     }
@@ -109,4 +119,174 @@ public final class CalculateMoveUtils {
             return throughCoordinate + Integer.signum(diff);
         }
     }
-} 
+
+    /**
+     * Calculates moves for sliding pieces (Queen, Rook, Bishop)
+     */
+    public static List<Move> calculateSlidingPieceMoves(
+            final List<Tile> boardTiles,
+            final Piece piece,
+            final int[] moveOffsets,
+            final boolean isDiagonal,
+            final Collection<Move> checkingMoves,
+            final Collection<Move> oppositePlayerMoves,
+            final boolean validateCheck) {
+
+        final List<Move> legalMoves = new ArrayList<>();
+        
+        if (validateCheck) {
+            // Handle check validation
+            List<Integer> checkingPieceAttackPath = new ArrayList<>();
+            List<Integer> pinningPiecesCoordinates = new ArrayList<>();
+            
+            if (checkingMoves.size() > 1) {
+                return legalMoves; // In double check, only king can move
+            }
+            
+            if (checkingMoves.size() == 1) {
+                final Move checkingMove = checkingMoves.iterator().next();
+                final Piece checkingPiece = checkingMove.getPieceToMove();
+                final int kingCoordinate = checkingMove.getTargetCoordinate();
+                checkingPieceAttackPath.addAll(calculateAttackPath(checkingPiece, kingCoordinate, boardTiles));
+            } else {
+                // Check for pins
+                pinningPiecesCoordinates = calculatePinningPieces(boardTiles, piece, oppositePlayerMoves);
+                if (pinningPiecesCoordinates.size() > 1) {
+                    return legalMoves; // In double pin, only king can move
+                }
+            }
+
+            // Calculate actual moves with pin/check validation
+            return calculateValidatedMoves(boardTiles, piece, moveOffsets, isDiagonal, 
+                    checkingPieceAttackPath, pinningPiecesCoordinates);
+        } else {
+            // Calculate moves without check validation (for opponent's moves)
+            return calculateValidatedMoves(boardTiles, piece, moveOffsets, isDiagonal, 
+                    new ArrayList<>(), new ArrayList<>());
+        }
+    }
+
+    private static List<Integer> calculatePinningPieces(
+            final List<Tile> boardTiles,
+            final Piece piece,
+            final Collection<Move> oppositePlayerMoves) {
+        
+        List<Integer> pinningPiecesCoordinates = new ArrayList<>();
+        final int kingPosition = CurrentPlayer.getKingCoordinate(boardTiles, piece.getPieceAlliance());
+        
+        List<Move> movesTargetingPiece = oppositePlayerMoves.stream()
+            .filter(move -> move.getTargetCoordinate() == piece.getPieceCoordinate())
+            .collect(Collectors.toList());
+            
+        for (Move targetingMove : movesTargetingPiece) {
+            Piece potentialPinningPiece = targetingMove.getPieceToMove();
+            if (!canPiecePin(potentialPinningPiece)) {
+                continue;
+            }
+            
+            if (isPiecePinned(boardTiles, piece, potentialPinningPiece, kingPosition)) {
+                pinningPiecesCoordinates.add(potentialPinningPiece.getPieceCoordinate());
+            }
+        }
+        
+        return pinningPiecesCoordinates;
+    }
+
+    private static boolean canPiecePin(Piece piece) {
+        return piece.getPieceSymbol() != PieceSymbol.PAWN && 
+               piece.getPieceSymbol() != PieceSymbol.KING &&
+               piece.getPieceSymbol() != PieceSymbol.KNIGHT;
+    }
+
+    private static boolean isPiecePinned(
+            final List<Tile> boardTiles,
+            final Piece pieceToCheck,
+            final Piece potentialPinningPiece,
+            final int kingPosition) {
+        
+        int throughCoordinate = pieceToCheck.getPieceCoordinate();
+        
+        while (true) {
+            throughCoordinate = getNextCoordinateInDirection(
+                potentialPinningPiece.getPieceCoordinate(),
+                throughCoordinate
+            );
+            
+            if (!BoardUtils.isValidTileCoordinate(throughCoordinate)) {
+                break;
+            }
+            
+            Tile throughTile = boardTiles.get(throughCoordinate);
+            if (throughTile.isTileOccupied()) {
+                Piece pieceInPath = throughTile.getPiece();
+                if (pieceInPath.getPieceSymbol() == PieceSymbol.KING && 
+                    pieceInPath.getPieceAlliance() == pieceToCheck.getPieceAlliance()) {
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
+    }
+
+    private static List<Move> calculateValidatedMoves(
+            final List<Tile> boardTiles,
+            final Piece piece,
+            final int[] moveOffsets,
+            final boolean isDiagonal,
+            final List<Integer> checkingPieceAttackPath,
+            final List<Integer> pinningPiecesCoordinates) {
+        
+        final List<Move> legalMoves = new ArrayList<>();
+        
+        for (final int offset : moveOffsets) {
+            for (int squaresMoved = 1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++) {
+                final int destinationCoordinate = piece.getPieceCoordinate() + (offset * squaresMoved);
+                
+                if (!BoardUtils.isValidTileCoordinate(destinationCoordinate)) {
+                    break;
+                }
+
+                if (!isValidDirection(piece.getPieceCoordinate(), destinationCoordinate, isDiagonal)) {
+                    break;
+                }
+
+                // Check validation
+                if (!checkingPieceAttackPath.isEmpty() && !checkingPieceAttackPath.contains(destinationCoordinate)) {
+                    continue;
+                }
+                if (!pinningPiecesCoordinates.isEmpty() && !pinningPiecesCoordinates.contains(destinationCoordinate)) {
+                    continue;
+                }
+
+                final Tile destinationTile = boardTiles.get(destinationCoordinate);
+                
+                if (!destinationTile.isTileOccupied()) {
+                    legalMoves.add(new NonCapturingMove(boardTiles, piece.getPieceCoordinate(), 
+                            destinationCoordinate, piece));
+                } else {
+                    final Piece pieceAtDestination = destinationTile.getPiece();
+                    if (piece.getPieceAlliance() != pieceAtDestination.getPieceAlliance()) {
+                        legalMoves.add(new CapturingMove(boardTiles, piece.getPieceCoordinate(),
+                                destinationCoordinate, piece, pieceAtDestination));
+                    }
+                    break;
+                }
+            }
+        }
+        
+        return legalMoves;
+    }
+
+    private static boolean isValidDirection(final int sourceCoordinate, 
+                                         final int targetCoordinate,
+                                         final boolean isDiagonal) {
+        if (isDiagonal) {
+            return true; // Diagonal moves are always valid if they reach this point
+        }
+        // For straight moves (rook/queen), check rank or file alignment
+        int rankDifference = BoardUtils.getCoordinateRankDifference(targetCoordinate, sourceCoordinate);
+        int fileDifference = BoardUtils.getCoordinateFileDifference(targetCoordinate, sourceCoordinate);
+        return rankDifference == 0 || fileDifference == 0;
+    }
+}
