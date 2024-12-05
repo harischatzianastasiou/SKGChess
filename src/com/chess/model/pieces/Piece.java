@@ -14,7 +14,7 @@ public abstract class Piece {
 	protected final Alliance pieceAlliance;
 	private final boolean isFirstMove;
 	private final int cachedHashCode;
-	
+		
 	Piece(final PieceSymbol pieceSymbol, final int pieceCoordinate,  final Alliance pieceAlliance, final boolean isFirstMove) {
         this.pieceSymbol = pieceSymbol;
         this.pieceCoordinate = pieceCoordinate;
@@ -89,6 +89,19 @@ public abstract class Piece {
 
 	public abstract Piece movePiece(int destinationCoordinate);
 	
+    protected int findKingPosition(final List<Tile> boardTiles) {
+        for (int i = 0; i < boardTiles.size(); i++) {
+            Tile tile = boardTiles.get(i);
+            if (tile.isTileOccupied()) {
+                Piece piece = tile.getPiece();
+                if (piece.getPieceSymbol() == PieceSymbol.KING && 
+                    piece.getPieceAlliance() == this.pieceAlliance) {
+                    return i;
+                }
+            }
+        }
+        throw new RuntimeException("Valid board must contain a king!");
+    }
 }
 
 

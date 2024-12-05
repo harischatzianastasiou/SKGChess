@@ -1,9 +1,8 @@
-package com.chess.model.board;
+package com.chess.model.pieces;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
 
 public final class CalculateMoveUtils {

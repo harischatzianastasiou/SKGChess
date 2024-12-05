@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
-import com.chess.model.pieces.King;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
@@ -41,14 +40,14 @@ public abstract class Player {
         return this.alliance == Alliance.WHITE ? Alliance.BLACK : Alliance.WHITE;
     }
 	
-	public King getKing() {
-	    for (Piece piece : this.pieces) {
-	        if (piece instanceof King king) {
-	            return king;
-	        }
-	    }
-	    throw new RuntimeException("No king found for this player");
-	}
+	// public King getKing() {
+	//     for (Piece piece : this.pieces) {
+	//         if (piece instanceof King king && piece.getPieceAlliance() == alliance) {
+	//             return king;
+	//         }
+	//     }
+	//     throw new RuntimeException("No king found for this player");
+	// }
 
-	public abstract boolean isCheckmate();
+	// public abstract boolean isCheckmate();
 }

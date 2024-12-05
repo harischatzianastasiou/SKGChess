@@ -17,17 +17,17 @@ public class CastlingQueenSideValidation implements MoveValidationStrategy {
     }
     
     private boolean checkCastleQueenSide(Move simulationMove, Collection<Move> opponentPlayerMoves) {
-        int currentPlayerKingPositionBeforeCastling = simulationMove.getSourceCoordinate();
-        int[] castlingPath = {currentPlayerKingPositionBeforeCastling, currentPlayerKingPositionBeforeCastling - 1, currentPlayerKingPositionBeforeCastling - 2}; // include current king position
+        // int currentPlayerKingPositionBeforeCastling = simulationMove.getSourceCoordinate();
+        // int[] castlingPath = {currentPlayerKingPositionBeforeCastling, currentPlayerKingPositionBeforeCastling - 1, currentPlayerKingPositionBeforeCastling - 2}; // include current king position
         
-        for (Move newCurrentPlayerPotentialMove :opponentPlayerMoves) {
-            int targetSquare = newCurrentPlayerPotentialMove.getTargetCoordinate();
-            for (int pathSquare : castlingPath) {
-                if (targetSquare == pathSquare) {
-                    return false; // castling path or king's position is under attack
-                }
-            }
-        }
+        // for (Move newCurrentPlayerPotentialMove :opponentPlayerMoves) {
+        //     int targetSquare = newCurrentPlayerPotentialMove.getTargetCoordinate();
+        //     for (int pathSquare : castlingPath) {
+        //         if (targetSquare == pathSquare) {
+        //             return false; // castling path or king's position is under attack
+        //         }
+        //     }
+        // }
         return true;
     }
 }

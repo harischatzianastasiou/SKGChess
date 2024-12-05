@@ -32,9 +32,9 @@ public final class OpponentPlayer extends Player {
         return new OpponentPlayer(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance);    
     }
 
-    @Override
-    public boolean isCheckmate() {
-        return false;
-    }
+    // @Override
+    // public boolean isCheckmate() {
+    //     return false;
+    // }
 }
 

@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import com.chess.model.Alliance;
 import com.chess.model.board.BoardUtils;
-import com.chess.model.board.CalculateMoveUtils;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.capturing.CapturingMove;
 import com.chess.model.moves.capturing.PawnEnPassantAttack;
@@ -54,14 +53,16 @@ public class Pawn extends Piece {
     @Override
 	public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves) {
         final List<Move> pawnPotentialLegalMoves = new ArrayList<>();
-        List<Integer> attackPath = new ArrayList<>();
+        List<Integer> attackPath = new ArrayList<>();// will be used in single check
 		
-		final Collection<Move> checkingMovesToUse = (checkingMoves != null) ? checkingMoves : new ArrayList<>();
-		final Collection<Move> oppositePlayerMovesToUse = (oppositePlayerMoves != null) ? oppositePlayerMoves : new ArrayList<>();
-		
-		if(checkingMovesToUse.size() > 1){
-			return ImmutableList.copyOf(pawnPotentialLegalMoves);
-		} else if(checkingMovesToUse.size() == 1){
+		final Collection<Move> checkingMovesToUse = (checkingMoves != null) ? ImmutableList.copyOf(checkingMoves) : new ArrayList<>();
+		final Collection<Move> oppositePlayerMovesToUse = (oppositePlayerMoves != null) ? ImmutableList.copyOf(oppositePlayerMoves) : new ArrayList<>();
+        List<Integer> attackingPieceCoordinates = new ArrayList<>();//will be used when no check to find this.piece attacking pieces(find out if this.piece is pinned)
+
+
+		if(checkingMovesToUse.size() > 1){// in double check only the king can move
+            return ImmutableList.copyOf(pawnPotentialLegalMoves);   
+		} else if(checkingMovesToUse.size() == 1){ // in single check a pawn can move to either block the check or capture the checking piece. To block the check we need the attack path of the checking piece. For capturing the checking piece I added checkingPieceCoordinate to the attackPath. 
 			final Move checkingMove = checkingMovesToUse.iterator().next();
 			final Piece checkingPiece = checkingMove.getPieceToMove();
 			final int kingCoordinate = checkingMove.getTargetCoordinate();
@@ -71,68 +72,113 @@ public class Pawn extends Piece {
 				kingCoordinate,
 				boardTiles
 			);
-		} else {
+		} else { //when no check we need to find out if this.piece is pinned. If it is pinned by only one piece then we can capture the attacking piece. If it is pinned by two or more pieces then we cannot move this piece.(see line 114)
+			final int kingPosition = findKingPosition(boardTiles);
 			List<Move> movesTargetingPawn = oppositePlayerMovesToUse.stream()
 				.filter(move -> move.getTargetCoordinate() == this.pieceCoordinate)
 				.collect(Collectors.toList());
 				
 			for(Move targetingMove : movesTargetingPawn) {
 				Piece attackingPiece = targetingMove.getPieceToMove();
-				List<Integer> potentialAttackPath = CalculateMoveUtils.calculateAttackPath(
-					attackingPiece,
-					CalculateMoveUtils.getNextCoordinateInDirection(
+				int throughCoordinate = this.pieceCoordinate;
+				
+				// Keep looking through coordinates until we hit a piece or board edge
+				while(true) {
+					throughCoordinate = CalculateMoveUtils.getNextCoordinateInDirection(
 						attackingPiece.getPieceCoordinate(), 
-						this.pieceCoordinate
-					),
-					boardTiles
-				);
-				attackPath.addAll(potentialAttackPath);
+						throughCoordinate
+					);
+					
+					if (!BoardUtils.isValidTileCoordinate(throughCoordinate)) {
+						break;  // Stop if we hit board edge
+					}
+					
+					Tile throughTile = boardTiles.get(throughCoordinate);
+                    
+					if (throughTile.isTileOccupied()) {
+						Piece pieceInPath = throughTile.getPiece();
+						// If it's our king, this pawn is pinned - can only capture the attacking piece
+						if (pieceInPath.getPieceSymbol() == PieceSymbol.KING && 
+							pieceInPath.getPieceAlliance() == this.pieceAlliance) {
+							attackingPieceCoordinates.add(attackingPiece.getPieceCoordinate());
+						}
+						break;  // Stop when we hit any piece
+					}
+				}
 			}
+            if(attackingPieceCoordinates.size() > 1){// in double pin only the king can move
+                return ImmutableList.copyOf(pawnPotentialLegalMoves); 
+            }
 		}
-    	addPotentialNonCapturingMoves(boardTiles,pawnPotentialLegalMoves, checkingMovesToUse, attackPath);
-    	addPotenialCaptureMoves(boardTiles,pawnPotentialLegalMoves, checkingMovesToUse, attackPath);
+
+        addPotentialNonCapturingMoves(boardTiles, pawnPotentialLegalMoves, checkingMovesToUse, attackPath, attackingPieceCoordinates);
+        addPotenialCaptureMoves(boardTiles, pawnPotentialLegalMoves, checkingMovesToUse, attackPath, attackingPieceCoordinates);
+
         return ImmutableList.copyOf(pawnPotentialLegalMoves);
     }
     
-    private void addPotentialNonCapturingMoves(final List<Tile> boardTiles, final List<Move> pawnPotentialLegalMoves, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath) {
-    	int candidateDestinationCoordinate = this.pieceCoordinate + (CANDIDATE_MOVE_OFFSET * advanceDirection);
-        if (checkingMovesToUse.size() == 1 && !attackPath.contains(candidateDestinationCoordinate)) {
-            return;
-        }
+    private void addPotentialNonCapturingMoves(final List<Tile> boardTiles, final List<Move> pawnPotentialLegalMoves, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath, final List<Integer> attackingPieceCoordinates) {
+        int candidateDestinationCoordinate = this.pieceCoordinate + (CANDIDATE_MOVE_OFFSET * advanceDirection);
         if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+            if (checkingMovesToUse.size() == 1  && !attackPath.contains(candidateDestinationCoordinate)) {
+                return;
+            }
+            if(checkingMovesToUse.isEmpty() && attackingPieceCoordinates.size() == 1){
+                if(candidateDestinationCoordinate != attackingPieceCoordinates.get(0)){
+                    return;
+                }
+            }
 	        final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	        if (!candidateDestinationTile.isTileOccupied()) {
                 if(currentRank != this.promotionRank){
 	                pawnPotentialLegalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));//Add standard advance move
 	                if (currentRank == this.initialRank) {
-	                    addPotenialDoubleAdvanceMove(boardTiles,pawnPotentialLegalMoves, checkingMovesToUse, attackPath);
+	                    addPotenialDoubleAdvanceMove(boardTiles,pawnPotentialLegalMoves, checkingMovesToUse, attackPath, attackingPieceCoordinates);
 	                }
 	            }else
-	                addPotentialPromotionMove(boardTiles,pawnPotentialLegalMoves, candidateDestinationCoordinate);
+	                addPotentialPromotionMove(boardTiles,pawnPotentialLegalMoves, candidateDestinationCoordinate, checkingMovesToUse, attackPath, attackingPieceCoordinates);
 	        }
         }
     }
     
-    private void addPotenialDoubleAdvanceMove(final List<Tile> boardTiles, final List<Move> pawnPotentialLegalMoves, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath) {
+    private void addPotenialDoubleAdvanceMove(final List<Tile> boardTiles, final List<Move> pawnPotentialLegalMoves, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath, final List<Integer> attackingPieceCoordinates) {
         int CandidateDoubleDestinationCoordinate = this.pieceCoordinate + (2 * CANDIDATE_MOVE_OFFSET * advanceDirection);
-        if (checkingMovesToUse.size() == 1 && !attackPath.contains(CandidateDoubleDestinationCoordinate)) {
+        if (checkingMovesToUse.size() == 1  && !attackPath.contains(CandidateDoubleDestinationCoordinate)) {
             return;
+        }
+        if(checkingMovesToUse.isEmpty() && attackingPieceCoordinates.size() == 1){
+            if(CandidateDoubleDestinationCoordinate != attackingPieceCoordinates.get(0)){
+                return;
+            }
         }
         final Tile candidateDestinationTile = boardTiles.get(CandidateDoubleDestinationCoordinate);
         if (!candidateDestinationTile.isTileOccupied())
             pawnPotentialLegalMoves.add(new PawnJumpMove(boardTiles,this.pieceCoordinate, CandidateDoubleDestinationCoordinate, this));
     }
     
-    private void addPotentialPromotionMove(final List<Tile> boardTiles, final List<Move> pawnPotentialLegalMoves, int candidateDestinationCoordinate) {
-    	pawnPotentialLegalMoves.add(new PawnPromotionMove(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
-    }
-    
-    private void addPotenialCaptureMoves(final List<Tile> boardTiles, final List<Move> pawnPotentialLegalMoves, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath) {
-    	for (final int candidateOffset : CANDIDATE_CAPTURE_OFFSETS) {
-            int candidateDestinationCoordinate = this.pieceCoordinate + (candidateOffset * advanceDirection);
-            if (checkingMovesToUse.size() == 1 && !attackPath.contains(candidateDestinationCoordinate)) {
+    private void addPotentialPromotionMove(final List<Tile> boardTiles, final List<Move> pawnPotentialLegalMoves, int candidateDestinationCoordinate, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath, final List<Integer> attackingPieceCoordinates) {
+        if (checkingMovesToUse.size() == 1  && !attackPath.contains(candidateDestinationCoordinate)) {
+            return;
+        }
+        if(checkingMovesToUse.isEmpty() && attackingPieceCoordinates.size() == 1){
+            if(candidateDestinationCoordinate != attackingPieceCoordinates.get(0)){
                 return;
             }
+        }
+        pawnPotentialLegalMoves.add(new PawnPromotionMove(boardTiles, this.pieceCoordinate, candidateDestinationCoordinate, this));
+    }
+    
+    private void addPotenialCaptureMoves(final List<Tile> boardTiles, final List<Move> pawnPotentialLegalMoves, final Collection<Move> checkingMovesToUse, final List<Integer> attackPath, final List<Integer> attackingPieceCoordinates) {
+    	for (final int candidateOffset : CANDIDATE_CAPTURE_OFFSETS) {
+            int candidateDestinationCoordinate = this.pieceCoordinate + (candidateOffset * advanceDirection);
+            if (checkingMovesToUse.size() == 1  && !attackPath.contains(candidateDestinationCoordinate)) {
+                continue;
+            }
+            if(checkingMovesToUse.isEmpty() && attackingPieceCoordinates.size() == 1){
+                if(candidateDestinationCoordinate != attackingPieceCoordinates.get(0)){
+                    continue;
+                }
+            }   
             if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
             	final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 	            if(candidateDestinationTile.isTileOccupied()) { 
@@ -146,7 +192,7 @@ public class Pawn extends Piece {
                         if(currentRank != this.promotionRank)
                         pawnPotentialLegalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
                         else
-                            addPotentialPromotionMove(boardTiles, pawnPotentialLegalMoves, candidateDestinationCoordinate);
+                            addPotentialPromotionMove(boardTiles, pawnPotentialLegalMoves, candidateDestinationCoordinate, checkingMovesToUse, attackPath, attackingPieceCoordinates);
                     }
 	            }else if(currentRank == this.enPassantRank) {
 	            	//check last move
@@ -186,4 +232,5 @@ public class Pawn extends Piece {
         }
     }
     // add case for pawn blocking castle of king
+
 }

@@ -38,11 +38,12 @@ public class GameController {
                     ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
                     ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    
                     chessboard = currentPlayerMove.execute();         
 
-                if (chessboard.getCurrentPlayer().isCheckmate()) {
-                    this.isCheckmate = true;
-                }
+                // if (chessboard.getCurrentPlayer().isCheckmate()) {
+                //     this.isCheckmate = true;
+                // }
                     break;
                 }
         }
