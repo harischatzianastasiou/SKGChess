@@ -85,23 +85,14 @@ public abstract class Piece {
         }
 	}
 
-    public abstract Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves);
+    public abstract Collection<Move> calculateOpponentMoves(final List<Tile> boardTiles); // We need to calculate opponent's moves(except for King since an opponent King cannot capture current player's King), in order to validate current player's moves for check/pin.
+
+    public abstract Collection<Move> calculateCurrentPlayerMoves(
+        final List<Tile> boardTiles,
+        final Collection<Move> checkingMoves,
+        final Collection<Move> oppositePlayerMoves);
 
 	public abstract Piece movePiece(int destinationCoordinate);
-	
-    protected int findKingPosition(final List<Tile> boardTiles) {
-        for (int i = 0; i < boardTiles.size(); i++) {
-            Tile tile = boardTiles.get(i);
-            if (tile.isTileOccupied()) {
-                Piece piece = tile.getPiece();
-                if (piece.getPieceSymbol() == PieceSymbol.KING && 
-                    piece.getPieceAlliance() == this.pieceAlliance) {
-                    return i;
-                }
-            }
-        }
-        throw new RuntimeException("Valid board must contain a king!");
-    }
 }
 
 

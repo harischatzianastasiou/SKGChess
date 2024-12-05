@@ -31,8 +31,21 @@ public class King extends Piece  {
         return this.pieceSymbol.toString();
     }
     
+	@Override
+	// Νο need to calculate opponent's King moves since an opponent King cannot capture current player's King
+	public Collection<Move> calculateOpponentMoves(List<Tile> boardTiles) {
+		// Add normal king moves
+		final List<Move> kingPotentialLegalMoves = new ArrayList<>();
+		return ImmutableList.copyOf(kingPotentialLegalMoves);
+	}
+
+
     @Override
-	public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves) {
+	// Current player's moves need to be validated for check/pin
+	public Collection<Move> calculateCurrentPlayerMoves(
+		final List<Tile> boardTiles,
+		final Collection<Move> checkingMoves,
+		final Collection<Move> oppositePlayerMoves) {
 		final List<Move> kingPotentialLegalMoves = new ArrayList<>();
 		final Collection<Move> checkingMovesToUse = (checkingMoves != null) ? ImmutableList.copyOf(checkingMoves) : new ArrayList<>();
 		final Collection<Move> oppositePlayerMovesToUse = (oppositePlayerMoves != null) ? ImmutableList.copyOf(oppositePlayerMoves) : new ArrayList<>();
@@ -50,10 +63,10 @@ public class King extends Piece  {
 
 	private void addPotentialNormalMoves(final List<Tile> boardTiles, final List<Move> kingPotentialLegalMoves, final Collection<Move> checkingMovesToUse, final Collection<Move> oppositePlayerMovesToUse) {
 		// Get attack paths from checking pieces
-		List<Integer> allAttackPaths = new ArrayList<>();
+		List<Integer> allCheckingPiecesAttackPaths = new ArrayList<>();
 		for (Move checkingMove : checkingMovesToUse) {
 			Piece checkingPiece = checkingMove.getPieceToMove();
-			List<Integer> attackPath = CalculateMoveUtils.calculateAttackPath(
+			List<Integer> checkingPieceAttackPath = CalculateMoveUtils.calculateAttackPath(
 				checkingPiece,
 				this.pieceCoordinate,  // current king position
 				boardTiles
@@ -64,9 +77,9 @@ public class King extends Piece  {
 				this.pieceCoordinate
 			);
 			if (BoardUtils.isValidTileCoordinate(throughCoordinate)) {
-				attackPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+				checkingPieceAttackPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
 			}
-			allAttackPaths.addAll(attackPath);
+			allCheckingPiecesAttackPaths.addAll(checkingPieceAttackPath);
 		}
 
 		for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
@@ -81,7 +94,7 @@ public class King extends Piece  {
 						.anyMatch(move -> move.getTargetCoordinate() == candidateDestinationCoordinate);
 					
 					// Check if destination is in any checking piece's attack path
-					boolean isInAttackPath = allAttackPaths.contains(candidateDestinationCoordinate);
+					boolean isInAttackPath = allCheckingPiecesAttackPaths.contains(candidateDestinationCoordinate);
 
 					if (!isUnderAttack && !isInAttackPath) {
 						if(!candidateDestinationTile.isTileOccupied()) {

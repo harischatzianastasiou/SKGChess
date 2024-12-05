@@ -14,6 +14,7 @@ import com.chess.model.player.CurrentPlayer;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
+
 public class Bishop extends Piece {
 	
 	private static final int[] CANDIDATE_MOVE_OFFSETS= { -9, -7, 7, 9 };
@@ -32,13 +33,52 @@ public class Bishop extends Piece {
 		return this.pieceSymbol.toString();
 	}
 	
+	@Override
+	// Opponent player's moves don't need to be validated for check/pin
+	public Collection<Move> calculateOpponentMoves(List<Tile> boardTiles) {
+		final List<Move> bishopPotentialLegalMoves = new ArrayList<>();
+		int candidateDestinationCoordinate;
+        for (final int candidateOffset : CANDIDATE_MOVE_OFFSETS) {
+            for(int squaresMoved=1; squaresMoved <= MAX_SQUARES_MOVED; squaresMoved++ ) {
+                int total_offset = candidateOffset * squaresMoved;
+                candidateDestinationCoordinate = this.pieceCoordinate + total_offset;
+                if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+					final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);	          
+					final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
+					final Tile currentTile = boardTiles.get(pieceCoordinate);	
+					final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
+					if (allianceOfCandidateDestinationTile == allianceOfCurrentTile) {
+						if (!candidateDestinationTile.isTileOccupied()) { 
+								bishopPotentialLegalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
+							}else {
+								final Piece pieceOnCandidateDestinationTile = candidateDestinationTile.getPiece();
+								final Alliance allianceOfPieceOnCandidateDestinationTile = pieceOnCandidateDestinationTile.getPieceAlliance();
+								if( this.pieceAlliance != allianceOfPieceOnCandidateDestinationTile ){
+									bishopPotentialLegalMoves.add(new CapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this, pieceOnCandidateDestinationTile));
+								}
+								break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
+							}
+					}
+					else break; //if the current vector does not apply for the pieceTile(eg for tiles that are on 1st or 8th rank), stop further checking in this direction.
+				}
+				else break;//If the candidateTargetCoordinate is out of boundaries, stop further checking in this direction.
+			} 
+		}
+		return ImmutableList.copyOf(bishopPotentialLegalMoves);
+    }
+	
     @Override
-	public Collection<Move> calculatePotentialLegalMoves(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves) {
-        final List<Move> bishopPotentialLegalMoves = new ArrayList<>();
+	// Current player's moves need to be validated for check/pin
+	public Collection<Move> calculateCurrentPlayerMoves(
+		final List<Tile> boardTiles,
+		final Collection<Move> checkingMoves, 
+		final Collection<Move> oppositePlayerMoves) {
+        
+		final List<Move> bishopPotentialLegalMoves = new ArrayList<>();
         List<Integer> checkingPieceAttackPath = new ArrayList<>();// will be used in single check
 		List<Integer> pinningPiecesOfPawnCoordinates = new ArrayList<>();//will be used when no check to find the pieces that may pin this.piece
 
-        // For opponent player these collections are null. For current player they are not null. Ensure that when opponent player calculates moves we have non-null collections.
+        // Ensure that we have non-null collections.
         final Collection<Move> checkingMovesToUse = (checkingMoves != null) ? ImmutableList.copyOf(checkingMoves) : new ArrayList<>();
         final Collection<Move> oppositePlayerMovesToUse = (oppositePlayerMoves != null) ? ImmutableList.copyOf(oppositePlayerMoves) : new ArrayList<>();
 
@@ -56,10 +96,15 @@ public class Bishop extends Piece {
                 .collect(Collectors.toList());
                 
             for(Move targetingMove : movesTargetingPawn) {
-                Piece pinningPieceOfPawn= targetingMove.getPieceToMove();
-                int throughCoordinate = this.pieceCoordinate;
-                // Keep looking through coordinates until we hit a piece or board edge
-                while(true) {
+				if(targetingMove.getPieceToMove().getPieceSymbol() == PieceSymbol.PAWN 
+				|| targetingMove.getPieceToMove().getPieceSymbol() == PieceSymbol.KING
+				|| targetingMove.getPieceToMove().getPieceSymbol() == PieceSymbol.KNIGHT){
+					continue; // Pawns, Kings and Knights cannot pin other pieces
+				}
+					Piece pinningPieceOfPawn= targetingMove.getPieceToMove();
+					int throughCoordinate = this.pieceCoordinate;
+					// Keep looking through coordinates until we hit a piece or board edge
+					while(true) {
                     throughCoordinate = CalculateMoveUtils.getNextCoordinateInDirection(
                         pinningPieceOfPawn.getPieceCoordinate(), 
                         throughCoordinate
