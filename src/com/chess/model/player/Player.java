@@ -40,14 +40,5 @@ public abstract class Player {
         return this.alliance == Alliance.WHITE ? Alliance.BLACK : Alliance.WHITE;
     }
 	
-	// public King getKing() {
-	//     for (Piece piece : this.pieces) {
-	//         if (piece instanceof King king && piece.getPieceAlliance() == alliance) {
-	//             return king;
-	//         }
-	//     }
-	//     throw new RuntimeException("No king found for this player");
-	// }
-
-	// public abstract boolean isCheckmate();
+	public abstract boolean isCheckmate();
 }

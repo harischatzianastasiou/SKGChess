@@ -14,63 +14,68 @@ import com.google.common.collect.ImmutableList;
 public final class CurrentPlayer extends Player {
 		
     private boolean isInCheck;
+    private boolean isInCheckmate;
     
-    private CurrentPlayer(final Collection<Piece> pieces, final Collection<Move> moves, final Alliance alliance, final boolean isInCheck) {
+    private CurrentPlayer(final Collection<Piece> pieces, final Collection<Move> moves, final Alliance alliance, final boolean isInCheck, final boolean isInCheckmate) {
         super(pieces, moves, alliance);
         this.isInCheck = isInCheck;
+        this.isInCheckmate = isInCheckmate;
     }
 
 	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Collection<Move> oppositePlayerMoves) {
         final List<Piece> activePieces = new ArrayList<>();
-        Collection<Move> potentialLegalMoves = new ArrayList<>();
+        final Collection<Move> potentialLegalMoves = new ArrayList<>();
+        final Collection<Move> checkingMoves = new ArrayList<>();
         boolean isInCheck = false;
         boolean isInCheckmate = false;
-        Collection<Move> paok = new ArrayList<>();
 
-        for (final Tile tile : tiles) {
-            if (tile.isTileOccupied()) {
-                final Piece piece = tile.getPiece();
-                if(piece instanceof King && piece.getPieceAlliance() == alliance){
-                    final Collection<Move> checkingMoves = checkingMoves(tile, oppositePlayerMoves);
-                    paok = ImmutableList.copyOf(checkingMoves);
-                    System.out.println("PAAAAAAAAAAAAAAAAAOOOOOOOOOOOOOOOOOOKKKKKKKKKKKKKKKcheckingMoves: " + checkingMoves);
-                    if(!checkingMoves.isEmpty()){
-                        isInCheck = true;
-                    }
-                }
-            }
+        checkingMoves.addAll(checkingMoves(tiles, alliance, oppositePlayerMoves));
+        if(!checkingMoves.isEmpty()){
+            isInCheck = true;
         }
         for (final Tile tile : tiles) {
             if (tile.isTileOccupied()) {
                 final Piece piece = tile.getPiece();   
                 if (piece.getPieceAlliance() == alliance) {
                     activePieces.add(piece);
-                    System.out.println("Calculating moves for piece at " + piece.getPieceCoordinate() + 
-                                      " with checking moves: " + paok);
-                    potentialLegalMoves.addAll(piece.calculatePotentialLegalMoves(tiles,paok,oppositePlayerMoves));
+                    potentialLegalMoves.addAll(piece.calculatePotentialLegalMoves(tiles,checkingMoves,oppositePlayerMoves));
                 }
             }
         }  
 
-        
-        if (isInCheck && (potentialLegalMoves == null || potentialLegalMoves.isEmpty())) {
+        if (isInCheck && potentialLegalMoves.isEmpty()) {
             isInCheckmate = true;
         }
-        return new CurrentPlayer(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance, isInCheck);    
+        return new CurrentPlayer(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance, isInCheck, isInCheckmate);    
     }
 
-    public static Collection<Move> checkingMoves(Tile tile, Collection<Move> oppositePlayerMoves) {// moves that are checking the current player's king
+    public static Collection<Move> checkingMoves(final List<Tile> tiles, final Alliance alliance, final Collection<Move> oppositePlayerMoves) {// moves that are checking the current player's king
         Collection<Move> checkingMoves = new ArrayList<>();
         for (Move move : oppositePlayerMoves) {
-            if (move.getTargetCoordinate() == tile.getTileCoordinate()) {
+            if (move.getTargetCoordinate() == getKingCoordinate(tiles, alliance)) {
                 checkingMoves.add(move);
             }
         }
         return checkingMoves;
     }
 
-    // @Override
-    // public final boolean isCheckmate() {
-    //     return this.isInCheckmate;
-    // }
+    public static int getKingCoordinate(final List<Tile> tiles, final Alliance alliance) {
+        for (final Tile tile : tiles) {
+            if (tile.isTileOccupied()) {
+                final Piece piece = tile.getPiece();   
+                if (piece.getPieceAlliance() == alliance) {
+                    if (piece instanceof King && piece.getPieceAlliance() == alliance) {
+                        return piece.getPieceCoordinate();
+                    }
+                }
+            }
+        }
+        throw new RuntimeException("No king found for this player");
+    }
+
+    @Override
+    public boolean isCheckmate() {
+        return this.isInCheckmate;
+    }
+
 }

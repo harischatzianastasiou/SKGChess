@@ -57,7 +57,15 @@ public class King extends Piece  {
 				checkingPiece,
 				this.pieceCoordinate,  // current king position
 				boardTiles
+			);//add all the coordinates in the attack path to the list
+
+			int throughCoordinate = CalculateMoveUtils.getNextCoordinateInDirection(
+				checkingPiece.getPieceCoordinate(),
+				this.pieceCoordinate
 			);
+			if (BoardUtils.isValidTileCoordinate(throughCoordinate)) {
+				attackPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+			}
 			allAttackPaths.addAll(attackPath);
 		}
 

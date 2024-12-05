@@ -41,9 +41,9 @@ public class GameController {
                     
                     chessboard = currentPlayerMove.execute();         
 
-                // if (chessboard.getCurrentPlayer().isCheckmate()) {
-                //     this.isCheckmate = true;
-                // }
+                if (chessboard.getCurrentPlayer().isCheckmate()) {
+                    this.isCheckmate = true;
+                }
                     break;
                 }
         }
