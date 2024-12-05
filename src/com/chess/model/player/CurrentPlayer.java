@@ -38,7 +38,11 @@ public final class CurrentPlayer extends Player {
                         isInCheck = true;
                     }
                 }
-               
+            }
+        }
+        for (final Tile tile : tiles) {
+            if (tile.isTileOccupied()) {
+                final Piece piece = tile.getPiece();   
                 if (piece.getPieceAlliance() == alliance) {
                     activePieces.add(piece);
                     System.out.println("Calculating moves for piece at " + piece.getPieceCoordinate() + 
