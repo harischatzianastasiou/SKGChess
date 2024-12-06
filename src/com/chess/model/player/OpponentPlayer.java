@@ -36,5 +36,10 @@ public final class OpponentPlayer extends Player {
     public boolean isCheckmate() {
         throw new UnsupportedOperationException("Opponent player cannot be checkmated");
     }
+
+    @Override
+    public boolean isInCheck() {
+        throw new UnsupportedOperationException("Opponent player cannot be in check");
+    }
 }
 

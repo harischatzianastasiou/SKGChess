@@ -41,4 +41,6 @@ public abstract class Player {
     }
 	
 	public abstract boolean isCheckmate();
+	
+	public abstract boolean isInCheck();
 }

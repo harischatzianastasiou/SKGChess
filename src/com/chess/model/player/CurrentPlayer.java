@@ -16,7 +16,7 @@ public final class CurrentPlayer extends Player {
     private boolean isInCheck;
     private boolean isInCheckmate;
     
-    private CurrentPlayer(final Collection<Piece> pieces, final Collection<Move> moves, final Alliance alliance, final boolean isInCheck, final boolean isInCheckmate) {
+    private CurrentPlayer(final Collection<Piece> pieces, final Collection<Move> moves, final Alliance alliance, boolean isInCheck, boolean isInCheckmate) {
         super(pieces, moves, alliance);
         this.isInCheck = isInCheck;
         this.isInCheckmate = isInCheckmate;
@@ -44,7 +44,7 @@ public final class CurrentPlayer extends Player {
         }  
 
         if (isInCheck && potentialLegalMoves.isEmpty()) {
-            isInCheckmate = true;
+            isInCheckmate = true; 
         }
         return new CurrentPlayer(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance, isInCheck, isInCheckmate);    
     }
@@ -76,6 +76,11 @@ public final class CurrentPlayer extends Player {
     @Override
     public boolean isCheckmate() {
         return this.isInCheckmate;
+    }
+
+    @Override
+    public boolean isInCheck() {
+        return this.isInCheck;
     }
 
 }
