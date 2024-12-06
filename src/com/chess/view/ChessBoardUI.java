@@ -423,7 +423,8 @@ public class ChessBoardUI {
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     if (dragOffset != null) {
-                        Point dropPoint = e.getPoint();
+                        Point dropPoint = SwingUtilities.convertPoint(
+                            e.getComponent(), e.getPoint(), boardPanel);
                         TilePanel targetTilePanel = findTargetTile(dropPoint, boardPanel);
                         
                         // Remove floating piece
@@ -439,6 +440,8 @@ public class ChessBoardUI {
                             sourceSelectedPiece = sourceTile.getPiece();
                             targetTile = chessboard.getTile(targetTilePanel.tileId);
                             moveSelected = true;
+                            // Hide original piece since move will be executed
+                            pieceLabel.setVisible(false);
                         } else {
                             // Invalid move - show original piece
                             pieceLabel.setVisible(true);
@@ -518,11 +521,19 @@ public class ChessBoardUI {
     }
 
     private TilePanel findTargetTile(Point dropPoint, BoardPanel boardPanel) {
-        for (TilePanel tile : boardPanel.boardTiles) {
-            if (tile.getBounds().contains(SwingUtilities.convertPoint(
-                boardPanel, dropPoint, tile))) {
-                return tile;
-            }
+        // Calculate which tile we're over based on coordinates
+        int tileSize = BOARD_PANEL_DIMENSION.width / 8;
+        int x = dropPoint.x;
+        int y = dropPoint.y;
+        
+        // Convert to tile coordinates
+        int file = x / tileSize;
+        int rank = y / tileSize;
+        
+        // Check if within board bounds
+        if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+            int tileId = rank * 8 + file;
+            return boardPanel.boardTiles.get(tileId);
         }
         return null;
     }
