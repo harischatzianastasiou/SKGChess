@@ -138,17 +138,25 @@ public class Bishop extends Piece {
                 int total_offset = candidateOffset * squaresMoved;
                 candidateDestinationCoordinate = this.pieceCoordinate + total_offset;
                 if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)) {
+					final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
                     if (checkingMovesToUse.size() == 1) {  // If in check
                         if (!checkingPieceAttackPath.contains(candidateDestinationCoordinate)) {  // And move doesn't block check
-                            continue;  // Skip this move but keep checking others
-                        }
+							if(candidateDestinationTile.isTileOccupied()){
+								break;
+							}else{
+								continue;  // Skip this move but keep checking others
+							}
+						}
                     }
                     if(checkingMovesToUse.isEmpty() && pinningPiecesOfPawnCoordinates.size() == 1){
                         if(candidateDestinationCoordinate != pinningPiecesOfPawnCoordinates.get(0)){
-                            continue;  // Skip this move but keep checking others
+                            if(candidateDestinationTile.isTileOccupied()){
+								break;
+							}else{
+								continue;  // Skip this move but keep checking others
+							}
                         }
                     }
-					final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);	          
 					final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
 					final Tile currentTile = boardTiles.get(pieceCoordinate);	
 					final Alliance allianceOfCurrentTile = currentTile.getTileAlliance(); 
@@ -163,6 +171,7 @@ public class Bishop extends Piece {
 								}
 								break;//if there is a piece in the direction that bishop can move, stop further checking in this direction.
 							}
+							
 					}
 					else break; //if the current vector does not apply for the pieceTile(eg for tiles that are on 1st or 8th rank), stop further checking in this direction.
 				}

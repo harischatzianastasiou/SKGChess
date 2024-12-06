@@ -134,18 +134,26 @@ public class Rook extends Piece {
 				int total_offset = candidateOffset * squaresMoved;
 				candidateDestinationCoordinate = this.pieceCoordinate + total_offset;
 	            if (BoardUtils.isValidTileCoordinate(candidateDestinationCoordinate)){
+					final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 					if (checkingMovesToUse.size() == 1  && !checkingPieceAttackPath.contains(candidateDestinationCoordinate)) {
-						continue;
+						if(candidateDestinationTile.isTileOccupied()){
+							break;
+						}else{
+							continue;  // Skip this move but keep checking others
+						}
 					}
 					if(checkingMovesToUse.isEmpty() && pinningPiecesOfRookCoordinates.size() == 1){
 						if(candidateDestinationCoordinate != pinningPiecesOfRookCoordinates.get(0)){
-							continue;
+							if(candidateDestinationTile.isTileOccupied()){
+								break;
+							}else{
+								continue;  // Skip this move but keep checking others
+							}
 						}
 					}
 	            	int rankDifference = BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate, this.pieceCoordinate);
                     int fileDifference = BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate, this.pieceCoordinate);
                     if (rankDifference == 0 || fileDifference == 0) {
-                        final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
                         if (!candidateDestinationTile.isTileOccupied()) {
 	            		    rookPotentialLegalMoves.add(new NonCapturingMove(boardTiles,this.pieceCoordinate, candidateDestinationCoordinate, this));
 		            	}else {
