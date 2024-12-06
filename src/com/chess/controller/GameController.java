@@ -2,7 +2,7 @@ package com.chess.controller;
 
 import java.util.Collection;
 
-import com.chess.model.board.Board;
+import com.chess.model.board.IBoard;
 import com.chess.model.moves.Move;
 import com.chess.util.GameHistory;
 import com.chess.view.ChessBoardUI;
@@ -10,25 +10,21 @@ import com.chess.view.ChessBoardUI;
 public class GameController {
 
     private boolean isCheckmate = false;
-    private static GameController instance;
+    private IBoard board;
 
-    private GameController() {}
-
-    public static GameController getInstance() {
-        if (instance == null) {
-            instance = new GameController();
-        }
-        return instance;
+    public GameController(IBoard board) {
+        this.board = board;
     }
 
-    public Board executeMove(Board chessboard, ChessBoardUI chessBoardUI) {
-        Collection<Move> currentPlayerMoves = chessboard.getCurrentPlayer().getMoves();
+    public IBoard executeMove(ChessBoardUI chessBoardUI) {
+        chessBoardUI.waitForPlayerMove();
+        Collection<Move> currentPlayerMoves = board.getCurrentPlayer().getMoves();
 
         for (Move currentPlayerMove : currentPlayerMoves) {
             if (currentPlayerMove.getSourceCoordinate() == chessBoardUI.getSourceTile().getTileCoordinate() &&
              currentPlayerMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
 
-                    GameHistory.getInstance().addBoard(chessboard);
+                    GameHistory.getInstance().addBoard(board);
                     GameHistory.getInstance().addMove(currentPlayerMove);
     
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,15 +35,15 @@ public class GameController {
                     ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     
-                    chessboard = currentPlayerMove.execute();         
+                    board = currentPlayerMove.execute();         
 
-                if (chessboard.getCurrentPlayer().isCheckmate()) {
+                if (board.getCurrentPlayer().isCheckmate()) {
                     this.isCheckmate = true;
                 }
                     break;
                 }
         }
-        return chessboard;
+        return board;
     }
 
     public boolean isCheckmate() {

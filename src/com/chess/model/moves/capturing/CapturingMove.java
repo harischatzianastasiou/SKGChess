@@ -5,6 +5,7 @@ import java.util.List;
 import com.chess.model.Alliance;
 import com.chess.model.board.Board;
 import com.chess.model.board.Board.Builder;
+import com.chess.model.board.IBoard;
 import com.chess.model.moves.Move;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
@@ -44,7 +45,7 @@ public class CapturingMove extends Move {
     }
 
     @Override
-    public Board execute() {
+    public IBoard execute() {
         return this.createBuilderAfterCapturingMove().build();
     }
 } 

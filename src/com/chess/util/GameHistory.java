@@ -3,13 +3,13 @@ package com.chess.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.chess.model.board.Board;
+import com.chess.model.board.IBoard;
 import com.chess.model.moves.Move;
 
 public class GameHistory {
 
     private static GameHistory instance;
-    private final List<Board> boards;
+    private final List<IBoard> boards;
     private final List<Move> moveHistory;
 
     private GameHistory() {
@@ -29,11 +29,11 @@ public class GameHistory {
     	this.moveHistory.add(move);
     }
 
-    public void addBoard(Board board) {
+    public void addBoard(IBoard board) {
         this.boards.add(board);
     }
 
-    public List<Board> getBoards() {
+    public List<IBoard> getBoards() {
         return new ArrayList<>(this.boards);
     }
 
@@ -41,7 +41,7 @@ public class GameHistory {
         return new ArrayList<>(this.moveHistory);
     }
 
-    public Board getLastBoard() {
+    public IBoard getLastBoard() {
         if (!boards.isEmpty()) {
             return boards.get(boards.size() - 1);
         }

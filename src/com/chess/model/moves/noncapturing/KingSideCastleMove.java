@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.chess.model.Alliance;
 import com.chess.model.board.Board;
+import com.chess.model.board.IBoard;
 import com.chess.model.pieces.Piece;
 import com.chess.model.pieces.Rook;
 import com.chess.model.tiles.Tile;
@@ -22,7 +23,7 @@ public class KingSideCastleMove extends NonCapturingMove {
     
     
  	@Override
-        public Board execute() {
+        public IBoard execute() {
 	        final Board.Builder builder = new Board.Builder();
 	        
 	        for (final Tile tile : super.getBoardTiles()) {

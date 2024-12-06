@@ -3,6 +3,7 @@ package com.chess.model.moves;
 import java.util.List;
 
 import com.chess.model.board.Board;
+import com.chess.model.board.IBoard;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
@@ -60,9 +61,9 @@ public abstract class Move {
 
     public abstract Piece getCapturedPiece();
 
-    public abstract Board execute();    
+    public abstract IBoard execute();    
     
-    public Board undo() {
+    public IBoard undo() {
         final Board.Builder builder = new Board.Builder();
         for (final Tile tile : this.boardTiles) {
             if (tile.isTileOccupied()) {

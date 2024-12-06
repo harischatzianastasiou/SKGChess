@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.chess.model.Alliance;
 import com.chess.model.board.Board;
+import com.chess.model.board.IBoard;
 import com.chess.model.pieces.Pawn;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
@@ -15,7 +16,7 @@ public class PawnPromotionMove extends NonCapturingMove {
     }
     
     @Override
-    public Board execute() {
+    public IBoard execute() {
         // Create a new board builder
         Board.Builder builder = new Board.Builder();
 

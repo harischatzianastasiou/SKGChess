@@ -39,36 +39,50 @@ import com.chess.test.PawnTest;
 import com.chess.test.QueenTest;
 import com.chess.test.RookTest;
 import com.chess.controller.GameController;
+import com.chess.model.board.IBoard;
 
 public class ChessBoardUI {
     
+    private static ChessBoardUI instance;
     private final JFrame gameFrame;
     private final BoardPanel boardPanel;
-    private Board chessboard;
-    private GameController gameController;
+    private IBoard chessboard;
     private Tile sourceTile;
     private Tile targetTile;
     private Piece selectedPiece;
+    private volatile boolean moveSelected = false;
 
     private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(600, 600);
     private final static Dimension BOARD_PANEL_DIMENSION = new Dimension (400, 350);
-    private final static Dimension TILE_PANEL_DIMENSION = new Dimension (70, 70); // Increased size
+    private final static Dimension TILE_PANEL_DIMENSION = new Dimension (70, 70);
     private final static String pieceImagesPath = "images/";
     private final Color lightTileColor = Color.decode("#eeeed2");
     private final Color darkTileColor = Color.decode("#769656");
     
     
     
-    public ChessBoardUI(GameController gameController) {
-        this.gameController = gameController;
+    private ChessBoardUI(IBoard board) {
         this.gameFrame = new JFrame("SKGChess");
         this.gameFrame.setLayout(new BorderLayout());
         this.gameFrame.setJMenuBar(createChessTableMenuBar());
         this.gameFrame.setSize(OUTER_FRAME_DIMENSION);
-        this.chessboard = Board.createStandardBoard();
+        this.chessboard = board;
         this.boardPanel = new BoardPanel();
         this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
         this.gameFrame.setVisible(true);
+    }
+
+    public static ChessBoardUI getInstance(IBoard board) {
+        if (instance == null) {
+            instance = new ChessBoardUI(board);
+        } else {
+            instance.chessboard = board;
+            instance.boardPanel.drawBoard(board);
+            instance.sourceTile = null;
+            instance.targetTile = null;
+            instance.selectedPiece = null;
+        }
+        return instance;
     }
 
     private JMenuBar createChessTableMenuBar() {
@@ -106,7 +120,7 @@ public class ChessBoardUI {
             validate();
         }
         
-        public void drawBoard(final Board board) {
+        public void drawBoard(final IBoard board) {
         	removeAll();
         	for(final TilePanel tilePanel : boardTiles) {
         		tilePanel.drawTile(board);
@@ -143,64 +157,62 @@ public class ChessBoardUI {
 	                    sourceTile = null;
 	                	targetTile = null;
 	                	selectedPiece = null;
+	                	moveSelected = false;
 	                }else if(isLeftMouseButtonClicked(e)) {
 	                	//first click
 	                	if(sourceTile == null) {
 	                        highlightColor = Color.GREEN; // Set highlight color for left-click
 	                        sourceTile = chessboard.getTile(tileId);
 	                        selectedPiece = sourceTile.getPiece();
-	                        if(selectedPiece== null) {
-	                        	sourceTile = null;
-	                        }else{
-                                Collection<Move> testValidLegalMoves = chessboard.getCurrentPlayer().getMoves();
-                                if(selectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
-                                    if(selectedPiece instanceof Rook) {
-                                    System.out.println("\nTesting Rook Moves:");
-                                    RookTest.testRookMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
-                                    }else if(selectedPiece instanceof Knight) {
-                                    System.out.println("\nTesting Knight Moves:");
-                                    KnightTest.testKnightMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
-                                    }else if(selectedPiece instanceof Bishop) {
-                                    System.out.println("\nTesting Bishop Moves:");
-                                    BishopTest.testBishopMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
-                                    }else if(selectedPiece instanceof Queen) {
-                                    System.out.println("\nTesting Queen Moves:");
-                                    QueenTest.testQueenMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
-                                    }else if(selectedPiece instanceof King) {
-                                    System.out.println("\nTesting King Moves:");
-                                    KingTest.testKingMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
-                                    }else if(selectedPiece instanceof Pawn) {
-                                    System.out.println("\nTesting Pawn Moves:");
-                                    PawnTest.testPawnMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
-                                    }
-                                }
-                            }
+	                        if(selectedPiece == null || 
+	                           selectedPiece.getPieceAlliance() != chessboard.getCurrentPlayer().getAlliance()) {
+	                            sourceTile = null;
+	                            selectedPiece = null;
+	                        } else {
+	                            Collection<Move> testValidLegalMoves = chessboard.getCurrentPlayer().getMoves();
+	                            if(selectedPiece instanceof Rook) {
+	                            System.out.println("\nTesting Rook Moves:");
+	                            RookTest.testRookMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+	                            }else if(selectedPiece instanceof Knight) {
+	                            System.out.println("\nTesting Knight Moves:");
+	                            KnightTest.testKnightMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+	                            }else if(selectedPiece instanceof Bishop) {
+	                            System.out.println("\nTesting Bishop Moves:");
+	                            BishopTest.testBishopMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+	                            }else if(selectedPiece instanceof Queen) {
+	                            System.out.println("\nTesting Queen Moves:");
+	                            QueenTest.testQueenMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+	                            }else if(selectedPiece instanceof King) {
+	                            System.out.println("\nTesting King Moves:");
+	                            KingTest.testKingMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+	                            }else if(selectedPiece instanceof Pawn) {
+	                            System.out.println("\nTesting Pawn Moves:");
+	                            PawnTest.testPawnMovesWithStandardBoard(testValidLegalMoves,selectedPiece.getPieceCoordinate());
+	                            }
+	                        }
 	                    //second click
 	                	}else {
 	                        highlightColor = Color.YELLOW; // Set highlight color for left-click
 	                        targetTile = chessboard.getTile(tileId);
-	                        if(sourceTile!= null && targetTile!= null) {
-	                           chessboard = gameController.executeMove(chessboard, ChessBoardUI.this);
+	                        if(sourceTile != null && targetTile != null) {
+	                           moveSelected = true;
 	                        }
-	                        sourceTile = null;
-	                        targetTile = null;
-	                        selectedPiece = null;
 	                	}
 	                    setBackground(highlightColor);
 	                    repaint();
-	                	
-	                	SwingUtilities.invokeLater(new Runnable() {
-	                		@Override
-	                		public void run() {
-	                			if(chessboard!= null) {
-	                				boardPanel.drawBoard(chessboard);
-                                    if(gameController.isCheckmate()) {
-                                        JOptionPane.showMessageDialog(null, "Checkmate! " + chessboard.getOpponentPlayer().getAlliance().toString() + " wins.");
-                                        System.exit(0);
-                                    }
-	                			}
-                            }
-	                	});
+
+	                	// SwingUtilities.invokeLater(new Runnable() {
+	                	// 	@Override
+	                	// 	public void run() {
+	                	// 		if(chessboard!= null) {
+	                	// 			boardPanel.drawBoard(chessboard);
+                        //             if(chessboard.getCurrentPlayer().isCheckmate()) {
+                        //                 JOptionPane.showMessageDialog(null, "Checkmate! " + chessboard.getOpponentPlayer().getAlliance().toString() + " wins.");
+                        //                 System.exit(0);
+                        //             }
+	                	// 		}
+                        //     }
+	                	// });
 	                		
 	                	}
 	            }
@@ -224,7 +236,7 @@ public class ChessBoardUI {
             );
         }
 
-        public void drawTile(final Board board) {
+        public void drawTile(final IBoard board) {
         	if (board != null) {
 	        	assignTileColor(tileId);
 	        	assignTilePieceIcon(board);
@@ -237,7 +249,7 @@ public class ChessBoardUI {
             setBackground(BoardUtils.getCoordinateAlliance(tileId) == Alliance.WHITE? lightTileColor : darkTileColor );	
         }
         
-        private void assignTilePieceIcon(final Board board) {
+        private void assignTilePieceIcon(final IBoard board) {
         	if (board != null) {
 	            this.removeAll();
 	            Tile tile = board.getTile(tileId);
@@ -258,7 +270,7 @@ public class ChessBoardUI {
         }
     }
 
-    public void updateBoard(Board board) {
+    public void updateBoard(IBoard board) {
         boardPanel.drawBoard(board);
     }
 
@@ -274,5 +286,22 @@ public class ChessBoardUI {
 	public Tile getTargetTile() {
 		return targetTile;
 	}
+
+	public void resetTileSelections() {
+		this.sourceTile = null;
+		this.targetTile = null;
+	}
+
+	public void waitForPlayerMove() {
+        moveSelected = false;
+        while (!moveSelected) {
+            try {
+                Thread.sleep(0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        moveSelected = false; // Reset for next move
+    }
 
 }

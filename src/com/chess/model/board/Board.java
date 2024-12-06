@@ -16,7 +16,8 @@ import com.chess.model.pieces.Rook;
 import com.chess.model.player.Player;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
-public class Board {
+
+public class Board implements IBoard {
 	
 	private final List<Tile> tiles;
     private final Player currentPlayer;
@@ -28,7 +29,7 @@ public class Board {
 		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer.getMoves());
 	}
 
-	private static Board createBoard(Builder builder) {
+	private static IBoard createBoard(Builder builder) {
         return new Board(builder);
     }
 	
@@ -65,10 +66,12 @@ public class Board {
 	    return builder.toString();
 	}
 
+	@Override
 	public List<Tile> getTiles() {
 		return ImmutableList.copyOf(tiles);
 	}
 
+	@Override
 	public Tile getTile(final int tileCoordinate) {
         if (!BoardUtils.isValidTileCoordinate(tileCoordinate)) {
             throw new IllegalArgumentException("Invalid tile coordinate: " + tileCoordinate);
@@ -76,10 +79,12 @@ public class Board {
         return tiles.get(tileCoordinate);
     }
 
+	@Override
 	public Player getCurrentPlayer() {
 		return this.currentPlayer;
 	}
 	
+	@Override
 	public Player getOpponentPlayer() {
         return this.opponentPlayer;
 	}
@@ -103,12 +108,12 @@ public class Board {
             return this;
         }
         
-        public Board build() {//build a new board everytime a move is executed.
+        public IBoard build() {//build a new board everytime a move is executed.
             return Board.createBoard(this);
         }
 	}
 	
-	public static Board createStandardBoard() {//Create initial board
+	public static IBoard createStandardBoard() {//Create initial board
 		// create white and black player here once
 	    final Builder builder = new Builder();
 	    
@@ -143,4 +148,6 @@ public class Board {
 
 	    return createBoard(builder);
 	}
+
+	
 }
