@@ -303,4 +303,12 @@ public final class CalculateMoveUtils {
                 return false;
         }
     }
+
+    public static int getMaxSquaresMoved(final Piece piece){
+        if(piece instanceof Pawn)
+            return 1;
+        if(piece instanceof King)
+            return 1;
+        return MAX_SQUARES_MOVED;
+    }
 }

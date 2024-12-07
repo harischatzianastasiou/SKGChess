@@ -105,6 +105,7 @@ public class Bishop extends Piece {
 					int throughCoordinate = this.pieceCoordinate;
 					// Keep looking through coordinates until we hit a piece or board edge
 					while(true) {
+						//must check alliance of throughTile and currentPieceTile
                     throughCoordinate = CalculateMoveUtils.getNextCoordinateInDirection(
                         pinningPieceOfPawn.getPieceCoordinate(), 
                         throughCoordinate
