@@ -85,12 +85,7 @@ public abstract class Piece {
         }
 	}
 
-    public abstract Collection<Move> calculateOpponentMoves(final List<Tile> boardTiles); // We need to calculate opponent's moves(except for King since an opponent King cannot capture current player's King), in order to validate current player's moves for check/pin.
-
-    public abstract Collection<Move> calculateCurrentPlayerMoves(
-        final List<Tile> boardTiles,
-        final Collection<Move> checkingMoves,
-        final Collection<Move> oppositePlayerMoves);
+    public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves);
 
 	public abstract Piece movePiece(int destinationCoordinate);
 }

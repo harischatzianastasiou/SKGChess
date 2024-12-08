@@ -309,6 +309,10 @@ public final class CalculateMoveUtils {
             return 1;
         if(piece instanceof King)
             return 1;
-        return MAX_SQUARES_MOVED;
+        if(piece instanceof Knight)
+            return 1;
+        if(piece instanceof Bishop || piece instanceof Rook || piece instanceof Queen)
+            return 7;
+        return 0;
     }
 }

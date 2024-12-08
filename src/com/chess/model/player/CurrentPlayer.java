@@ -38,7 +38,7 @@ public final class CurrentPlayer extends Player {
                 final Piece piece = tile.getPiece();   
                 if (piece.getPieceAlliance() == alliance) {
                     activePieces.add(piece);
-                    potentialLegalMoves.addAll(piece.calculateCurrentPlayerMoves(tiles, checkingMoves, oppositePlayerMoves));
+                    potentialLegalMoves.addAll(piece.calculateMoves(tiles, checkingMoves, oppositePlayerMoves));
                 }
             }
         }  
