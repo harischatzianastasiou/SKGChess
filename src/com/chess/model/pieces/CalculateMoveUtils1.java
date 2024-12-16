@@ -95,6 +95,8 @@ public final class CalculateMoveUtils1 {
                 }else{
                     if(isCandidateTileOccupiedByOpponent(piece,candidateDestinationTile))
                         moves.addAll(addCapturingMoves(piece, boardTiles,  candidateDestinationCoordinate, candidateOffset));
+                    else
+                        ProtectedPiecesTracker.addProtectedPieceCoordinate(candidateDestinationCoordinate); // Store the protected piece
                     break; //for sliding pieces if there is a piece in the direction that sliding piece can move, stop further checking in this direction.
                 }
             }
