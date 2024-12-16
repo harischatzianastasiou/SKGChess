@@ -36,7 +36,7 @@ public class King extends Piece  {
 		final Collection<Move> checkingMoves = (checkingMoves1 != null) ? ImmutableList.copyOf(checkingMoves1) : new ArrayList<>();
 		final Collection<Move> oppositePlayerMoves= (oppositePlayerMoves1 != null) ? ImmutableList.copyOf(oppositePlayerMoves1) : new ArrayList<>();
 		
-		kingPotentialLegalMoves.addAll(CalculateMoveUtils1.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves));
+		kingPotentialLegalMoves.addAll(CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves));
 
 		if(checkingMoves.isEmpty()){
 			addPotentialCastlingMoves(boardTiles, kingPotentialLegalMoves, oppositePlayerMoves);

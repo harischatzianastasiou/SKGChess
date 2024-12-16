@@ -1,7 +1,7 @@
 package com.chess;
 
-import com.chess.controller.GameController;
 import com.chess.model.board.IBoard;
+import com.chess.controller.GameController;
 import com.chess.view.ChessBoardUI;
 
 public class SKGChess {

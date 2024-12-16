@@ -26,24 +26,10 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import com.chess.model.Alliance;
-import com.chess.model.board.Board;
 import com.chess.model.moves.Move;
-import com.chess.model.pieces.Bishop;
-import com.chess.model.pieces.CalculateMoveUtils1;
-import com.chess.model.pieces.King;
-import com.chess.model.pieces.Knight;
-import com.chess.model.pieces.Pawn;
-import com.chess.model.pieces.Piece;
-import com.chess.model.pieces.Queen;
-import com.chess.model.pieces.Rook;
+import com.chess.model.pieces.CalculateMoveUtils;
 import com.chess.model.tiles.Tile;
-import com.chess.test.BishopTest;
-import com.chess.test.KingTest;
-import com.chess.test.KnightTest;
-import com.chess.test.PawnTest;
-import com.chess.test.QueenTest;
-import com.chess.test.RookTest;
-import com.chess.controller.GameController;
+import com.chess.model.pieces.Piece;
 import com.chess.model.board.IBoard;
 import com.chess.model.player.Player;
 import com.chess.util.GameHistory;
@@ -162,7 +148,7 @@ public class ChessBoardUI {
             layeredPane.setBounds(0, 0, OUTER_FRAME_DIMENSION.width, OUTER_FRAME_DIMENSION.height);
             tilesPanel.setBounds(0, 0, BOARD_PANEL_DIMENSION.width, BOARD_PANEL_DIMENSION.height);
             
-            for (int i = 0; i < CalculateMoveUtils1.NUM_TILES; i++) {
+            for (int i = 0; i < CalculateMoveUtils.NUM_TILES; i++) {
                 final TilePanel tilePanel = new TilePanel(this, i);
                 this.boardTiles.add(tilePanel);
                 tilesPanel.add(tilePanel);
@@ -308,7 +294,7 @@ public class ChessBoardUI {
 		}
 
 		private void assignTileColor(final int tileId) {
-            Color baseColor = CalculateMoveUtils1.getCoordinateAlliance(tileId) == Alliance.WHITE ? lightTileColor : darkTileColor;
+            Color baseColor = CalculateMoveUtils.getCoordinateAlliance(tileId) == Alliance.WHITE ? lightTileColor : darkTileColor;
             
             // If this tile was part of the last move, blend with lastMoveColor
             if (tileId == lastMoveSource || tileId == lastMoveTarget) {

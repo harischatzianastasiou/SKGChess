@@ -40,7 +40,7 @@ public class Pawn extends Piece {
         super(PieceSymbol.PAWN,pieceCoordinate, pieceAlliance, true);
         this.advanceDirection = this.pieceAlliance.getMovingDirection();  
         this.initialRank = this.pieceAlliance.isWhite() ? 7: 2;
-        this.currentRank = CalculateMoveUtils1.getCoordinateRank(this.pieceCoordinate);
+        this.currentRank = CalculateMoveUtils.getCoordinateRank(this.pieceCoordinate);
         this.promotionRank = this.pieceAlliance.isWhite() ? 2 : 7;
         this.enPassantRank = this.pieceAlliance.isWhite()? 4 : 5;
     }
@@ -49,7 +49,7 @@ public class Pawn extends Piece {
         super(PieceSymbol.PAWN,pieceCoordinate, pieceAlliance, isFirstMove);
         this.advanceDirection = this.pieceAlliance.getMovingDirection();  
         this.initialRank = this.pieceAlliance.isWhite() ? 7 : 2;
-        this.currentRank = CalculateMoveUtils1.getCoordinateRank(this.pieceCoordinate);
+        this.currentRank = CalculateMoveUtils.getCoordinateRank(this.pieceCoordinate);
         this.promotionRank = this.pieceAlliance.isWhite() ? 2 : 7;
         this.enPassantRank = this.pieceAlliance.isWhite()? 4 : 5;
     }
@@ -61,7 +61,7 @@ public class Pawn extends Piece {
      
 	@Override
 	public Collection<Move> calculateMoves(final List<Tile> boardTiles,final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves) {
-		return CalculateMoveUtils1.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves);
+		return CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves);
 	} 
     
     @Override

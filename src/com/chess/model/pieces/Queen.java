@@ -26,7 +26,7 @@ public class Queen extends Piece {
 
 	@Override
 	public Collection<Move> calculateMoves(final List<Tile> boardTiles,final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves) {
-		return CalculateMoveUtils1.calculate(boardTiles, this, QUEEN_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves);
+		return CalculateMoveUtils.calculate(boardTiles, this, QUEEN_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves);
 	} 
 
     @Override
