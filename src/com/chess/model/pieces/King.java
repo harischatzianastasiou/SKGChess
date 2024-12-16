@@ -7,7 +7,6 @@ import java.util.List;
 import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.noncapturing.KingSideCastleMove;
-import com.chess.model.moves.noncapturing.PawnPromotionMove;
 import com.chess.model.moves.noncapturing.QueenSideCastleMove;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
@@ -30,11 +29,10 @@ public class King extends Piece  {
     }
     
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles,final Collection<Move> checkingMoves1, final Collection<Move> oppositePlayerMoves1) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles,final Collection<Move> checkingMoves1, final Collection<Move> oppositePlayerMoves) {
 
 		final List<Move> kingPotentialLegalMoves = new ArrayList<>();
 		final Collection<Move> checkingMoves = (checkingMoves1 != null) ? ImmutableList.copyOf(checkingMoves1) : new ArrayList<>();
-		final Collection<Move> oppositePlayerMoves= (oppositePlayerMoves1 != null) ? ImmutableList.copyOf(oppositePlayerMoves1) : new ArrayList<>();
 		
 		kingPotentialLegalMoves.addAll(CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves));
 
@@ -45,7 +43,7 @@ public class King extends Piece  {
 		return ImmutableList.copyOf(kingPotentialLegalMoves);
     }
 
-	private void addPotentialCastlingMoves(final List<Tile> boardTiles, final List<Move> kingPotentialLegalMoves, final Collection<Move> oppositePlayerMovesToUse) {
+	private void addPotentialCastlingMoves(final List<Tile> boardTiles, final List<Move> kingPotentialLegalMoves, final Collection<Move> oppositePlayerMoves) {
 		if (this.isFirstMove()) {
 			// Add kingside castle if rook is present
 			final Tile kingSideRookTile = boardTiles.get(this.pieceCoordinate + 3);
@@ -55,12 +53,17 @@ public class King extends Piece  {
 					if (!boardTiles.get(this.pieceCoordinate + 1).isTileOccupied() && 
 						!boardTiles.get(this.pieceCoordinate + 2).isTileOccupied()) {
 						
+						if( ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate)
+						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate + 1)
+						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate + 2)){
+							return;
+						}
+
 						// Check if castling path is under attack
 						int[] castlingPath = {this.pieceCoordinate, this.pieceCoordinate + 1, this.pieceCoordinate + 2};
-						boolean isCastlingPathSafe = oppositePlayerMovesToUse.stream()
+						boolean isCastlingPathSafe = oppositePlayerMoves.stream()
 							.noneMatch(move -> {
-								if (move instanceof PawnPromotionMove && 
-									(move.getTargetCoordinate() == this.pieceCoordinate
+								if ((move.getTargetCoordinate() == this.pieceCoordinate
 									|| move.getTargetCoordinate() == this.pieceCoordinate + 1 
 									|| move.getTargetCoordinate() == this.pieceCoordinate + 2)) {
 									return true;
@@ -98,10 +101,15 @@ public class King extends Piece  {
 
 						// Check if castling path is under attack
 						int[] castlingPath = {this.pieceCoordinate, this.pieceCoordinate - 1, this.pieceCoordinate - 2};
-						boolean isCastlingPathSafe = oppositePlayerMovesToUse.stream()
+						if( ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate)
+						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 1)
+						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 2)
+						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 3)){
+							return;
+						}
+						boolean isCastlingPathSafe = oppositePlayerMoves.stream()
 							.noneMatch(move -> {
-								if (move instanceof PawnPromotionMove &&
-									(move.getTargetCoordinate() == this.pieceCoordinate
+								if ((move.getTargetCoordinate() == this.pieceCoordinate
 									|| move.getTargetCoordinate() == this.pieceCoordinate - 1 
 									|| move.getTargetCoordinate() == this.pieceCoordinate - 2
 									|| move.getTargetCoordinate() == this.pieceCoordinate - 3)) {
