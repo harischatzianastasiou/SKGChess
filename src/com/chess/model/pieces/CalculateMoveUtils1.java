@@ -126,12 +126,13 @@ public final class CalculateMoveUtils1 {
                 final Tile currentTile = boardTiles.get(piece.getPieceCoordinate());
 
                 if(isCandidateTileEmpty(candidateDestinationTile)){
-                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset));
+                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, oppositePlayerMoves1));
                 }else{
                     if(isCandidateTileOccupiedByOpponent(piece,candidateDestinationTile))
                         moves.addAll(addCapturingMoves(piece, boardTiles,  candidateDestinationCoordinate, candidateOffset));
                     else
-                        ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
+                        if(oppositePlayerMoves1 == null)
+                            ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
                     break; //for sliding pieces if there is a piece in the direction that sliding piece can move, stop further checking in this direction.
                 }
             }
@@ -139,7 +140,7 @@ public final class CalculateMoveUtils1 {
         return ImmutableList.copyOf(moves);
     }
 
-    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset){
+    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Collection<Move> oppositePlayerMoves1){
         final List<Move> moves = new ArrayList<>();
 
         if(!(piece instanceof Pawn)){
@@ -165,7 +166,8 @@ public final class CalculateMoveUtils1 {
             }
             
             if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){//pawn en passant is in addNonCapturingMoves because the candidateDestinationTile is empty
-                ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
+                if(oppositePlayerMoves1 == null)
+                    ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
                 if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
                     Move lastMove = GameHistory.getInstance().getLastMove();
                     if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
