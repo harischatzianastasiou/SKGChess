@@ -13,8 +13,8 @@ import com.google.common.collect.ImmutableList;
 
 public final class CurrentPlayer extends Player {
 		
-    private boolean isInCheck;
-    private boolean isInCheckmate;
+    private final boolean isInCheck;
+    private final boolean isInCheckmate;
     
     private CurrentPlayer(final Collection<Piece> pieces, final Collection<Move> moves, final Alliance alliance, boolean isInCheck, boolean isInCheckmate) {
         super(pieces, moves, alliance);

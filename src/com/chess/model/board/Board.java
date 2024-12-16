@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.chess.model.Alliance;
 import com.chess.model.pieces.Bishop;
+import com.chess.model.pieces.CalculateMoveUtils1;
 import com.chess.model.pieces.King;
 import com.chess.model.pieces.Knight;
 import com.chess.model.pieces.Pawn;
@@ -34,13 +35,13 @@ public class Board implements IBoard {
     }
 	
 	private static List<Tile> createTiles(final Builder builder) {// list of 64 tiles. each occupied tile gets a piece mapped from the builder. if not mapped the tile is empty
-	    final List<Tile> tiles = new ArrayList<>(BoardUtils.NUM_TILES);
-	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
+	    final List<Tile> tiles = new ArrayList<>(CalculateMoveUtils1.NUM_TILES);
+	    for (int i = 0; i < CalculateMoveUtils1.NUM_TILES; i++) {
 	        Piece piece = builder.pieces.get(i);
 	        if (builder.pieces.containsKey(i) && piece != null) {
-	            tiles.add(Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), piece));
+	            tiles.add(Tile.createTile(i, CalculateMoveUtils1.getCoordinateAlliance(i), piece));
 	        } else {
-	            tiles.add(Tile.createTile(i, BoardUtils.getCoordinateAlliance(i), null));
+	            tiles.add(Tile.createTile(i, CalculateMoveUtils1.getCoordinateAlliance(i), null));
 	        }
 	    }
 	    return ImmutableList.copyOf(tiles);
@@ -49,7 +50,7 @@ public class Board implements IBoard {
 	@Override
 	public String toString() {
 	    StringBuilder builder = new StringBuilder();
-	    for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
+	    for (int i = 0; i < CalculateMoveUtils1.NUM_TILES; i++) {
 	        Tile tile = this.tiles.get(i);
 	        if (tile.isTileOccupied()) {
 	            Piece piece = tile.getPiece();
@@ -59,7 +60,7 @@ public class Board implements IBoard {
 	        } else {
 	            builder.append(String.format("%3s", "-"));
 	        }
-	        if ((i + 1) % BoardUtils.NUM_TILES_PER_ROW == 0) {
+	        if ((i + 1) % CalculateMoveUtils1.NUM_TILES_PER_ROW == 0) {
 	            builder.append("\n");
 	        }
 	    }
@@ -73,7 +74,7 @@ public class Board implements IBoard {
 
 	@Override
 	public Tile getTile(final int tileCoordinate) {
-        if (!BoardUtils.isValidTileCoordinate(tileCoordinate)) {
+        if (!CalculateMoveUtils1.isCoordinateInBounds(tileCoordinate)) {
             throw new IllegalArgumentException("Invalid tile coordinate: " + tileCoordinate);
         }
         return tiles.get(tileCoordinate);

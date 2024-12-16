@@ -27,9 +27,9 @@ import javax.swing.*;
 
 import com.chess.model.Alliance;
 import com.chess.model.board.Board;
-import com.chess.model.board.BoardUtils;
 import com.chess.model.moves.Move;
 import com.chess.model.pieces.Bishop;
+import com.chess.model.pieces.CalculateMoveUtils1;
 import com.chess.model.pieces.King;
 import com.chess.model.pieces.Knight;
 import com.chess.model.pieces.Pawn;
@@ -162,7 +162,7 @@ public class ChessBoardUI {
             layeredPane.setBounds(0, 0, OUTER_FRAME_DIMENSION.width, OUTER_FRAME_DIMENSION.height);
             tilesPanel.setBounds(0, 0, BOARD_PANEL_DIMENSION.width, BOARD_PANEL_DIMENSION.height);
             
-            for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
+            for (int i = 0; i < CalculateMoveUtils1.NUM_TILES; i++) {
                 final TilePanel tilePanel = new TilePanel(this, i);
                 this.boardTiles.add(tilePanel);
                 tilesPanel.add(tilePanel);
@@ -308,7 +308,7 @@ public class ChessBoardUI {
 		}
 
 		private void assignTileColor(final int tileId) {
-            Color baseColor = BoardUtils.getCoordinateAlliance(tileId) == Alliance.WHITE ? lightTileColor : darkTileColor;
+            Color baseColor = CalculateMoveUtils1.getCoordinateAlliance(tileId) == Alliance.WHITE ? lightTileColor : darkTileColor;
             
             // If this tile was part of the last move, blend with lastMoveColor
             if (tileId == lastMoveSource || tileId == lastMoveTarget) {

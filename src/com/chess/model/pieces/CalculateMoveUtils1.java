@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.chess.model.Alliance;
-import com.chess.model.board.BoardUtils;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.capturing.CapturingMove;
 import com.chess.model.moves.capturing.PawnEnPassantAttack;
@@ -31,6 +30,9 @@ public final class CalculateMoveUtils1 {
         final Collection<Move> checkingMoves= (checkingMoves1 != null) ? ImmutableList.copyOf(checkingMoves1) : new ArrayList<>();
         List<Integer> checkingPieceAttackPath = new ArrayList<>();// will be used in single check
         List<Integer> pinningPieceAttackPath = new ArrayList<>();// will be used in pinning
+        List<Integer> checkingPiecesThroughKingPath = new ArrayList<>();
+        List<Integer> checkingPiecesCoordinates = new ArrayList<>();
+
         if(oppositePlayerMoves1!= null){
             if(!(piece instanceof King)){
                 if(!checkingMoves.isEmpty()){
@@ -49,7 +51,20 @@ public final class CalculateMoveUtils1 {
                     return NO_LEGAL_MOVES;
                 } 
             }
+
+            if(piece instanceof King){
+                for (Move checkingMove : checkingMoves) {
+                    checkingPiecesCoordinates.add(checkingMove.getPieceToMove().getPieceCoordinate());
+                    Piece checkingPiece = checkingMove.getPieceToMove();
+                    int kingCoordinate = checkingMove.getTargetCoordinate();
+                    int throughCoordinate = CalculateMoveUtils1.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
+                    if (isCoordinateInBounds(throughCoordinate)) {
+                        checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+                    }
+                }
+            }
         }
+        
         
         for (final int candidateOffset : moveOffsets) {
             for(int squaresMoved=1; squaresMoved <= getMaxSquaresMoved(piece); squaresMoved++ ) {
@@ -77,7 +92,27 @@ public final class CalculateMoveUtils1 {
                             break;
                         }
                     }
+                    if(piece instanceof King){
+                        boolean isCandidateCoordinateUnderAttack = oppositePlayerMoves1.stream()
+						.anyMatch(move -> {
+							// If it's a pawn's forward move, ignore it (pawns can't attack(capture) forward)
+							if (move instanceof PawnMove || move instanceof PawnPromotionMove || move instanceof PawnJumpMove) {
+								return false;
+							}
+							// For all other moves, check if they target the square
+							return move.getTargetCoordinate() == candidateDestinationCoordinate;
+						});
+
+                        boolean isCandidateCoordinateInCheckingPieceThroughPath = checkingPiecesThroughKingPath.contains(candidateDestinationCoordinate);
+			
+                        boolean isCandidateCoordinateProtectedByOpponentPiece = ProtectedCoordinatesTracker.getProtectedCoordinates().contains(candidateDestinationCoordinate);
+
+                        if (isCandidateCoordinateUnderAttack || isCandidateCoordinateInCheckingPieceThroughPath || isCandidateCoordinateProtectedByOpponentPiece ) {
+                            break;
+                        }
+                    }
                 }
+
                 if(!(isCoordinateInBounds(candidateDestinationCoordinate))){
                     break;
                 }
@@ -96,7 +131,7 @@ public final class CalculateMoveUtils1 {
                     if(isCandidateTileOccupiedByOpponent(piece,candidateDestinationTile))
                         moves.addAll(addCapturingMoves(piece, boardTiles,  candidateDestinationCoordinate, candidateOffset));
                     else
-                        ProtectedPiecesTracker.addProtectedPieceCoordinate(candidateDestinationCoordinate); // Store the protected piece
+                        ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
                     break; //for sliding pieces if there is a piece in the direction that sliding piece can move, stop further checking in this direction.
                 }
             }
@@ -130,9 +165,10 @@ public final class CalculateMoveUtils1 {
             }
             
             if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){//pawn en passant is in addNonCapturingMoves because the candidateDestinationTile is empty
+                ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
                 if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
                     Move lastMove = GameHistory.getInstance().getLastMove();
-                    if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || BoardUtils.getCoordinateFile(lastMove.getTargetCoordinate()) != BoardUtils.getCoordinateFile(candidateDestinationCoordinate)) {
+                    if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
                         return ImmutableList.copyOf(moves);
                     }
                     Piece pieceToCapture = boardTiles.get(lastMove.getTargetCoordinate()).getPiece();
@@ -167,8 +203,8 @@ public final class CalculateMoveUtils1 {
 
     public static boolean validateCandidateRankAndFile(Piece piece, int candidateDestinationCoordinate, int candidateOffset){
         if(piece instanceof Rook || piece instanceof King || piece instanceof Queen){
-            int rankDifference = BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
-            int fileDifference = BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
+            int rankDifference = getCoordinateRankDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
+            int fileDifference = getCoordinateFileDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
             if(piece instanceof Rook){
                 return rankDifference == 0 || fileDifference == 0;
             }
@@ -246,7 +282,7 @@ public final class CalculateMoveUtils1 {
     }
 
     public static Alliance getCoordinateAlliance(int tileCoordinate) {
-        return (BoardUtils.getCoordinateRank(tileCoordinate) + BoardUtils.getCoordinateFile(tileCoordinate)) % 2 == 0 ? Alliance.BLACK : Alliance.WHITE;
+        return (getCoordinateRank(tileCoordinate) + getCoordinateFile(tileCoordinate)) % 2 == 0 ? Alliance.BLACK : Alliance.WHITE;
     }
 
     public static List<Integer> calculateAttackPath(final Piece checkingPiece, final int kingCoordinate, final List<Tile> boardTiles) {
@@ -364,7 +400,7 @@ public final class CalculateMoveUtils1 {
                 //must check alliance of throughTile and currentPieceTile
                 throughCoordinate = getNextCoordinateInDirection( pinningPiece.getPieceCoordinate(), throughCoordinate);
             
-                if (!BoardUtils.isValidTileCoordinate(throughCoordinate)) {
+                if (!isCoordinateInBounds(throughCoordinate)) {
                     break;  // Stop if we hit board edge
                 }
                 

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.chess.model.Alliance;
-import com.chess.model.board.BoardUtils;
+import com.chess.model.pieces.CalculateMoveUtils1;
 import com.chess.model.pieces.Piece;
 import com.google.common.collect.ImmutableMap;
 
@@ -12,8 +12,8 @@ public final class EmptyTile extends Tile  {
 
     static Map<Integer, Tile> createEmptyTilesCache() {
         final Map<Integer, Tile> emptyTiles = new HashMap<>();
-        for (int i = 0; i < BoardUtils.NUM_TILES; i++) {
-            emptyTiles.put(i, new EmptyTile(i, BoardUtils.getCoordinateAlliance(i)));
+        for (int i = 0; i < CalculateMoveUtils1.NUM_TILES; i++) {
+            emptyTiles.put(i, new EmptyTile(i, CalculateMoveUtils1.getCoordinateAlliance(i)));
         }
         return ImmutableMap.copyOf(emptyTiles);
 	}	

@@ -7,14 +7,12 @@ import java.util.List;
 import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
 import com.chess.model.pieces.Piece;
-import com.chess.model.pieces.ProtectedPiecesTracker;
+import com.chess.model.pieces.ProtectedCoordinatesTracker;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
 public final class OpponentPlayer extends Player {
 		    
-    private final List<Piece> protectedPieces = new ArrayList<>(); 
-
     private OpponentPlayer(final Collection<Piece> pieces, final Collection<Move> potentialLegalMoves, final Alliance alliance) {
         super(pieces, potentialLegalMoves, alliance);
     }
@@ -22,13 +20,13 @@ public final class OpponentPlayer extends Player {
 	public static OpponentPlayer createOpponentPlayer(final List<Tile> tiles, final Alliance alliance) {
         final List<Piece> activePieces = new ArrayList<>();
         final List<Move> potentialLegalMoves = new ArrayList<>();
+        ProtectedCoordinatesTracker.clear();
 
         for (final Tile tile : tiles) {
             if (tile.isTileOccupied()) {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                     activePieces.add(piece);
-                    ProtectedPiecesTracker.clear();
                     potentialLegalMoves.addAll(piece.calculateMoves(tiles, null, null));
                 }
             }
