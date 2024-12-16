@@ -1,18 +1,11 @@
 package com.chess.model.pieces;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.chess.model.Alliance;
-import com.chess.model.board.BoardUtils;
 import com.chess.model.moves.Move;
-import com.chess.model.moves.capturing.CapturingMove;
-import com.chess.model.moves.noncapturing.NonCapturingMove;
-import com.chess.model.player.CurrentPlayer;
 import com.chess.model.tiles.Tile;
-import com.google.common.collect.ImmutableList;
 
 public class Queen extends Piece {
     

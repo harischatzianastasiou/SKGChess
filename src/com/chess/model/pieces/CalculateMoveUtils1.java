@@ -33,19 +33,20 @@ public final class CalculateMoveUtils1 {
         List<Integer> pinningPieceAttackPath = new ArrayList<>();// will be used in pinning
         if(oppositePlayerMoves1!= null){
             if(!(piece instanceof King)){
-                if(checkingMoves.size() > 1){ //in double check only the king can move.
-                    return NO_LEGAL_MOVES;
-                }
-                else if(checkingMoves.size() == 1){ // in single check a piece can block the check by moving to the attack path of the checking piece(the attack path includes the coordinate of the checking piece until the coordinate of the King)
+                if(!checkingMoves.isEmpty()){
+                    if(checkingMoves.size() > 1){ //in double check only the king can move.
+                        System.out.println("1");
+                        return NO_LEGAL_MOVES;
+                    }
                     final Move checkingMove = checkingMoves.iterator().next();
                     final Piece checkingPiece = checkingMove.getPieceToMove();
                     final int kingCoordinate = checkingMove.getTargetCoordinate();
                     checkingPieceAttackPath.addAll(calculateAttackPath(checkingPiece, kingCoordinate, boardTiles));
-                }else { // in no check, piece can move as long as it is not pinned
-                    pinningPieceAttackPath = calculateAttackPathOfPinningPiece(piece, boardTiles, oppositePlayerMoves1);
-                    if(pinningPieceAttackPath == null){//if it is empty we dont want to return NO_LEGAL_MOVES
-                        return NO_LEGAL_MOVES;
-                    }
+                }
+                pinningPieceAttackPath = calculateAttackPathOfPinningPiece(piece, boardTiles, oppositePlayerMoves1);
+                if(pinningPieceAttackPath == null){
+                    System.out.println("sourcecoordinate" + piece.getPieceCoordinate());
+                    return NO_LEGAL_MOVES;
                 } 
             }
         }
@@ -63,24 +64,25 @@ public final class CalculateMoveUtils1 {
 
                 if(oppositePlayerMoves1 != null){
                     if(!(piece instanceof King)){
-                        if (checkingMoves.size() == 1  && !checkingPieceAttackPath.contains(candidateDestinationCoordinate)) {
-                            System.out.println("1");
-                            return NO_LEGAL_MOVES;
+                        if (!checkingMoves.isEmpty() && !checkingPieceAttackPath.contains(candidateDestinationCoordinate)) {
+                            System.out.println("aristotelis");
+                            break;
                         }
-                        if(checkingMoves.isEmpty() && !pinningPieceAttackPath.isEmpty() && !pinningPieceAttackPath.contains(candidateDestinationCoordinate)){
-                            System.out.println("2");
+                        if(!pinningPieceAttackPath.isEmpty() && !pinningPieceAttackPath.contains(candidateDestinationCoordinate)){
+                            System.out.println("sokratis");
                             System.out.println(pinningPieceAttackPath);
                             System.out.println(pinningPieceAttackPath.contains(candidateDestinationCoordinate));
-                            return NO_LEGAL_MOVES;
+                            System.out.println(candidateDestinationCoordinate);
+                            System.out.println(piece.toString());
+                            break;
                         }
                     }
                 }
                 if(!(isCoordinateInBounds(candidateDestinationCoordinate))){
                     break;
                 }
-
                 
-                if(!(validateCandidateRankAndFile(piece, candidateDestinationCoordinate))
+                if(!(validateCandidateRankAndFile(piece, candidateDestinationCoordinate,candidateOffset))
                    || !(isValidAllianceOfTile(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, candidateOffset, piece))){
                     break;
                 }
@@ -161,8 +163,8 @@ public final class CalculateMoveUtils1 {
         return tileCoordinate >= 0 && tileCoordinate < NUM_TILES;
     }
 
-    public static boolean validateCandidateRankAndFile(Piece piece, int candidateDestinationCoordinate){
-        if(piece instanceof Rook || piece instanceof King){
+    public static boolean validateCandidateRankAndFile(Piece piece, int candidateDestinationCoordinate, int candidateOffset){
+        if(piece instanceof Rook || piece instanceof King || piece instanceof Queen){
             int rankDifference = BoardUtils.getCoordinateRankDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
             int fileDifference = BoardUtils.getCoordinateFileDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
             if(piece instanceof Rook){
@@ -170,6 +172,11 @@ public final class CalculateMoveUtils1 {
             }
             if(piece instanceof King){
 				return rankDifference <= 1 && fileDifference <= 1;
+            }
+            if(piece instanceof Queen){
+                if((Math.abs(candidateOffset) == 1 || Math.abs(candidateOffset) == 8)){
+                    return rankDifference == 0 || fileDifference == 0;
+                }
             }
         }
         return true;
