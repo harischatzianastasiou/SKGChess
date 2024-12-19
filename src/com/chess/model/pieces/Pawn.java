@@ -6,6 +6,7 @@ import java.util.List;
 import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
 import com.chess.model.tiles.Tile;
+import com.chess.model.player.Player;
 
 public class Pawn extends Piece {
     
@@ -60,8 +61,8 @@ public class Pawn extends Piece {
     }
      
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles,final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves) {
-		return CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves);
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer) {
+		return CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, opponentPlayer);
 	} 
     
     @Override

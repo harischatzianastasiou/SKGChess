@@ -27,7 +27,7 @@ public class Board implements IBoard {
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
 		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(), null);
-		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer.getMoves());
+		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer);
 	}
 
 	private static IBoard createBoard(Builder builder) {

@@ -22,36 +22,36 @@ public final class CurrentPlayer extends Player {
         this.isInCheckmate = isInCheckmate;
     }
 
-	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Collection<Move> oppositePlayerMoves) {
-        final List<Piece> activePieces = new ArrayList<>();
-        final Collection<Move> potentialLegalMoves = new ArrayList<>();
-        final Collection<Move> checkingMoves = new ArrayList<>();
+	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer) {
+        final List<Piece> pieces = new ArrayList<>();
+        final Collection<Move> moves = new ArrayList<>();
+        final Collection<Move> opponentCheckingMoves = new ArrayList<>();
         boolean isInCheck = false;
         boolean isInCheckmate = false;
 
-        checkingMoves.addAll(checkingMoves(tiles, alliance, oppositePlayerMoves));
-        if(!checkingMoves.isEmpty()){
+        opponentCheckingMoves.addAll(getOpponentCheckingMoves(tiles, alliance, opponentPlayer));
+        if(!opponentCheckingMoves.isEmpty()){
             isInCheck = true;
         }
         for (final Tile tile : tiles) {
             if (tile.isTileOccupied()) {
                 final Piece piece = tile.getPiece();   
                 if (piece.getPieceAlliance() == alliance) {
-                    activePieces.add(piece);
-                    potentialLegalMoves.addAll(piece.calculateMoves(tiles, checkingMoves, oppositePlayerMoves));
+                    pieces.add(piece);
+                    moves.addAll(piece.calculateMoves(tiles, opponentPlayer));
                 }
             }
         }  
 
-        if (isInCheck && potentialLegalMoves.isEmpty()) {
+        if (isInCheck && moves.isEmpty()) {
             isInCheckmate = true; 
         }
-        return new CurrentPlayer(ImmutableList.copyOf(activePieces), ImmutableList.copyOf(potentialLegalMoves), alliance, isInCheck, isInCheckmate);    
+        return new CurrentPlayer(ImmutableList.copyOf(pieces), ImmutableList.copyOf(moves), alliance, isInCheck, isInCheckmate);    
     }
 
-    public static Collection<Move> checkingMoves(final List<Tile> tiles, final Alliance alliance, final Collection<Move> oppositePlayerMoves) {// moves that are checking the current player's king
+    public static Collection<Move> getOpponentCheckingMoves(final List<Tile> tiles, final Alliance alliance, final Player opponentPlayer) {// moves that are checking the current player's king
         Collection<Move> checkingMoves = new ArrayList<>();
-        for (Move move : oppositePlayerMoves) {
+        for (Move move : opponentPlayer.getMoves()) {
             if (move.getTargetCoordinate() == getKingCoordinate(tiles, alliance)) {
                 checkingMoves.add(move);
             }

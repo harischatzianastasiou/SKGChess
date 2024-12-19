@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
+import com.chess.model.player.Player;
 import com.chess.model.tiles.Tile;
 
 public abstract class Piece {
@@ -85,7 +86,7 @@ public abstract class Piece {
         }
 	}
 
-    public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final Collection<Move> checkingMoves, final Collection<Move> oppositePlayerMoves);
+    public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer);
 
 	public abstract Piece movePiece(int destinationCoordinate);
 }

@@ -9,6 +9,7 @@ import com.chess.model.board.IBoard;
 import com.chess.model.moves.Move;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
+
 public class CapturingMove extends Move {
     private final Piece capturedPiece;
 

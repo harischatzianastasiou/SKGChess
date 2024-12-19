@@ -10,18 +10,18 @@ import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Player {
-	protected final Collection<Piece>	pieces;
+	protected final Collection<Piece> pieces;
 	protected final Collection<Move> moves;
 	protected final Alliance alliance;
 	
 	protected Player(final Collection<Piece> pieces,final Collection<Move> moves, final Alliance alliance) {
 		this.pieces = pieces;
         this.moves = moves;
-		this.alliance = alliance;//could use incheck here?
+		this.alliance = alliance;
 	}
 
-	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance,final Collection<Move> oppositePlayerMoves) {
-	  return oppositePlayerMoves != null ? CurrentPlayer.createCurrentPlayer(tiles, alliance, oppositePlayerMoves) : OpponentPlayer.createOpponentPlayer(tiles, alliance);
+	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer) {
+	  return opponentPlayer != null ? CurrentPlayer.createCurrentPlayer(tiles, alliance, opponentPlayer) : OpponentPlayer.createOpponentPlayer(tiles, alliance);
   }
 
 	public Collection<Piece> getPieces(){

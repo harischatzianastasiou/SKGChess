@@ -8,6 +8,8 @@ import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.noncapturing.KingSideCastleMove;
 import com.chess.model.moves.noncapturing.QueenSideCastleMove;
+import com.chess.model.player.CurrentPlayer;
+import com.chess.model.player.Player;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -29,21 +31,24 @@ public class King extends Piece  {
     }
     
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles,final Collection<Move> checkingMoves1, final Collection<Move> oppositePlayerMoves) {
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer) {
 
-		final List<Move> kingPotentialLegalMoves = new ArrayList<>();
-		final Collection<Move> checkingMoves = (checkingMoves1 != null) ? ImmutableList.copyOf(checkingMoves1) : new ArrayList<>();
-		
-		kingPotentialLegalMoves.addAll(CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, checkingMoves, oppositePlayerMoves));
+		final List<Move> moves = new ArrayList<>();
+		final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
+        final Collection<Move> checkingMoves= (opponentMoves != null) ? CurrentPlayer.getOpponentCheckingMoves(boardTiles, opponentPlayer.getOppositeAlliance(), opponentPlayer) : new ArrayList<>();
+        
+		moves.addAll(CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, opponentPlayer));
 
-		if(checkingMoves.isEmpty()){
-			addPotentialCastlingMoves(boardTiles, kingPotentialLegalMoves, oppositePlayerMoves);
+		if(opponentPlayer != null){
+			if(checkingMoves.isEmpty()){
+				addPotentialCastlingMoves(boardTiles, moves, opponentMoves);
+			}
 		}
 		
-		return ImmutableList.copyOf(kingPotentialLegalMoves);
+		return ImmutableList.copyOf(moves);
     }
 
-	private void addPotentialCastlingMoves(final List<Tile> boardTiles, final List<Move> kingPotentialLegalMoves, final Collection<Move> oppositePlayerMoves) {
+	private void addPotentialCastlingMoves(final List<Tile> boardTiles, final List<Move> moves, final Collection<Move> opponentMoves) {
 		if (this.isFirstMove()) {
 			// Add kingside castle if rook is present
 			final Tile kingSideRookTile = boardTiles.get(this.pieceCoordinate + 3);
@@ -61,7 +66,7 @@ public class King extends Piece  {
 
 						// Check if castling path is under attack
 						int[] castlingPath = {this.pieceCoordinate, this.pieceCoordinate + 1, this.pieceCoordinate + 2};
-						boolean isCastlingPathSafe = oppositePlayerMoves.stream()
+						boolean isCastlingPathSafe = opponentMoves.stream()
 							.noneMatch(move -> {
 								if ((move.getTargetCoordinate() == this.pieceCoordinate
 									|| move.getTargetCoordinate() == this.pieceCoordinate + 1 
@@ -78,7 +83,7 @@ public class King extends Piece  {
 						
 
 						if (isCastlingPathSafe) {
-							kingPotentialLegalMoves.add(new KingSideCastleMove(boardTiles,
+							moves.add(new KingSideCastleMove(boardTiles,
 																 this.pieceCoordinate,
 																 this.pieceCoordinate + 2,
 																 this,
@@ -107,7 +112,7 @@ public class King extends Piece  {
 						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 3)){
 							return;
 						}
-						boolean isCastlingPathSafe = oppositePlayerMoves.stream()
+						boolean isCastlingPathSafe = opponentMoves.stream()
 							.noneMatch(move -> {
 								if ((move.getTargetCoordinate() == this.pieceCoordinate
 									|| move.getTargetCoordinate() == this.pieceCoordinate - 1 
@@ -123,7 +128,7 @@ public class King extends Piece  {
 							});
 
 						if (isCastlingPathSafe) {
-							kingPotentialLegalMoves.add(new QueenSideCastleMove(boardTiles,
+							moves.add(new QueenSideCastleMove(boardTiles,
 																  this.pieceCoordinate,
 																  this.pieceCoordinate - 2,
 																  this,

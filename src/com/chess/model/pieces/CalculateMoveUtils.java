@@ -15,6 +15,7 @@ import com.chess.model.moves.noncapturing.PawnMove;
 import com.chess.model.moves.noncapturing.PawnPromotionMove;
 import com.chess.model.pieces.Piece.PieceSymbol;
 import com.chess.model.player.CurrentPlayer;
+import com.chess.model.player.Player;
 import com.chess.model.tiles.Tile;
 import com.chess.util.GameHistory;
 import com.google.common.collect.ImmutableList;
@@ -25,15 +26,16 @@ public final class CalculateMoveUtils {
 	public static final int NUM_TILES_PER_ROW = 8;
     public static final Collection<Move> NO_LEGAL_MOVES = ImmutableList.copyOf(new ArrayList<>());
 
-    public static Collection<Move> calculate(List<Tile> boardTiles,final Piece piece,final int[] moveOffsets,final Collection<Move> oppositePlayerCheckingMoves ,final Collection<Move> oppositePlayerAllMoves){
-        final List<Move> moves = new ArrayList<>();
-        final Collection<Move> checkingMoves= (oppositePlayerCheckingMoves != null) ? ImmutableList.copyOf(oppositePlayerCheckingMoves) : new ArrayList<>();
+    public static Collection<Move> calculate(List<Tile> boardTiles,final Piece piece,final int[] moveOffsets ,final Player opponentPlayer){
+        final Collection<Move> moves = new ArrayList<>();
+        final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
+        final Collection<Move> checkingMoves= (opponentPlayer == null) ? null : CurrentPlayer.getOpponentCheckingMoves(boardTiles, opponentPlayer.getOppositeAlliance(), opponentPlayer);
         List<Integer> checkingPieceAttackPath = new ArrayList<>();// will be used in single check
         List<Integer> pinningPieceAttackPath = new ArrayList<>();// will be used in pinning
         List<Integer> checkingPiecesThroughKingPath = new ArrayList<>();
         List<Integer> checkingPiecesCoordinates = new ArrayList<>();
 
-        if(oppositePlayerAllMoves!= null){
+        if(opponentPlayer!= null){
             if(!(piece instanceof King)){
                 if(!checkingMoves.isEmpty()){
                     if(checkingMoves.size() > 1){ //in double check only the king can move.
@@ -45,7 +47,7 @@ public final class CalculateMoveUtils {
                     final int kingCoordinate = checkingMove.getTargetCoordinate();
                     checkingPieceAttackPath.addAll(calculateAttackPath(checkingPiece, kingCoordinate, boardTiles));
                 }
-                pinningPieceAttackPath = calculateAttackPathOfPinningPiece(piece, boardTiles, oppositePlayerAllMoves);
+                pinningPieceAttackPath = calculateAttackPathOfPinningPiece(piece, boardTiles, opponentMoves);
                 if(pinningPieceAttackPath == null){
                     System.out.println("sourcecoordinate" + piece.getPieceCoordinate());
                     return NO_LEGAL_MOVES;
@@ -77,23 +79,17 @@ public final class CalculateMoveUtils {
                     candidateDestinationCoordinate = piece.getPieceCoordinate() + total_offset;
                 }
 
-                if(oppositePlayerAllMoves != null){
+                if(opponentMoves != null){
                     if(!(piece instanceof King)){
                         if (!checkingMoves.isEmpty() && !checkingPieceAttackPath.contains(candidateDestinationCoordinate)) {
-                            System.out.println("aristotelis");
                             break;
                         }
                         if(!pinningPieceAttackPath.isEmpty() && !pinningPieceAttackPath.contains(candidateDestinationCoordinate)){
-                            System.out.println("sokratis");
-                            System.out.println(pinningPieceAttackPath);
-                            System.out.println(pinningPieceAttackPath.contains(candidateDestinationCoordinate));
-                            System.out.println(candidateDestinationCoordinate);
-                            System.out.println(piece.toString());
                             break;
                         }
                     }
                     if(piece instanceof King){
-                        boolean isCandidateCoordinateUnderAttack = oppositePlayerAllMoves.stream()
+                        boolean isCandidateCoordinateUnderAttack = opponentMoves.stream()
 						.anyMatch(move -> {
 							// If it's a pawn's forward move, ignore it (pawns can't attack(capture) forward)
 							if (move instanceof PawnMove || move instanceof PawnPromotionMove || move instanceof PawnJumpMove) {
@@ -126,12 +122,12 @@ public final class CalculateMoveUtils {
                 final Tile currentTile = boardTiles.get(piece.getPieceCoordinate());
 
                 if(isCandidateTileEmpty(candidateDestinationTile)){
-                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, oppositePlayerAllMoves));
+                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer));
                 }else{
                     if(isCandidateTileOccupiedByOpponent(piece,candidateDestinationTile))
                         moves.addAll(addCapturingMoves(piece, boardTiles,  candidateDestinationCoordinate, candidateOffset));
                     else
-                        if(oppositePlayerAllMoves == null)
+                        if(opponentPlayer == null)
                             ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
                     break; //for sliding pieces if there is a piece in the direction that sliding piece can move, stop further checking in this direction.
                 }
@@ -140,7 +136,7 @@ public final class CalculateMoveUtils {
         return ImmutableList.copyOf(moves);
     }
 
-    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Collection<Move> oppositePlayerAllMoves){
+    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer){
         final List<Move> moves = new ArrayList<>();
 
         if(!(piece instanceof Pawn)){
@@ -166,7 +162,7 @@ public final class CalculateMoveUtils {
             }
             
             if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){//pawn en passant is in addNonCapturingMoves because the candidateDestinationTile is empty
-                if(oppositePlayerAllMoves == null)
+                if(opponentPlayer == null)
                     ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
                 if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
                     Move lastMove = GameHistory.getInstance().getLastMove();
