@@ -79,6 +79,12 @@ public final class CalculateMoveUtils {
                     candidateDestinationCoordinate = piece.getPieceCoordinate() + total_offset;
                 }
 
+                if(!(isCoordinateInBounds(candidateDestinationCoordinate))){
+                    break;
+                }
+
+                final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
+
                 if(opponentMoves != null){
                     if(!(piece instanceof King)){
                         if (!checkingMoves.isEmpty() && !checkingPieceAttackPath.contains(candidateDestinationCoordinate)) {
@@ -108,18 +114,11 @@ public final class CalculateMoveUtils {
                         }
                     }
                 }
-
-                if(!(isCoordinateInBounds(candidateDestinationCoordinate))){
-                    break;
-                }
                 
                 if(!(validateCandidateRankAndFile(piece, candidateDestinationCoordinate,candidateOffset))
                    || !(isValidAllianceOfTile(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, candidateOffset, piece))){
                     break;
                 }
-
-                final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
-                final Tile currentTile = boardTiles.get(piece.getPieceCoordinate());
 
                 if(isCandidateTileEmpty(candidateDestinationTile)){
                    moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer));
