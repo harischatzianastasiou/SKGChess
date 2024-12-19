@@ -6,8 +6,8 @@ import java.util.List;
 
 import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
+import com.chess.model.pieces.CalculateMoveUtils;
 import com.chess.model.pieces.Piece;
-import com.chess.model.pieces.ProtectedCoordinatesTracker;
 import com.chess.model.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -20,7 +20,7 @@ public final class OpponentPlayer extends Player {
 	public static OpponentPlayer createOpponentPlayer(final List<Tile> tiles, final Alliance alliance) {
         final List<Piece> pieces = new ArrayList<>();
         final List<Move> moves = new ArrayList<>();
-        ProtectedCoordinatesTracker.clear();
+        CalculateMoveUtils.ProtectedCoordinatesTracker.clear(); // every time an opponent player calculates his moves we clear the ProtectedCoordinatesTracker
 
         for (final Tile tile : tiles) {
             if (tile.isTileOccupied()) {

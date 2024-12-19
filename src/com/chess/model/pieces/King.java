@@ -58,9 +58,9 @@ public class King extends Piece  {
 					if (!boardTiles.get(this.pieceCoordinate + 1).isTileOccupied() && 
 						!boardTiles.get(this.pieceCoordinate + 2).isTileOccupied()) {
 						
-						if( ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate)
-						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate + 1)
-						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate + 2)){
+						if( CalculateMoveUtils.ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate)
+						|| CalculateMoveUtils.ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate + 1)
+						|| CalculateMoveUtils.ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate + 2)){
 							return;
 						}
 
@@ -106,10 +106,10 @@ public class King extends Piece  {
 
 						// Check if castling path is under attack
 						int[] castlingPath = {this.pieceCoordinate, this.pieceCoordinate - 1, this.pieceCoordinate - 2};
-						if( ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate)
-						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 1)
-						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 2)
-						|| ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 3)){
+						if( CalculateMoveUtils.ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate)
+						|| CalculateMoveUtils.ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 1)
+						|| CalculateMoveUtils.ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 2)
+						|| CalculateMoveUtils.ProtectedCoordinatesTracker.getProtectedCoordinates().contains(this.pieceCoordinate - 3)){
 							return;
 						}
 						boolean isCastlingPathSafe = opponentMoves.stream()
