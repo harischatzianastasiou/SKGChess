@@ -67,7 +67,6 @@ public final class CalculateMoveUtils {
             }
         }
         
-        
         for (final int candidateOffset : moveOffsets) {
             for(int squaresMoved=1; squaresMoved <= getMaxSquaresMoved(piece); squaresMoved++ ) {
                 int total_offset = candidateOffset * squaresMoved;
@@ -144,33 +143,35 @@ public final class CalculateMoveUtils {
 
         if(piece instanceof Pawn){
             Pawn pawn = (Pawn) piece;
-            if(Math.abs(candidateOffset) == 8){
-                if(pawn.getCurrentRank() != pawn.getPromotionRank()){
-                    moves.add(new PawnMove(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece));//Add standard advance move
-                }else
-                    moves.add(new PawnPromotionMove(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece));
-            }
-
-            if(Math.abs(candidateOffset) == 16){
-                if(pawn.getCurrentRank() == pawn.getInitialRank()){
-                    int coordinateBeforeCandidate = piece.getPieceCoordinate() + ( 8 * pawn.getAdvanceDirection());
-                    if(isCandidateTileEmpty(boardTiles.get(coordinateBeforeCandidate))){ //isTileEmpty
-                        moves.add(new PawnJumpMove(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece));
+            switch (Math.abs(candidateOffset)) {
+                case 8:
+                    if(pawn.getCurrentRank() != pawn.getPromotionRank()){
+                        moves.add(new PawnMove(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece));
+                    } else {
+                        moves.add(new PawnPromotionMove(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece));
                     }
-                }
-            }
-            
-            if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){//pawn en passant is in addNonCapturingMoves because the candidateDestinationTile is empty
-                if(opponentPlayer == null)
-                    ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
-                if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
-                    Move lastMove = GameHistory.getInstance().getLastMove();
-                    if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
-                        return ImmutableList.copyOf(moves);
+                    break;
+                case 16:
+                    if(pawn.getCurrentRank() == pawn.getInitialRank()){
+                        int coordinateBeforeCandidate = piece.getPieceCoordinate() + ( 8 * pawn.getAdvanceDirection());
+                        if(isCandidateTileEmpty(boardTiles.get(coordinateBeforeCandidate))){
+                            moves.add(new PawnJumpMove(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece));
+                        }
                     }
-                    Piece pieceToCapture = boardTiles.get(lastMove.getTargetCoordinate()).getPiece();
-                    moves.add(new PawnEnPassantAttack(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece, pieceToCapture));
-                }
+                    break;
+                case 7:
+                case 9:
+                    if(opponentPlayer == null)
+                        ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate);
+                    if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
+                        Move lastMove = GameHistory.getInstance().getLastMove();
+                        if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
+                            return ImmutableList.copyOf(moves);
+                        }
+                        Piece pieceToCapture = boardTiles.get(lastMove.getTargetCoordinate()).getPiece();
+                        moves.add(new PawnEnPassantAttack(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece, pieceToCapture));
+                    }
+                    break;
             }
         }
         return ImmutableList.copyOf(moves);
@@ -199,43 +200,43 @@ public final class CalculateMoveUtils {
     }
 
     public static boolean validateCandidateRankAndFile(Piece piece, int candidateDestinationCoordinate, int candidateOffset){
-        if(piece instanceof Rook || piece instanceof King || piece instanceof Queen){
-            int rankDifference = getCoordinateRankDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
-            int fileDifference = getCoordinateFileDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
-            if(piece instanceof Rook){
+        int rankDifference = getCoordinateRankDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
+        int fileDifference = getCoordinateFileDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
+        switch(piece.getPieceSymbol()){
+            case ROOK:
                 return rankDifference == 0 || fileDifference == 0;
-            }
-            if(piece instanceof King){
-				return rankDifference <= 1 && fileDifference <= 1;
-            }
-            if(piece instanceof Queen){
+            case KING:
+                return rankDifference <= 1 && fileDifference <= 1;
+            case QUEEN:
                 if((Math.abs(candidateOffset) == 1 || Math.abs(candidateOffset) == 8)){
                     return rankDifference == 0 || fileDifference == 0;
                 }
-            }
+                break;
         }
         return true;
     }
     
-    public static boolean isValidAllianceOfTile(List<Tile> boardTiles, int pieceCoordinate, int candidateDestinationCoordinate, int candidateOffset,Piece piece){
-        if(piece instanceof Bishop || piece instanceof Queen || piece instanceof Knight || piece instanceof Pawn){
-            final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
-            final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
-            final Tile currentTile = boardTiles.get(pieceCoordinate);
-            final Alliance allianceOfCurrentTile = currentTile.getTileAlliance();
-            
-            if (piece instanceof Bishop 
-                || (piece instanceof Queen && (Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9))){
-                return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
-            }
+    public static boolean isValidAllianceOfTile(List<Tile> boardTiles, int pieceCoordinate, int candidateDestinationCoordinate, int candidateOffset, Piece piece){
+        final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
+        final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
+        final Tile currentTile = boardTiles.get(pieceCoordinate);
+        final Alliance allianceOfCurrentTile = currentTile.getTileAlliance();
 
-            if(piece instanceof Knight){
+        switch(piece.getPieceSymbol()){
+            case BISHOP:
+                return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
+            case QUEEN:
+                if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){
+                    return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
+                }
+                break;
+            case KNIGHT:
                 return allianceOfCandidateDestinationTile != allianceOfCurrentTile;
-            }
-
-            if(piece instanceof Pawn && (Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9)){
-                return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
-            }
+            case PAWN:
+                if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){
+                    return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
+                }
+                break;
         }
         return true;
     }
@@ -271,15 +272,18 @@ public final class CalculateMoveUtils {
     }
 
     public static int getMaxSquaresMoved(final Piece piece){
-        if(piece instanceof Pawn)
-            return 1;
-        if(piece instanceof King)
-            return 1;
-        if(piece instanceof Knight)
-            return 1;
-        if(piece instanceof Bishop || piece instanceof Rook || piece instanceof Queen)
-            return 7;
-        return 0;
+        switch(piece.getPieceSymbol()){
+            case PAWN:
+            case KING:
+            case KNIGHT:
+                return 1;
+            case BISHOP:
+            case ROOK:
+            case QUEEN:
+                return 7;
+            default:
+                return 0;
+        }
     }
 
     public static List<Integer> calculateAttackPath(final Piece checkingPiece, final int kingCoordinate, final List<Tile> boardTiles) {
