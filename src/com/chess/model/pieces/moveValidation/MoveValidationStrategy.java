@@ -32,6 +32,7 @@ public interface MoveValidationStrategy {
                 
             case QUEEN:
                 if (isOnDiagonal(checkingPieceCoordinate, kingCoordinate)) {
+                    System.out.println("isondiagonal");
                     return calculateDiagonalAttackPath(checkingPieceCoordinate, kingCoordinate);
                 } else {
                     return calculateStraightAttackPath(checkingPieceCoordinate, kingCoordinate);
@@ -94,6 +95,10 @@ public interface MoveValidationStrategy {
 
     public static boolean isOnDiagonal(final int startCoordinate, final int endCoordinate) {
         int diff = Math.abs(endCoordinate - startCoordinate);
+        if((CalculateMoveUtils.getCoordinateRank(endCoordinate) == 1 && CalculateMoveUtils.getCoordinateRank(startCoordinate) == 8)
+        || CalculateMoveUtils.getCoordinateRank(endCoordinate) == 8 && CalculateMoveUtils.getCoordinateRank(startCoordinate) == 1){
+            if(diff % 7 ==0 || diff % 9 == 0) return false;
+        }
         return diff % 7 == 0 || diff % 9 == 0;
     }
 

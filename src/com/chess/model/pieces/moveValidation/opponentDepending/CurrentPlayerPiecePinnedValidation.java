@@ -27,7 +27,10 @@ public class CurrentPlayerPiecePinnedValidation implements MoveValidationStrateg
                     return false;
                 }
             }
+            System.out.println(pinningPieceAttackPath);
+            System.out.println(piece.getPieceCoordinate());
         }
+        
         return true;
     }
 }
