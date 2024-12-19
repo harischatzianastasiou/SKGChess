@@ -55,13 +55,15 @@ public final class CalculateMoveUtils {
             }
 
             if(piece instanceof King){
-                for (Move checkingMove : checkingMoves) {
-                    checkingPiecesCoordinates.add(checkingMove.getPieceToMove().getPieceCoordinate());
-                    Piece checkingPiece = checkingMove.getPieceToMove();
-                    int kingCoordinate = checkingMove.getTargetCoordinate();
-                    int throughCoordinate = CalculateMoveUtils.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
-                    if (isCoordinateInBounds(throughCoordinate)) {
-                        checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+                if(!checkingMoves.isEmpty()){
+                    for (Move checkingMove : checkingMoves) {
+                        checkingPiecesCoordinates.add(checkingMove.getPieceToMove().getPieceCoordinate());
+                        Piece checkingPiece = checkingMove.getPieceToMove();
+                        int kingCoordinate = checkingMove.getTargetCoordinate();
+                        int throughCoordinate = CalculateMoveUtils.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
+                        if (isCoordinateInBounds(throughCoordinate)) {
+                            checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+                        }
                     }
                 }
             }
@@ -212,7 +214,7 @@ public final class CalculateMoveUtils {
                     return rankDifference == 0 || fileDifference == 0;
                 }
                 break;
-        }
+        } 
         return true;
     }
     
