@@ -12,7 +12,7 @@ import com.chess.view.ChessBoardUI;
 
 public class GameController {
 
-    private boolean isCheckmate = false;
+    private boolean isGameOver = false;
     private IBoard board;
 
     public GameController(IBoard board) {
@@ -56,7 +56,7 @@ public class GameController {
                 }
 
                 if (board.getCurrentPlayer().isCheckmate()) {
-                    this.isCheckmate = true;
+                    this.isGameOver = true;
                 }
                     break;
                 }
@@ -64,8 +64,8 @@ public class GameController {
         return board;
     }
 
-    public boolean isCheckmate() {
-        return this.isCheckmate;
+    public boolean isGameOver() {
+        return this.isGameOver;
     }
 
 }

@@ -1,7 +1,7 @@
 package com.chess;
 
-import com.chess.model.board.IBoard;
 import com.chess.controller.GameController;
+import com.chess.model.board.IBoard;
 import com.chess.view.ChessBoardUI;
 
 public class SKGChess {
@@ -13,10 +13,10 @@ public class SKGChess {
                 ChessBoardUI chessBoardUI = ChessBoardUI.getInstance(board);
                 board = controller.executeMove(chessBoardUI);
                 
-                // // Add a condition to break the loop (e.g., check for game over)
-                // if (controller.isGameOver()) {
-                //     break; // Exit the loop if the game is over
-                // }
+                if (controller.isGameOver()) {
+                    chessBoardUI = ChessBoardUI.getInstance(board);
+                    chessBoardUI.displayCheckmateMessage(board.getOpponentPlayer().getAlliance());
+                }
             } catch (Exception e) {
                 e.printStackTrace(); // Handle exceptions gracefully
             }

@@ -29,97 +29,33 @@ public final class CalculateMoveUtils {
     public static Collection<Move> calculate(List<Tile> boardTiles,final Piece piece,final int[] moveOffsets ,final Player opponentPlayer){
         final Collection<Move> moves = new ArrayList<>();
         final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
-        final Collection<Move> checkingMoves= (opponentPlayer == null) ? null : CurrentPlayer.getOpponentCheckingMoves(boardTiles, opponentPlayer.getOppositeAlliance(), opponentPlayer);
-        List<Integer> checkingPieceAttackPath = new ArrayList<>();// will be used in single check
-        List<Integer> pinningPieceAttackPath = new ArrayList<>();// will be used in pinning
-        List<Integer> checkingPiecesThroughKingPath = new ArrayList<>();
-        List<Integer> checkingPiecesCoordinates = new ArrayList<>();
+        final int MAX_SQUARES = getMaxSquaresMoved(piece);
 
-        if(opponentPlayer!= null){
-            if(!(piece instanceof King)){
-                if(!checkingMoves.isEmpty()){
-                    if(checkingMoves.size() > 1){ //in double check only the king can move.
-                        System.out.println("1");
-                        return NO_LEGAL_MOVES;
-                    }
-                    final Move checkingMove = checkingMoves.iterator().next();
-                    final Piece checkingPiece = checkingMove.getPieceToMove();
-                    final int kingCoordinate = checkingMove.getTargetCoordinate();
-                    checkingPieceAttackPath.addAll(calculateAttackPath(checkingPiece, kingCoordinate, boardTiles));
+        for (final int candidateOffset : moveOffsets) {
+            for(int squaresMoved=1; squaresMoved <= MAX_SQUARES; squaresMoved++ ) {
+                int total_offset = candidateOffset * squaresMoved;
+                final int candidateDestinationCoordinate = calculateDestinationCoordinate(piece, total_offset);
+
+                if(!(validateCoordinateInBounds(candidateDestinationCoordinate))
+                || !(validateCandidateRankAndFile(piece, candidateDestinationCoordinate,candidateOffset))
+                || !(validateAllianceOfTile(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, candidateOffset, piece))){
+                    break;
                 }
-                pinningPieceAttackPath = calculateAttackPathOfPinningPiece(piece, boardTiles, opponentMoves);
-                if(pinningPieceAttackPath == null){
-                    System.out.println("sourcecoordinate" + piece.getPieceCoordinate());
-                    return NO_LEGAL_MOVES;
-                } 
-            }
 
-            if(piece instanceof King){
-                if(!checkingMoves.isEmpty()){
-                    for (Move checkingMove : checkingMoves) {
-                        checkingPiecesCoordinates.add(checkingMove.getPieceToMove().getPieceCoordinate());
-                        Piece checkingPiece = checkingMove.getPieceToMove();
-                        int kingCoordinate = checkingMove.getTargetCoordinate();
-                        int throughCoordinate = CalculateMoveUtils.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
-                        if (isCoordinateInBounds(throughCoordinate)) {
-                            checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+                if(opponentMoves != null){
+                    if(!(validateWhenCurrentPlayerInCheck(boardTiles, piece, opponentPlayer, candidateDestinationCoordinate))
+                    || !(validateWhenCurrentPlayerPieceIsPinned(boardTiles, piece, opponentPlayer, candidateDestinationCoordinate))){
+                        break;
+                    }
+
+                    if(piece instanceof King){
+                        if(!(validateCurrentPlayerKingSafeSquares(opponentPlayer, candidateDestinationCoordinate))){
+                            break;
                         }
                     }
-                }
-            }
-        }
-        
-        for (final int candidateOffset : moveOffsets) {
-            for(int squaresMoved=1; squaresMoved <= getMaxSquaresMoved(piece); squaresMoved++ ) {
-                int total_offset = candidateOffset * squaresMoved;
-                final int candidateDestinationCoordinate;
-                if(piece instanceof Pawn){
-                    Pawn pawn = (Pawn) piece;
-                    candidateDestinationCoordinate = piece.getPieceCoordinate() +(pawn.getAdvanceDirection() * total_offset);
-                }else{
-                    candidateDestinationCoordinate = piece.getPieceCoordinate() + total_offset;
-                }
-
-                if(!(isCoordinateInBounds(candidateDestinationCoordinate))){
-                    break;
                 }
 
                 final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
-
-                if(opponentMoves != null){
-                    if(!(piece instanceof King)){
-                        if (!checkingMoves.isEmpty() && !checkingPieceAttackPath.contains(candidateDestinationCoordinate)) {
-                            break;
-                        }
-                        if(!pinningPieceAttackPath.isEmpty() && !pinningPieceAttackPath.contains(candidateDestinationCoordinate)){
-                            break;
-                        }
-                    }
-                    if(piece instanceof King){
-                        boolean isCandidateCoordinateUnderAttack = opponentMoves.stream()
-						.anyMatch(move -> {
-							// If it's a pawn's forward move, ignore it (pawns can't attack(capture) forward)
-							if (move instanceof PawnMove || move instanceof PawnPromotionMove || move instanceof PawnJumpMove) {
-								return false;
-							}
-							// For all other moves, check if they target the square
-							return move.getTargetCoordinate() == candidateDestinationCoordinate;
-						});
-
-                        boolean isCandidateCoordinateInCheckingPieceThroughPath = checkingPiecesThroughKingPath.contains(candidateDestinationCoordinate);
-			
-                        boolean isCandidateCoordinateProtectedByOpponentPiece = ProtectedCoordinatesTracker.getProtectedCoordinates().contains(candidateDestinationCoordinate);
-
-                        if (isCandidateCoordinateUnderAttack || isCandidateCoordinateInCheckingPieceThroughPath || isCandidateCoordinateProtectedByOpponentPiece ) {
-                            break;
-                        }
-                    }
-                }
-                
-                if(!(validateCandidateRankAndFile(piece, candidateDestinationCoordinate,candidateOffset))
-                   || !(isValidAllianceOfTile(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, candidateOffset, piece))){
-                    break;
-                }
 
                 if(isCandidateTileEmpty(candidateDestinationTile)){
                    moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer));
@@ -134,6 +70,138 @@ public final class CalculateMoveUtils {
             }
         }
         return ImmutableList.copyOf(moves);
+    }
+
+    private static int calculateDestinationCoordinate(Piece piece, int total_offset) {
+        if (piece instanceof Pawn) {
+            Pawn pawn = (Pawn) piece;
+            return piece.getPieceCoordinate() + (pawn.getAdvanceDirection() * total_offset);
+        } else {
+            return piece.getPieceCoordinate() + total_offset;
+        }
+    }
+
+    public static boolean validateCoordinateInBounds(final int tileCoordinate) {
+        return tileCoordinate >= 0 && tileCoordinate < NUM_TILES;
+    }
+
+    public static boolean validateCandidateRankAndFile(Piece piece, int candidateDestinationCoordinate, int candidateOffset){
+        int rankDifference = getCoordinateRankDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
+        int fileDifference = getCoordinateFileDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
+        switch(piece.getPieceSymbol()){
+            case ROOK:
+                return rankDifference == 0 || fileDifference == 0;
+            case KING:
+                return rankDifference <= 1 && fileDifference <= 1;
+            case QUEEN:
+                if((Math.abs(candidateOffset) == 1 || Math.abs(candidateOffset) == 8)){
+                    return rankDifference == 0 || fileDifference == 0;
+                }
+                break;
+        } 
+        return true;
+    }
+
+    public static boolean validateAllianceOfTile(List<Tile> boardTiles, int pieceCoordinate, int candidateDestinationCoordinate, int candidateOffset, Piece piece){
+        final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
+        final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
+        final Tile currentTile = boardTiles.get(pieceCoordinate);
+        final Alliance allianceOfCurrentTile = currentTile.getTileAlliance();
+
+        switch(piece.getPieceSymbol()){
+            case BISHOP:
+                return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
+            case QUEEN:
+                if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){
+                    return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
+                }
+                break;
+            case KNIGHT:
+                return allianceOfCandidateDestinationTile != allianceOfCurrentTile;
+            case PAWN:
+                if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){
+                    return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
+                }
+                break;
+        }
+        return true;
+    }
+
+    public static boolean validateWhenCurrentPlayerInCheck(List<Tile> boardTiles, Piece piece, Player opponentPlayer, int candidateDestinationCoordinate){
+        final Collection<Move> checkingMoves = CurrentPlayer.getOpponentCheckingMoves(boardTiles, opponentPlayer.getOppositeAlliance(), opponentPlayer);
+
+        List<Integer> checkingPieceAttackPath = new ArrayList<>();
+        if(!(piece instanceof King)){
+            if(!checkingMoves.isEmpty()){
+                if(checkingMoves.size() > 1){ //in double check only the king can move.
+                    return false;
+                }
+                final Move checkingMove = checkingMoves.iterator().next();
+                final Piece checkingPiece = checkingMove.getPieceToMove();
+                final int kingCoordinate = checkingMove.getTargetCoordinate();
+                checkingPieceAttackPath.addAll(calculateAttackPath(checkingPiece, kingCoordinate, boardTiles));
+            
+                if (!checkingPieceAttackPath.contains(candidateDestinationCoordinate)) { // if piece does not block the check then move is illegal
+                    return false;
+                }
+            }
+        }
+        if(piece instanceof King){
+            List<Integer> checkingPiecesThroughKingPath = new ArrayList<>();
+            if(!checkingMoves.isEmpty()){
+                for (Move checkingMove : checkingMoves) {
+                    Piece checkingPiece = checkingMove.getPieceToMove();
+                    int kingCoordinate = checkingMove.getTargetCoordinate();
+                    int throughCoordinate = CalculateMoveUtils.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
+                    if (validateCoordinateInBounds(throughCoordinate)) {
+                        checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+                    }
+                }
+            }
+
+            boolean isCandidateCoordinateInCheckingPieceThroughPath = checkingPiecesThroughKingPath.contains(candidateDestinationCoordinate);
+
+            if (isCandidateCoordinateInCheckingPieceThroughPath) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean validateWhenCurrentPlayerPieceIsPinned(List<Tile> boardTiles, Piece piece, Player opponentPlayer, int candidateDestinationCoordinate){
+        final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
+
+        List<Integer> pinningPieceAttackPath = calculateAttackPathOfPinningPiece(piece, boardTiles, opponentMoves);
+        if(!(piece instanceof King)){
+            if(pinningPieceAttackPath == null){
+                return false;
+            } 
+
+            if(!pinningPieceAttackPath.isEmpty() && !pinningPieceAttackPath.contains(candidateDestinationCoordinate)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean validateCurrentPlayerKingSafeSquares(Player opponentPlayer, int candidateDestinationCoordinate){
+        final Collection<Move> opponentMoves = opponentPlayer.getMoves();
+        boolean isCandidateCoordinateUnderAttack = opponentMoves.stream()
+        .anyMatch(move -> {
+            // If it's a pawn's forward move, ignore it (pawns can't attack(capture) forward)
+            if (move instanceof PawnMove || move instanceof PawnPromotionMove || move instanceof PawnJumpMove) {
+                return false;
+            }
+            // For all other moves, check if they target the square
+            return move.getTargetCoordinate() == candidateDestinationCoordinate;
+        });
+
+        boolean isCandidateCoordinateProtectedByOpponentPiece = ProtectedCoordinatesTracker.getProtectedCoordinates().contains(candidateDestinationCoordinate);
+
+        if (isCandidateCoordinateUnderAttack || isCandidateCoordinateProtectedByOpponentPiece ) {
+            return false;
+        }
+        return true;
     }
 
     public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer){
@@ -195,52 +263,6 @@ public final class CalculateMoveUtils {
                 moves.add(new PawnPromotionCapturingMove(boardTiles, piece.getPieceCoordinate(), candidateDestinationCoordinate, piece, pieceOnCandidateDestinationTile));
         }
         return ImmutableList.copyOf(moves);
-    }
-
-    public static boolean isCoordinateInBounds(final int tileCoordinate) {
-        return tileCoordinate >= 0 && tileCoordinate < NUM_TILES;
-    }
-
-    public static boolean validateCandidateRankAndFile(Piece piece, int candidateDestinationCoordinate, int candidateOffset){
-        int rankDifference = getCoordinateRankDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
-        int fileDifference = getCoordinateFileDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
-        switch(piece.getPieceSymbol()){
-            case ROOK:
-                return rankDifference == 0 || fileDifference == 0;
-            case KING:
-                return rankDifference <= 1 && fileDifference <= 1;
-            case QUEEN:
-                if((Math.abs(candidateOffset) == 1 || Math.abs(candidateOffset) == 8)){
-                    return rankDifference == 0 || fileDifference == 0;
-                }
-                break;
-        } 
-        return true;
-    }
-    
-    public static boolean isValidAllianceOfTile(List<Tile> boardTiles, int pieceCoordinate, int candidateDestinationCoordinate, int candidateOffset, Piece piece){
-        final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
-        final Alliance allianceOfCandidateDestinationTile = candidateDestinationTile.getTileAlliance();
-        final Tile currentTile = boardTiles.get(pieceCoordinate);
-        final Alliance allianceOfCurrentTile = currentTile.getTileAlliance();
-
-        switch(piece.getPieceSymbol()){
-            case BISHOP:
-                return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
-            case QUEEN:
-                if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){
-                    return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
-                }
-                break;
-            case KNIGHT:
-                return allianceOfCandidateDestinationTile != allianceOfCurrentTile;
-            case PAWN:
-                if(Math.abs(candidateOffset) == 7 || Math.abs(candidateOffset) == 9){
-                    return allianceOfCandidateDestinationTile == allianceOfCurrentTile;
-                }
-                break;
-        }
-        return true;
     }
 
     public static boolean isCandidateTileEmpty(Tile candidateDestinationTile){
@@ -403,7 +425,7 @@ public final class CalculateMoveUtils {
                 //must check alliance of throughTile and currentPieceTile
                 throughCoordinate = getNextCoordinateInDirection( pinningPiece.getPieceCoordinate(), throughCoordinate);
             
-                if (!isCoordinateInBounds(throughCoordinate)) {
+                if (!validateCoordinateInBounds(throughCoordinate)) {
                     break;  // Stop if we hit board edge
                 }
                 
