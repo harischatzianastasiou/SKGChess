@@ -74,7 +74,7 @@ public class Board implements IBoard {
 
 	@Override
 	public Tile getTile(final int tileCoordinate) {
-        if (!CalculateMoveUtils.validateCoordinateInBounds(tileCoordinate)) {
+        if (!CalculateMoveUtils.isCoordinateInBounds(tileCoordinate)) {
             throw new IllegalArgumentException("Invalid tile coordinate: " + tileCoordinate);
         }
         return tiles.get(tileCoordinate);
