@@ -5,9 +5,12 @@ import java.util.Collection;
 import java.util.List;
 
 import com.chess.model.moves.Move;
+import com.chess.model.pieces.Bishop;
 import com.chess.model.pieces.CalculateMoveUtils;
 import com.chess.model.pieces.King;
 import com.chess.model.pieces.Piece;
+import com.chess.model.pieces.Queen;
+import com.chess.model.pieces.Rook;
 import com.chess.model.pieces.moveValidation.MoveValidationStrategy;
 import com.chess.model.player.CurrentPlayer;
 import com.chess.model.player.Player;
@@ -41,9 +44,11 @@ public class CurrentPlayerInCheckValidation implements MoveValidationStrategy{
                     for (Move checkingMove : checkingMoves) {
                         Piece checkingPiece = checkingMove.getPieceToMove();
                         int kingCoordinate = checkingMove.getTargetCoordinate();
-                        int throughCoordinate = MoveValidationStrategy.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
-                        if (CalculateMoveUtils.isCoordinateInBounds(throughCoordinate)) {
-                            checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+                        if(checkingPiece instanceof Bishop || checkingPiece instanceof Queen || checkingPiece instanceof Rook){
+                            int throughCoordinate = MoveValidationStrategy.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
+                            if (CalculateMoveUtils.isCoordinateInBounds(throughCoordinate)) {
+                                checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+                            }
                         }
                     }
                 }

@@ -30,7 +30,6 @@ public class CurrentPlayerPiecePinnedValidation implements MoveValidationStrateg
             System.out.println(pinningPieceAttackPath);
             System.out.println(piece.getPieceCoordinate());
         }
-        
         return true;
     }
 }
