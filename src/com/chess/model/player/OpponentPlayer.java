@@ -33,22 +33,5 @@ public final class OpponentPlayer extends Player {
         }   
         return new OpponentPlayer(ImmutableList.copyOf(pieces), ImmutableList.copyOf(moves), alliance);    
     }
-
-    @Override
-    public boolean isCheckmate() {
-        throw new UnsupportedOperationException("Opponent player cannot be checkmated");
-    }
-
-    @Override
-    public boolean isInCheck() {
-        throw new UnsupportedOperationException("Opponent player cannot be in check");
-    }
-
-    public static Collection<Move> getOpponentCheckingMoves(final List<Tile> tiles, final Alliance alliance, final Player opponentPlayer) {// moves that are checking the current player's king
-        throw new UnsupportedOperationException("Opponent player should not calculate current player's checkiing moves");
-    }
-    public static int getKingCoordinate(final List<Tile> tiles, final Alliance alliance){
-        throw new UnsupportedOperationException("Opponent player should not calculate his king position");
-    }
 }
 

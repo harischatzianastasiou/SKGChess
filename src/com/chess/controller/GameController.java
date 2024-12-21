@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.chess.model.board.IBoard;
 import com.chess.model.moves.Move;
 import com.chess.model.moves.capturing.CapturingMove;
-import com.chess.model.player.Player;
+import com.chess.model.player.CurrentPlayer;
 import com.chess.util.GameHistory;
 import com.chess.util.SoundPlayer;
 import com.chess.view.ChessBoardUI;
@@ -20,10 +20,9 @@ public class GameController {
     }
 
     public IBoard executeMove(ChessBoardUI chessBoardUI) {
-        Player currentPlayer = board.getCurrentPlayer();
 
         chessBoardUI.waitForPlayerMove();
-        Collection<Move> currentPlayerMoves = currentPlayer.getMoves();
+        Collection<Move> currentPlayerMoves = board.getCurrentPlayer().getMoves();
 
         for (Move currentPlayerMove : currentPlayerMoves) {
             if (currentPlayerMove.getSourceCoordinate() == chessBoardUI.getSourceTile().getTileCoordinate() &&
@@ -48,14 +47,16 @@ public class GameController {
                 
                 board = currentPlayerMove.execute(); 
                 
-                if (board.getCurrentPlayer().isCheckmate()) {
+                CurrentPlayer currentPlayer = (CurrentPlayer) board.getCurrentPlayer();
+
+                if (currentPlayer.isCheckmate()) {
                     SoundPlayer.playCheckmateSound();
-                }else if(board.getCurrentPlayer().isInCheck()) {
+                }else if(currentPlayer.isInCheck()) {
                     System.out.println("Checking");
                     SoundPlayer.playCheckSound();
                 }
 
-                if (board.getCurrentPlayer().isCheckmate()) {
+                if (currentPlayer.isCheckmate()) {
                     this.isGameOver = true;
                 }
                     break;

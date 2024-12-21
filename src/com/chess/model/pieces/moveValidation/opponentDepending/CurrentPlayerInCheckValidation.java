@@ -20,46 +20,44 @@ public class CurrentPlayerInCheckValidation implements MoveValidationStrategy{
 
     @Override
     public boolean validate(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer) {
-        if (opponentPlayer != null) {
-            final Collection<Move> checkingMoves = CurrentPlayer.getOpponentCheckingMoves(boardTiles, opponentPlayer.getOppositeAlliance(), opponentPlayer);
-            List<Integer> checkingPieceAttackPath = new ArrayList<>();
-            if(!(piece instanceof King)){
-                if(!checkingMoves.isEmpty()){
-                    if(checkingMoves.size() > 1){ //in double check only the king can move.
-                        return false;
-                    }
-                    final Move checkingMove = checkingMoves.iterator().next();
-                    final Piece checkingPiece = checkingMove.getPieceToMove();
-                    final int kingCoordinate = checkingMove.getTargetCoordinate();
-                    checkingPieceAttackPath.addAll(MoveValidationStrategy.calculateAttackPath(checkingPiece, kingCoordinate, boardTiles));
-                
-                    if (!checkingPieceAttackPath.contains(candidateDestinationCoordinate)) { // if piece does not block the check then move is illegal
-                        return false;
-                    }
+        final Collection<Move> checkingMoves = CurrentPlayer.getOpponentCheckingMoves(boardTiles, opponentPlayer.getAlliance().getOpposite(), opponentPlayer);
+        List<Integer> checkingPieceAttackPath = new ArrayList<>();
+        if(!(piece instanceof King)){
+            if(!checkingMoves.isEmpty()){
+                if(checkingMoves.size() > 1){ //in double check only the king can move.
+                    return false;
                 }
-            }
-            if(piece instanceof King){
-                List<Integer> checkingPiecesThroughKingPath = new ArrayList<>();
-                if(!checkingMoves.isEmpty()){
-                    for (Move checkingMove : checkingMoves) {
-                        Piece checkingPiece = checkingMove.getPieceToMove();
-                        int kingCoordinate = checkingMove.getTargetCoordinate();
-                        if(checkingPiece instanceof Bishop || checkingPiece instanceof Queen || checkingPiece instanceof Rook){
-                            int throughCoordinate = MoveValidationStrategy.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
-                            if (CalculateMoveUtils.isCoordinateInBounds(throughCoordinate)) {
-                                checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
-                            }
-                        }
-                    }
-                }
-
-                boolean isCandidateCoordinateInCheckingPieceThroughPath = checkingPiecesThroughKingPath.contains(candidateDestinationCoordinate);
-
-                if (isCandidateCoordinateInCheckingPieceThroughPath) {
+                final Move checkingMove = checkingMoves.iterator().next();
+                final Piece checkingPiece = checkingMove.getPieceToMove();
+                final int kingCoordinate = checkingMove.getTargetCoordinate();
+                checkingPieceAttackPath.addAll(MoveValidationStrategy.calculateAttackPath(checkingPiece, kingCoordinate, boardTiles));
+            
+                if (!checkingPieceAttackPath.contains(candidateDestinationCoordinate)) { // if piece does not block the check then move is illegal
                     return false;
                 }
             }
         }
-        return true;
+        if(piece instanceof King){
+            List<Integer> checkingPiecesThroughKingPath = new ArrayList<>();
+            if(!checkingMoves.isEmpty()){
+                for (Move checkingMove : checkingMoves) {
+                    Piece checkingPiece = checkingMove.getPieceToMove();
+                    int kingCoordinate = checkingMove.getTargetCoordinate();
+                    if(checkingPiece instanceof Bishop || checkingPiece instanceof Queen || checkingPiece instanceof Rook){
+                        int throughCoordinate = MoveValidationStrategy.getNextCoordinateInDirection(checkingPiece.getPieceCoordinate(), kingCoordinate);
+                        if (CalculateMoveUtils.isCoordinateInBounds(throughCoordinate)) {
+                            checkingPiecesThroughKingPath.add(throughCoordinate); // add the next coordinate that the attacking piece would target if king was not in the way of the attacking piece
+                        }
+                    }
+                }
+            }
+
+            boolean isCandidateCoordinateInCheckingPieceThroughPath = checkingPiecesThroughKingPath.contains(candidateDestinationCoordinate);
+
+            if (isCandidateCoordinateInCheckingPieceThroughPath) {
+                return false;
+            }
+        }
+    return true;
     }
 }

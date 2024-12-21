@@ -17,24 +17,22 @@ import com.chess.model.tiles.Tile;
 public class CurrentPlayerKingSafeSquaresValidation implements MoveValidationStrategy{
     @Override
     public boolean validate(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer) {
-        if(opponentPlayer != null){
-            if(piece instanceof King){
-                final Collection<Move> opponentMoves = opponentPlayer.getMoves();
-                boolean isCandidateCoordinateUnderAttack = opponentMoves.stream()
-                .anyMatch(move -> {
-                    // If it's a pawn's forward move, ignore it (pawns can't attack(capture) forward)
-                    if (move instanceof PawnMove || move instanceof PawnPromotionMove || move instanceof PawnJumpMove) {
-                        return false;
-                    }
-                    // For all other moves, check if they target the square
-                    return move.getTargetCoordinate() == candidateDestinationCoordinate;
-                });
-
-                boolean isCandidateCoordinateProtectedByOpponentPiece = ProtectedCoordinatesTracker.getProtectedCoordinates().contains(candidateDestinationCoordinate);
-
-                if (isCandidateCoordinateUnderAttack || isCandidateCoordinateProtectedByOpponentPiece ) {
+        if(piece instanceof King){
+            final Collection<Move> opponentMoves = opponentPlayer.getMoves();
+            boolean isCandidateCoordinateUnderAttack = opponentMoves.stream()
+            .anyMatch(move -> {
+                // If it's a pawn's forward move, ignore it (pawns can't attack(capture) forward)
+                if (move instanceof PawnMove || move instanceof PawnPromotionMove || move instanceof PawnJumpMove) {
                     return false;
                 }
+                // For all other moves, check if they target the square
+                return move.getTargetCoordinate() == candidateDestinationCoordinate;
+            });
+
+            boolean isCandidateCoordinateProtectedByOpponentPiece = ProtectedCoordinatesTracker.getProtectedCoordinates().contains(candidateDestinationCoordinate);
+
+            if (isCandidateCoordinateUnderAttack || isCandidateCoordinateProtectedByOpponentPiece ) {
+                return false;
             }
         }
         return true;

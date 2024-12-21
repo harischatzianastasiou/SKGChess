@@ -18,6 +18,7 @@ import com.chess.model.pieces.moveValidation.AllianceOfTileValidation;
 import com.chess.model.pieces.moveValidation.CandidateRankAndFileValidation;
 import com.chess.model.pieces.moveValidation.CoordinateInBoundsValidation;
 import com.chess.model.pieces.moveValidation.MoveValidation;
+import com.chess.model.pieces.moveValidation.MoveValidationStrategy;
 import com.chess.model.pieces.moveValidation.opponentDepending.CurrentPlayerInCheckValidation;
 import com.chess.model.pieces.moveValidation.opponentDepending.CurrentPlayerKingSafeSquaresValidation;
 import com.chess.model.pieces.moveValidation.opponentDepending.CurrentPlayerKingsideCastleValidation;
@@ -44,14 +45,19 @@ public final class CalculateMoveUtils {
                 int total_offset = candidateOffset * squaresMoved;
                 final int candidateDestinationCoordinate = calculateDestinationCoordinate(piece, total_offset);
 
-                MoveValidation moveValidation = new MoveValidation(List.of(
-                    new CoordinateInBoundsValidation(),    
-                    new AllianceOfTileValidation(), 
-                    new CandidateRankAndFileValidation(), 
-                    new CurrentPlayerInCheckValidation(),
-                    new CurrentPlayerPiecePinnedValidation(),
-                    new CurrentPlayerKingSafeSquaresValidation()));
+                List<MoveValidationStrategy> validations = new ArrayList<>(List.of(
+                    new CoordinateInBoundsValidation(),
+                    new AllianceOfTileValidation(),
+                    new CandidateRankAndFileValidation()
+                ));
 
+                if (opponentPlayer != null) {
+                    validations.add(new CurrentPlayerInCheckValidation());
+                    validations.add(new CurrentPlayerPiecePinnedValidation());
+                    validations.add(new CurrentPlayerKingSafeSquaresValidation());
+                }
+
+                MoveValidation moveValidation = new MoveValidation(validations);
                 if (!moveValidation.validate(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer)) {
                     break;
                 }

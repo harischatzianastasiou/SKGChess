@@ -35,12 +35,4 @@ public abstract class Player {
 	public Alliance getAlliance() {
 		return this.alliance;
 	}
-	
-	public Alliance getOppositeAlliance() {
-        return this.alliance == Alliance.WHITE ? Alliance.BLACK : Alliance.WHITE;
-    }
-	
-	public abstract boolean isCheckmate();
-	
-	public abstract boolean isInCheck();
 }

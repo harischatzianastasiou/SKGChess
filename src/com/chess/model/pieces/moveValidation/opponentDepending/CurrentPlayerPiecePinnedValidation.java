@@ -14,21 +14,16 @@ public class CurrentPlayerPiecePinnedValidation implements MoveValidationStrateg
 
     @Override
     public boolean validate(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer) {
-        if (opponentPlayer != null) {
-            final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
+        final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
+        List<Integer> pinningPieceAttackPath = MoveValidationStrategy.calculateAttackPathOfPinningPiece(piece, boardTiles, opponentMoves);
+        if(!(piece instanceof King)){
+            if(pinningPieceAttackPath == null){
+                return false;
+            } 
 
-            List<Integer> pinningPieceAttackPath = MoveValidationStrategy.calculateAttackPathOfPinningPiece(piece, boardTiles, opponentMoves);
-            if(!(piece instanceof King)){
-                if(pinningPieceAttackPath == null){
-                    return false;
-                } 
-
-                if(!pinningPieceAttackPath.isEmpty() && !pinningPieceAttackPath.contains(candidateDestinationCoordinate)){
-                    return false;
-                }
+            if(!pinningPieceAttackPath.isEmpty() && !pinningPieceAttackPath.contains(candidateDestinationCoordinate)){
+                return false;
             }
-            System.out.println(pinningPieceAttackPath);
-            System.out.println(piece.getPieceCoordinate());
         }
         return true;
     }

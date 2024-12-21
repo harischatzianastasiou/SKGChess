@@ -73,12 +73,10 @@ public final class CurrentPlayer extends Player {
         throw new RuntimeException("No king found for this player");
     }
 
-    @Override
     public boolean isCheckmate() {
         return this.isInCheckmate;
     }
 
-    @Override
     public boolean isInCheck() {
         return this.isInCheck;
     }
