@@ -51,12 +51,15 @@ public class ChessBoardUI {
 
     private volatile boolean moveSelected = false;
 
-    private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(591, 637);
+    private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(613, 655);
     private final static Dimension BOARD_PANEL_DIMENSION = new Dimension(580, 580);
-    private final static Dimension TILE_PANEL_DIMENSION = new Dimension (70, 70);
+    private final static Dimension TILE_PANEL_DIMENSION = new Dimension(64, 64);
+    private final static Dimension ANNOTATION_PANEL_DIMENSION = new Dimension(20, 655);
     private final static String pieceImagesPath = "images/";
     private final Color lightTileColor = Color.decode("#eeeed2");
-    private final Color darkTileColor = Color.decode("#769656");
+    private final Color darkTileColor = Color.decode("#003166");
+    private final Color annotationBackgroundColor = Color.decode("#ffffff");
+    private final Color annotationTextColor = Color.decode("#003166");
     
     private int lastMoveSource = -1;
     private int lastMoveTarget = -1;
@@ -134,19 +137,57 @@ public class ChessBoardUI {
     private class BoardPanel extends JPanel{
         final List<TilePanel> boardTiles;
         private final JLayeredPane layeredPane;
+        private final JPanel fileAnnotationPanel;
+        private final JPanel rankAnnotationPanel;
         
         BoardPanel(){
-            super(new BorderLayout());
+            super(new BorderLayout(0, 0));
             this.layeredPane = new JLayeredPane();
-            JPanel tilesPanel = new JPanel(new GridLayout(8, 8));
+            JPanel tilesPanel = new JPanel(new GridLayout(8, 8, 0, 0));
             this.boardTiles = new ArrayList<>();
+            
+            // Create file annotation panel (A-H)
+            this.fileAnnotationPanel = new JPanel(new GridLayout(1, 8, 0, 0));
+            fileAnnotationPanel.setPreferredSize(new Dimension(BOARD_PANEL_DIMENSION.width, 20));
+            fileAnnotationPanel.setBackground(annotationBackgroundColor);
+            for (char file = 'a'; file <= 'h'; file++) {
+                JPanel cellPanel = new JPanel(new GridBagLayout());
+                cellPanel.setBackground(annotationBackgroundColor);
+                JLabel fileLabel = new JLabel(String.valueOf(file));
+                fileLabel.setForeground(annotationTextColor);
+                fileLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+                fileLabel.setHorizontalAlignment(SwingConstants.CENTER);
+                fileLabel.setVerticalAlignment(SwingConstants.CENTER);
+                // Add right padding to the text
+                fileLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+                cellPanel.add(fileLabel);
+                fileAnnotationPanel.add(cellPanel);
+            }
+            
+            // Create rank annotation panel (1-8)
+            this.rankAnnotationPanel = new JPanel(new GridLayout(8, 1, 0, 0));
+            rankAnnotationPanel.setPreferredSize(ANNOTATION_PANEL_DIMENSION);
+            rankAnnotationPanel.setBackground(annotationBackgroundColor);
+            for (int rank = 8; rank >= 1; rank--) {
+                JLabel rankLabel = new JLabel(String.valueOf(rank), SwingConstants.CENTER);
+                rankLabel.setForeground(annotationTextColor);
+                rankLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+                rankAnnotationPanel.add(rankLabel);
+            }
+            
+            // Create a container panel for the board and rank annotation
+            JPanel boardContainer = new JPanel(new BorderLayout(0, 0));
+            boardContainer.add(rankAnnotationPanel, BorderLayout.WEST);
+            boardContainer.add(tilesPanel, BorderLayout.CENTER);
             
             setPreferredSize(OUTER_FRAME_DIMENSION);
             layeredPane.setPreferredSize(OUTER_FRAME_DIMENSION);
             tilesPanel.setPreferredSize(BOARD_PANEL_DIMENSION);
             
-            layeredPane.setBounds(0, 0, OUTER_FRAME_DIMENSION.width, OUTER_FRAME_DIMENSION.height);
-            tilesPanel.setBounds(0, 0, BOARD_PANEL_DIMENSION.width, BOARD_PANEL_DIMENSION.height);
+            // Set bounds for the container panel
+            boardContainer.setBounds(0, 0, 
+                BOARD_PANEL_DIMENSION.width + ANNOTATION_PANEL_DIMENSION.width,
+                BOARD_PANEL_DIMENSION.height);
             
             for (int i = 0; i < CalculateMoveUtils.NUM_TILES; i++) {
                 final TilePanel tilePanel = new TilePanel(this, i);
@@ -154,8 +195,12 @@ public class ChessBoardUI {
                 tilesPanel.add(tilePanel);
             }
             
-            layeredPane.add(tilesPanel, JLayeredPane.DEFAULT_LAYER);
+            // Add components to the layered pane
+            layeredPane.add(boardContainer, JLayeredPane.DEFAULT_LAYER);
+            
+            // Add the main components to the panel
             add(layeredPane, BorderLayout.CENTER);
+            add(fileAnnotationPanel, BorderLayout.SOUTH);
             
             validate();
         }
@@ -345,8 +390,6 @@ public class ChessBoardUI {
                 repaint();
             }
         }
-
-	
 
         private void highlightLegalMoves(Piece selectedPiece) {
             if (selectedPiece != null) {

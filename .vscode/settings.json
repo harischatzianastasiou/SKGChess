@@ -1,4 +1,4 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
-    "cursor.general.disableHttp2" :true
+    "cursor.general.disableHttp2" :false
 }

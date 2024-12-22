@@ -35,7 +35,7 @@ public final class CalculateMoveUtils {
 	public static final int NUM_TILES_PER_ROW = 8;
     public static final Collection<Move> NO_LEGAL_MOVES = ImmutableList.copyOf(new ArrayList<>());
 
-    public static Collection<Move> calculate(List<Tile> boardTiles,final Piece piece,final int[] moveOffsets ,final Player opponentPlayer){
+    public static Collection<Move> calculate(List<Tile> boardTiles, final Piece piece, final int[] moveOffsets , final Player opponentPlayer){
         final Collection<Move> moves = new ArrayList<>();
         final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
         final int MAX_SQUARES = getMaxSquaresMoved(piece);
