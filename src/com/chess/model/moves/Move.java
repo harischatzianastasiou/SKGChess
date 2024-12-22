@@ -2,10 +2,10 @@ package com.chess.model.moves;
 
 import java.util.List;
 
-import com.chess.model.board.Board;
 import com.chess.model.board.IBoard;
 import com.chess.model.pieces.Piece;
 import com.chess.model.tiles.Tile;
+import com.chess.util.GameHistory;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Move {
@@ -63,15 +63,7 @@ public abstract class Move {
 
     public abstract IBoard execute();    
     
-    public IBoard undo() {
-        final Board.Builder builder = new Board.Builder();
-        for (final Tile tile : this.boardTiles) {
-            if (tile.isTileOccupied()) {
-                builder.setPiece(tile.getPiece());
-            }
-        }        
-        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance());
-
-        return builder.build();
+    public IBoard undo() {//for reviewing moves
+        return GameHistory.getInstance().getLastBoard();
     }
 } 

@@ -35,9 +35,11 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import javax.swing.text.DefaultCaret;
+import javax.swing.text.DefaultHighlighter;
 
 import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
+import com.chess.model.moves.capturing.CapturingMove;
 import com.chess.model.moves.capturing.PawnEnPassantAttack;
 import com.chess.model.moves.capturing.PawnPromotionCapturingMove;
 import com.chess.model.moves.noncapturing.KingSideCastleMove;
@@ -53,6 +55,8 @@ import com.chess.model.board.IBoard;
 import com.chess.model.player.Player;
 import com.chess.model.player.CurrentPlayer;
 import com.chess.util.GameHistory;
+import com.chess.util.SoundPlayer;
+
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.Component;
@@ -93,8 +97,11 @@ public class ChessBoardUI {
     private int lastMoveTarget = -1;
     private final Color lastMoveColor = new Color(170, 162, 58, 90); // Light smooth green with transparency
     
-    
-    
+    private boolean isViewingHistory = false;
+    private int currentHistoryIndex = -1;
+
+    private final Color moveHighlightColor = new Color(255, 255, 0, 128); // Brighter yellow with more opacity
+
     private ChessBoardUI(IBoard board) {
         this.gameFrame = new JFrame("SKGChess");
         this.gameFrame.setLayout(new BorderLayout());
@@ -103,6 +110,9 @@ public class ChessBoardUI {
         this.chessboard = board;
         this.currentPlayer = chessboard.getCurrentPlayer();
 		this.pieceLegalMoves = getPieceLegalCoordinates(this.currentPlayer);
+        
+        // Initialize board panel first
+        this.boardPanel = new BoardPanel();
         
         // Initialize move history panel
         this.moveHistoryPanel = new JPanel(new BorderLayout(0, 0));
@@ -212,7 +222,138 @@ public class ChessBoardUI {
         moveHistoryPanel.add(titlePanel, BorderLayout.NORTH);
         moveHistoryPanel.add(scrollPane, BorderLayout.CENTER);
         
-        this.boardPanel = new BoardPanel();
+        // Create navigation buttons panel
+        JPanel navigationPanel = new JPanel(new GridLayout(1, 2, 5, 0));
+        navigationPanel.setBackground(historyPanelColor);
+        navigationPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        // Create left (previous) button
+        JButton previousButton = new JButton("\u2190"); // Left arrow unicode
+        previousButton.setFont(new Font("Dialog", Font.BOLD, 20));
+        previousButton.setFocusPainted(false);
+
+        // Create right (next) button
+        JButton nextButton = new JButton("\u2192"); // Right arrow unicode
+        nextButton.setFont(new Font("Dialog", Font.BOLD, 20));
+        nextButton.setFocusPainted(false);
+        nextButton.setEnabled(false); // Initially disabled since we start at latest position
+
+        previousButton.addActionListener(e -> {
+            List<IBoard> boardHistory = GameHistory.getInstance().getBoards();
+            List<Move> moveHistory = GameHistory.getInstance().getMoveHistory();
+            if (currentHistoryIndex == -1) {
+                // If at current position, go to the last board in history
+                currentHistoryIndex = boardHistory.size() - 1;
+            } else if (currentHistoryIndex > 0) {
+                currentHistoryIndex--;
+            }
+            if (currentHistoryIndex >= 0) {
+                isViewingHistory = true;
+                boardPanel.drawBoard(boardHistory.get(currentHistoryIndex));
+                nextButton.setEnabled(true); // Enable next button since we can go forward
+                previousButton.setEnabled(currentHistoryIndex > 0);
+                
+                // Update move highlighting
+                highlightMoveInHistory(currentHistoryIndex);
+                // Update last move squares highlighting
+                updateLastMoveHighlighting(currentHistoryIndex > 0 ? moveHistory.get(currentHistoryIndex - 1) : null);
+                
+                // Play the sound of the next move that will be made from this position
+                if (currentHistoryIndex < moveHistory.size()) {
+                    Move nextMove = moveHistory.get(currentHistoryIndex);
+                    if (nextMove instanceof CapturingMove) {
+                        SoundPlayer.playCaptureSound();
+                    } else {
+                        SoundPlayer.playMoveSound();
+                    }
+                    
+                    // Then check for check/checkmate on the next position
+                    if (currentHistoryIndex + 1 < boardHistory.size()) {
+                        IBoard nextBoard = boardHistory.get(currentHistoryIndex + 1);
+                        if (nextBoard.getCurrentPlayer() instanceof CurrentPlayer) {
+                            CurrentPlayer currentPlayer = (CurrentPlayer) nextBoard.getCurrentPlayer();
+                            if (currentPlayer.isCheckmate()) {
+                                SoundPlayer.playCheckmateSound();
+                            } else if (currentPlayer.isInCheck()) {
+                                SoundPlayer.playCheckSound();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        nextButton.addActionListener(e -> {
+            List<IBoard> boardHistory = GameHistory.getInstance().getBoards();
+            List<Move> moveHistory = GameHistory.getInstance().getMoveHistory();
+            if (currentHistoryIndex < boardHistory.size() - 1) {
+                currentHistoryIndex++;
+                boardPanel.drawBoard(boardHistory.get(currentHistoryIndex));
+                previousButton.setEnabled(true);
+                
+                // Update move highlighting
+                highlightMoveInHistory(currentHistoryIndex - 1);
+                // Update last move squares highlighting
+                updateLastMoveHighlighting(moveHistory.get(currentHistoryIndex - 1));
+                
+                // Play the sound of the move that got us to this position
+                Move moveToShow = moveHistory.get(currentHistoryIndex - 1);
+                if (moveToShow instanceof CapturingMove) {
+                    SoundPlayer.playCaptureSound();
+                } else {
+                    SoundPlayer.playMoveSound();
+                }
+                
+                // Then check for check/checkmate on the current position
+                IBoard currentBoard = boardHistory.get(currentHistoryIndex);
+                if (currentBoard.getCurrentPlayer() instanceof CurrentPlayer) {
+                    CurrentPlayer currentPlayer = (CurrentPlayer) currentBoard.getCurrentPlayer();
+                    if (currentPlayer.isCheckmate()) {
+                        SoundPlayer.playCheckmateSound();
+                    } else if (currentPlayer.isInCheck()) {
+                        SoundPlayer.playCheckSound();
+                    }
+                }
+                
+                if (currentHistoryIndex == boardHistory.size() - 1) {
+                    nextButton.setEnabled(true);
+                }
+            } else if (currentHistoryIndex == boardHistory.size() - 1) {
+                // We're at the last history board and clicked next, go to current
+                isViewingHistory = false;
+                currentHistoryIndex = -1;
+                boardPanel.drawBoard(chessboard);
+                nextButton.setEnabled(false);
+                
+                // Update move highlighting for last move
+                highlightMoveInHistory(moveHistory.size() - 1);
+                // Update last move squares highlighting for last move
+                updateLastMoveHighlighting(moveHistory.get(moveHistory.size() - 1));
+                
+                // Play the sound of the last move
+                Move lastMove = moveHistory.get(moveHistory.size() - 1);
+                if (lastMove instanceof CapturingMove) {
+                    SoundPlayer.playCaptureSound();
+                } else {
+                    SoundPlayer.playMoveSound();
+                }
+                
+                // Check for check/checkmate on current position
+                if (chessboard.getCurrentPlayer() instanceof CurrentPlayer) {
+                    CurrentPlayer currentPlayer = (CurrentPlayer) chessboard.getCurrentPlayer();
+                    if (currentPlayer.isCheckmate()) {
+                        SoundPlayer.playCheckmateSound();
+                    } else if (currentPlayer.isInCheck()) {
+                        SoundPlayer.playCheckSound();
+                    }
+                }
+            }
+        });
+
+        navigationPanel.add(previousButton);
+        navigationPanel.add(nextButton);
+
+        moveHistoryPanel.add(navigationPanel, BorderLayout.SOUTH);
         
         // Create a container panel for board and history
         JPanel containerPanel = new JPanel(new BorderLayout());
@@ -462,6 +603,10 @@ public class ChessBoardUI {
         moveSelected = false;
         while (!moveSelected) {
             try {
+                if (isViewingHistory) {
+                    Thread.sleep(100); // Don't consume CPU while viewing history
+                    continue; // Skip move processing while viewing history
+                }
                 Thread.sleep(0);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -540,6 +685,9 @@ public class ChessBoardUI {
             addMouseListener(new MouseListener() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
+                    if (isViewingHistory) {
+                        return; // Ignore clicks while viewing history
+                    }
                     if (chessboard == null) {
                         JOptionPane.showMessageDialog(null, "Chessboard is not initialized. Please restart the game.");
                         return;
@@ -801,6 +949,10 @@ public class ChessBoardUI {
             }
         }
         moveHistoryTextArea.setCaretPosition(moveHistoryTextArea.getDocument().getLength());
+        
+        // Highlight the latest move in the history
+        List<Move> moveHistory = GameHistory.getInstance().getMoveHistory();
+        highlightMoveInHistory(moveHistory.size() - 1);
     }
 
     private String formatMove(Move move) {
@@ -858,6 +1010,83 @@ public class ChessBoardUI {
         }
         
         return notation.toString();
+    }
+
+    private void highlightMoveInHistory(int moveIndex) {
+        try {
+            // Clear any existing highlights
+            moveHistoryTextArea.getHighlighter().removeAllHighlights();
+            
+            if (moveIndex < 0) {
+                return;
+            }
+            
+            String text = moveHistoryTextArea.getText();
+            if (text.isEmpty()) {
+                return;
+            }
+            
+            // Split into lines and process each line
+            String[] lines = text.split("\n");
+            int currentMove = 0;
+            int currentPosition = 0;
+            
+            for (String line : lines) {
+                // Skip empty lines
+                if (line.trim().isEmpty()) {
+                    currentPosition += line.length() + 1; // +1 for newline
+                    continue;
+                }
+                
+                // Split the line into move number and moves
+                String[] parts = line.split("\\.");
+                if (parts.length < 2) {
+                    currentPosition += line.length() + 1;
+                    continue;
+                }
+                
+                // Get the moves part (after the number and dot)
+                String movesText = parts[1].trim();
+                String[] moves = movesText.split("\\s+");
+                
+                // Process each move in the line
+                for (String move : moves) {
+                    if (!move.trim().isEmpty()) {
+                        if (currentMove == moveIndex) {
+                            // Find the exact position of this move in the text
+                            int startPos = text.indexOf(move, currentPosition);
+                            if (startPos >= 0) {
+                                int endPos = startPos + move.length();
+                                moveHistoryTextArea.getHighlighter().addHighlight(
+                                    startPos, 
+                                    endPos,
+                                    new DefaultHighlighter.DefaultHighlightPainter(moveHighlightColor)
+                                );
+                                // Ensure the highlighted text is visible
+                                moveHistoryTextArea.setCaretPosition(startPos);
+                            }
+                            return;
+                        }
+                        currentMove++;
+                    }
+                }
+                currentPosition += line.length() + 1; // +1 for newline
+            }
+        } catch (Exception e) {
+            // Silently handle any highlighting errors
+            moveHistoryTextArea.getHighlighter().removeAllHighlights();
+        }
+    }
+
+    private void updateLastMoveHighlighting(Move move) {
+        if (move != null) {
+            lastMoveSource = move.getSourceCoordinate();
+            lastMoveTarget = move.getTargetCoordinate();
+        } else {
+            lastMoveSource = -1;
+            lastMoveTarget = -1;
+        }
+        boardPanel.drawBoard(currentHistoryIndex == -1 ? chessboard : GameHistory.getInstance().getBoards().get(currentHistoryIndex));
     }
 
 }
