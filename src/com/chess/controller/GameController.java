@@ -20,7 +20,6 @@ public class GameController {
     }
 
     public IBoard executeMove(ChessBoardUI chessBoardUI) {
-
         chessBoardUI.waitForPlayerMove();
         Collection<Move> currentPlayerMoves = board.getCurrentPlayer().getMoves();
 
@@ -29,7 +28,7 @@ public class GameController {
                 currentPlayerMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
                 GameHistory.getInstance().addBoard(board);
                 GameHistory.getInstance().addMove(currentPlayerMove);
-                chessBoardUI.addMoveToHistory(currentPlayerMove);       
+                
                 // Play appropriate sound based on move type
                 if(currentPlayerMove instanceof CapturingMove) {
                     SoundPlayer.playCaptureSound();
@@ -50,17 +49,19 @@ public class GameController {
                 CurrentPlayer currentPlayer = (CurrentPlayer) board.getCurrentPlayer();
 
                 if (currentPlayer.isCheckmate()) {
+                    chessBoardUI.addMoveToHistory(currentPlayerMove, "#");       
                     SoundPlayer.playCheckmateSound();
-                }else if(currentPlayer.isInCheck()) {
-                    System.out.println("Checking");
-                    SoundPlayer.playCheckSound();
-                }
-
-                if (currentPlayer.isCheckmate()) {
                     this.isGameOver = true;
+                } else if(currentPlayer.isInCheck()) {
+                    System.out.println("Checking");
+                    chessBoardUI.addMoveToHistory(currentPlayerMove, "+");       
+                    SoundPlayer.playCheckSound();
+                } else {
+                    chessBoardUI.addMoveToHistory(currentPlayerMove, "");
                 }
-                    break;
-                }
+                
+                break;
+            }
         }
         return board;
     }
@@ -68,5 +69,4 @@ public class GameController {
     public boolean isGameOver() {
         return this.isGameOver;
     }
-
 }

@@ -30,6 +30,7 @@ import java.awt.RenderingHints;
 import java.awt.GradientPaint;
 import java.awt.RadialGradientPaint;
 import java.awt.Point;
+import java.awt.BasicStroke;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -700,20 +701,52 @@ public class ChessBoardUI {
         int x = dropPoint.x;
         int y = dropPoint.y;
         
-        // Convert to tile coordinates
-        int file = x / tileSize;
-        int rank = y / tileSize;
+        // Calculate distance to center of each tile and find the closest one
+        int closestTileId = -1;
+        double minDistance = Double.MAX_VALUE;
         
-        // Check if within board bounds
-        if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-            // Adjust coordinates if board is flipped
-            if (boardIsFlipped) {
-                file = 7 - file;
-                rank = 7 - rank;
+        // Expand search area significantly
+        for (int rank = -2; rank <= 9; rank++) {
+            for (int file = -2; file <= 9; file++) {
+                // Calculate center of this potential tile
+                int tileCenterX = (file * tileSize) + (tileSize / 2);
+                int tileCenterY = (rank * tileSize) + (tileSize / 2);
+                
+                // Calculate distance to this tile's center using a weighted Manhattan distance
+                // This makes diagonal movements more forgiving
+                double dx = Math.abs(x - tileCenterX);
+                double dy = Math.abs(y - tileCenterY);
+                double distance = dx + dy * 0.8; // Weight vertical distance less to make it more forgiving
+                
+                // If this is the closest tile so far and it's within a very generous range
+                // Using 2.5 tile sizes as the maximum distance (increased from 1.5)
+                if (distance < minDistance && distance < tileSize * 2.5) {
+                    // Convert to valid board coordinates
+                    int validFile = Math.max(0, Math.min(file, 7));
+                    int validRank = Math.max(0, Math.min(rank, 7));
+                    
+                    // Give preference to tiles that are closer to the cursor's actual position
+                    // by adjusting the minimum distance based on how far we are from the board edges
+                    double edgePenalty = 0;
+                    if (file < 0 || file > 7 || rank < 0 || rank > 7) {
+                        edgePenalty = tileSize * 0.5; // Add a small penalty for tiles outside the board
+                    }
+                    
+                    minDistance = distance + edgePenalty;
+                    closestTileId = validRank * 8 + validFile;
+                }
             }
-            int tileId = rank * 8 + file;
-            return boardPanel.boardTiles.get(tileId);
         }
+        
+        // If we found a valid tile
+        if (closestTileId != -1) {
+            // Adjust for flipped board if necessary
+            if (boardIsFlipped) {
+                closestTileId = 63 - closestTileId;
+            }
+            return boardPanel.boardTiles.get(closestTileId);
+        }
+        
         return null;
     }
 
@@ -721,6 +754,7 @@ public class ChessBoardUI {
         private final int tileId;
         private Color highlightColor; // Store the current highlight color
         private DraggablePieceLabel pieceLabel;  // New field to hold the draggable piece
+        private boolean showBorder = false;
 
         TilePanel(final BoardPanel boardPanel, final int tileId) {
             super(new GridBagLayout());
@@ -826,6 +860,22 @@ public class ChessBoardUI {
             });
         }
 
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (showBorder) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setColor(Color.WHITE);
+                g2d.setStroke(new BasicStroke(3)); // Set border thickness
+                g2d.drawRect(1, 1, getWidth() - 3, getHeight() - 3);
+            }
+        }
+
+        public void setBorderHighlight(boolean show) {
+            this.showBorder = show;
+            repaint();
+        }
+
         public void drawTile(final IBoard board) {
             if (board != null) {
                 assignTileColor(tileId);
@@ -905,6 +955,17 @@ public class ChessBoardUI {
             MouseAdapter dragListener = new MouseAdapter() {
                 private Point dragOffset;
                 private int sourceTileId;
+                private TilePanel lastHighlightedTile = null;
+                private Point lastLocation = null;
+                private Point targetLocation = null;
+                private Timer smoothMoveTimer = null;
+                private long lastDragTime = 0;
+                private Point lastMousePos = null;
+                private double currentVelocity = 0;
+                private static final double BASE_DAMPING = 0.45;
+                private static final double MAX_VELOCITY = 1.5;
+                // private static final double ACCELERATION_FACTOR = 0.5;
+                private static final int ANIMATION_SPEED = 16; // ~60fps
 
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -912,6 +973,9 @@ public class ChessBoardUI {
                         chessboard.getTile(tileId).getPiece().getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
                         dragOffset = e.getPoint();
                         sourceTileId = tileId;
+                        lastMousePos = e.getPoint();
+                        lastDragTime = System.currentTimeMillis();
+                        currentVelocity = 0;
                         
                         // Create floating piece
                         Point loc = SwingUtilities.convertPoint(pieceLabel, 0, 0, boardPanel.layeredPane);
@@ -920,29 +984,107 @@ public class ChessBoardUI {
                         floatingPiece.setBounds(loc.x, loc.y, 
                             TILE_PANEL_DIMENSION.width, TILE_PANEL_DIMENSION.height);
                         boardPanel.layeredPane.add(floatingPiece, JLayeredPane.DRAG_LAYER);
+                        lastLocation = loc;
+                        targetLocation = loc;
                         
                         // Hide original piece
                         pieceLabel.setVisible(false);
                         boardPanel.repaint();
+
+                        // Start smooth movement timer
+                        if (smoothMoveTimer != null && smoothMoveTimer.isRunning()) {
+                            smoothMoveTimer.stop();
+                        }
+                        smoothMoveTimer = new Timer(ANIMATION_SPEED, e2 -> updatePiecePosition());
+                        smoothMoveTimer.start();
+                    }
+                }
+
+                private void updatePiecePosition() {
+                    if (lastLocation != null && targetLocation != null) {
+                        Component draggedPiece = boardPanel.layeredPane.getComponentsInLayer(
+                            JLayeredPane.DRAG_LAYER)[0];
+                        
+                        // Calculate damping based on velocity
+                        double dampingFactor = BASE_DAMPING * (1.0 + (currentVelocity / MAX_VELOCITY));
+                        dampingFactor = Math.min(dampingFactor, 0.9); // Cap maximum damping
+                        
+                        // Interpolate between current and target position
+                        int dampedX = lastLocation.x + (int)((targetLocation.x - lastLocation.x) * dampingFactor);
+                        int dampedY = lastLocation.y + (int)((targetLocation.y - lastLocation.y) * dampingFactor);
+                        lastLocation = new Point(dampedX, dampedY);
+                        draggedPiece.setLocation(lastLocation);
+
+                        // Gradually reduce velocity
+                        currentVelocity *= 0.95;
+
+                        // Find potential target tile using the damped location
+                        Point dropPoint = SwingUtilities.convertPoint(
+                            draggedPiece, 
+                            TILE_PANEL_DIMENSION.width / 2, 
+                            TILE_PANEL_DIMENSION.height / 2, 
+                            boardPanel);
+                        TilePanel potentialTargetTile = findTargetTile(dropPoint, boardPanel);
+
+                        // Reset previous highlight if exists
+                        if (lastHighlightedTile != null) {
+                            lastHighlightedTile.setBorderHighlight(false);
+                            lastHighlightedTile = null;
+                        }
+
+                        // Highlight new target tile if it's a legal move
+                        if (potentialTargetTile != null && 
+                            pieceLegalMoves.getOrDefault(sourceTileId, new HashSet<>())
+                                .contains(potentialTargetTile.tileId)) {
+                            lastHighlightedTile = potentialTargetTile;
+                            potentialTargetTile.setBorderHighlight(true);
+                        }
                     }
                 }
 
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     if (dragOffset != null) {
-                        Component draggedPiece = boardPanel.layeredPane.getComponentsInLayer(
-                            JLayeredPane.DRAG_LAYER)[0];
                         Point newLocation = SwingUtilities.convertPoint(
                             e.getComponent(), e.getPoint(), boardPanel.layeredPane);
                         newLocation.x -= dragOffset.x;
                         newLocation.y -= dragOffset.y;
-                        draggedPiece.setLocation(newLocation);
+                        
+                        // Calculate mouse velocity
+                        long currentTime = System.currentTimeMillis();
+                        long timeDelta = currentTime - lastDragTime;
+                        if (timeDelta > 0 && lastMousePos != null) {
+                            Point currentMousePos = e.getPoint();
+                            double dx = currentMousePos.x - lastMousePos.x;
+                            double dy = currentMousePos.y - lastMousePos.y;
+                            double distance = Math.sqrt(dx * dx + dy * dy);
+                            double newVelocity = distance / timeDelta;
+                            
+                            // Smooth velocity changes
+                            currentVelocity = currentVelocity * 0.7 + newVelocity * 0.3;
+                            currentVelocity = Math.min(currentVelocity, MAX_VELOCITY);
+                        }
+                        
+                        lastMousePos = e.getPoint();
+                        lastDragTime = currentTime;
+                        targetLocation = newLocation;
                     }
                 }
 
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     if (dragOffset != null) {
+                        // Stop the smooth movement timer
+                        if (smoothMoveTimer != null) {
+                            smoothMoveTimer.stop();
+                        }
+
+                        // Reset any remaining highlight
+                        if (lastHighlightedTile != null) {
+                            lastHighlightedTile.setBorderHighlight(false);
+                            lastHighlightedTile = null;
+                        }
+
                         Point dropPoint = SwingUtilities.convertPoint(
                             e.getComponent(), e.getPoint(), boardPanel);
                         TilePanel targetTilePanel = findTargetTile(dropPoint, boardPanel);
@@ -968,6 +1110,10 @@ public class ChessBoardUI {
                         }
                         
                         dragOffset = null;
+                        lastLocation = null;
+                        targetLocation = null;
+                        lastMousePos = null;
+                        currentVelocity = 0;
                         boardPanel.layeredPane.repaint();
                     }
                 }
@@ -978,8 +1124,8 @@ public class ChessBoardUI {
         }
     }
 
-    public void addMoveToHistory(Move move) {
-        String moveText = formatMove(move);
+    public void addMoveToHistory(Move move, String notation) {
+        String moveText = formatMove(move) + notation;
         if (moveHistoryTextArea.getText().isEmpty()) {
             // First move (White)
             moveHistoryTextArea.append(String.format("1. %-5s", moveText));
@@ -1038,20 +1184,6 @@ public class ChessBoardUI {
             // Add promotion piece
             if (move instanceof PawnPromotionMove || move instanceof PawnPromotionCapturingMove) {
                 notation.append("=Q"); // Assuming queen promotion for now
-            }
-        }
-        
-        // Execute the move temporarily to check the resulting position
-        IBoard futureBoard = move.execute();
-        Player futurePlayer = futureBoard.getCurrentPlayer();
-        
-        // Check if the move results in check or checkmate
-        if (futurePlayer instanceof CurrentPlayer) {
-            CurrentPlayer currentPlayer = (CurrentPlayer) futurePlayer;
-            if (currentPlayer.isCheckmate()) {
-                notation.append("#");
-            } else if (currentPlayer.isInCheck()) {
-                notation.append("+");
             }
         }
         
