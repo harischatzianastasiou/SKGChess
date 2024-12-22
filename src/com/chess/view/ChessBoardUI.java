@@ -48,6 +48,7 @@ public class ChessBoardUI {
     private Piece sourceSelectedPiece;
 	private Piece targetSelectedPiece;
 	private Map<Integer, Set<Integer>> pieceLegalMoves;
+    private boolean boardIsFlipped;
 
     private volatile boolean moveSelected = false;
 
@@ -117,6 +118,7 @@ public class ChessBoardUI {
     private JMenuBar createChessTableMenuBar() {
         final JMenuBar menuBar = new JMenuBar();
         menuBar.add(createFileMenu());
+        menuBar.add(createViewMenu());
         return menuBar;
     }
 
@@ -133,24 +135,110 @@ public class ChessBoardUI {
         fileMenu.add(openPGN);
         return fileMenu;
     }
+
+    private JMenu createViewMenu() {
+        final JMenu viewMenu = new JMenu("View");
+        
+        final JMenuItem flipBoardItem = new JMenuItem("Flip Board");
+        flipBoardItem.setAccelerator(KeyStroke.getKeyStroke('F', java.awt.event.InputEvent.CTRL_DOWN_MASK));
+        flipBoardItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                flipBoard();
+            }
+        });
+        viewMenu.add(flipBoardItem);
+        return viewMenu;
+    }
     
     private class BoardPanel extends JPanel{
         final List<TilePanel> boardTiles;
         private final JLayeredPane layeredPane;
         private final JPanel fileAnnotationPanel;
         private final JPanel rankAnnotationPanel;
+        private JPanel tilesPanel;
         
         BoardPanel(){
             super(new BorderLayout(0, 0));
             this.layeredPane = new JLayeredPane();
-            JPanel tilesPanel = new JPanel(new GridLayout(8, 8, 0, 0));
+            this.tilesPanel = new JPanel(new GridLayout(8, 8, 0, 0));
             this.boardTiles = new ArrayList<>();
             
             // Create file annotation panel (A-H)
             this.fileAnnotationPanel = new JPanel(new GridLayout(1, 8, 0, 0));
             fileAnnotationPanel.setPreferredSize(new Dimension(BOARD_PANEL_DIMENSION.width, 20));
             fileAnnotationPanel.setBackground(annotationBackgroundColor);
-            for (char file = 'a'; file <= 'h'; file++) {
+            updateFileAnnotations();
+            
+            // Create rank annotation panel (1-8)
+            this.rankAnnotationPanel = new JPanel(new GridLayout(8, 1, 0, 0));
+            rankAnnotationPanel.setPreferredSize(ANNOTATION_PANEL_DIMENSION);
+            rankAnnotationPanel.setBackground(annotationBackgroundColor);
+            updateRankAnnotations();
+            
+            setPreferredSize(OUTER_FRAME_DIMENSION);
+            layeredPane.setPreferredSize(OUTER_FRAME_DIMENSION);
+            tilesPanel.setPreferredSize(BOARD_PANEL_DIMENSION);
+            
+            // Initialize tiles
+            for (int i = 0; i < CalculateMoveUtils.NUM_TILES; i++) {
+                final TilePanel tilePanel = new TilePanel(this, i);
+                this.boardTiles.add(tilePanel);
+            }
+            
+            // Initial board setup
+            setupBoard();
+            
+            validate();
+        }
+
+        private void setupBoard() {
+            tilesPanel.removeAll();
+            
+            // Create a container panel for the board and rank annotation
+            JPanel boardContainer = new JPanel(new BorderLayout(0, 0));
+            boardContainer.add(rankAnnotationPanel, BorderLayout.WEST);
+            boardContainer.add(tilesPanel, BorderLayout.CENTER);
+            
+            // Set bounds for the container panel
+            boardContainer.setBounds(0, 0, 
+                BOARD_PANEL_DIMENSION.width + ANNOTATION_PANEL_DIMENSION.width,
+                BOARD_PANEL_DIMENSION.height);
+            
+            // Add tiles in the correct order
+            if (boardIsFlipped) {
+                for (int rank = 0; rank < 8; rank++) {
+                    for (int file = 0; file < 8; file++) {
+                        int index = (7 - rank) * 8 + (7 - file);
+                        tilesPanel.add(boardTiles.get(index));
+                    }
+                }
+            } else {
+                for (int i = 0; i < 64; i++) {
+                    tilesPanel.add(boardTiles.get(i));
+                }
+            }
+            
+            // Add components to the layered pane
+            layeredPane.removeAll();
+            layeredPane.add(boardContainer, JLayeredPane.DEFAULT_LAYER);
+            
+            // Add the main components to the panel
+            removeAll();
+            add(layeredPane, BorderLayout.CENTER);
+            add(fileAnnotationPanel, BorderLayout.SOUTH);
+            
+            validate();
+            repaint();
+        }
+
+        private void updateFileAnnotations() {
+            fileAnnotationPanel.removeAll();
+            char[] files = boardIsFlipped ? 
+                new char[]{'h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'} :
+                new char[]{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'};
+            
+            for (char file : files) {
                 JPanel cellPanel = new JPanel(new GridBagLayout());
                 cellPanel.setBackground(annotationBackgroundColor);
                 JLabel fileLabel = new JLabel(String.valueOf(file));
@@ -158,76 +246,145 @@ public class ChessBoardUI {
                 fileLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
                 fileLabel.setHorizontalAlignment(SwingConstants.CENTER);
                 fileLabel.setVerticalAlignment(SwingConstants.CENTER);
-                // Add right padding to the text
                 fileLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
                 cellPanel.add(fileLabel);
                 fileAnnotationPanel.add(cellPanel);
             }
+            fileAnnotationPanel.revalidate();
+            fileAnnotationPanel.repaint();
+        }
+
+        private void updateRankAnnotations() {
+            rankAnnotationPanel.removeAll();
+            int startRank = boardIsFlipped ? 1 : 8;
+            int endRank = boardIsFlipped ? 8 : 1;
+            int step = boardIsFlipped ? 1 : -1;
             
-            // Create rank annotation panel (1-8)
-            this.rankAnnotationPanel = new JPanel(new GridLayout(8, 1, 0, 0));
-            rankAnnotationPanel.setPreferredSize(ANNOTATION_PANEL_DIMENSION);
-            rankAnnotationPanel.setBackground(annotationBackgroundColor);
-            for (int rank = 8; rank >= 1; rank--) {
+            for (int rank = startRank; rank != endRank + step; rank += step) {
                 JLabel rankLabel = new JLabel(String.valueOf(rank), SwingConstants.CENTER);
                 rankLabel.setForeground(annotationTextColor);
                 rankLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
                 rankAnnotationPanel.add(rankLabel);
             }
-            
-            // Create a container panel for the board and rank annotation
-            JPanel boardContainer = new JPanel(new BorderLayout(0, 0));
-            boardContainer.add(rankAnnotationPanel, BorderLayout.WEST);
-            boardContainer.add(tilesPanel, BorderLayout.CENTER);
-            
-            setPreferredSize(OUTER_FRAME_DIMENSION);
-            layeredPane.setPreferredSize(OUTER_FRAME_DIMENSION);
-            tilesPanel.setPreferredSize(BOARD_PANEL_DIMENSION);
-            
-            // Set bounds for the container panel
-            boardContainer.setBounds(0, 0, 
-                BOARD_PANEL_DIMENSION.width + ANNOTATION_PANEL_DIMENSION.width,
-                BOARD_PANEL_DIMENSION.height);
-            
-            for (int i = 0; i < CalculateMoveUtils.NUM_TILES; i++) {
-                final TilePanel tilePanel = new TilePanel(this, i);
-                this.boardTiles.add(tilePanel);
-                tilesPanel.add(tilePanel);
+            rankAnnotationPanel.revalidate();
+            rankAnnotationPanel.repaint();
+        }
+
+        public void drawBoard(final IBoard board) {
+            // Clear drag layer
+            Component[] dragLayerComps = layeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER);
+            for (Component comp : dragLayerComps) {
+                layeredPane.remove(comp);
             }
             
-            // Add components to the layered pane
-            layeredPane.add(boardContainer, JLayeredPane.DEFAULT_LAYER);
+            // Update all tiles
+            for (TilePanel tilePanel : boardTiles) {
+                tilePanel.drawTile(board);
+            }
             
-            // Add the main components to the panel
-            add(layeredPane, BorderLayout.CENTER);
-            add(fileAnnotationPanel, BorderLayout.SOUTH);
-            
-            validate();
-        }
-        
-        public void drawBoard(final IBoard board) {
-        	// Clear drag layer
-        	Component[] dragLayerComps = layeredPane.getComponentsInLayer(JLayeredPane.DRAG_LAYER);
-        	for (Component comp : dragLayerComps) {
-        		layeredPane.remove(comp);
-        	}
-        	
-        	for(final TilePanel tilePanel : boardTiles) {
-        		tilePanel.drawTile(board);
-        	}
-        	validate();
-        	repaint();
+            // Rebuild the board layout
+            setupBoard();
         }
     }
-    
-    private class TilePanel extends JPanel{
+
+    public void flipBoard() {
+        boardIsFlipped = !boardIsFlipped;
+        boardPanel.updateFileAnnotations();
+        boardPanel.updateRankAnnotations();
+        boardPanel.drawBoard(chessboard);
+    }
+
+    public void updateBoard(IBoard board) {
+        boardPanel.drawBoard(board);
+    }
+
+    public void displayCheckmateMessage(Alliance winningAlliance) {
+        JOptionPane.showMessageDialog(null, "Checkmate! " + winningAlliance.toString() + " wins.");
+        System.exit(0);
+    }
+
+	public Tile getSourceTile() {
+		return sourceTile;
+	}
+
+	public Tile getTargetTile() {
+		return targetTile;
+	}
+
+	public void resetTileSelections() {
+		this.sourceTile = null;
+		this.targetTile = null;
+	}
+
+	public void waitForPlayerMove() {
+        moveSelected = false;
+        while (!moveSelected) {
+            try {
+                Thread.sleep(0);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        moveSelected = false; // Reset for next move
+    }
+
+    private Color blendColors(Color base, Color overlay) {
+        float alpha = overlay.getAlpha() / 255f;
+        int red = (int) ((1 - alpha) * base.getRed() + alpha * overlay.getRed());
+        int green = (int) ((1 - alpha) * base.getGreen() + alpha * overlay.getGreen());
+        int blue = (int) ((1 - alpha) * base.getBlue() + alpha * overlay.getBlue());
+        return new Color(red, green, blue);
+    }
+
+    private class DraggablePieceLabel extends JLabel {
+        private Point initialPosition;
+
+        public DraggablePieceLabel(ImageIcon icon) {
+            super(icon);
+            setOpaque(false);
+        }
+
+        public void setInitialPosition(Point p) {
+            initialPosition = p;
+        }
+
+        public void returnToInitialPosition() {
+            if (initialPosition != null) {
+                setLocation(initialPosition);
+                getParent().repaint();
+            }
+        }
+    }
+
+    private TilePanel findTargetTile(Point dropPoint, BoardPanel boardPanel) {
+        // Calculate which tile we're over based on coordinates
+        int tileSize = BOARD_PANEL_DIMENSION.width / 8;
+        int x = dropPoint.x;
+        int y = dropPoint.y;
         
+        // Convert to tile coordinates
+        int file = x / tileSize;
+        int rank = y / tileSize;
+        
+        // Check if within board bounds
+        if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+            // Adjust coordinates if board is flipped
+            if (boardIsFlipped) {
+                file = 7 - file;
+                rank = 7 - rank;
+            }
+            int tileId = rank * 8 + file;
+            return boardPanel.boardTiles.get(tileId);
+        }
+        return null;
+    }
+
+    private class TilePanel extends JPanel {
         private final int tileId;
         private Color highlightColor; // Store the current highlight color
         private DraggablePieceLabel pieceLabel;  // New field to hold the draggable piece
 
-        
-        TilePanel(final BoardPanel boardPanel, final int tileId){
+        TilePanel(final BoardPanel boardPanel, final int tileId) {
             super(new GridBagLayout());
             this.tileId = tileId;
             // Calculate tile size based on board size
@@ -235,110 +392,109 @@ public class ChessBoardUI {
             setPreferredSize(new Dimension(tileSize, tileSize));
             assignTileColor(tileId);
             if(chessboard!=null) {
-            	assignTilePieceIcon(chessboard);
+                assignTilePieceIcon(chessboard);
             }
             setupDragListeners(boardPanel);
             addMouseListener(new MouseListener() {
-	        	@Override
-	            public void mouseClicked(MouseEvent e) {
+                @Override
+                public void mouseClicked(MouseEvent e) {
                     if (chessboard == null) {
                         JOptionPane.showMessageDialog(null, "Chessboard is not initialized. Please restart the game.");
                         return;
                     }
-	                if(isRightMouseButtonClicked(e)) {
-	                    highlightColor = Color.BLUE;
-	                    sourceTile = null;
-	                	targetTile = null;
-	                	sourceSelectedPiece = null;
-	                	targetSelectedPiece = null;
-	                	moveSelected = false;
-	                    assignTileColor(tileId);
-	                    repaint();
-	                    for (TilePanel tile : boardPanel.boardTiles) {
-	                        tile.drawTile(chessboard);
-	                    }
-	                }else if(isLeftMouseButtonClicked(e)) {
-	                	//Select source piece
-	                	if(sourceTile == null) {
-	                        sourceTile = chessboard.getTile(tileId);
-	                        sourceSelectedPiece = sourceTile.getPiece();
-	                        if(sourceSelectedPiece == null || sourceSelectedPiece.getPieceAlliance() != chessboard.getCurrentPlayer().getAlliance()) {
-	                            sourceTile = null;
-	                            sourceSelectedPiece = null;
-	                            assignTileColor(tileId);
-	                            repaint();
-	                            return; // Exit the click handler
-	                        } else {
-								highlightColor = Color.GREEN;
-								setBackground(highlightColor);
-								highlightLegalMoves(sourceSelectedPiece);
-							}
-						}
+                    if(isRightMouseButtonClicked(e)) {
+                        highlightColor = Color.BLUE;
+                        sourceTile = null;
+                        targetTile = null;
+                        sourceSelectedPiece = null;
+                        targetSelectedPiece = null;
+                        moveSelected = false;
+                        assignTileColor(tileId);
+                        repaint();
+                        for (TilePanel tile : boardPanel.boardTiles) {
+                            tile.drawTile(chessboard);
+                        }
+                    } else if(isLeftMouseButtonClicked(e)) {
+                        //Select source piece
+                        if(sourceTile == null) {
+                            sourceTile = chessboard.getTile(tileId);
+                            sourceSelectedPiece = sourceTile.getPiece();
+                            if(sourceSelectedPiece == null || sourceSelectedPiece.getPieceAlliance() != chessboard.getCurrentPlayer().getAlliance()) {
+                                sourceTile = null;
+                                sourceSelectedPiece = null;
+                                assignTileColor(tileId);
+                                repaint();
+                                return; // Exit the click handler
+                            } else {
+                                highlightColor = Color.GREEN;
+                                setBackground(highlightColor);
+                                highlightLegalMoves(sourceSelectedPiece);
+                            }
+                        }
 
-						//Select target piece
-						if(sourceSelectedPiece != null) {
-	                        targetTile = chessboard.getTile(tileId);
-							if(targetTile.isTileOccupied()) {
-								targetSelectedPiece = targetTile.getPiece();
-								if(targetSelectedPiece != null) {
-									if(targetSelectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
-										if (sourceTile != null) {
-											boardPanel.boardTiles.get(sourceTile.getTileCoordinate()).assignTileColor(sourceTile.getTileCoordinate());
-											boardPanel.boardTiles.get(sourceTile.getTileCoordinate()).repaint();
-										}
-										sourceTile = targetTile;
-										sourceSelectedPiece= targetSelectedPiece;
-										targetTile = null;
-										targetSelectedPiece = null;
-										highlightColor = Color.GREEN;
-										highlightLegalMoves(sourceSelectedPiece);
-									}else {
-										highlightColor = Color.RED;
-										moveSelected = true;
-									}
-								}
-							}else{
-								highlightColor = Color.YELLOW;
-								moveSelected = true;
-							}
-	                        if(sourceTile != null && targetTile != null) {
-	                           moveSelected = true;
-	                        }
-	                	}
-	                    setBackground(highlightColor);
-	                    repaint();
-	                	}
-	            }
-	        	
-	            private boolean isRightMouseButtonClicked(MouseEvent e) {
-	                return SwingUtilities.isRightMouseButton(e);
-	            }
-	            
-	            private boolean isLeftMouseButtonClicked(MouseEvent e) {
-	                return SwingUtilities.isLeftMouseButton(e);
-	            }
-				@Override
-	            public void mousePressed(MouseEvent e) {}
-	            @Override
-	            public void mouseReleased(MouseEvent e) {}
-	            @Override
-	            public void mouseEntered(MouseEvent e) {}
-	            @Override
-	            public void mouseExited(MouseEvent e) {}
-	            }
-            );
+                        //Select target piece
+                        if(sourceSelectedPiece != null) {
+                            targetTile = chessboard.getTile(tileId);
+                            if(targetTile.isTileOccupied()) {
+                                targetSelectedPiece = targetTile.getPiece();
+                                if(targetSelectedPiece != null) {
+                                    if(targetSelectedPiece.getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
+                                        if (sourceTile != null) {
+                                            boardPanel.boardTiles.get(sourceTile.getTileCoordinate()).assignTileColor(sourceTile.getTileCoordinate());
+                                            boardPanel.boardTiles.get(sourceTile.getTileCoordinate()).repaint();
+                                        }
+                                        sourceTile = targetTile;
+                                        sourceSelectedPiece = targetSelectedPiece;
+                                        targetTile = null;
+                                        targetSelectedPiece = null;
+                                        highlightColor = Color.GREEN;
+                                        highlightLegalMoves(sourceSelectedPiece);
+                                    } else {
+                                        highlightColor = Color.RED;
+                                        moveSelected = true;
+                                    }
+                                }
+                            } else {
+                                highlightColor = Color.YELLOW;
+                                moveSelected = true;
+                            }
+                            if(sourceTile != null && targetTile != null) {
+                               moveSelected = true;
+                            }
+                        }
+                        setBackground(highlightColor);
+                        repaint();
+                    }
+                }
+                
+                private boolean isRightMouseButtonClicked(MouseEvent e) {
+                    return SwingUtilities.isRightMouseButton(e);
+                }
+                
+                private boolean isLeftMouseButtonClicked(MouseEvent e) {
+                    return SwingUtilities.isLeftMouseButton(e);
+                }
+                @Override
+                public void mousePressed(MouseEvent e) {}
+                @Override
+                public void mouseReleased(MouseEvent e) {}
+                @Override
+                public void mouseEntered(MouseEvent e) {}
+                @Override
+                public void mouseExited(MouseEvent e) {}
+            });
         }
 
         public void drawTile(final IBoard board) {
-        	if (board != null) {
-	        	assignTileColor(tileId);
-	        	assignTilePieceIcon(board);
-	        	validate();
-	        	repaint();
-        	}
-		}
+            if (board != null) {
+                assignTileColor(tileId);
+                assignTilePieceIcon(board);
+                validate();
+                repaint();
+            }
+        }
 
-		private void assignTileColor(final int tileId) {
+        private void assignTileColor(final int tileId) {
             Color baseColor = CalculateMoveUtils.getCoordinateAlliance(tileId) == Alliance.WHITE ? lightTileColor : darkTileColor;
             
             // If this tile was part of the last move, blend with lastMoveColor
@@ -350,29 +506,29 @@ public class ChessBoardUI {
         }
         
         private void assignTilePieceIcon(final IBoard board) {
-        	if (board != null) {
-	            this.removeAll();
-	            Tile tile = board.getTile(tileId);
-	            if(tile.isTileOccupied()) {
-	                Piece piece = tile.getPiece();
-	                String pieceSymbol = piece.getPieceSymbol().toString().toLowerCase();
-	                String colorPrefix = piece.getPieceAlliance().isWhite() ? "white" : "black";
-	                String pieceIconPath = pieceImagesPath + colorPrefix + "_" + pieceSymbol + ".png";
-	                try {
-	                    final BufferedImage image = ImageIO.read(new File(pieceIconPath));
-	                    ImageIcon icon = new ImageIcon(image.getScaledInstance(
-	                       BOARD_PANEL_DIMENSION.width / 8,
-	                       BOARD_PANEL_DIMENSION.height / 8,
-	                        Image.SCALE_AREA_AVERAGING));
-	                    pieceLabel = new DraggablePieceLabel(icon);
-	                    add(pieceLabel);
-	                }catch(IOException e) {
-	                    e.printStackTrace();
-	                }
-	            } else {
-	                pieceLabel = null;
-	            }
-        	}
+            if (board != null) {
+                this.removeAll();
+                Tile tile = board.getTile(tileId);
+                if(tile.isTileOccupied()) {
+                    Piece piece = tile.getPiece();
+                    String pieceSymbol = piece.getPieceSymbol().toString().toLowerCase();
+                    String colorPrefix = piece.getPieceAlliance().isWhite() ? "white" : "black";
+                    String pieceIconPath = pieceImagesPath + colorPrefix + "_" + pieceSymbol + ".png";
+                    try {
+                        final BufferedImage image = ImageIO.read(new File(pieceIconPath));
+                        ImageIcon icon = new ImageIcon(image.getScaledInstance(
+                           BOARD_PANEL_DIMENSION.width / 8,
+                           BOARD_PANEL_DIMENSION.height / 8,
+                            Image.SCALE_AREA_AVERAGING));
+                        pieceLabel = new DraggablePieceLabel(icon);
+                        add(pieceLabel);
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    pieceLabel = null;
+                }
+            }
         }
 
         private void drawLegalMoveIndicator() {
@@ -400,10 +556,9 @@ public class ChessBoardUI {
                 for (TilePanel tile : boardPanel.boardTiles) {
                     if (legalTargets.contains(tile.tileId)) {
                         tile.drawLegalMoveIndicator();
+                    } else {
+                        tile.drawTile(chessboard);
                     }
-					else{
-						tile.drawTile(chessboard);
-					}
                 }
                 boardPanel.revalidate();
                 boardPanel.repaint();
@@ -485,86 +640,6 @@ public class ChessBoardUI {
             addMouseListener(dragListener);
             addMouseMotionListener(dragListener);
         }
-    }
-
-    public void updateBoard(IBoard board) {
-        boardPanel.drawBoard(board);
-    }
-
-    public void displayCheckmateMessage(Alliance winningAlliance) {
-        JOptionPane.showMessageDialog(null, "Checkmate! " + winningAlliance.toString() + " wins.");
-        System.exit(0);
-    }
-
-	public Tile getSourceTile() {
-		return sourceTile;
-	}
-
-	public Tile getTargetTile() {
-		return targetTile;
-	}
-
-	public void resetTileSelections() {
-		this.sourceTile = null;
-		this.targetTile = null;
-	}
-
-	public void waitForPlayerMove() {
-        moveSelected = false;
-        while (!moveSelected) {
-            try {
-                Thread.sleep(0);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        moveSelected = false; // Reset for next move
-    }
-
-    private Color blendColors(Color base, Color overlay) {
-        float alpha = overlay.getAlpha() / 255f;
-        int red = (int) ((1 - alpha) * base.getRed() + alpha * overlay.getRed());
-        int green = (int) ((1 - alpha) * base.getGreen() + alpha * overlay.getGreen());
-        int blue = (int) ((1 - alpha) * base.getBlue() + alpha * overlay.getBlue());
-        return new Color(red, green, blue);
-    }
-
-    private class DraggablePieceLabel extends JLabel {
-        private Point initialPosition;
-
-        public DraggablePieceLabel(ImageIcon icon) {
-            super(icon);
-            setOpaque(false);
-        }
-
-        public void setInitialPosition(Point p) {
-            initialPosition = p;
-        }
-
-        public void returnToInitialPosition() {
-            if (initialPosition != null) {
-                setLocation(initialPosition);
-                getParent().repaint();
-            }
-        }
-    }
-
-    private TilePanel findTargetTile(Point dropPoint, BoardPanel boardPanel) {
-        // Calculate which tile we're over based on coordinates
-        int tileSize = BOARD_PANEL_DIMENSION.width / 8;
-        int x = dropPoint.x;
-        int y = dropPoint.y;
-        
-        // Convert to tile coordinates
-        int file = x / tileSize;
-        int rank = y / tileSize;
-        
-        // Check if within board bounds
-        if (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-            int tileId = rank * 8 + file;
-            return boardPanel.boardTiles.get(tileId);
-        }
-        return null;
     }
 
 }
