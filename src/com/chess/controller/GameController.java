@@ -29,7 +29,7 @@ public class GameController {
                 currentPlayerMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
                 GameHistory.getInstance().addBoard(board);
                 GameHistory.getInstance().addMove(currentPlayerMove);
-                       
+                chessBoardUI.addMoveToHistory(currentPlayerMove);       
                 // Play appropriate sound based on move type
                 if(currentPlayerMove instanceof CapturingMove) {
                     SoundPlayer.playCaptureSound();

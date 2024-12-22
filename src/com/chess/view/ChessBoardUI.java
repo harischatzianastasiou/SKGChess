@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -19,19 +20,38 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Insets;
+import java.awt.RenderingHints;
+import java.awt.GradientPaint;
+import java.awt.RadialGradientPaint;
+import java.awt.Point;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicScrollBarUI;
+import javax.swing.text.DefaultCaret;
 
 import com.chess.model.Alliance;
 import com.chess.model.moves.Move;
+import com.chess.model.moves.capturing.PawnEnPassantAttack;
+import com.chess.model.moves.capturing.PawnPromotionCapturingMove;
+import com.chess.model.moves.noncapturing.KingSideCastleMove;
+import com.chess.model.moves.noncapturing.PawnJumpMove;
+import com.chess.model.moves.noncapturing.PawnMove;
+import com.chess.model.moves.noncapturing.PawnPromotionMove;
+import com.chess.model.moves.noncapturing.QueenSideCastleMove;
 import com.chess.model.pieces.CalculateMoveUtils;
+import com.chess.model.pieces.Pawn;
 import com.chess.model.tiles.Tile;
 import com.chess.model.pieces.Piece;
 import com.chess.model.board.IBoard;
 import com.chess.model.player.Player;
+import com.chess.model.player.CurrentPlayer;
 import com.chess.util.GameHistory;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -41,6 +61,8 @@ public class ChessBoardUI {
     private static ChessBoardUI instance;
     private final JFrame gameFrame;
     private final BoardPanel boardPanel;
+    private final JPanel moveHistoryPanel;
+    private final JTextArea moveHistoryTextArea;
     private IBoard chessboard;
 	private Player currentPlayer;
     private Tile sourceTile;
@@ -52,15 +74,20 @@ public class ChessBoardUI {
 
     private volatile boolean moveSelected = false;
 
-    private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(613, 655);
+    private final static Dimension OUTER_FRAME_DIMENSION = new Dimension(743, 655);
     private final static Dimension BOARD_PANEL_DIMENSION = new Dimension(580, 580);
     private final static Dimension TILE_PANEL_DIMENSION = new Dimension(64, 64);
     private final static Dimension ANNOTATION_PANEL_DIMENSION = new Dimension(20, 655);
+    private final static Dimension HISTORY_PANEL_DIMENSION = new Dimension(130, 580);
     private final static String pieceImagesPath = "images/";
     private final Color lightTileColor = Color.decode("#eeeed2");
     private final Color darkTileColor = Color.decode("#003166");
     private final Color annotationBackgroundColor = Color.decode("#ffffff");
     private final Color annotationTextColor = Color.decode("#003166");
+    private final Color historyPanelColor = Color.decode("#eeeed2");
+    private final Color historyTitleBackgroundColor = new Color(51, 51, 51);
+    private final Color historyTitleTextColor = Color.WHITE;
+    private final Color moveTextColor = new Color(0, 0, 0);
     
     private int lastMoveSource = -1;
     private int lastMoveTarget = -1;
@@ -76,8 +103,123 @@ public class ChessBoardUI {
         this.chessboard = board;
         this.currentPlayer = chessboard.getCurrentPlayer();
 		this.pieceLegalMoves = getPieceLegalCoordinates(this.currentPlayer);
+        
+        // Initialize move history panel
+        this.moveHistoryPanel = new JPanel(new BorderLayout(0, 0));
+        moveHistoryPanel.setPreferredSize(HISTORY_PANEL_DIMENSION);
+        moveHistoryPanel.setBackground(historyPanelColor);
+        moveHistoryPanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, new Color(200, 200, 200)));
+        
+        // Create title panel
+        JPanel titlePanel = new JPanel(new BorderLayout()) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setColor(historyTitleBackgroundColor);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+            }
+        };
+        titlePanel.setPreferredSize(new Dimension(HISTORY_PANEL_DIMENSION.width, 40));
+        
+        // Add title with custom font and styling
+        JLabel historyTitle = new JLabel("Move History", SwingConstants.CENTER);
+        historyTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        historyTitle.setForeground(historyTitleTextColor);
+        historyTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        titlePanel.add(historyTitle, BorderLayout.CENTER);
+        
+        // Initialize move history text area with custom styling
+        this.moveHistoryTextArea = new JTextArea() {
+            @Override
+            public void paint(Graphics g) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+                                   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                super.paint(g);
+            }
+        };
+        moveHistoryTextArea.setEditable(false);
+        moveHistoryTextArea.setFont(new Font("Consolas", Font.BOLD, 16));
+        moveHistoryTextArea.setBackground(historyPanelColor);
+        moveHistoryTextArea.setForeground(moveTextColor);
+        moveHistoryTextArea.setMargin(new Insets(10, 10, 10, 10));
+        moveHistoryTextArea.setLineWrap(true);
+        moveHistoryTextArea.setWrapStyleWord(true);
+        moveHistoryTextArea.setCaret(new DefaultCaret() {
+            @Override
+            public boolean isVisible() {
+                return false;
+            }
+        });
+        
+        // Create scroll pane
+        JScrollPane scrollPane = new JScrollPane(moveHistoryTextArea);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setBackground(historyPanelColor);
+        
+        // Customize scroll bar
+        JScrollBar verticalBar = scrollPane.getVerticalScrollBar();
+        verticalBar.setOpaque(false);
+        verticalBar.setPreferredSize(new Dimension(8, 0));
+        verticalBar.setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(150, 150, 150, 100);
+            }
+            
+            @Override
+            protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
+                // Don't paint the track
+            }
+            
+            @Override
+            protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
+                if(thumbBounds.isEmpty() || !scrollbar.isEnabled()) {
+                    return;
+                }
+                
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                  RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setPaint(thumbColor);
+                g2.fillRoundRect(thumbBounds.x + 1, thumbBounds.y + 1,
+                               thumbBounds.width - 2, thumbBounds.height - 2,
+                               5, 5);
+                g2.dispose();
+            }
+            
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+                return createZeroButton();
+            }
+            
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                return createZeroButton();
+            }
+            
+            private JButton createZeroButton() {
+                JButton button = new JButton();
+                button.setPreferredSize(new Dimension(0, 0));
+                button.setMinimumSize(new Dimension(0, 0));
+                button.setMaximumSize(new Dimension(0, 0));
+                return button;
+            }
+        });
+        
+        // Add components to the history panel
+        moveHistoryPanel.add(titlePanel, BorderLayout.NORTH);
+        moveHistoryPanel.add(scrollPane, BorderLayout.CENTER);
+        
         this.boardPanel = new BoardPanel();
-        this.gameFrame.add(this.boardPanel, BorderLayout.CENTER);
+        
+        // Create a container panel for board and history
+        JPanel containerPanel = new JPanel(new BorderLayout());
+        containerPanel.add(boardPanel, BorderLayout.CENTER);
+        containerPanel.add(moveHistoryPanel, BorderLayout.EAST);
+        
+        this.gameFrame.add(containerPanel, BorderLayout.CENTER);
         this.gameFrame.setVisible(true);
     }
 
@@ -640,6 +782,82 @@ public class ChessBoardUI {
             addMouseListener(dragListener);
             addMouseMotionListener(dragListener);
         }
+    }
+
+    public void addMoveToHistory(Move move) {
+        String moveText = formatMove(move);
+        if (moveHistoryTextArea.getText().isEmpty()) {
+            // First move (White)
+            moveHistoryTextArea.append(String.format("1. %-5s", moveText));
+        } else {
+            String currentText = moveHistoryTextArea.getText();
+            if (currentPlayer.getAlliance().isWhite()) {
+                // Start new move number with consistent spacing
+                moveHistoryTextArea.append(String.format("\n%d. %-5s",
+                    currentText.split("\n").length + 1, moveText));
+            } else {
+                // Add black's move with consistent spacing
+                moveHistoryTextArea.append(moveText);
+            }
+        }
+        moveHistoryTextArea.setCaretPosition(moveHistoryTextArea.getDocument().getLength());
+    }
+
+    private String formatMove(Move move) {
+        StringBuilder notation = new StringBuilder();
+        Piece piece = move.getPieceToMove();
+        
+        // Get file and rank for coordinates
+        int sourceFile = move.getSourceCoordinate() % 8;
+        int sourceRank = 7 - (move.getSourceCoordinate() / 8); // Invert rank for correct notation
+        int targetFile = move.getTargetCoordinate() % 8;
+        int targetRank = 7 - (move.getTargetCoordinate() / 8); // Invert rank for correct notation
+        
+        // Handle castling first
+        if (move instanceof KingSideCastleMove) {
+            notation.append("O-O");
+        } else if (move instanceof QueenSideCastleMove) {
+            notation.append("O-O-O");
+        } else {
+            // Add piece symbol (except for pawns)
+            if (!(piece instanceof Pawn)) {
+                notation.append(piece.getPieceSymbol().toString());
+            }
+            
+            // Add capture symbol
+            if (move.getCapturedPiece() != null) {
+                // For pawn captures, add the source file
+                if (piece instanceof Pawn) {
+                    notation.append((char)('a' + sourceFile));
+                }
+                notation.append("x");
+            }
+            
+            // Add destination square
+            notation.append((char)('a' + targetFile));
+            notation.append(targetRank + 1); // Add 1 since ranks are 1-based
+            
+            // Add promotion piece
+            if (move instanceof PawnPromotionMove || move instanceof PawnPromotionCapturingMove) {
+                notation.append("=Q"); // Assuming queen promotion for now
+            }
+        }
+        
+        // Execute the move temporarily to check the resulting position
+        IBoard futureBoard = move.execute();
+        Player futurePlayer = futureBoard.getCurrentPlayer();
+        
+        // Check if the move results in check or checkmate
+        if (futurePlayer instanceof CurrentPlayer) {
+            CurrentPlayer currentPlayer = (CurrentPlayer) futurePlayer;
+            if (currentPlayer.isCheckmate()) {
+                notation.append("#");
+            } else if (currentPlayer.isInCheck()) {
+                notation.append("+");
+            }
+        }
+        
+        return notation.toString();
     }
 
 }
