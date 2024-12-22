@@ -88,10 +88,10 @@ public class ChessBoardUI {
     private final Color darkTileColor = Color.decode("#003166");
     private final Color annotationBackgroundColor = Color.decode("#ffffff");
     private final Color annotationTextColor = Color.decode("#003166");
-    private final Color historyPanelColor = Color.decode("#eeeed2");
+    private final Color historyPanelColor = new Color(45, 45, 45); // Soft dark gray
     private final Color historyTitleBackgroundColor = new Color(51, 51, 51);
     private final Color historyTitleTextColor = Color.WHITE;
-    private final Color moveTextColor = new Color(0, 0, 0);
+    private final Color moveTextColor = Color.WHITE;
     
     private int lastMoveSource = -1;
     private int lastMoveTarget = -1;
@@ -101,6 +101,29 @@ public class ChessBoardUI {
     private int currentHistoryIndex = -1;
 
     private final Color moveHighlightColor = new Color(255, 255, 0, 128); // Brighter yellow with more opacity
+
+    private static final Map<String, ImageIcon> pieceIconCache = new HashMap<>();
+
+    static {
+        // Pre-load all piece icons
+        String[] colors = {"white", "black"};
+        String[] pieces = {"p", "r", "n", "b", "q", "k"};
+        for (String color : colors) {
+            for (String piece : pieces) {
+                String iconPath = pieceImagesPath + color + "_" + piece + ".png";
+                try {
+                    BufferedImage image = ImageIO.read(new File(iconPath));
+                    ImageIcon icon = new ImageIcon(image.getScaledInstance(
+                        BOARD_PANEL_DIMENSION.width / 8,
+                        BOARD_PANEL_DIMENSION.height / 8,
+                        Image.SCALE_SMOOTH));
+                    pieceIconCache.put(color + "_" + piece, icon);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     private ChessBoardUI(IBoard board) {
         this.gameFrame = new JFrame("SKGChess");
@@ -228,14 +251,42 @@ public class ChessBoardUI {
         navigationPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
         // Create left (previous) button
-        JButton previousButton = new JButton("\u2190"); // Left arrow unicode
+        JButton previousButton = new JButton("<"); // Changed from unicode arrow to bold <
         previousButton.setFont(new Font("Dialog", Font.BOLD, 20));
         previousButton.setFocusPainted(false);
+        previousButton.setBackground(new Color(60, 60, 60)); // Slightly lighter than panel
+        previousButton.setForeground(Color.WHITE);
+        previousButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        previousButton.setContentAreaFilled(false); // Remove default button fill
+        previousButton.setOpaque(true); // Make it opaque to show our colors
+        // Add pressed effect
+        previousButton.getModel().addChangeListener(e -> {
+            ButtonModel model = (ButtonModel) e.getSource();
+            if (model.isPressed()) {
+                previousButton.setBackground(new Color(75, 75, 75)); // Lighter gray when pressed
+            } else {
+                previousButton.setBackground(new Color(60, 60, 60)); // Normal state
+            }
+        });
 
         // Create right (next) button
-        JButton nextButton = new JButton("\u2192"); // Right arrow unicode
+        JButton nextButton = new JButton(">"); // Changed from unicode arrow to bold >
         nextButton.setFont(new Font("Dialog", Font.BOLD, 20));
         nextButton.setFocusPainted(false);
+        nextButton.setBackground(new Color(60, 60, 60)); // Slightly lighter than panel
+        nextButton.setForeground(Color.WHITE);
+        nextButton.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        nextButton.setContentAreaFilled(false); // Remove default button fill
+        nextButton.setOpaque(true); // Make it opaque to show our colors
+        // Add pressed effect
+        nextButton.getModel().addChangeListener(e -> {
+            ButtonModel model = (ButtonModel) e.getSource();
+            if (model.isPressed()) {
+                nextButton.setBackground(new Color(75, 75, 75)); // Lighter gray when pressed
+            } else {
+                nextButton.setBackground(new Color(60, 60, 60)); // Normal state
+            }
+        });
         nextButton.setEnabled(false); // Initially disabled since we start at latest position
 
         previousButton.addActionListener(e -> {
@@ -604,7 +655,7 @@ public class ChessBoardUI {
         while (!moveSelected) {
             try {
                 if (isViewingHistory) {
-                    Thread.sleep(100); // Don't consume CPU while viewing history
+                    Thread.sleep(0); // Don't consume CPU while viewing history
                     continue; // Skip move processing while viewing history
                 }
                 Thread.sleep(0);
@@ -803,17 +854,12 @@ public class ChessBoardUI {
                     Piece piece = tile.getPiece();
                     String pieceSymbol = piece.getPieceSymbol().toString().toLowerCase();
                     String colorPrefix = piece.getPieceAlliance().isWhite() ? "white" : "black";
-                    String pieceIconPath = pieceImagesPath + colorPrefix + "_" + pieceSymbol + ".png";
-                    try {
-                        final BufferedImage image = ImageIO.read(new File(pieceIconPath));
-                        ImageIcon icon = new ImageIcon(image.getScaledInstance(
-                           BOARD_PANEL_DIMENSION.width / 8,
-                           BOARD_PANEL_DIMENSION.height / 8,
-                            Image.SCALE_AREA_AVERAGING));
+                    String iconKey = colorPrefix + "_" + pieceSymbol;
+                    
+                    ImageIcon icon = pieceIconCache.get(iconKey);
+                    if (icon != null) {
                         pieceLabel = new DraggablePieceLabel(icon);
                         add(pieceLabel);
-                    } catch(IOException e) {
-                        e.printStackTrace();
                     }
                 } else {
                     pieceLabel = null;
