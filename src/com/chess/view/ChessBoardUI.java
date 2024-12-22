@@ -104,6 +104,7 @@ public class ChessBoardUI {
     private final Color moveHighlightColor = new Color(255, 255, 0, 128); // Brighter yellow with more opacity
 
     private static final Map<String, ImageIcon> pieceIconCache = new HashMap<>();
+    private static final Map<String, ImageIcon> squarePieceCache = new HashMap<>();
 
     static {
         // Pre-load all piece icons
@@ -114,16 +115,29 @@ public class ChessBoardUI {
                 String iconPath = pieceImagesPath + color + "_" + piece + ".png";
                 try {
                     BufferedImage image = ImageIO.read(new File(iconPath));
+                    // Scale pieces to 95% of tile size
+                    int pieceSize = (int)(BOARD_PANEL_DIMENSION.width / 8 * 0.95);
                     ImageIcon icon = new ImageIcon(image.getScaledInstance(
-                        BOARD_PANEL_DIMENSION.width / 8,
-                        BOARD_PANEL_DIMENSION.height / 8,
+                        pieceSize,
+                        pieceSize,
                         Image.SCALE_SMOOTH));
-                    pieceIconCache.put(color + "_" + piece, icon);
+                    String iconKey = color + "_" + piece;
+                    pieceIconCache.put(iconKey, icon);
+                    
+                    // Pre-cache scaled icons for each square
+                    for (int square = 0; square < 64; square++) {
+                        String squareKey = iconKey + "_" + square;
+                        squarePieceCache.put(squareKey, icon);
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    private ImageIcon getPreCachedIcon(String iconKey, int square) {
+        return squarePieceCache.get(iconKey + "_" + square);
     }
 
     private ChessBoardUI(IBoard board) {
@@ -678,7 +692,7 @@ public class ChessBoardUI {
     private class DraggablePieceLabel extends JLabel {
         private Point initialPosition;
 
-        public DraggablePieceLabel(ImageIcon icon) {
+        public DraggablePieceLabel(Icon icon) {
             super(icon);
             setOpaque(false);
         }
@@ -905,15 +919,23 @@ public class ChessBoardUI {
                     String pieceSymbol = piece.getPieceSymbol().toString().toLowerCase();
                     String colorPrefix = piece.getPieceAlliance().isWhite() ? "white" : "black";
                     String iconKey = colorPrefix + "_" + pieceSymbol;
+                    String squareKey = iconKey + "_" + tileId;
                     
-                    ImageIcon icon = pieceIconCache.get(iconKey);
+                    // Use pre-cached icon for this specific square
+                    ImageIcon icon = squarePieceCache.get(squareKey);
                     if (icon != null) {
-                        pieceLabel = new DraggablePieceLabel(icon);
+                        if (pieceLabel == null || !pieceLabel.getIcon().equals(icon)) {
+                            // Only create new label if necessary
+                            pieceLabel = new DraggablePieceLabel(icon);
+                        }
+                        pieceLabel.setVisible(true);
                         add(pieceLabel);
                     }
                 } else {
                     pieceLabel = null;
                 }
+                validate();
+                repaint();
             }
         }
 
@@ -962,10 +984,9 @@ public class ChessBoardUI {
                 private long lastDragTime = 0;
                 private Point lastMousePos = null;
                 private double currentVelocity = 0;
-                private static final double BASE_DAMPING = 0.45;
-                private static final double MAX_VELOCITY = 1.5;
-                // private static final double ACCELERATION_FACTOR = 0.5;
-                private static final int ANIMATION_SPEED = 16; // ~60fps
+                private static final double BASE_DAMPING = 0.65;
+                private static final double MAX_VELOCITY = 2.0;
+                private static final int ANIMATION_SPEED = 12;
 
                 @Override
                 public void mousePressed(MouseEvent e) {
@@ -977,10 +998,9 @@ public class ChessBoardUI {
                         lastDragTime = System.currentTimeMillis();
                         currentVelocity = 0;
                         
-                        // Create floating piece
+                        // Create floating piece using pre-cached icon
                         Point loc = SwingUtilities.convertPoint(pieceLabel, 0, 0, boardPanel.layeredPane);
-                        DraggablePieceLabel floatingPiece = new DraggablePieceLabel(
-                            (ImageIcon)pieceLabel.getIcon());
+                        DraggablePieceLabel floatingPiece = new DraggablePieceLabel(pieceLabel.getIcon());
                         floatingPiece.setBounds(loc.x, loc.y, 
                             TILE_PANEL_DIMENSION.width, TILE_PANEL_DIMENSION.height);
                         boardPanel.layeredPane.add(floatingPiece, JLayeredPane.DRAG_LAYER);
