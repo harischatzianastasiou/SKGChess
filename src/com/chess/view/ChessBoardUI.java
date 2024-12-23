@@ -33,6 +33,9 @@ import java.awt.Point;
 import java.awt.BasicStroke;
 import java.awt.event.MouseAdapter;
 import java.awt.Component;
+import java.awt.AlphaComposite;
+import java.awt.geom.Path2D;
+import java.awt.FontMetrics;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -205,8 +208,8 @@ public class ChessBoardUI {
         titlePanel.setPreferredSize(new Dimension(HISTORY_PANEL_DIMENSION.width, 40));
         
         // Add title with custom font and styling
-        JLabel historyTitle = new JLabel("Move History", SwingConstants.CENTER);
-        historyTitle.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        JLabel historyTitle = new JLabel("SKGChess", SwingConstants.CENTER);
+        historyTitle.setFont(new Font("Segoe Script", Font.ITALIC, 20));
         historyTitle.setForeground(historyTitleTextColor);
         historyTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         titlePanel.add(historyTitle, BorderLayout.CENTER);
@@ -911,11 +914,38 @@ public class ChessBoardUI {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+            
+            // Draw the border if needed
             if (showBorder) {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(Color.WHITE);
                 g2d.setStroke(new BasicStroke(3)); // Set border thickness
                 g2d.drawRect(1, 1, getWidth() - 3, getHeight() - 3);
+            }
+            
+            // Add SKGChess text to A1 tile (tile 56 in normal orientation, tile 7 when flipped)
+            if (tileId == (boardIsFlipped ? 7 : 56)) {
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                Font handwrittenFont = new Font("Segoe Script", Font.ITALIC, 14);  // Increased size
+                g2d.setFont(handwrittenFont);
+                
+                // Set color based on tile color (dark tile gets white text, light tile gets dark text)
+                Color textColor = CalculateMoveUtils.getCoordinateAlliance(tileId) == Alliance.WHITE ? 
+                    new Color(0, 49, 102, 180) :     // Dark blue with 70% opacity for light tiles
+                    new Color(255, 255, 255, 180);   // White with 70% opacity for dark tiles
+                g2d.setColor(textColor);
+                
+                // Calculate text position
+                String text = "SKGChess";
+                int textWidth = g2d.getFontMetrics(handwrittenFont).stringWidth(text);
+                int textHeight = g2d.getFontMetrics(handwrittenFont).getHeight();
+                
+                // Position the text in the bottom right corner with some padding
+                int x = getWidth() - textWidth - 5;
+                int y = getHeight() - 5;
+                
+                g2d.drawString(text, x, y);
             }
         }
 
