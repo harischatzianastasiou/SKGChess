@@ -31,6 +31,8 @@ import java.awt.GradientPaint;
 import java.awt.RadialGradientPaint;
 import java.awt.Point;
 import java.awt.BasicStroke;
+import java.awt.event.MouseAdapter;
+import java.awt.Component;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -61,6 +63,7 @@ import com.chess.util.SoundPlayer;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.Component;
+
 public class ChessBoardUI {
     
     private static ChessBoardUI instance;
@@ -114,22 +117,53 @@ public class ChessBoardUI {
             for (String piece : pieces) {
                 String iconPath = pieceImagesPath + color + "_" + piece + ".png";
                 try {
-                    BufferedImage image = ImageIO.read(new File(iconPath));
-                    // Scale pieces to 95% of tile size
-                    int pieceSize = (int)(BOARD_PANEL_DIMENSION.width / 8 * 0.95);
-                    ImageIcon icon = new ImageIcon(image.getScaledInstance(
-                        pieceSize,
-                        pieceSize,
-                        Image.SCALE_SMOOTH));
+                    // Load the high-resolution image (5000x5000)
+                    BufferedImage originalImage = ImageIO.read(new File(iconPath));
+                    
+                    // Calculate the target size based on the tile dimension
+                    // Using 90% of tile size for optimal display
+                    int targetSize = (int)(TILE_PANEL_DIMENSION.width * 1);
+                    
+                    // Create an intermediate high-quality buffer at 2x target size for better downscaling
+                    int intermediateSize = targetSize * 2;
+                    BufferedImage intermediateImage = new BufferedImage(intermediateSize, intermediateSize, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2dIntermediate = intermediateImage.createGraphics();
+                    
+                    // First scale down to intermediate size with BICUBIC
+                    g2dIntermediate.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g2dIntermediate.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+                    g2dIntermediate.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    g2dIntermediate.drawImage(originalImage, 0, 0, intermediateSize, intermediateSize, null);
+                    g2dIntermediate.dispose();
+                    
+                    // Create final image at target size
+                    BufferedImage finalImage = new BufferedImage(targetSize, targetSize, BufferedImage.TYPE_INT_ARGB);
+                    Graphics2D g2dFinal = finalImage.createGraphics();
+                    
+                    // Final scaling with high-quality settings
+                    g2dFinal.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g2dFinal.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    g2dFinal.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+                    g2dFinal.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+                    g2dFinal.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    g2dFinal.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+                    
+                    // Draw the final image with precise pixel alignment
+                    g2dFinal.drawImage(intermediateImage, 0, 0, targetSize, targetSize, null);
+                    g2dFinal.dispose();
+                    
+                    // Create and cache the icon
+                    ImageIcon icon = new ImageIcon(finalImage);
                     String iconKey = color + "_" + piece;
                     pieceIconCache.put(iconKey, icon);
                     
-                    // Pre-cache scaled icons for each square
+                    // Pre-cache for all squares
                     for (int square = 0; square < 64; square++) {
-                        String squareKey = iconKey + "_" + square;
-                        squarePieceCache.put(squareKey, icon);
+                        squarePieceCache.put(iconKey + "_" + square, icon);
                     }
+                    
                 } catch (IOException e) {
+                    System.err.println("Error loading piece image: " + iconPath);
                     e.printStackTrace();
                 }
             }
