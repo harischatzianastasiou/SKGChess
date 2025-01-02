@@ -128,7 +128,7 @@ public class ChessBoardUI {
                     int targetSize = (int)(TILE_PANEL_DIMENSION.width * 1);
                     
                     // Create an intermediate high-quality buffer at 2x target size for better downscaling
-                    int intermediateSize = targetSize * 2;
+                    int intermediateSize = targetSize ;
                     BufferedImage intermediateImage = new BufferedImage(intermediateSize, intermediateSize, BufferedImage.TYPE_INT_ARGB);
                     Graphics2D g2dIntermediate = intermediateImage.createGraphics();
                     
