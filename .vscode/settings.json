@@ -1,5 +1,6 @@
 {
     "java.compile.nullAnalysis.mode": "automatic",
     "cursor.general.disableHttp2": false,
-    "java.configuration.updateBuildConfiguration": "interactive"
+    "java.configuration.updateBuildConfiguration": "interactive",
+    "java.debug.settings.onBuildFailureProceed": true
 }

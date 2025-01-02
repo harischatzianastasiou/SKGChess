@@ -13,6 +13,11 @@
           <release>22</release>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.3</version>
+      </plugin>
     </plugins>
   </build>
   
@@ -21,6 +26,21 @@
 	    <groupId>com.google.guava</groupId>
 	    <artifactId>guava</artifactId>
 	    <version>23.5-jre</version> <!-- or 23.5-android for the Android flavor -->
+	</dependency>
+	
+	<!-- JUnit Jupiter API for writing tests -->
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-api</artifactId>
+		<version>5.10.1</version>
+		<scope>test</scope>
+	</dependency>
+	<!-- JUnit Jupiter Engine for running tests -->
+	<dependency>
+		<groupId>org.junit.jupiter</groupId>
+		<artifactId>junit-jupiter-engine</artifactId>
+		<version>5.10.1</version>
+		<scope>test</scope>
 	</dependency>
    </dependencies>
 

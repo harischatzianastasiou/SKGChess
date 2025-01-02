@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Build-Jdk-Spec: 22
-Class-Path: guava-32.1.3-jre.jar failureaccess-1.0.1.jar listenablefutur
- e-9999.0-empty-to-avoid-conflict-with-guava.jar jsr305-3.0.2.jar checke
- r-qual-3.37.0.jar error_prone_annotations-2.21.1.jar j2objc-annotations
- -2.8.jar
-Main-Class: com.chess.SKGChess
-Created-By: Maven Integration for Eclipse
-
