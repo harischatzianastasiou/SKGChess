@@ -10,16 +10,27 @@ import com.chess.model.tiles.Tile;
 public class CandidateRankAndFileValidation implements MoveValidationStrategy {
     @Override
     public boolean validate(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer) {
-        int rankDifference = CalculateMoveUtils.getCoordinateRankDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
-        int fileDifference = CalculateMoveUtils.getCoordinateFileDifference(candidateDestinationCoordinate, piece.getPieceCoordinate());
+        int sourceRank = CalculateMoveUtils.getCoordinateRank(piece.getPieceCoordinate());
+        int destRank = CalculateMoveUtils.getCoordinateRank(candidateDestinationCoordinate);
+        int rankDiff = Math.max(sourceRank, destRank) - Math.min(sourceRank, destRank);
+        
+        int sourceFile = CalculateMoveUtils.getCoordinateFile(piece.getPieceCoordinate());
+        int destFile = CalculateMoveUtils.getCoordinateFile(candidateDestinationCoordinate);
+        int fileDiff = Math.max(destFile, sourceFile) - Math.min(destFile, sourceFile);
+        
+        // Prevent wrapping around board edges
+        if (Math.abs(sourceFile - destFile) > 4) { // If file difference is more than half the board, it's wrapping
+            return false;
+        }
+        
         switch(piece.getPieceSymbol()){
             case ROOK:
-                return rankDifference == 0 || fileDifference == 0;
+                return rankDiff == 0 || fileDiff == 0;
             case KING:
-                return rankDifference <= 1 && fileDifference <= 1;
+                return rankDiff <= 1 && fileDiff <= 1;
             case QUEEN:
                 if((Math.abs(candidateOffset) == 1 || Math.abs(candidateOffset) == 8)){
-                    return rankDifference == 0 || fileDifference == 0;
+                    return rankDiff == 0 || fileDiff == 0;
                 }
                 break;
         } 

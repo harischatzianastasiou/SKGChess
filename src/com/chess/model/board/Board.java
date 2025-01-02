@@ -119,7 +119,7 @@ public class Board implements IBoard {
 		// create white and black player here once
 	    final Builder builder = new Builder();
 	    
-	    // Set up Black pieces
+	    //Set up Black pieces
 	    builder.setPiece(new Rook  (0, Alliance.BLACK));
 	    builder.setPiece(new Knight(1, Alliance.BLACK));
 	    builder.setPiece(new Bishop(2, Alliance.BLACK));
@@ -144,7 +144,7 @@ public class Board implements IBoard {
 	    for(int coordinate = 48; coordinate < 56; coordinate++) {
 	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
 	    }
-	    
+	   
 	    // Set up current player's color
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
 
@@ -166,7 +166,7 @@ public class Board implements IBoard {
         // Place the specified pieces
         for (final Piece piece : pieces) {
             int coordinate = piece.getPieceCoordinate();
-            Alliance alliance = piece.getPieceAlliance();
+			Alliance alliance = piece.getPieceAlliance();
             
             switch (piece.getPieceSymbol()) {
                 case ROOK:

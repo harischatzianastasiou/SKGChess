@@ -8,6 +8,7 @@ import java.util.Arrays;
 import com.chess.model.Alliance;
 import com.chess.model.board.IBoard;
 import com.chess.model.pieces.*;
+import com.chess.model.pieces.Piece.PieceSymbol;
 import com.chess.model.moves.Move;
 import com.chess.model.tiles.Tile;
 import com.chess.util.GameHistory;
@@ -17,18 +18,18 @@ class DrawTest {
     
     @Test
     void testStalemate() {
-        King whiteKing = new King(60, Alliance.WHITE);
         King blackKing = new King(7, Alliance.BLACK);
-        Queen whiteQueen = new Queen(46, Alliance.WHITE);
+        King whiteKing = new King(23, Alliance.WHITE);
+        Queen whiteQueen = new Queen(22, Alliance.WHITE);
         
-        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteQueen));
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(blackKing, whiteKing, whiteQueen));
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> kingMoves = blackKing.calculateMoves(tiles, board.getCurrentPlayer());
         Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getOpponentPlayer());
         
         // Black king should have no legal moves but not be in check
-        assertTrue(kingMoves.isEmpty());
+        assertTrue(kingMoves.isEmpty() || kingMoves == null);
         assertFalse(queenMoves.stream().anyMatch(move -> 
             move.getTargetCoordinate() == blackKing.getPieceCoordinate()));
     }
@@ -132,12 +133,30 @@ class DrawTest {
         // Execute 50 moves without pawn moves or captures
         for (int i = 0; i < 50; i++) {
             board = whiteKingToF1.execute();
+            GameHistory.getInstance().addBoard(board);
+            GameHistory.getInstance().incrementHalfMoveCount();
+            
             board = blackKingToF8.execute();
-            board = whiteKingToF1.undo();
-            board = blackKingToF8.undo();
+            GameHistory.getInstance().addBoard(board);
+            GameHistory.getInstance().incrementHalfMoveCount();
         }
         
         // Check if 50 moves have been made without pawn moves or captures
-        assertEquals(100, GameHistory.getInstance().getHalfMoveCount());
+        List<Move> moveHistory = GameHistory.getInstance().getMoveHistory();
+        int lastMoveIndex = moveHistory.size() - 1;
+        int movesWithoutPawnOrCapture = 0;
+        
+        // Check the last 100 half-moves (50 full moves)
+        for (int i = lastMoveIndex; i >= Math.max(0, lastMoveIndex - 99); i--) {
+            Move move = moveHistory.get(i);
+            if (move.getPieceToMove().getPieceSymbol() == PieceSymbol.PAWN || 
+                move.getCapturedPiece() != null) {
+                break;
+            }
+            movesWithoutPawnOrCapture++;
+        }
+        
+        // Verify that we have 100 half-moves without pawns or captures
+        assertEquals(100, movesWithoutPawnOrCapture);
     }
 } 

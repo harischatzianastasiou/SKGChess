@@ -66,4 +66,5 @@ public abstract class Move {
     public IBoard undo() {//for reviewing moves
         return GameHistory.getInstance().getLastBoard();
     }
+    
 } 
