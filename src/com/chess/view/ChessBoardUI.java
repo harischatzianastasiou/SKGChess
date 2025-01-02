@@ -689,6 +689,11 @@ public class ChessBoardUI {
         System.exit(0);
     }
 
+    public void displayDrawMessage() {
+        JOptionPane.showMessageDialog(null, "Draw! The game is over.");
+        System.exit(0);
+    }
+
 	public Tile getSourceTile() {
 		return sourceTile;
 	}

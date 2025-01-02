@@ -13,9 +13,14 @@ public class SKGChess {
                 ChessBoardUI chessBoardUI = ChessBoardUI.getInstance(board);
                 board = controller.executeMove(chessBoardUI);
                 
-                if (controller.isGameOver()) {
+                if (controller.isCheckmate()) {
                     chessBoardUI = ChessBoardUI.getInstance(board);
                     chessBoardUI.displayCheckmateMessage(board.getOpponentPlayer().getAlliance());
+                    break;
+                } else if (controller.isDraw()) {
+                    chessBoardUI = ChessBoardUI.getInstance(board);
+                    chessBoardUI.displayDrawMessage();
+                    break;
                 }
             } catch (Exception e) {
                 e.printStackTrace(); // Handle exceptions gracefully

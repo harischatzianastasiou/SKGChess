@@ -1,6 +1,7 @@
 package com.chess.model.board;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,5 +151,48 @@ public class Board implements IBoard {
 	    return createBoard(builder);
 	}
 
-	
+    public static IBoard createEmptyBoard() {
+        final Builder builder = new Builder();
+        
+        // Set the first move to WHITE
+        builder.setCurrentPlayerAlliance(Alliance.WHITE);
+        
+	    return createBoard(builder);
+    }
+
+    public static IBoard createRandomBoard(Collection<Piece> pieces) {
+        final Builder builder = new Builder();
+        
+        // Place the specified pieces
+        for (final Piece piece : pieces) {
+            int coordinate = piece.getPieceCoordinate();
+            Alliance alliance = piece.getPieceAlliance();
+            
+            switch (piece.getPieceSymbol()) {
+                case ROOK:
+                    builder.setPiece(new Rook(coordinate, alliance));
+                    break;
+                case KNIGHT:
+                    builder.setPiece(new Knight(coordinate, alliance));
+                    break;
+                case BISHOP:
+                    builder.setPiece(new Bishop(coordinate, alliance));
+                    break;
+                case QUEEN:
+                    builder.setPiece(new Queen(coordinate, alliance));
+                    break;
+                case KING:
+                    builder.setPiece(new King(coordinate, alliance));
+                    break;
+                case PAWN:
+                    builder.setPiece(new Pawn(coordinate, alliance));
+                    break;
+            }
+        }
+        
+        // Set the move to WHITE
+        builder.setCurrentPlayerAlliance(Alliance.WHITE);
+        
+	    return createBoard(builder);
+    }
 }
