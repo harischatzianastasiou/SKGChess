@@ -69,6 +69,7 @@ public interface MoveValidationStrategy {
             pathCoordinates.add(currentCoordinate);
             currentCoordinate += offset;
         }
+        pathCoordinates.add(endCoordinate);
         
         return pathCoordinates;
     }
@@ -89,6 +90,7 @@ public interface MoveValidationStrategy {
             pathCoordinates.add(currentCoordinate);
             currentCoordinate += offset;
         }
+        pathCoordinates.add(endCoordinate);
         
         return pathCoordinates;
     }

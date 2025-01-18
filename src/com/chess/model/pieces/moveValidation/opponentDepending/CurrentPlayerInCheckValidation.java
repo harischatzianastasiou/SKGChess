@@ -30,9 +30,13 @@ public class CurrentPlayerInCheckValidation implements MoveValidationStrategy{
                 final Move checkingMove = checkingMoves.iterator().next();
                 final Piece checkingPiece = checkingMove.getPieceToMove();
                 final int kingCoordinate = checkingMove.getTargetCoordinate();
+                
+                // Add the checking piece's position to the attack path
+                checkingPieceAttackPath.add(checkingPiece.getPieceCoordinate());
+                // Add the rest of the attack path
                 checkingPieceAttackPath.addAll(MoveValidationStrategy.calculateAttackPath(checkingPiece, kingCoordinate, boardTiles));
             
-                if (!checkingPieceAttackPath.contains(candidateDestinationCoordinate)) { // if piece does not block the check then move is illegal
+                if (!checkingPieceAttackPath.contains(candidateDestinationCoordinate)) { // if piece does not block the check or capture the checking piece then move is illegal
                     return false;
                 }
             }

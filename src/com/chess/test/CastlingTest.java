@@ -9,6 +9,7 @@ import com.chess.model.Alliance;
 import com.chess.model.board.IBoard;
 import com.chess.model.pieces.King;
 import com.chess.model.pieces.Rook;
+import com.chess.model.pieces.Bishop;
 import com.chess.model.moves.Move;
 import com.chess.model.tiles.Tile;
 import java.util.List;
@@ -85,8 +86,8 @@ class CastlingTest {
             .filter(move -> move.getTargetCoordinate() == 61)
             .findFirst().orElse(null);
         assertNotNull(kingMove);
+        
         board = kingMove.execute();
-        board = kingMove.undo();
         
         Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
         
@@ -112,11 +113,43 @@ class CastlingTest {
             .findFirst().orElse(null);
         assertNotNull(rookMove);
         board = rookMove.execute();
-        board = rookMove.undo();
         
         Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
         
         // Should not be able to castle after rook has moved
+        assertFalse(moves.stream().anyMatch(move -> 
+            move.getTargetCoordinate() == 62)); // g1
+    }
+
+    @Test
+    void testCastlingPreventedBySlidingPieceControl() {
+        // Both kings must be present
+        King whiteKing = new King(60, Alliance.WHITE); // e1
+        King blackKing = new King(4, Alliance.BLACK); // e8
+        Rook whiteRook = new Rook(63, Alliance.WHITE); // h1
+        
+        // Black rook controls f1 square
+        Rook blackRook = new Rook(61, Alliance.BLACK); // f1
+        
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(
+            whiteKing, blackKing, whiteRook, blackRook));
+        List<Tile> tiles = board.getTiles();
+        
+        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        
+        // Should not be able to castle when a square is controlled by enemy piece
+        assertFalse(moves.stream().anyMatch(move -> 
+            move.getTargetCoordinate() == 62)); // g1
+            
+        // Test with bishop controlling castling square
+        board = IBoard.createRandomBoard(Arrays.asList(
+            whiteKing, blackKing, whiteRook,
+            new Bishop(43, Alliance.BLACK))); // f3 - controls f1
+        tiles = board.getTiles();
+        
+        moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        
+        // Should not be able to castle when a square is controlled by enemy bishop
         assertFalse(moves.stream().anyMatch(move -> 
             move.getTargetCoordinate() == 62)); // g1
     }
