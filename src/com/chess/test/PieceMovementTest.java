@@ -305,7 +305,7 @@ class PieceMovementTest {
         King blackKing = new King(4, Alliance.BLACK); // e8
         
         // Test rook blocking check
-        Rook whiteRook = new Rook(28, Alliance.WHITE); // e4
+        Rook whiteRook = new Rook(21, Alliance.WHITE); // e4
         Queen blackQueen = new Queen(63, Alliance.BLACK); // h1
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
@@ -313,11 +313,11 @@ class PieceMovementTest {
         List<Tile> tiles = board.getTiles();
         Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getOpponentPlayer());
         
-        // Rook should be able to block check by moving to e2
-        assertTrue(rookMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 52)); // e2
+        // Rook should be able to block check by moving to F1
+        assertTrue(rookMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 61)); // e2
         
         // Test bishop blocking check
-        Bishop whiteBishop = new Bishop(35, Alliance.WHITE); // d3
+        Bishop whiteBishop = new Bishop(38, Alliance.WHITE); // d3
         Rook blackRook = new Rook(56, Alliance.BLACK); // a1
         
         board = IBoard.createRandomBoard(Arrays.asList(
@@ -326,11 +326,11 @@ class PieceMovementTest {
         Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer());
         
         // Bishop should be able to block check by moving to c2
-        assertTrue(bishopMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 50)); // c2
+        assertTrue(bishopMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 59)); // c2
         
         // Test queen blocking check
         Queen whiteQueen = new Queen(43, Alliance.WHITE); // d3
-        Bishop blackBishop = new Bishop(0, Alliance.BLACK); // a8
+        Bishop blackBishop = new Bishop(18, Alliance.BLACK); // a8
         
         board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, whiteQueen, blackBishop));
@@ -338,7 +338,7 @@ class PieceMovementTest {
         Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getOpponentPlayer());
         
         // Queen should be able to block check by moving to c2
-        assertTrue(queenMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 50)); // c2
+        assertTrue(queenMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 11)); // c2
     }
     
     @Test

@@ -13,7 +13,7 @@ public class GameHistory {
     private static GameHistory instance;
     private final List<IBoard> boards;
     private final List<Move> moveHistory;
-    private int halfMoveCount = 0; // for 50 move rule
+    private int moveCount = 0; // for 50 move rule
 
     private GameHistory() {
         this.boards = new ArrayList<>();
@@ -59,15 +59,15 @@ public class GameHistory {
     }
 
     public int getHalfMoveCount() {
-        return halfMoveCount;
+        return moveCount;
     }
 
-    public void incrementHalfMoveCount() {
-        halfMoveCount++;
+    public void incrementMoveCount() {
+        moveCount++;
     }
 
-    public void resetHalfMoveCount() {
-        halfMoveCount = 0;
+    public void resetMoveCount() {
+        moveCount = 0;
     }
 
     /**

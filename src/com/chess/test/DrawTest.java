@@ -120,34 +120,55 @@ class DrawTest {
         Collection<Move> blackKingMoves = blackKing.calculateMoves(tiles, board.getCurrentPlayer());
         
         // Get the specific moves for the kings
-        Move whiteKingToF1 = whiteKingMoves.stream()
+        Move whiteKingMove1 = whiteKingMoves.stream()
             .filter(move -> move.getTargetCoordinate() == 61) // f1
             .findFirst().orElse(null);
-        Move blackKingToF8 = blackKingMoves.stream()
+        Move blackKingMove1 = blackKingMoves.stream()
             .filter(move -> move.getTargetCoordinate() == 5) // f8
             .findFirst().orElse(null);
-            
-        assertNotNull(whiteKingToF1);
-        assertNotNull(blackKingToF8);
         
-        // Execute 50 moves without pawn moves or captures
-        for (int i = 0; i < 50; i++) {
-            board = whiteKingToF1.execute();
-            GameHistory.getInstance().addBoard(board);
-            GameHistory.getInstance().incrementHalfMoveCount();
+        Move whiteKingMove2 = whiteKingMoves.stream()
+                .filter(move -> move.getTargetCoordinate() == 61) // f1
+                .findFirst().orElse(null);
+            Move blackKingMove2 = blackKingMoves.stream()
+                .filter(move -> move.getTargetCoordinate() == 5) // f8
+                .findFirst().orElse(null);
             
-            board = blackKingToF8.execute();
+        assertNotNull(whiteKingMove1);
+        assertNotNull(blackKingMove1);
+        assertNotNull(whiteKingMove2);
+        assertNotNull(blackKingMove2);
+        
+        // Execute 50 moves for each player without pawn moves or captures
+        for (int i = 0; i < 25; i++) {
+            board = whiteKingMove1.execute();
             GameHistory.getInstance().addBoard(board);
-            GameHistory.getInstance().incrementHalfMoveCount();
+            GameHistory.getInstance().addMove(whiteKingMove1);
+            GameHistory.getInstance().incrementMoveCount();
+            
+            board = blackKingMove1.execute();
+            GameHistory.getInstance().addBoard(board);
+            GameHistory.getInstance().addMove(blackKingMove1);
+            GameHistory.getInstance().incrementMoveCount();
+            
+            board = whiteKingMove2.execute();
+            GameHistory.getInstance().addBoard(board);
+            GameHistory.getInstance().addMove(whiteKingMove2);
+            GameHistory.getInstance().incrementMoveCount();
+            
+            board = blackKingMove2.execute();
+            GameHistory.getInstance().addBoard(board);
+            GameHistory.getInstance().addMove(blackKingMove2);
+            GameHistory.getInstance().incrementMoveCount();
+            
         }
         
-        // Check if 50 moves have been made without pawn moves or captures
+        // Check if 100 moves have been made without pawn moves or captures
         List<Move> moveHistory = GameHistory.getInstance().getMoveHistory();
-        int lastMoveIndex = moveHistory.size() - 1;
         int movesWithoutPawnOrCapture = 0;
         
-        // Check the last 100 half-moves (50 full moves)
-        for (int i = lastMoveIndex; i >= Math.max(0, lastMoveIndex - 99); i--) {
+        // Check the last 100 moves
+        for (int i = 0; i <moveHistory.size(); i++) {
             Move move = moveHistory.get(i);
             if (move.getPieceToMove().getPieceSymbol() == PieceSymbol.PAWN || 
                 move.getCapturedPiece() != null) {
@@ -156,7 +177,7 @@ class DrawTest {
             movesWithoutPawnOrCapture++;
         }
         
-        // Verify that we have 100 half-moves without pawns or captures
+        // Verify that we have 50 half-moves without pawns or captures
         assertEquals(100, movesWithoutPawnOrCapture);
     }
 } 
