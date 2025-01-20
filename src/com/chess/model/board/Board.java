@@ -120,42 +120,30 @@ public class Board implements IBoard {
 	    final Builder builder = new Builder();
 	    
 	    //Set up Black pieces
-	    // builder.setPiece(new Rook  (0, Alliance.BLACK));
-	    // builder.setPiece(new Knight(1, Alliance.BLACK));
-	    // builder.setPiece(new Bishop(2, Alliance.BLACK));
-	    // builder.setPiece(new Queen (3, Alliance.BLACK));
-	    // builder.setPiece(new King  (4, Alliance.BLACK));
-	    // builder.setPiece(new Bishop(5, Alliance.BLACK));
-	    // builder.setPiece(new Knight(6, Alliance.BLACK));
-	    // builder.setPiece(new Rook  (7, Alliance.BLACK));
-	    // for(int coordinate = 8; coordinate < 16; coordinate++) {
-	    //     builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
-	    // }
+	    builder.setPiece(new Rook  (0, Alliance.BLACK));
+	    builder.setPiece(new Knight(1, Alliance.BLACK));
+	    builder.setPiece(new Bishop(2, Alliance.BLACK));
+	    builder.setPiece(new Queen (3, Alliance.BLACK));
+	    builder.setPiece(new King  (4, Alliance.BLACK));
+	    builder.setPiece(new Bishop(5, Alliance.BLACK));
+	    builder.setPiece(new Knight(6, Alliance.BLACK));
+	    builder.setPiece(new Rook  (7, Alliance.BLACK));
+	    for(int coordinate = 8; coordinate < 16; coordinate++) {
+	        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
+	    }
 	    
-	    // // Set up White pieces
-	    // builder.setPiece(new Rook  (56, Alliance.WHITE));
-	    // builder.setPiece(new Knight(57, Alliance.WHITE));
-	    // builder.setPiece(new Bishop(58, Alliance.WHITE));
-		// builder.setPiece(new Queen (59, Alliance.WHITE));
-		// builder.setPiece(new King  (60, Alliance.WHITE));
-	    // builder.setPiece(new Bishop(61, Alliance.WHITE));
-	    // builder.setPiece(new Knight(62, Alliance.WHITE));
-	    // builder.setPiece(new Rook  (63, Alliance.WHITE));
-	    // for(int coordinate = 48; coordinate < 56; coordinate++) {
-	    //     builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
-	    // }
-
-		King whiteKing = new King(60, Alliance.WHITE); // e1
-        King blackKing = new King(4, Alliance.BLACK); // e8
-        
-        // Test rook blocking check
-        Rook whiteRook = new Rook(21, Alliance.WHITE); // e4
-        Queen blackQueen = new Queen(63, Alliance.BLACK); // h1
-        
-		builder.setPiece(whiteKing);
-		builder.setPiece(blackKing);
-		builder.setPiece(whiteRook);
-		builder.setPiece(blackQueen);
+	    // Set up White pieces
+	    builder.setPiece(new Rook  (56, Alliance.WHITE));
+	    builder.setPiece(new Knight(57, Alliance.WHITE));
+	    builder.setPiece(new Bishop(58, Alliance.WHITE));
+		builder.setPiece(new Queen (59, Alliance.WHITE));
+		builder.setPiece(new King  (60, Alliance.WHITE));
+	    builder.setPiece(new Bishop(61, Alliance.WHITE));
+	    builder.setPiece(new Knight(62, Alliance.WHITE));
+	    builder.setPiece(new Rook  (63, Alliance.WHITE));
+	    for(int coordinate = 48; coordinate < 56; coordinate++) {
+	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
+	    }
 	   
 	    // Set up current player's color
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
