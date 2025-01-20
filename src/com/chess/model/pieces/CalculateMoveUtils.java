@@ -45,21 +45,35 @@ public final class CalculateMoveUtils {
                 int total_offset = candidateOffset * squaresMoved;
                 final int candidateDestinationCoordinate = calculateDestinationCoordinate(piece, total_offset);
 
-                List<MoveValidationStrategy> validations = new ArrayList<>(List.of(
+                List<MoveValidationStrategy> basicValidations = new ArrayList<>(List.of(
                     new CoordinateInBoundsValidation(),
                     new AllianceOfTileValidation(),
                     new CandidateRankAndFileValidation()
                 ));
 
-                if (opponentPlayer != null) {
-                    validations.add(new CurrentPlayerInCheckValidation());
-                    validations.add(new CurrentPlayerPiecePinnedValidation());
-                    validations.add(new CurrentPlayerKingSafeSquaresValidation());
+                // Basic validations that should break the direction if they fail
+                MoveValidation basicValidation = new MoveValidation(basicValidations);
+                if (!basicValidation.validate(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer)) {
+                    break;
                 }
 
-                MoveValidation moveValidation = new MoveValidation(validations);
-                if (!moveValidation.validate(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer)) {
-                    break;
+                // Check and pin validations that should break the direction only if there is a piece in the destination tile
+                // Else continue checking in the direction
+                if (opponentPlayer != null) {
+                    List<MoveValidationStrategy> checkValidations = new ArrayList<>(List.of(
+                        new CurrentPlayerInCheckValidation(),
+                        new CurrentPlayerPiecePinnedValidation(),
+                        new CurrentPlayerKingSafeSquaresValidation()
+                    ));
+                    
+                    final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
+                    MoveValidation checkValidation = new MoveValidation(checkValidations);
+                    if (!checkValidation.validate(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer)) {
+                        if (!isCandidateTileEmpty(candidateDestinationTile)) {
+                            break;  // Break only if we hit a piece that fails validation
+                        }
+                        continue;  // Otherwise just skip this square and continue checking
+                    }
                 }
 
                 final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
@@ -69,9 +83,11 @@ public final class CalculateMoveUtils {
                 }else{
                     if(isCandidateTileOccupiedByOpponent(piece,candidateDestinationTile))
                         moves.addAll(addCapturingMoves(piece, boardTiles,  candidateDestinationCoordinate, candidateOffset));
-                    else
-                        if(opponentPlayer == null)
+                    else {
+                        if(opponentPlayer == null){
                             ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate); // Store the protected piece
+                        }
+                    }
                     break; //for sliding pieces if there is a piece in the direction that sliding piece can move, stop further checking in this direction.
                 }
             }
