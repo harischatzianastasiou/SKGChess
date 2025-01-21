@@ -195,4 +195,11 @@ public class Board implements IBoard {
         
 	    return createBoard(builder);
     }
+
+	public Collection<Piece> getAllPieces() {
+		return this.tiles.stream()
+				.map(Tile::getPiece)
+				.filter(piece -> piece != null)
+				.toList();
+	}
 }
