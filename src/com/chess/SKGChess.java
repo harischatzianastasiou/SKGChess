@@ -9,14 +9,31 @@ import com.chess.model.board.IBoard;
 import com.chess.model.moves.Move;
 import com.chess.view.ChessBoardUI;
 import com.chess.view.GameModeSelector;
+import com.chess.view.GameIntro;
+import java.awt.Point;
 
 public class SKGChess {
     public static void main(String[] args) {
+        Point windowLocation = null;
+
+        // Show intro animation
+        GameIntro intro = new GameIntro();
+        while (!intro.isIntroFinished()) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        windowLocation = intro.getLocation();
+
         // Show game mode selection dialog
-        GameModeSelector modeSelector = new GameModeSelector();
+        IBoard board = IBoard.createStandardBoard();
+        GameModeSelector modeSelector = new GameModeSelector(windowLocation);
         if (!modeSelector.isSelectionMade()) {
             return; // User closed the dialog
         }
+        windowLocation = modeSelector.getLocation();
 
         boolean isHumanVsHuman = modeSelector.isHumanVsHuman();
         Alliance playerAlliance = modeSelector.getPlayerAlliance();
@@ -28,34 +45,36 @@ public class SKGChess {
             MinimaxStrategy strategy = new MinimaxStrategy(new StandardBoardEvaluator(), 3); // depth of 3
             aiPlayer = new AIPlayer(strategy, aiAlliance);
         }
-        
-        IBoard board = IBoard.createStandardBoard();
 
+        // Initialize the game UI at the same location
+        ChessBoardUI chessBoardUI = ChessBoardUI.getInstance(board);
+        chessBoardUI.getGameFrame().setLocation(windowLocation);
+        chessBoardUI.getGameFrame().setVisible(true);
+        
         while (true) {
             try {
                 GameController controller = new GameController(board);
-                ChessBoardUI chessBoardUI = ChessBoardUI.getInstance(board);
 
                 // If it's AI's turn in human vs AI mode
                 if (!isHumanVsHuman && board.getCurrentPlayer().getAlliance() == aiPlayer.getAlliance()) {
                     Move aiMove = aiPlayer.makeMove(board);
                     board = aiMove.execute();
-                    chessBoardUI = ChessBoardUI.getInstance(board);
                 } else {
                     board = controller.executeMove(chessBoardUI);
                 }
                 
+                // Update UI after each move
+                chessBoardUI = ChessBoardUI.getInstance(board);
+                
                 if (controller.isCheckmate()) {
-                    chessBoardUI = ChessBoardUI.getInstance(board);
                     chessBoardUI.displayCheckmateMessage(board.getOpponentPlayer().getAlliance());
                     break;
                 } else if (controller.isDraw()) {
-                    chessBoardUI = ChessBoardUI.getInstance(board);
                     chessBoardUI.displayDrawMessage();
                     break;
                 }
             } catch (Exception e) {
-                e.printStackTrace(); // Handle exceptions gracefully
+                e.printStackTrace();
             }
         }
     }

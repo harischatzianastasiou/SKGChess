@@ -209,7 +209,7 @@ public class ChessBoardUI {
         
         // Add title with custom font and styling
         JLabel historyTitle = new JLabel("SKGChess", SwingConstants.CENTER);
-        historyTitle.setFont(new Font("Segoe Script", Font.ITALIC, 20));
+        historyTitle.setFont(new Font("Palatino Linotype", Font.BOLD, 20));
         historyTitle.setForeground(historyTitleTextColor);
         historyTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         titlePanel.add(historyTitle, BorderLayout.CENTER);
@@ -932,8 +932,8 @@ public class ChessBoardUI {
             if (tileId == (boardIsFlipped ? 7 : 56)) {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                Font handwrittenFont = new Font("Segoe Script", Font.ITALIC, 14);  // Increased size
-                g2d.setFont(handwrittenFont);
+                Font watermarkFont = new Font("Palatino Linotype", Font.BOLD, 14);
+                g2d.setFont(watermarkFont);
                 
                 // Set color based on tile color (dark tile gets white text, light tile gets dark text)
                 Color textColor = CalculateMoveUtils.getCoordinateAlliance(tileId) == Alliance.WHITE ? 
@@ -943,8 +943,8 @@ public class ChessBoardUI {
                 
                 // Calculate text position
                 String text = "SKGChess";
-                int textWidth = g2d.getFontMetrics(handwrittenFont).stringWidth(text);
-                int textHeight = g2d.getFontMetrics(handwrittenFont).getHeight();
+                int textWidth = g2d.getFontMetrics(watermarkFont).stringWidth(text);
+                int textHeight = g2d.getFontMetrics(watermarkFont).getHeight();
                 
                 // Position the text in the bottom right corner with some padding
                 int x = getWidth() - textWidth - 5;
@@ -1354,6 +1354,10 @@ public class ChessBoardUI {
             lastMoveTarget = -1;
         }
         boardPanel.drawBoard(currentHistoryIndex == -1 ? chessboard : GameHistory.getInstance().getBoards().get(currentHistoryIndex));
+    }
+
+    public JFrame getGameFrame() {
+        return gameFrame;
     }
 
 }
