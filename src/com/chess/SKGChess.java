@@ -3,6 +3,7 @@ package com.chess;
 import com.chess.ai.AIPlayer;
 import com.chess.ai.evaluation.StandardBoardEvaluator;
 import com.chess.ai.strategy.MinimaxStrategy;
+import com.chess.ai.strategy.OpeningBookStrategy;
 import com.chess.controller.GameController;
 import com.chess.model.Alliance;
 import com.chess.model.board.IBoard;
@@ -42,8 +43,9 @@ public class SKGChess {
         AIPlayer aiPlayer = null;
         if (!isHumanVsHuman) {
             Alliance aiAlliance = playerAlliance == Alliance.WHITE ? Alliance.BLACK : Alliance.WHITE;
-            MinimaxStrategy strategy = new MinimaxStrategy(new StandardBoardEvaluator(), 3); // depth of 3
-            aiPlayer = new AIPlayer(strategy, aiAlliance);
+            MinimaxStrategy strategy = new MinimaxStrategy(new StandardBoardEvaluator(), 3);
+            OpeningBookStrategy openingBookStrategy = new OpeningBookStrategy(strategy);
+            aiPlayer = new AIPlayer(openingBookStrategy, aiAlliance);
         }
 
         // Initialize the game UI at the same location

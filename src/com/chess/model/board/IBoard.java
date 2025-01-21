@@ -6,11 +6,23 @@ import java.util.List;
 import com.chess.model.pieces.Piece;
 import com.chess.model.player.Player;
 import com.chess.model.tiles.Tile;
+import com.chess.pgn.FENUtils;
+
 public interface IBoard {
     List<Tile> getTiles();
     Tile getTile(int tileCoordinate);
     Player getCurrentPlayer();
     Player getOpponentPlayer();
+    
+    /**
+     * Gets the FEN (Forsyth-Edwards Notation) string representation of the current board position.
+     * This is used to uniquely identify positions for the opening book.
+     * @return The FEN string for this position
+     */
+    default String getFEN() {
+        return FENUtils.toFEN(this);
+    }
+
     /**
      * Creates a standard chess board with all pieces in their initial positions.
      * @return A new board with standard piece setup

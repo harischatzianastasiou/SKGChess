@@ -1242,9 +1242,9 @@ public class ChessBoardUI {
         
         // Get file and rank for coordinates
         int sourceFile = move.getSourceCoordinate() % 8;
-        int sourceRank = 7 - (move.getSourceCoordinate() / 8); // Invert rank for correct notation
+        int sourceRank = move.getSourceCoordinate() / 8; // Get rank directly, no need to invert
         int targetFile = move.getTargetCoordinate() % 8;
-        int targetRank = 7 - (move.getTargetCoordinate() / 8); // Invert rank for correct notation
+        int targetRank = move.getTargetCoordinate() / 8;
         
         // Handle castling first
         if (move instanceof KingSideCastleMove) {
@@ -1268,12 +1268,12 @@ public class ChessBoardUI {
             
             // Add destination square
             notation.append((char)('a' + targetFile));
-            notation.append(targetRank + 1); // Add 1 since ranks are 1-based
+            notation.append(8 - targetRank); // Convert board rank (0-7) to chess rank (8-1)
             
             // Add promotion piece
             if (move instanceof PawnPromotionMove || move instanceof PawnPromotionCapturingMove) {
                 notation.append("=Q"); // Assuming queen promotion for now
-            }
+            }//fix
         }
         
         return notation.toString();

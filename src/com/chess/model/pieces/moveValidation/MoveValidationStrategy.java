@@ -32,7 +32,6 @@ public interface MoveValidationStrategy {
                 
             case QUEEN:
                 if (isOnDiagonal(checkingPieceCoordinate, kingCoordinate)) {
-                    System.out.println("isondiagonal");
                     return calculateDiagonalAttackPath(checkingPieceCoordinate, kingCoordinate);
                 } else {
                     return calculateStraightAttackPath(checkingPieceCoordinate, kingCoordinate);
