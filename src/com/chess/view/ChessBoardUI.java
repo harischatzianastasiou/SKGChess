@@ -862,7 +862,35 @@ public class ChessBoardUI {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (isViewingHistory) {
-                        return; // Ignore clicks while viewing history
+                        // If clicking own tile while viewing history, reset to current board
+                        Tile clickedTile = chessboard.getTile(tileId);
+                        if (clickedTile.isTileOccupied() && 
+                            clickedTile.getPiece().getPieceAlliance() == chessboard.getCurrentPlayer().getAlliance()) {
+                            isViewingHistory = false;
+                            currentHistoryIndex = -1;
+                            boardPanel.drawBoard(chessboard);
+                            // Enable/disable navigation buttons appropriately
+                            Component[] components = moveHistoryPanel.getComponents();
+                            for (Component comp : components) {
+                                if (comp instanceof JPanel) { // This is the navigation panel
+                                    Component[] buttons = ((JPanel) comp).getComponents();
+                                    for (Component button : buttons) {
+                                        if (button instanceof JButton) {
+                                            JButton navButton = (JButton) button;
+                                            // Enable previous button, disable next button
+                                            navButton.setEnabled(navButton.getText().equals("<"));
+                                        }
+                                    }
+                                }
+                            }
+                            // Update move highlighting for last move
+                            List<Move> moveHistory = GameHistory.getInstance().getMoveHistory();
+                            if (!moveHistory.isEmpty()) {
+                                highlightMoveInHistory(moveHistory.size() - 1);
+                                updateLastMoveHighlighting(moveHistory.get(moveHistory.size() - 1));
+                            }
+                        }
+                        return;
                     }
                     if (chessboard == null) {
                         JOptionPane.showMessageDialog(null, "Chessboard is not initialized. Please restart the game.");
