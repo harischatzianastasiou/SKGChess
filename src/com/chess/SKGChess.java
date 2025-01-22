@@ -61,7 +61,7 @@ public class SKGChess {
                 // If it's AI's turn in human vs AI mode
                 if (!isHumanVsHuman && board.getCurrentPlayer().getAlliance() == aiPlayer.getAlliance()) {
                     Move aiMove = aiPlayer.makeMove(board);
-                    board = aiMove.execute();
+                    board = controller.executeAIMove(aiMove, chessBoardUI);
                 } else {
                     board = controller.executeMove(chessBoardUI);
                 }

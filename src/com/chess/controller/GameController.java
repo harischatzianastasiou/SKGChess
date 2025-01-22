@@ -34,16 +34,27 @@ public class GameController {
         for (Move currentPlayerMove : currentPlayerMoves) {
             if (currentPlayerMove.getSourceCoordinate() == chessBoardUI.getSourceTile().getTileCoordinate() &&
                 currentPlayerMove.getTargetCoordinate() == chessBoardUI.getTargetTile().getTileCoordinate()) {
-                GameHistory.getInstance().addBoard(board);
-                GameHistory.getInstance().addMove(currentPlayerMove);
-                
-                // Play appropriate sound based on move type
-                if(currentPlayerMove instanceof CapturingMove) {
-                    SoundPlayer.playCaptureSound();
-                } else {
-                    SoundPlayer.playMoveSound();
-                }
-    
+                return executeSelectedMove(currentPlayerMove, chessBoardUI);
+            }
+        }
+        return board;
+    }
+
+    public IBoard executeAIMove(Move aiMove, ChessBoardUI chessBoardUI) {
+        return executeSelectedMove(aiMove, chessBoardUI);
+    }
+
+    private IBoard executeSelectedMove(Move selectedMove, ChessBoardUI chessBoardUI) {
+        GameHistory.getInstance().addBoard(board);
+        GameHistory.getInstance().addMove(selectedMove);
+        
+        // Play appropriate sound based on move type
+        if(selectedMove instanceof CapturingMove) {
+            SoundPlayer.playCaptureSound();
+        } else {
+            SoundPlayer.playMoveSound();
+        }
+
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///   With each move a new board is created to represent the new state of the tiles and the turn of the next players.     //           
                 ///   At least one tile has now changed to occupied or empty (tiles hold pieces).                                         // 
@@ -52,25 +63,22 @@ public class GameController {
                 ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 
-                board = currentPlayerMove.execute(); 
-                
-                CurrentPlayer currentPlayer = (CurrentPlayer) board.getCurrentPlayer();
+                board = selectedMove.execute(); 
+        
+        CurrentPlayer currentPlayer = (CurrentPlayer) board.getCurrentPlayer();
 
-                if (currentPlayer.isCheckmate()) {
-                    chessBoardUI.addMoveToHistory(currentPlayerMove, "#");       
-                    SoundPlayer.playCheckmateSound();
-                    this.isCheckmate = true;
-                } else if(currentPlayer.isInCheck()) {
-                    System.out.println("Checking");
-                    chessBoardUI.addMoveToHistory(currentPlayerMove, "+");       
-                    SoundPlayer.playCheckSound();
-                } else {
-                    chessBoardUI.addMoveToHistory(currentPlayerMove, "");
-                }
-                
-                break;
-            }
+        if (currentPlayer.isCheckmate()) {
+            chessBoardUI.addMoveToHistory(selectedMove, "#");       
+            SoundPlayer.playCheckmateSound();
+            this.isCheckmate = true;
+        } else if(currentPlayer.isInCheck()) {
+            System.out.println("Checking");
+            chessBoardUI.addMoveToHistory(selectedMove, "+");       
+            SoundPlayer.playCheckSound();
+        } else {
+            chessBoardUI.addMoveToHistory(selectedMove, "");
         }
+        
         return board;
     }
 
