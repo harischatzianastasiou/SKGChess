@@ -1,9 +1,19 @@
 package com.chess.ai.utils;
 
+import java.util.List;
+
 import com.chess.model.board.IBoard;
 import com.chess.model.moves.Move;
+import com.chess.model.moves.capturing.CapturingMove;
+import com.chess.model.moves.noncapturing.KingSideCastleMove;
+import com.chess.model.moves.noncapturing.QueenSideCastleMove;
+import com.chess.model.pieces.Bishop;
+import com.chess.model.pieces.King;
+import com.chess.model.pieces.Knight;
+import com.chess.model.pieces.Pawn;
 import com.chess.model.pieces.Piece;
-import com.chess.model.tiles.Tile;
+import com.chess.model.pieces.Queen;
+import com.chess.model.pieces.Rook;
 
 public class MoveConverter {
     
@@ -13,67 +23,107 @@ public class MoveConverter {
     // Map chess ranks (1-8) to board rows (0-7), counting from top to bottom
     private static final int[] RANK_MAP = {0, 1, 2, 3, 4, 5, 6, 7};  // 8=0, 7=1, etc.
     
-    public static Move fromLongAlgebraic(String notation, IBoard board) {
-        if (notation == null || notation.length() != 4) {
-            System.out.println("Invalid notation length: " + notation);
+    public static Move fromLongAlgebraic(String moveStr, IBoard board) {
+        if (moveStr == null || moveStr.length() < 4) {
             return null;
         }
         
-        System.out.println("\n=== Converting Move: " + notation + " ===");
+        // Handle castling
+        if (moveStr.equals("e1g1") || moveStr.equals("e8g8")) {
+            return findMatchingMove(board, m -> m instanceof KingSideCastleMove);
+        }
+        if (moveStr.equals("e1c1") || moveStr.equals("e8c8")) {
+            return findMatchingMove(board, m -> m instanceof QueenSideCastleMove);
+        }
         
-        // Get files (a-h)
-        char fromFileChar = notation.charAt(0);
-        char toFileChar = notation.charAt(2);
+        // Parse source and target squares
+        int sourceFile = moveStr.charAt(0) - 'a';
+        int sourceRank = '8' - moveStr.charAt(1);
+        int targetFile = moveStr.charAt(2) - 'a';
+        int targetRank = '8' - moveStr.charAt(3);
         
-        // Get ranks (1-8)
-        int fromRankNum = Character.getNumericValue(notation.charAt(1));
-        int toRankNum = Character.getNumericValue(notation.charAt(3));
-        
-        // Convert to board coordinates
-        int fromFile = fromFileChar - 'a';
-        int toFile = toFileChar - 'a';
-        int fromRank = RANK_MAP[8 - fromRankNum];  // Convert chess rank (8-1) to board rank (0-7)
-        int toRank = RANK_MAP[8 - toRankNum];
-        
-        System.out.println(String.format("From: %c%d -> rank=%d, file=%d", fromFileChar, fromRankNum, fromRank, fromFile));
-        System.out.println(String.format("To: %c%d -> rank=%d, file=%d", toFileChar, toRankNum, toRank, toFile));
-        
-        // Calculate board coordinates
-        int sourceCoordinate = (fromRank * 8) + fromFile;
-        int targetCoordinate = (toRank * 8) + toFile;
-        
-        System.out.println("Board coordinates: " + sourceCoordinate + " -> " + targetCoordinate);
-        
-        // Validate coordinates
-        if (!isValidCoordinate(sourceCoordinate) || !isValidCoordinate(targetCoordinate)) {
-            System.out.println("❌ Invalid coordinates!");
+        if (!isValidSquare(sourceFile, sourceRank) || !isValidSquare(targetFile, targetRank)) {
             return null;
         }
         
-        // Get the piece at the source square
-        Tile sourceTile = board.getTile(sourceCoordinate);
-        if (!sourceTile.isTileOccupied()) {
-            System.out.println("❌ No piece at source square!");
+        int sourceCoord = sourceRank * 8 + sourceFile;
+        int targetCoord = targetRank * 8 + targetFile;
+        
+        // Find matching move in legal moves
+        return findMatchingMove(board, m -> 
+            m.getSourceCoordinate() == sourceCoord && 
+            m.getTargetCoordinate() == targetCoord);
+    }
+    
+    public static String toLongAlgebraic(Move move) {
+        if (move == null) {
             return null;
         }
         
-        Piece piece = sourceTile.getPiece();
-        System.out.println("Piece at source: " + piece.getPieceSymbol());
+        int sourceCoord = move.getSourceCoordinate();
+        int targetCoord = move.getTargetCoordinate();
         
-        // Find the matching legal move
-        for (Move move : piece.calculateMoves(board.getTiles(), board.getOpponentPlayer())) {
-            if (move.getSourceCoordinate() == sourceCoordinate && 
-                move.getTargetCoordinate() == targetCoordinate) {
-                System.out.println("✓ Found legal move!");
+        char sourceFile = (char)('a' + (sourceCoord % 8));
+        char sourceRank = (char)('8' - (sourceCoord / 8));
+        char targetFile = (char)('a' + (targetCoord % 8));
+        char targetRank = (char)('8' - (targetCoord / 8));
+        
+        return "" + sourceFile + sourceRank + targetFile + targetRank;
+    }
+    
+    public static Move fromAlgebraic(String moveStr, IBoard board) {
+        if (moveStr == null || moveStr.isEmpty()) {
+            return null;
+        }
+        
+        moveStr = moveStr.replaceAll("[+#!?]", ""); // Remove check/mate/annotation symbols
+        
+        // Handle castling
+        if (moveStr.equals("O-O")) {
+            return findMatchingMove(board, m -> m instanceof KingSideCastleMove);
+        }
+        if (moveStr.equals("O-O-O")) {
+            return findMatchingMove(board, m -> m instanceof QueenSideCastleMove);
+        }
+        
+        // Parse the move
+        char pieceType = Character.isUpperCase(moveStr.charAt(0)) ? moveStr.charAt(0) : 'P';
+        boolean isCapture = moveStr.contains("x");
+        String square = moveStr.substring(moveStr.length() - 2); // Last two characters are always the target square
+        
+        // Parse target square
+        int targetFile = square.charAt(0) - 'a';
+        int targetRank = '8' - square.charAt(1);
+        int targetCoord = targetRank * 8 + targetFile;
+        
+        // Find matching move in legal moves
+        return findMatchingMove(board, m -> {
+            Piece piece = m.getPieceToMove();
+            boolean pieceMatches = piece instanceof Pawn ? pieceType == 'P' :
+                                 piece instanceof Knight ? pieceType == 'N' :
+                                 piece instanceof Bishop ? pieceType == 'B' :
+                                 piece instanceof Rook ? pieceType == 'R' :
+                                 piece instanceof Queen ? pieceType == 'Q' :
+                                 piece instanceof King ? pieceType == 'K' : false;
+            
+            boolean captureMatches = isCapture == (m instanceof CapturingMove);
+            boolean targetMatches = m.getTargetCoordinate() == targetCoord;
+            
+            return pieceMatches && captureMatches && targetMatches;
+        });
+    }
+    
+    private static boolean isValidSquare(int file, int rank) {
+        return file >= 0 && file < 8 && rank >= 0 && rank < 8;
+    }
+    
+    private static Move findMatchingMove(IBoard board, java.util.function.Predicate<Move> predicate) {
+        List<Move> legalMoves = (List<Move>) board.getCurrentPlayer().getMoves();
+        for (Move move : legalMoves) {
+            if (predicate.test(move)) {
                 return move;
             }
         }
-        
-        System.out.println("❌ No legal move found!");
         return null;
-    }
-    
-    private static boolean isValidCoordinate(int coordinate) {
-        return coordinate >= 0 && coordinate < 64;
     }
 }

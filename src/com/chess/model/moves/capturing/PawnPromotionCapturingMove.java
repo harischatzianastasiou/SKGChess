@@ -31,7 +31,6 @@ public class PawnPromotionCapturingMove extends CapturingMove {
         }
 
         // Let the user select a new piece
-        System.out.println("Select a new piece for the pawn (Queen, Rook, Bishop, Knight): ");
         // Assume user input is handled elsewhere and stored in newPieceType
         String newPieceType = "QUEEN"; // Replace with actual user input
 

@@ -11,13 +11,11 @@ public class FENUtils {
         
         // 1. Piece placement (from rank 8 to 1)
         for (int rank = 0; rank < 8; rank++) {
-            System.out.println("\nProcessing rank " + (8 - rank));
             int emptySquares = 0;
             
             for (int file = 0; file < 8; file++) {
                 int coordinate = rank * 8 + file;
                 Tile tile = board.getTile(coordinate);
-                System.out.printf("  Coordinate %d (rank=%d, file=%d): ", coordinate, rank, file);
                 
                 if (tile.isTileOccupied()) {
                     if (emptySquares > 0) {
@@ -29,10 +27,8 @@ public class FENUtils {
                     // Lowercase for black pieces, uppercase for white
                     String pieceChar = piece.getPieceAlliance().isWhite() ? symbol : symbol.toLowerCase();
                     fen.append(pieceChar);
-                    System.out.println("Piece " + pieceChar);
                 } else {
                     emptySquares++;
-                    System.out.println("Empty");
                 }
             }
             
@@ -43,7 +39,6 @@ public class FENUtils {
             if (rank < 7) {
                 fen.append('/');
             }
-            System.out.println("Current FEN: " + fen.toString());
         }
         
         // 2. Active color
@@ -61,7 +56,6 @@ public class FENUtils {
         // 6. Fullmove number
         fen.append(" 1");
         
-        System.out.println("Generated FEN: " + fen.toString());
         return fen.toString();
     }
 

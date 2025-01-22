@@ -3,6 +3,7 @@ package com.chess.view;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -12,7 +13,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.geom.Path2D;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -37,22 +37,34 @@ public class GameIntro {
         JPanel logoPanel = new JPanel() {
             private float alpha = 0f;
             private Timer fadeTimer;
-            private final int ANIMATION_DURATION = 2000; // 2 seconds
+            private final int ANIMATION_DURATION = 1500; // 1.5 seconds fade in
+            private final int STAY_DURATION = 2000; // 2 seconds stay
             private final int TIMER_DELAY = 20;
             private long startTime;
+            private float towerAnimationPhase = 0f;
 
             {
                 setBackground(Color.BLACK);
                 startTime = System.currentTimeMillis();
                 fadeTimer = new Timer(TIMER_DELAY, e -> {
                     long elapsed = System.currentTimeMillis() - startTime;
-                    alpha = Math.min(1f, (float) elapsed / ANIMATION_DURATION);
                     
-                    if (elapsed >= ANIMATION_DURATION + 500) { // Wait extra 500ms at full opacity
+                    // Fade in phase
+                    if (elapsed <= ANIMATION_DURATION) {
+                        alpha = Math.min(1f, (float) elapsed / ANIMATION_DURATION);
+                    } 
+                    // Stay phase
+                    else if (elapsed <= ANIMATION_DURATION + STAY_DURATION) {
+                        alpha = 1.0f;
+                    }
+                    // End animation
+                    else {
                         fadeTimer.stop();
                         introFinished = true;
                         introDialog.dispose();
                     }
+                    
+                    towerAnimationPhase = (elapsed % 2000) / 2000f;
                     repaint();
                 });
                 fadeTimer.start();
@@ -64,6 +76,9 @@ public class GameIntro {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+                // Draw background elements first
+                drawBackground(g2d);
 
                 // Set composite for fade effect
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
@@ -85,60 +100,154 @@ public class GameIntro {
                 // Draw main text with gradient
                 GradientPaint gradient = new GradientPaint(
                     x, y - textHeight,
-                    new Color(255, 255, 255), // White
+                    new Color(255, 255, 255),
                     x, y,
-                    new Color(200, 200, 200) // Light gray
+                    new Color(200, 200, 200)
                 );
                 g2d.setPaint(gradient);
                 g2d.drawString(text, x, y);
 
-                // Draw decorative chess piece silhouette (knight)
-                int pieceSize = 120;
-                int pieceX = (getWidth() - pieceSize) / 2;
-                int pieceY = y + 20;
-                drawKnightSilhouette(g2d, pieceX, pieceY, pieceSize);
+                // Draw White Tower silhouette
+                int towerSize = 160;
+                int towerX = (getWidth() - towerSize) / 2;
+                int towerY = y + 20;
+                drawWhiteTower(g2d, towerX, towerY, towerSize);
             }
 
-            private void drawKnightSilhouette(Graphics2D g2d, int x, int y, int size) {
-                // Create a gradient for the knight silhouette
-                GradientPaint pieceGradient = new GradientPaint(
+            private void drawBackground(Graphics2D g2d) {
+                // Simple black background
+                g2d.setColor(Color.BLACK);
+                g2d.fillRect(0, 0, getWidth(), getHeight());
+
+                // Draw Toumba Stadium silhouette
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.15f));
+                g2d.setColor(new Color(255, 255, 255));
+                
+                // Stadium outline
+                int stadiumWidth = getWidth() * 2/3;
+                int stadiumHeight = getHeight() / 3;
+                int stadiumX = (getWidth() - stadiumWidth) / 2;
+                int stadiumY = getHeight() - stadiumHeight - 50;
+
+                // Draw stadium arcs
+                g2d.setStroke(new BasicStroke(2));
+                g2d.drawArc(stadiumX, stadiumY, stadiumWidth, stadiumHeight * 2, 0, 180);
+                g2d.drawLine(stadiumX, stadiumY + stadiumHeight, stadiumX + stadiumWidth, stadiumY + stadiumHeight);
+
+                // Draw stadium details (floodlights)
+                int lightCount = 4;
+                for (int i = 0; i < lightCount; i++) {
+                    int x = stadiumX + (stadiumWidth * (i + 1))/(lightCount + 1);
+                    g2d.drawLine(x, stadiumY + stadiumHeight, x, stadiumY + stadiumHeight - 40);
+                    // Light glow
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.05f));
+                    g2d.fillOval(x - 15, stadiumY + stadiumHeight - 55, 30, 30);
+                }
+            }
+
+            private void drawWhiteTower(Graphics2D g2d, int x, int y, int size) {
+                // Save original composite
+                Composite originalComposite = g2d.getComposite();
+                
+                // Create a gradient for the tower's stone texture
+                GradientPaint towerGradient = new GradientPaint(
                     x, y,
-                    new Color(100, 100, 100), // Darker gray
+                    new Color(238, 232, 205), // Authentic White Tower color
                     x, y + size,
-                    new Color(50, 50, 50)     // Even darker gray
+                    new Color(215, 210, 190)  // Slightly darker authentic tone
                 );
-                g2d.setPaint(pieceGradient);
+                g2d.setPaint(towerGradient);
                 g2d.setStroke(new BasicStroke(2));
 
-                Path2D path = new Path2D.Float();
-                // Enhanced knight silhouette with smoother curves
-                path.moveTo(x + size * 0.2, y + size * 0.8);
-                path.curveTo(
-                    x + size * 0.2, y + size * 0.5,  // Control point 1
-                    x + size * 0.3, y + size * 0.3,  // Control point 2
-                    x + size * 0.4, y + size * 0.25  // End point
-                );
-                path.curveTo(
-                    x + size * 0.5, y + size * 0.2,  // Control point 1
-                    x + size * 0.6, y + size * 0.15, // Control point 2
-                    x + size * 0.7, y + size * 0.2   // End point
-                );
-                path.curveTo(
-                    x + size * 0.75, y + size * 0.3, // Control point 1
-                    x + size * 0.8, y + size * 0.6,  // Control point 2
-                    x + size * 0.8, y + size * 0.8   // End point
-                );
-                path.closePath();
+                // Draw main cylindrical tower body
+                int bodyWidth = (int)(size * 0.4); // Thinner, more authentic proportion
+                int bodyHeight = (int)(size * 0.85); // Taller, like the real tower
+                int bodyX = x + (size - bodyWidth) / 2;
+                int bodyY = y + size - bodyHeight;
 
-                // Add a subtle shadow
-                g2d.translate(3, 3);
-                g2d.setColor(new Color(0, 0, 0, 50));
-                g2d.fill(path);
-                g2d.translate(-3, -3);
+                // Draw the cylindrical body
+                g2d.fillRect(bodyX, bodyY, bodyWidth, bodyHeight);
 
-                // Draw the main silhouette
-                g2d.setPaint(pieceGradient);
-                g2d.fill(path);
+                // Draw the characteristic top section (wider than body)
+                int topWidth = (int)(bodyWidth * 1.3);
+                int topHeight = (int)(bodyHeight * 0.15);
+                int topX = bodyX + (bodyWidth - topWidth) / 2;
+                int topY = bodyY;
+                
+                g2d.setColor(new Color(228, 222, 195));
+                g2d.fillRect(topX, topY, topWidth, topHeight);
+
+                // Draw the crenellations (more accurate count and shape)
+                int creCount = 12; // Actual number of crenellations
+                int creWidth = topWidth / creCount;
+                int creHeight = (int)(topHeight * 0.4);
+                g2d.setColor(new Color(218, 212, 185));
+                for (int i = 0; i < creCount; i++) {
+                    g2d.fillRect(
+                        topX + (i * creWidth),
+                        topY - creHeight,
+                        creWidth - 2,
+                        creHeight
+                    );
+                }
+
+                // Draw the characteristic horizontal bands
+                g2d.setColor(new Color(208, 202, 175));
+                int bandCount = 6;
+                int bandSpacing = bodyHeight / (bandCount + 1);
+                for (int i = 1; i <= bandCount; i++) {
+                    g2d.fillRect(
+                        bodyX - 4,
+                        bodyY + (i * bandSpacing),
+                        bodyWidth + 8,
+                        4
+                    );
+                }
+
+                // Draw the authentic arched windows (3 rows, 2 per row)
+                g2d.setColor(new Color(40, 40, 40));
+                int windowRows = 3;
+                int windowsPerRow = 2;
+                int windowWidth = bodyWidth / 5;
+                int windowHeight = bandSpacing / 2;
+                
+                for (int row = 0; row < windowRows; row++) {
+                    int windowY = bodyY + topHeight + (row * bandSpacing * 2) + bandSpacing/2;
+                    for (int col = 0; col < windowsPerRow; col++) {
+                        int windowX = bodyX + (col * (bodyWidth - windowWidth)) + bodyWidth/4;
+                        
+                        // Draw arched window
+                        g2d.fillRoundRect(
+                            windowX,
+                            windowY,
+                            windowWidth,
+                            windowHeight,
+                            windowWidth/2,
+                            windowHeight/2
+                        );
+                    }
+                }
+
+                // Draw base
+                g2d.setColor(new Color(198, 192, 165));
+                int baseWidth = (int)(bodyWidth * 1.4);
+                int baseHeight = (int)(size * 0.08);
+                g2d.fillRect(
+                    bodyX + (bodyWidth - baseWidth) / 2,
+                    bodyY + bodyHeight - baseHeight,
+                    baseWidth,
+                    baseHeight
+                );
+
+                // Add subtle stone texture
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+                for (int i = 0; i < bodyHeight; i += 4) {
+                    g2d.setColor(new Color(0, 0, 0, 10));
+                    g2d.drawLine(bodyX, bodyY + i, bodyX + bodyWidth, bodyY + i);
+                }
+
+                // Restore original composite
+                g2d.setComposite(originalComposite);
             }
         };
 

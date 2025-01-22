@@ -62,6 +62,12 @@ import com.chess.model.player.Player;
 import com.chess.model.player.CurrentPlayer;
 import com.chess.util.GameHistory;
 import com.chess.util.SoundPlayer;
+import com.chess.infrastructure.pgn.PGNParser;
+import com.chess.repository.PGNRepository;
+import com.chess.repository.impl.SQLitePGNRepository;
+import com.chess.infrastructure.db.DatabaseManager;
+import com.chess.service.PGNService;
+import com.chess.infrastructure.db.PGNGame;
 
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
@@ -515,7 +521,36 @@ public class ChessBoardUI {
         openPGN.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("open up that pgn file!");
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new javax.swing.filechooser.FileFilter() {
+                    @Override
+                    public boolean accept(File f) {
+                        return f.isDirectory() || f.getName().toLowerCase().endsWith(".pgn");
+                    }
+                    
+                    @Override
+                    public String getDescription() {
+                        return "PGN Files (*.pgn)";
+                    }
+                });
+                
+                int result = fileChooser.showOpenDialog(gameFrame);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    try {
+                        List<PGNGame> games = PGNParser.parsePGNFile(selectedFile.getAbsolutePath());
+                        PGNService pgnService = new PGNService(new SQLitePGNRepository(DatabaseManager.getInstance()));
+                        pgnService.saveGames(games);
+                        JOptionPane.showMessageDialog(gameFrame, 
+                            String.format("Successfully loaded %d games from %s", 
+                            games.size(), selectedFile.getName()));
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(gameFrame,
+                            "Error loading PGN file: " + ex.getMessage(),
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                }
             }
         });
         fileMenu.add(openPGN);

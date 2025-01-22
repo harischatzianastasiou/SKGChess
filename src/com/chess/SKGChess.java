@@ -1,5 +1,7 @@
 package com.chess;
 
+import java.awt.Point;
+
 import com.chess.ai.AIPlayer;
 import com.chess.ai.evaluation.StandardBoardEvaluator;
 import com.chess.ai.strategy.MinimaxStrategy;
@@ -9,9 +11,8 @@ import com.chess.model.Alliance;
 import com.chess.model.board.IBoard;
 import com.chess.model.moves.Move;
 import com.chess.view.ChessBoardUI;
-import com.chess.view.GameModeSelector;
 import com.chess.view.GameIntro;
-import java.awt.Point;
+import com.chess.view.GameModeSelector;
 
 public class SKGChess {
     public static void main(String[] args) {
