@@ -1,0 +1,8 @@
+com\chess\core\TileTest.class
+com\chess\core\DrawTest.class
+com\chess\core\ai\OpeningBookTest.class
+com\chess\core\PawnMovementTest.class
+com\chess\core\PieceMovementTest.class
+com\chess\core\CastlingTest.class
+com\chess\core\CheckmateTest.class
+com\chess\core\AllianceTest.class

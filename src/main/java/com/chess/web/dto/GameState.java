@@ -29,7 +29,14 @@ public class GameState {
             Tile tile = board.getTile(i);
             Piece piece = tile.getPiece();
             if (piece != null) {
-                pieces.add(new PieceDTO(piece.getPieceAlliance().toString(), piece.getClass().getSimpleName().toUpperCase()));
+                String type = piece.getClass().getSimpleName().toUpperCase();
+                // Remove "IMPL" suffix if present
+                if (type.endsWith("IMPL")) {
+                    type = type.substring(0, type.length() - 4);
+                }
+                String alliance = piece.getPieceAlliance().toString();
+                System.out.println("Piece at " + i + ": " + alliance + "_" + type); // Debug log
+                pieces.add(new PieceDTO(alliance, type));
             } else {
                 pieces.add(null);
             }

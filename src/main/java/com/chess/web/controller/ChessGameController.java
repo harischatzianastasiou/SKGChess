@@ -2,12 +2,16 @@ package com.chess.web.controller;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +24,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chess.core.GameController;
 import com.chess.core.board.IBoard;
 import com.chess.core.moves.Move;
+import com.chess.core.pieces.Piece;
+import com.chess.core.tiles.Tile;
 import com.chess.web.dto.GameState;
 import com.chess.web.dto.MoveRequest;
 import com.chess.web.game.GameSession;
@@ -204,6 +210,36 @@ public class ChessGameController {
             false,
             null
         ));
+    }
+
+    @GetMapping("/{sessionId}/legal-moves/{coordinate}")
+    public ResponseEntity<List<Integer>> getLegalMoves(
+            @PathVariable String sessionId,
+            @PathVariable int coordinate) {
+
+        // Validate session
+        GameSession session = activeSessions.get(sessionId);
+        if (session == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        // Get the piece at the coordinate
+        IBoard board = session.getCurrentBoard();
+        Tile tile = board.getTile(coordinate);
+        if (!tile.isTileOccupied()) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
+        // Get legal moves for the piece
+        Piece piece = tile.getPiece();
+        Collection<Move> moves = piece.calculateMoves(board.getTiles(), board.getOpponentPlayer());
+        
+        // Convert moves to target coordinates
+        List<Integer> legalMoveCoordinates = moves.stream()
+            .map(Move::getTargetCoordinate)
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(legalMoveCoordinates);
     }
 
     @PreDestroy

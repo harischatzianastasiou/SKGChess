@@ -114,14 +114,17 @@ class ChessGame {
     }
 
     updateBoard(gameState) {
+        console.log('Updating board with game state:', gameState); // Debug log
         const tiles = this.board.querySelectorAll('.tile');
         tiles.forEach((tile, index) => {
             tile.innerHTML = '';
             const piece = gameState.pieces[index];
             if (piece) {
+                const pieceKey = piece.alliance + '_' + piece.type;
+                console.log('Piece at', index, ':', pieceKey, 'Image:', this.pieceImages[pieceKey]); // Debug log
                 const pieceDiv = document.createElement('div');
                 pieceDiv.className = 'piece';
-                pieceDiv.style.backgroundImage = `url('${this.pieceImages[piece.alliance + '_' + piece.type]}')`;
+                pieceDiv.style.backgroundImage = `url('${this.pieceImages[pieceKey]}')`;
                 tile.appendChild(pieceDiv);
             }
         });

@@ -25,7 +25,7 @@
 }
 
 .tile.light {
-    background-color: #eeeed2;
+    background-color: #681954;
 }
 
 .tile.dark {
@@ -33,13 +33,13 @@
 }
 
 .tile.selected {
-    background-color: #ffff00;
+    background-color: #00ff08;
 }
 
 .tile.legal-move::after {
     content: "•";
     font-size: 40px;
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(0, 0, 0, 0.8);
 }
 
 .piece {
