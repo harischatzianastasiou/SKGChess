@@ -1,8 +1,8 @@
 package com.chess.pgn;
 
-import com.chess.model.board.IBoard;
-import com.chess.model.pieces.Piece;
-import com.chess.model.tiles.Tile;
+import com.chess.core.board.IBoard;
+import com.chess.core.pieces.Piece;
+import com.chess.core.tiles.Tile;
 
 public class FENUtils {
     
