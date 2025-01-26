@@ -91,8 +91,11 @@ public class OpeningBookStrategy implements MoveStrategy {
             try {
                 // Start from initial position
 <<<<<<< Updated upstream:src/com/chess/core/player/ai/engine/strategy/OpeningBookStrategy.java
+<<<<<<< Updated upstream:src/com/chess/core/player/ai/engine/strategy/OpeningBookStrategy.java
                 IBoard currentBoard = IBoard.createStandardBoard();
 =======
+=======
+>>>>>>> Stashed changes:src/main/java/com/chess/core/player/ai/engine/strategy/OpeningBookStrategy.java
                 Map<String, Game> gameMap = GameService.createNewGame();
                 String gameId = gameMap.keySet().iterator().next();
                 IBoard currentBoard = gameMap.get(gameId).getBoard();

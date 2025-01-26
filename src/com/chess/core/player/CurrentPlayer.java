@@ -38,7 +38,11 @@ public final class CurrentPlayer extends Player {
 
         // Check if player has castled by looking for castle moves in game history
 <<<<<<< Updated upstream:src/com/chess/core/player/CurrentPlayer.java
+<<<<<<< Updated upstream:src/com/chess/core/player/CurrentPlayer.java
         for (Move move : GameHistory.getInstance().getMoveHistory()) {
+=======
+        for (Move move : GameService.getCurrentGame().getMoveHistory()) {
+>>>>>>> Stashed changes:src/main/java/com/chess/core/player/CurrentPlayer.java
 =======
         for (Move move : GameService.getCurrentGame().getMoveHistory()) {
 >>>>>>> Stashed changes:src/main/java/com/chess/core/player/CurrentPlayer.java

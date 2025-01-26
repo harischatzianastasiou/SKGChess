@@ -148,7 +148,11 @@ public final class CalculateMoveUtils {
                         ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate);
                     if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
 <<<<<<< Updated upstream:src/com/chess/core/pieces/CalculateMoveUtils.java
+<<<<<<< Updated upstream:src/com/chess/core/pieces/CalculateMoveUtils.java
                         Move lastMove = GameHistory.getInstance().getLastMove();
+=======
+                        Move lastMove = currentGame.getLastMove();
+>>>>>>> Stashed changes:src/main/java/com/chess/core/pieces/CalculateMoveUtils.java
 =======
                         Move lastMove = currentGame.getLastMove();
 >>>>>>> Stashed changes:src/main/java/com/chess/core/pieces/CalculateMoveUtils.java
