@@ -43,7 +43,7 @@ public class NonCapturingMove extends Move {
 
 
     @Override
-    public IBoard execute() {
-        return this.createBuilderAfterNonCapturingMove().build();
+    public IBoard execute(String gameId) {
+        return this.createBuilderAfterNonCapturingMove().build(gameId);
     }
 } 

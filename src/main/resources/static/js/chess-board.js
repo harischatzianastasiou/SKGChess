@@ -3,7 +3,7 @@ class ChessGame {
         this.board = document.getElementById('game-board');
         this.statusElement = document.getElementById('status');
         this.selectedTile = null;
-        this.sessionId = null;
+        this.gameId = null;
         this.pieceImages = {
             'WHITE_PAWN': 'images/white_p.png',
             'WHITE_KNIGHT': 'images/white_n.png',
@@ -33,6 +33,31 @@ class ChessGame {
                 this.board.appendChild(tile);
             }
         }
+        this.placeInitialPieces();
+    }
+
+    placeInitialPieces() {
+        const initialPositions = [
+            'BLACK_ROOK', 'BLACK_KNIGHT', 'BLACK_BISHOP', 'BLACK_QUEEN', 'BLACK_KING', 'BLACK_BISHOP', 'BLACK_KNIGHT', 'BLACK_ROOK',
+            'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN',
+            null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null,
+            'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN',
+            'WHITE_ROOK', 'WHITE_KNIGHT', 'WHITE_BISHOP', 'WHITE_QUEEN', 'WHITE_KING', 'WHITE_BISHOP', 'WHITE_KNIGHT', 'WHITE_ROOK'
+        ];
+
+        const tiles = this.board.querySelectorAll('.tile');
+        tiles.forEach((tile, index) => {
+            const piece = initialPositions[index];
+            if (piece) {
+                const pieceDiv = document.createElement('div');
+                pieceDiv.className = 'piece';
+                pieceDiv.style.backgroundImage = `url('${this.pieceImages[piece]}')`;
+                tile.appendChild(pieceDiv);
+            }
+        });
     }
 
     setupEventListeners() {
@@ -42,11 +67,24 @@ class ChessGame {
 
     async startNewGame() {
         try {
-            const response = await fetch('/api/chess/new-game', {
-                method: 'POST'
-            });
-            const gameState = await response.json();
-            this.sessionId = gameState.sessionId;
+            const response = await fetch('/api/chess/create', { method: 'POST' });
+    
+            if (!response.ok) {
+                throw new Error('Failed to start a new game');
+            }
+    
+            const data = await response.json(); 
+            const gameId = data.gameId;
+            this.gameId = gameId;
+    
+            const gameResponse = await fetch(`/api/chess/${gameId}`);
+
+            if (!gameResponse.ok) {
+                throw new Error('Failed to fetch game state');
+            }
+
+            const gameState = await gameResponse.json();
+    
             this.updateBoard(gameState);
             this.statusElement.textContent = 'Game started! Your turn (White)';
         } catch (error) {
@@ -56,7 +94,7 @@ class ChessGame {
     }
 
     async handleTileClick(event) {
-        if (!this.sessionId) return;
+        if (!this.gameId) return;
 
         const tile = event.target.closest('.tile');
         if (!tile) return;
@@ -75,7 +113,7 @@ class ChessGame {
             const targetCoordinate = position;
             
             try {
-                const response = await fetch(`/api/chess/${this.sessionId}/move`, {
+                const response = await fetch(`/api/chess/${this.gameId}/move`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -93,11 +131,14 @@ class ChessGame {
                 const gameState = await response.json();
                 this.updateBoard(gameState);
                 
-                if (gameState.isGameOver) {
-                    this.statusElement.textContent = gameState.gameResult;
+                if (gameState.gameStatus === 'CHECKMATE') {
+                    this.statusElement.textContent = 'Checkmate';
+                } else if (gameState.gameStatus === 'DRAW') {
+                    this.statusElement.textContent = gameState.drawType ? gameState.drawType.description : 'Draw';
                 } else {
                     this.statusElement.textContent = 'Your turn';
                 }
+                
             } catch (error) {
                 console.error('Error making move:', error);
                 this.statusElement.textContent = 'Invalid move';
@@ -114,18 +155,20 @@ class ChessGame {
     }
 
     updateBoard(gameState) {
-        console.log('Updating board with game state:', gameState); // Debug log
         const tiles = this.board.querySelectorAll('.tile');
         tiles.forEach((tile, index) => {
             tile.innerHTML = '';
-            const piece = gameState.pieces[index];
-            if (piece) {
-                const pieceKey = piece.alliance + '_' + piece.type;
-                console.log('Piece at', index, ':', pieceKey, 'Image:', this.pieceImages[pieceKey]); // Debug log
-                const pieceDiv = document.createElement('div');
-                pieceDiv.className = 'piece';
-                pieceDiv.style.backgroundImage = `url('${this.pieceImages[pieceKey]}')`;
-                tile.appendChild(pieceDiv);
+            const tileData = gameState.board.tiles.find(t => t.tileCoordinate === index);
+            if (tileData && tileData.tileOccupied) {
+                const piece = tileData.piece;
+                if (piece) {
+                    const pieceKey = piece.pieceAlliance + '_' + piece.pieceSymbol;
+                    console.log('Piece at', index, ':', pieceKey, 'Image:', this.pieceImages[pieceKey]); // Debug log
+                    const pieceElement = document.createElement('div');
+                    pieceElement.className = 'piece';
+                    pieceElement.style.backgroundImage = `url('${this.pieceImages[pieceKey]}')`;
+                    tile.appendChild(pieceElement);
+                }
             }
         });
     }

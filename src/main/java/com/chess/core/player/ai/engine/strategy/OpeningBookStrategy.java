@@ -6,10 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import com.chess.core.Game;
 import com.chess.core.board.IBoard;
-import com.chess.core.moves.Move;
+import  com.chess.core.moves.Move;
 import  com.chess.core.player.ai.OpeningBookCache;
-import  com.chess.core.player.ai.engine.utils.MoveConverter;
+import com.chess.core.player.ai.engine.utils.MoveConverter;
 import com.chess.db.DatabaseManager;
 import com.chess.pgn.model.PGNGame;
 import com.chess.pgn.repository.SQLitePGNRepository;
@@ -50,7 +51,7 @@ public class OpeningBookStrategy implements MoveStrategy {
     }
 
     @Override
-    public Move getBestMove(IBoard board) {
+    public Move getBestMove(IBoard board, String gameId) {
         String position = board.getFEN();
         String positionKey = getPositionKey(position);
         List<String> bookMoves = openingBook.get(positionKey);
@@ -63,7 +64,7 @@ public class OpeningBookStrategy implements MoveStrategy {
             }
         }
         
-        return fallbackStrategy.getBestMove(board);
+        return fallbackStrategy.getBestMove(board, gameId);
     }
 
     @Override
@@ -90,7 +91,9 @@ public class OpeningBookStrategy implements MoveStrategy {
             
             try {
                 // Start from initial position
-                IBoard currentBoard = IBoard.createStandardBoard();
+                Map<String, Game> gameMap = Game.createNewGame();
+                String gameId = gameMap.keySet().iterator().next();
+                IBoard currentBoard = gameMap.get(gameId).getBoard();
                 String[] moveArray = moves.split("\\s+");
                 
                 // Process first 10 moves (20 plies) of each game
@@ -111,7 +114,7 @@ public class OpeningBookStrategy implements MoveStrategy {
                             book.computeIfAbsent(getPositionKey(fen), k -> new ArrayList<>()).add(longAlgebraic);
                             
                             // Make the move on our board
-                            currentBoard = move.execute();
+                            currentBoard = move.execute(gameId);
                             moveCount++;
                         }
                     } catch (Exception e) {

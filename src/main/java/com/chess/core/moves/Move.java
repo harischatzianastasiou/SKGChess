@@ -5,7 +5,6 @@ import java.util.List;
 import  com.chess.core.board.IBoard;
 import  com.chess.core.pieces.Piece;
 import  com.chess.core.tiles.Tile;
-import com.chess.util.GameHistory;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Move {
@@ -61,10 +60,5 @@ public abstract class Move {
 
     public abstract Piece getCapturedPiece();
 
-    public abstract IBoard execute();    
-    
-    public IBoard undo() {//for reviewing moves
-        return GameHistory.getInstance().getLastBoard();
-    }
-    
+    public abstract IBoard execute(String gameId);
 } 

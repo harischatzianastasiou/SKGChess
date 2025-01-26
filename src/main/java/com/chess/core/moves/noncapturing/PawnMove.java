@@ -1,9 +1,9 @@
 package  com.chess.core.moves.noncapturing;
 
-import  com.chess.core.pieces.Piece;
-import  com.chess.core.tiles.Tile;
+import  java.util.List;
 
-import java.util.List;
+import  com.chess.core.pieces.Piece;
+import com.chess.core.tiles.Tile;
 
 public class PawnMove extends NonCapturingMove {
     public PawnMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {

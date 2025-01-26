@@ -22,7 +22,7 @@ class CheckmateTest {
     private void assertNoLegalMoves(IBoard board, Alliance alliance) {
         for (Tile tile : board.getTiles()) {
             if (tile.isTileOccupied() && tile.getPiece().getPieceAlliance() == alliance) {
-                Collection<Move> moves = tile.getPiece().calculateMoves(board.getTiles(), board.getOpponentPlayer());
+                Collection<Move> moves = tile.getPiece().calculateMoves(board.getTiles(), board.getOpponentPlayer(), "test");
                 if (moves != null && !moves.isEmpty()) {
                     System.out.println("Piece at " + tile.getTileCoordinate() + " (" + 
                         tile.getPiece().getClass().getSimpleName() + ") has legal moves:");
@@ -42,11 +42,11 @@ class CheckmateTest {
         Rook blackRook = new Rook(52, Alliance.BLACK);
         King whiteKing = new King(60, Alliance.WHITE);
 
-        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, blackRook));
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, blackRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> kingMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
-        Collection<Move> rookMoves = blackRook.calculateMoves(tiles, board.getCurrentPlayer());
+        Collection<Move> kingMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> rookMoves = blackRook.calculateMoves(tiles, board.getCurrentPlayer(), "test");
         
         // King should be in check (rook controls the square)
         assertTrue(rookMoves.stream().anyMatch(move -> 
@@ -65,10 +65,10 @@ class CheckmateTest {
         Bishop whiteBishop = new Bishop(52, Alliance.WHITE);
         King whiteKing = new King(60, Alliance.WHITE);
         
-        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteBishop, blackRook));
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteBishop, blackRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Bishop should be pinned and have no legal moves
         assertTrue(bishopMoves == null || bishopMoves.isEmpty());
@@ -86,7 +86,7 @@ class CheckmateTest {
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, blackRook,
-            whitePawnF, whitePawnG, whitePawnH));
+            whitePawnF, whitePawnG, whitePawnH), "test");
             
         // Verify that White has no legal moves (is in checkmate)
         assertNoLegalMoves(board, Alliance.WHITE);
@@ -107,7 +107,7 @@ class CheckmateTest {
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, blackKnight, blackRook,
-            whitePawnF, whitePawnG, whitePawnH, whiteBishop, whiteRook));
+            whitePawnF, whitePawnG, whitePawnH, whiteBishop, whiteRook), "test");
             
         // Verify that White has no legal moves (is in checkmate)
         assertNoLegalMoves(board, Alliance.WHITE);
@@ -122,7 +122,7 @@ class CheckmateTest {
         Pawn blackPawn = new Pawn(45, Alliance.BLACK); // f2
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, blackQueen, blackPawn));
+            whiteKing, blackKing, blackQueen, blackPawn), "test");
             
         // Verify that White has no legal moves (is in checkmate)
         assertNoLegalMoves(board, Alliance.WHITE);
@@ -138,7 +138,7 @@ class CheckmateTest {
         Pawn whitePawn = new Pawn(55, Alliance.WHITE);
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, blackBishop1, blackBishop2, whitePawn));
+            whiteKing, blackKing, blackBishop1, blackBishop2, whitePawn), "test");
             
         // Verify that White has no legal moves (is in checkmate)
         assertNoLegalMoves(board, Alliance.WHITE);
@@ -153,7 +153,7 @@ class CheckmateTest {
         Rook blackRook = new Rook(58, Alliance.BLACK); // c1
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, blackQueen, blackRook));
+            whiteKing, blackKing, blackQueen, blackRook), "test");
             
         // Verify that White has no legal moves (is in checkmate)
         assertNoLegalMoves(board, Alliance.WHITE);
@@ -170,7 +170,7 @@ class CheckmateTest {
         Bishop blackBishop = new Bishop(45, Alliance.BLACK); // f3
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, blackKnight, blackBishop, whitePawn1, whitePawn2));
+            whiteKing, blackKing, blackKnight, blackBishop, whitePawn1, whitePawn2), "test");
             
         // Verify that White has no legal moves (is in checkmate)
         assertNoLegalMoves(board, Alliance.WHITE);

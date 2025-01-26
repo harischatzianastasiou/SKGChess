@@ -27,16 +27,16 @@ public interface IBoard {
      * Creates a standard chess board with all pieces in their initial positions.
      * @return A new board with standard piece setup
      */
-    static IBoard createStandardBoard() {
-        return Board.createStandardBoard();
+    static IBoard createStandardBoard(String gameId) {
+        return Board.createStandardBoard(gameId);
     }
     
     /**
      * Creates an empty chess board with no pieces.
      * @return A new empty board
      */
-    static IBoard createEmptyBoard() {
-        return Board.createEmptyBoard();
+    static IBoard createEmptyBoard(String gameId) {
+        return Board.createEmptyBoard(gameId);
     }
     
     /**
@@ -44,8 +44,8 @@ public interface IBoard {
      * @param pieces Collection of pieces to place on the board
      * @return A new board with only the specified pieces
      */
-    static IBoard createRandomBoard(Collection<Piece> pieces) {
-        return Board.createRandomBoard(pieces);
+    static IBoard createRandomBoard(Collection<Piece> pieces, String gameId) {
+        return Board.createRandomBoard(pieces, gameId);
     }
 
     Collection<Piece> getAllPieces();

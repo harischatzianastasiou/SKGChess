@@ -23,7 +23,7 @@ public class KingSideCastleMove extends NonCapturingMove {
     
     
  	@Override
-        public IBoard execute() {
+        public IBoard execute(String gameId) {
 	        final Board.Builder builder = new Board.Builder();
 	        
 	        for (final Tile tile : super.getBoardTiles()) {
@@ -46,7 +46,7 @@ public class KingSideCastleMove extends NonCapturingMove {
 	        // Set the next player's alliance
 	        builder.setCurrentPlayerAlliance(super.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
 	        
-	        return builder.build(); 
+	        return builder.build(gameId); 
 	    }
 
 

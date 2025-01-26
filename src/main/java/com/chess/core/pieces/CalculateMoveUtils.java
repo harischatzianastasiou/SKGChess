@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import  com.chess.core.Alliance;
+import  com.chess.core.Game;
 import  com.chess.core.moves.Move;
 import  com.chess.core.moves.capturing.CapturingMove;
 import  com.chess.core.moves.capturing.PawnEnPassantAttack;
@@ -25,8 +26,7 @@ import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerKing
 import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerPiecePinnedValidation;
 import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerQueensideCastleValidation;
 import  com.chess.core.player.Player;
-import  com.chess.core.tiles.Tile;
-import com.chess.util.GameHistory;
+import com.chess.core.tiles.Tile;
 import com.google.common.collect.ImmutableList;
 
 public final class CalculateMoveUtils {
@@ -35,7 +35,7 @@ public final class CalculateMoveUtils {
 	public static final int NUM_TILES_PER_ROW = 8;
     public static final Collection<Move> NO_LEGAL_MOVES = ImmutableList.copyOf(new ArrayList<>());
 
-    public static Collection<Move> calculate(List<Tile> boardTiles, final Piece piece, final int[] moveOffsets , final Player opponentPlayer){
+    public static Collection<Move> calculate(List<Tile> boardTiles, final Piece piece, final int[] moveOffsets , final Player opponentPlayer, String gameId){
         final Collection<Move> moves = new ArrayList<>();
         final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
         final int MAX_SQUARES = getMaxSquaresMoved(piece);
@@ -79,7 +79,7 @@ public final class CalculateMoveUtils {
                 final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 
                 if(isCandidateTileEmpty(candidateDestinationTile)){
-                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer));
+                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer, gameId));
                 }else{
                     if(isCandidateTileOccupiedByOpponent(piece,candidateDestinationTile))
                         moves.addAll(addCapturingMoves(piece, boardTiles,  candidateDestinationCoordinate, candidateOffset));
@@ -104,7 +104,7 @@ public final class CalculateMoveUtils {
         }
     }
 
-    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer){
+    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer, String gameId){
         final List<Move> moves = new ArrayList<>();
 
         if(!(piece instanceof Pawn)){
@@ -145,7 +145,7 @@ public final class CalculateMoveUtils {
                     if(opponentPlayer == null)
                         ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate);
                     if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
-                        Move lastMove = GameHistory.getInstance().getLastMove();
+                        Move lastMove = Game.getGame(gameId).getLastMove();
                         if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
                             return ImmutableList.copyOf(moves);
                         }

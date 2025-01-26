@@ -19,8 +19,8 @@ import  com.chess.core.pieces.King;
 import  com.chess.core.pieces.Pawn;
 import com.chess.core.pieces.Rook;
 import com.chess.core.tiles.Tile;
-import com.chess.util.GameHistory;
-
+import com.chess.core.Game;
+import java.util.Map;
 class PawnMovementTest {
     
     @Test
@@ -29,10 +29,12 @@ class PawnMovementTest {
         King blackKing = new King(4, Alliance.BLACK); // e8
         Pawn whitePawn = new Pawn(44, Alliance.WHITE); // e4
         
-        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whitePawn));
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whitePawn), "test");
+        Map<String, Game> gameMap = Game.createNewTestGame("test");
+Game.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should only be able to move one square forward
         assertTrue(moves.stream().anyMatch(move -> move.getTargetCoordinate() == 36)); // e4
@@ -48,10 +50,12 @@ class PawnMovementTest {
         Pawn blackPawnRight = new Pawn(37, Alliance.BLACK); // f5
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, whitePawn, blackPawnLeft, blackPawnRight));
+            whiteKing, blackKing, whitePawn, blackPawnLeft, blackPawnRight), "test");
+        Map<String, Game> gameMap = Game.createNewTestGame("test");
+Game.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should be able to capture diagonally
         assertTrue(moves.stream().anyMatch(move -> 
@@ -68,10 +72,12 @@ class PawnMovementTest {
         Pawn blockingPawn = new Pawn(44, Alliance.BLACK); // e4
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, whitePawn, blockingPawn));
+            whiteKing, blackKing, whitePawn, blockingPawn), "test");
+        Map<String, Game> gameMap = Game.createNewTestGame("test");
+Game.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should not be able to move forward when blocked
         assertFalse(moves.stream().anyMatch(move -> 
@@ -89,10 +95,12 @@ class PawnMovementTest {
         Pawn whitePawn = new Pawn(8, Alliance.WHITE); // a7
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, whitePawn));
+            whiteKing, blackKing, whitePawn), "test");
+        Map<String, Game> gameMap = Game.createNewTestGame("test");
+Game.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Pawn should have promotion moves available
         assertTrue(pawnMoves.stream().anyMatch(move -> 
@@ -103,10 +111,12 @@ class PawnMovementTest {
         Pawn blackPawn = new Pawn(55, Alliance.BLACK); // h2
         
         board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, blackPawn));
+            whiteKing, blackKing, blackPawn),"test");
+        Map<String, Game> gameMap1 = Game.createNewTestGame("test");
+Game.addTestGame(board, "test");
         tiles = board.getTiles();
         
-        pawnMoves = blackPawn.calculateMoves(tiles, board.getOpponentPlayer());
+        pawnMoves = blackPawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Black pawn should have promotion moves
         assertTrue(pawnMoves.stream().anyMatch(move -> 
@@ -126,20 +136,21 @@ class PawnMovementTest {
         Pawn blackPawn = new Pawn(12, Alliance.BLACK); // e7
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, whitePawn, blackPawn));
+            whiteKing, blackKing, whitePawn, blackPawn), "test");
+        Map<String, Game> gameMap = Game.createNewTestGame("test");
+Game.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         // Move black pawn two squares forward
-        Collection<Move> blackPawnMoves = blackPawn.calculateMoves(tiles, board.getCurrentPlayer());
+        Collection<Move> blackPawnMoves = blackPawn.calculateMoves(tiles, board.getCurrentPlayer(), "test");
         Move twoSquareAdvance = new PawnJumpMove(tiles, 12, 28, blackPawn);
         assertNotNull(twoSquareAdvance);
-        GameHistory.getInstance().addMove(twoSquareAdvance);
-        board = twoSquareAdvance.execute();
-        GameHistory.getInstance().addBoard(board);
+        board = twoSquareAdvance.execute("test");
+        gameMap.get("test").updateGame(twoSquareAdvance);
         tiles = board.getTiles();
         
         // White pawn should have en passant capture available
-        Collection<Move> whitePawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> whitePawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         assertTrue(whitePawnMoves.stream().anyMatch(move -> 
             move instanceof PawnEnPassantAttack &&
             move.getTargetCoordinate() == 20)); 
@@ -156,11 +167,13 @@ class PawnMovementTest {
         Rook blackRook = new Rook(1, Alliance.BLACK); // b8
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, whitePawn, blackRook));
+            whiteKing, blackKing, whitePawn, blackRook), "test");
+        Map<String, Game> gameMap = Game.createNewTestGame("test");
+Game.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer());
-        
+        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+
         // Pawn should have promotion capture move available
         assertTrue(pawnMoves.stream().anyMatch(move -> 
             move.getTargetCoordinate() == 1 && // b8
@@ -178,10 +191,12 @@ class PawnMovementTest {
         Rook blackRook = new Rook(0, Alliance.BLACK); // a8
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, whitePawn, blackRook));
+            whiteKing, blackKing, whitePawn, blackRook), "test");
+        Map<String, Game> gameMap = Game.createNewTestGame("test");
+Game.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Pawn should not have any promotion moves when blocked
         assertFalse(pawnMoves.stream().anyMatch(move -> 

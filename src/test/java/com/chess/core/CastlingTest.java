@@ -25,10 +25,10 @@ class CastlingTest {
         King blackKing = new King(4, Alliance.BLACK); // e8
         Rook whiteRook = new Rook(63, Alliance.WHITE); // h1
         
-        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook));
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should be able to castle kingside
         assertTrue(moves.stream().anyMatch(move -> 
@@ -42,10 +42,10 @@ class CastlingTest {
         King blackKing = new King(4, Alliance.BLACK); // e8
         Rook whiteRook = new Rook(56, Alliance.WHITE); // a1
         
-        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook));
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should be able to castle queenside
         assertTrue(moves.stream().anyMatch(move -> 
@@ -61,10 +61,10 @@ class CastlingTest {
         Rook blockingRook = new Rook(61, Alliance.WHITE); // f1
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, whiteRook, blockingRook));
+            whiteKing, blackKing, whiteRook, blockingRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should not be able to castle when pieces are in the way
         assertFalse(moves.stream().anyMatch(move -> 
@@ -78,10 +78,10 @@ class CastlingTest {
         King blackKing = new King(4, Alliance.BLACK); // e8
         Rook whiteRook = new Rook(63, Alliance.WHITE); // h1
         
-        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook));
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> kingMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> kingMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Move king
         Move kingMove = kingMoves.stream()
@@ -89,9 +89,9 @@ class CastlingTest {
             .findFirst().orElse(null);
         assertNotNull(kingMove);
         
-        board = kingMove.execute();
+        board = kingMove.execute("test");
         
-        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should not be able to castle after king has moved
         assertFalse(moves.stream().anyMatch(move -> 
@@ -105,18 +105,18 @@ class CastlingTest {
         King blackKing = new King(4, Alliance.BLACK); // e8
         Rook whiteRook = new Rook(63, Alliance.WHITE); // h1
         
-        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook));
+        IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook), "test");
         List<Tile> tiles = board.getTiles();
         
         // Move rook
-        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         Move rookMove = rookMoves.stream()
             .filter(move -> move.getTargetCoordinate() == 62)
             .findFirst().orElse(null);
         assertNotNull(rookMove);
-        board = rookMove.execute();
+        board = rookMove.execute("test");
         
-        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should not be able to castle after rook has moved
         assertFalse(moves.stream().anyMatch(move -> 
@@ -134,10 +134,10 @@ class CastlingTest {
         Rook blackRook = new Rook(61, Alliance.BLACK); // f1
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
-            whiteKing, blackKing, whiteRook, blackRook));
+            whiteKing, blackKing, whiteRook, blackRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        Collection<Move> moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should not be able to castle when a square is controlled by enemy piece
         assertFalse(moves.stream().anyMatch(move -> 
@@ -146,10 +146,10 @@ class CastlingTest {
         // Test with bishop controlling castling square
         board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, whiteRook,
-            new Bishop(43, Alliance.BLACK))); // f3 - controls f1
+            new Bishop(43, Alliance.BLACK)), "test");
         tiles = board.getTiles();
         
-        moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer());
+        moves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
         
         // Should not be able to castle when a square is controlled by enemy bishop
         assertFalse(moves.stream().anyMatch(move -> 

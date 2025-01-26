@@ -17,7 +17,7 @@ public final class OpponentPlayer extends Player {
         super(pieces, moves, alliance);
     }
 
-	public static OpponentPlayer createOpponentPlayer(final List<Tile> tiles, final Alliance alliance) {
+	public static OpponentPlayer createOpponentPlayer(final List<Tile> tiles, final Alliance alliance, String gameId) {
         final List<Piece> pieces = new ArrayList<>();
         final List<Move> moves = new ArrayList<>();
         CalculateMoveUtils.ProtectedCoordinatesTracker.clear(); // every time an opponent player calculates his moves we clear the ProtectedCoordinatesTracker
@@ -27,7 +27,7 @@ public final class OpponentPlayer extends Player {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                     pieces.add(piece);
-                    moves.addAll(piece.calculateMoves(tiles, null));
+                    moves.addAll(piece.calculateMoves(tiles, null, gameId));
                 }
             }
         }   
