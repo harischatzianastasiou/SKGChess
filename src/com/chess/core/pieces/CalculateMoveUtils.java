@@ -28,12 +28,14 @@ import  com.chess.core.player.Player;
 import  com.chess.core.tiles.Tile;
 import com.chess.util.GameHistory;
 import com.google.common.collect.ImmutableList;
+import com.chess.application.game.GameService;
 
 public final class CalculateMoveUtils {
 
     public static final int NUM_TILES = 64;
 	public static final int NUM_TILES_PER_ROW = 8;
     public static final Collection<Move> NO_LEGAL_MOVES = ImmutableList.copyOf(new ArrayList<>());
+    public static Game currentGame = GameService.getCurrentGame();
 
     public static Collection<Move> calculate(List<Tile> boardTiles, final Piece piece, final int[] moveOffsets , final Player opponentPlayer){
         final Collection<Move> moves = new ArrayList<>();
@@ -145,7 +147,11 @@ public final class CalculateMoveUtils {
                     if(opponentPlayer == null)
                         ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate);
                     if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
+<<<<<<< Updated upstream:src/com/chess/core/pieces/CalculateMoveUtils.java
                         Move lastMove = GameHistory.getInstance().getLastMove();
+=======
+                        Move lastMove = currentGame.getLastMove();
+>>>>>>> Stashed changes:src/main/java/com/chess/core/pieces/CalculateMoveUtils.java
                         if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
                             return ImmutableList.copyOf(moves);
                         }

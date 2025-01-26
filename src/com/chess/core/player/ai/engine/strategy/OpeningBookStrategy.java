@@ -14,7 +14,7 @@ import com.chess.db.DatabaseManager;
 import com.chess.pgn.model.PGNGame;
 import com.chess.pgn.repository.SQLitePGNRepository;
 import com.chess.pgn.service.PGNService;
-
+import com.chess.application.game.GameService;
 public class OpeningBookStrategy implements MoveStrategy {
     private final Map<String, List<String>> openingBook;
     private final MoveStrategy fallbackStrategy;
@@ -90,7 +90,13 @@ public class OpeningBookStrategy implements MoveStrategy {
             
             try {
                 // Start from initial position
+<<<<<<< Updated upstream:src/com/chess/core/player/ai/engine/strategy/OpeningBookStrategy.java
                 IBoard currentBoard = IBoard.createStandardBoard();
+=======
+                Map<String, Game> gameMap = GameService.createNewGame();
+                String gameId = gameMap.keySet().iterator().next();
+                IBoard currentBoard = gameMap.get(gameId).getBoard();
+>>>>>>> Stashed changes:src/main/java/com/chess/core/player/ai/engine/strategy/OpeningBookStrategy.java
                 String[] moveArray = moves.split("\\s+");
                 
                 // Process first 10 moves (20 plies) of each game

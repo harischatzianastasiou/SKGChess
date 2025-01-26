@@ -13,6 +13,7 @@ import  com.chess.core.pieces.Piece;
 import  com.chess.core.tiles.Tile;
 import com.chess.util.GameHistory;
 import com.google.common.collect.ImmutableList;
+import com.chess.application.game.GameService;
 
 public final class CurrentPlayer extends Player {
 		
@@ -36,7 +37,11 @@ public final class CurrentPlayer extends Player {
         boolean isCastled = false;
 
         // Check if player has castled by looking for castle moves in game history
+<<<<<<< Updated upstream:src/com/chess/core/player/CurrentPlayer.java
         for (Move move : GameHistory.getInstance().getMoveHistory()) {
+=======
+        for (Move move : GameService.getCurrentGame().getMoveHistory()) {
+>>>>>>> Stashed changes:src/main/java/com/chess/core/player/CurrentPlayer.java
             if ((move instanceof KingSideCastleMove || move instanceof QueenSideCastleMove) && 
                 move.getPieceToMove().getPieceAlliance() == alliance) {
                 isCastled = true;
