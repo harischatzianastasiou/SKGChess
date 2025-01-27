@@ -136,20 +136,9 @@ button:hover {
 }
 
 .tile.light.selected {
-    animation: selectedBreathingLight 3.5s ease-in-out infinite;
-    transition: background-color 0.8s ease-in-out;
+    animation: selectedBreathingLight 2s ease-in-out infinite;
 }
 
 .tile.dark.selected {
-    animation: selectedBreathingDark 3.5s ease-in-out infinite;
-    transition: background-color 0.8s ease-in-out;
-}
-
-/* Override transition for drag operations */
-.tile.selected.dragging {
-    transition: none;
-}
-
-.tile.selected {
-    background-color: initial;
+    animation: selectedBreathingDark 2s ease-in-out infinite;
 } 

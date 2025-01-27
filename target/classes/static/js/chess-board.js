@@ -7,6 +7,8 @@ class ChessGame {
         this.selectedSourceTile = null;
         this.selectedTargetTile = null;
         this.isDragging = false;
+        this.draggedPiece = null;
+        this.dragImage = null;
         this.pieceImages = {
             'WHITE_PAWN': 'images/white_p.png',
             'WHITE_KNIGHT': 'images/white_n.png',
@@ -58,8 +60,6 @@ class ChessGame {
                 const pieceDiv = document.createElement('div');
                 pieceDiv.className = 'piece';
                 pieceDiv.style.backgroundImage = `url('${this.pieceImages[piece]}')`;
-                pieceDiv.setAttribute('draggable', true);
-                pieceDiv.addEventListener('dragstart', this.handleDragStart.bind(this));
                 tile.appendChild(pieceDiv);
             }
         });
@@ -69,13 +69,10 @@ class ChessGame {
         document.getElementById('new-game').addEventListener('click', () => this.startNewGame());
         this.board.addEventListener('click', (e) => this.handleTileClick(e));
         
-        // Add drag and drop listeners to the board
-        this.board.addEventListener('dragstart', this.handleDragStart.bind(this));
-        this.board.addEventListener('dragover', this.handleDragOver.bind(this));
-        this.board.addEventListener('drop', this.handleDrop.bind(this));
-        this.board.addEventListener('dragend', this.handleDragEnd.bind(this));
-        this.board.addEventListener('dragenter', this.handleDragEnter.bind(this));
-        this.board.addEventListener('dragleave', this.handleDragLeave.bind(this));
+        // Mouse event listeners for dragging
+        this.board.addEventListener('mousedown', this.handleMouseDown.bind(this));
+        document.addEventListener('mousemove', this.handleMouseMove.bind(this));
+        document.addEventListener('mouseup', this.handleMouseUp.bind(this));
 
         this.board.addEventListener('contextmenu', (event) => {
             event.preventDefault();
@@ -194,149 +191,139 @@ class ChessGame {
         }
     }
 
-    handleDragStart(event) {
-        this.isDragging = true;
-        document.body.classList.add('grabbing');
-        // Clear any previous selections first
-        document.querySelector('.selected')?.classList.remove('selected');
-        this.clearLegalMoves();
-        
+    handleMouseDown(event) {
         const piece = event.target.closest('.piece');
         if (!piece) return;
+
+        // Clear any previous selections first
+        this.clearLegalMoves();
+        document.querySelector('.selected')?.classList.remove('selected');
 
         const tile = piece.parentElement;
         const position = parseInt(tile.dataset.position);
         const tileData = this.currentGameState.board.tiles.find(t => t.tileCoordinate === position);
         
-        if (!tileData || !tileData.piece) {
-            event.preventDefault();
-            return;
-        }
+        if (!tileData || !tileData.piece) return;
 
         const pieceData = tileData.piece;
-        if (pieceData.pieceAlliance !== this.currentGameState.board.currentPlayer.alliance) {
-            event.preventDefault();
-            return;
-        }
+        if (pieceData.pieceAlliance !== this.currentGameState.board.currentPlayer.alliance) return;
 
+        this.isDragging = true;
+        this.draggedPiece = piece;
         this.selectedSourceTile = position;
-        event.dataTransfer.setData('text/plain', position);
-        event.dataTransfer.effectAllowed = 'move';
-        
-        // Add dragging class for visual feedback
-        piece.classList.add('dragging');
-        
-        // Highlight the source tile
-        const sourceTile = this.board.querySelector(`.tile[data-position='${position}']`);
-        sourceTile.classList.add('selected');
-        
-        // Add a slight delay to show legal moves after drag starts
-        setTimeout(() => {
-            this.showLegalMoves(position);
-        }, 50);
-    }
 
-    handleDragOver(event) {
+        // Create drag image
+        this.dragImage = document.createElement('div');
+        this.dragImage.className = 'piece dragging-piece';
+        this.dragImage.style.backgroundImage = piece.style.backgroundImage;
+        this.dragImage.style.width = '60px';
+        this.dragImage.style.height = '60px';
+        this.dragImage.style.position = 'fixed';
+        this.dragImage.style.pointerEvents = 'none';
+        this.dragImage.style.zIndex = '1000';
+        document.body.appendChild(this.dragImage);
+
+        // Set initial position
+        this.dragImage.style.left = (event.clientX - 30) + 'px';
+        this.dragImage.style.top = (event.clientY - 30) + 'px';
+
+        // Hide original piece
+        this.draggedPiece.style.opacity = '0.3';
+
+        // Show legal moves and highlight selected tile
+        tile.classList.add('selected');
+        this.showLegalMoves(position);
+
         event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
     }
 
-    handleDragEnter(event) {
-        const tile = event.target.closest('.tile');
-        if (tile) {
-            tile.classList.add('dragover');
+    handleMouseMove(event) {
+        if (!this.isDragging || !this.dragImage) return;
+        
+        this.dragImage.style.left = (event.clientX - 30) + 'px';
+        this.dragImage.style.top = (event.clientY - 30) + 'px';
+        
+        event.preventDefault();
+    }
+
+    async handleMouseUp(event) {
+        if (!this.isDragging) return;
+
+        const targetTile = event.target.closest('.tile');
+        let moveSuccessful = false;
+
+        if (targetTile) {
+            const targetPosition = parseInt(targetTile.dataset.position);
+            if (this.selectedSourceTile !== targetPosition) {
+                try {
+                    const response = await fetch(`/api/chess/move`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            sourceCoordinate: this.selectedSourceTile,
+                            targetCoordinate: targetPosition
+                        })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Invalid move');
+                    }
+                    
+                    const gameState = await response.json();
+                    moveSuccessful = true;
+                    this.updateBoard(gameState);
+                    this.currentGameState = gameState;
+
+                    if (gameState.gameStatus === 'CHECKMATE') {
+                        this.statusElement.textContent = 'Checkmate';
+                    } else if (gameState.gameStatus === 'DRAW') {
+                        this.statusElement.textContent = gameState.drawType ? gameState.drawType.description : 'Draw';
+                    } else {
+                        this.statusElement.textContent = 'Your turn';
+                    }
+                    
+                } catch (error) {
+                    console.error('Error making move:', error);
+                    this.statusElement.textContent = 'Invalid move';
+                }
+            }
         }
-    }
 
-    handleDragLeave(event) {
-        const tile = event.target.closest('.tile');
-        if (tile) {
-            tile.classList.remove('dragover');
+        // Cleanup
+        if (this.draggedPiece) {
+            this.draggedPiece.style.opacity = '1';
+            
+            // Add landing animation if move was not successful
+            if (!moveSuccessful) {
+                this.draggedPiece.style.transition = 'all 0.08s ease-out';
+                this.draggedPiece.style.transform = 'scale(0.97)';
+                requestAnimationFrame(() => {
+                    this.draggedPiece.style.transform = 'scale(1)';
+                    this.draggedPiece.animate([
+                        { transform: 'scale(1) translateX(-1px)' },
+                        { transform: 'scale(1) translateX(1px)' },
+                        { transform: 'scale(1) translateX(0)' }
+                    ], {
+                        duration: 50,
+                        easing: 'ease-out',
+                        iterations: 1
+                    });
+                });
+            }
         }
-    }
-
-    handleDragEnd(event) {
+        if (this.dragImage) {
+            this.dragImage.remove();
+        }
         this.isDragging = false;
-        document.body.classList.remove('grabbing');
-        const pieces = document.querySelectorAll('.piece');
-        pieces.forEach(piece => piece.classList.remove('dragging'));
-        
-        // Remove dragover class from all tiles
-        document.querySelectorAll('.tile').forEach(tile => {
-            tile.classList.remove('dragover');
-        });
-        
-        // Reset the piece to its original position if the drag was not successful
-        if (this.selectedSourceTile !== null) {
-            const sourceTile = this.board.querySelector(`.tile[data-position='${this.selectedSourceTile}']`);
-            const piece = document.querySelector('.dragging');
-            if (piece && sourceTile) {
-                sourceTile.appendChild(piece);
-            }
-            this.clearLegalMoves();
-            document.querySelector('.selected')?.classList.remove('selected');
-            this.selectedSourceTile = null;
-        }
-    }
+        this.draggedPiece = null;
+        this.dragImage = null;
+        this.selectedSourceTile = null;
+        this.clearLegalMoves();
+        document.querySelector('.selected')?.classList.remove('selected');
 
-    async handleDrop(event) {
         event.preventDefault();
-        
-        const tile = event.target.closest('.tile');
-        if (!tile) {
-            this.clearLegalMoves();
-            document.querySelector('.selected')?.classList.remove('selected');
-            this.selectedSourceTile = null;
-            return;
-        }
-
-        const targetPosition = parseInt(tile.dataset.position);
-        const sourcePosition = this.selectedSourceTile;
-
-        if (sourcePosition === null || sourcePosition === targetPosition) {
-            this.clearLegalMoves();
-            document.querySelector('.selected')?.classList.remove('selected');
-            this.selectedSourceTile = null;
-            return;
-        }
-
-        try {
-            const response = await fetch(`/api/chess/move`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    sourceCoordinate: sourcePosition,
-                    targetCoordinate: targetPosition
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error('Invalid move');
-            }
-
-            const gameState = await response.json();
-            this.updateBoard(gameState);
-            this.currentGameState = gameState;
-
-            if (gameState.gameStatus === 'CHECKMATE') {
-                this.statusElement.textContent = 'Checkmate';
-            } else if (gameState.gameStatus === 'DRAW') {
-                this.statusElement.textContent = gameState.drawType ? gameState.drawType.description : 'Draw';
-            } else {
-                this.statusElement.textContent = 'Your turn';
-            }
-
-        } catch (error) {
-            console.error('Error making move:', error);
-            this.statusElement.textContent = 'Invalid move';
-        } finally {
-            // Clear selection and legal moves after the move is processed
-            this.selectedSourceTile = null;
-            this.clearLegalMoves();
-            document.querySelector('.selected')?.classList.remove('selected');
-        }
     }
 
     showLegalMoves(position) {
@@ -372,18 +359,50 @@ class ChessGame {
     updateBoard(gameState) {
         const tiles = this.board.querySelectorAll('.tile');
         tiles.forEach((tile, index) => {
-            tile.innerHTML = '';
+            const existingPiece = tile.querySelector('.piece');
             const tileData = gameState.board.tiles.find(t => t.tileCoordinate === index);
-            if (tileData && tileData.tileOccupied) {
-                const piece = tileData.piece;
-                if (piece) {
-                    const pieceKey = piece.pieceAlliance + '_' + piece.pieceSymbol;
+            
+            if (tileData && tileData.tileOccupied && tileData.piece) {
+                const pieceKey = tileData.piece.pieceAlliance + '_' + tileData.piece.pieceSymbol;
+                
+                if (existingPiece) {
+                    // Update existing piece if it's different
+                    if (existingPiece.style.backgroundImage !== `url('${this.pieceImages[pieceKey]}')`) {
+                        existingPiece.style.backgroundImage = `url('${this.pieceImages[pieceKey]}')`;
+                    }
+                } else {
+                    // Create new piece with transition
                     const pieceElement = document.createElement('div');
                     pieceElement.className = 'piece';
                     pieceElement.style.backgroundImage = `url('${this.pieceImages[pieceKey]}')`;
-                    pieceElement.setAttribute('draggable', true);
+                    pieceElement.style.transition = 'all 0.15s ease-out';
+                    pieceElement.style.opacity = '0';
+                    pieceElement.style.transform = 'scale(0.95)';
                     tile.appendChild(pieceElement);
+                    
+                    // Trigger landing animation in next frame
+                    requestAnimationFrame(() => {
+                        pieceElement.style.opacity = '1';
+                        pieceElement.style.transform = 'scale(1)';
+                        
+                        // Add subtle shake animation
+                        pieceElement.animate([
+                            { transform: 'scale(1) translateX(-1px)' },
+                            { transform: 'scale(1) translateX(1px)' },
+                            { transform: 'scale(1) translateX(0)' }
+                        ], {
+                            duration: 100,
+                            easing: 'ease-out',
+                            iterations: 1
+                        });
+                    });
                 }
+            } else if (existingPiece) {
+                // Remove piece with subtle fade out
+                existingPiece.style.transition = 'all 0.1s ease-out';
+                existingPiece.style.opacity = '0';
+                existingPiece.style.transform = 'scale(0.95)';
+                setTimeout(() => existingPiece.remove(), 100);
             }
         });
     }
