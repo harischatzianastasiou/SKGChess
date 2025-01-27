@@ -33,13 +33,13 @@
 }
 
 .tile.selected {
-    background-color: #00ff08;
+    background-color: rgba(0, 0, 0, 0.0);
 }
 
 .tile.legal-move-non-capture::after {
     content: "•";
     font-size: 80px;
-    color: rgba(0, 0, 0, 0.3);
+    color: rgba(0, 0, 0, 0.4);
 }
 
 .tile.legal-move-capture::after {
@@ -49,7 +49,7 @@
     left: 50%;
     width: 100%;
     height: 100%;
-    border: 6px solid rgba(0, 0, 0, 0.2); /* Adjust color and opacity as needed */
+    border: 6px solid rgba(0, 0, 0, 0.4); /* Adjust color and opacity as needed */
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none; /* Ensure the circle doesn't interfere with clicks */
@@ -62,9 +62,17 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    position: absolute;
+    opacity: 1;
 }
 
+.tile.dragover {
+    border: 3px solid white;
+    box-sizing: border-box;
+}
+
+.piece.dragging {
+    cursor: grabbing;
+}
 
 .legal-move {
     background-color: rgba(0, 255, 0, 0.5); /* Semi-transparent green */
@@ -92,4 +100,8 @@ button:hover {
     margin-top: 10px;
     font-size: 18px;
     font-weight: bold;
+}
+
+.grabbing {
+    cursor: grabbing;
 } 
