@@ -36,10 +36,24 @@
     background-color: #00ff08;
 }
 
-.tile.legal-move::after {
+.tile.legal-move-non-capture::after {
     content: "•";
-    font-size: 40px;
-    color: rgba(0, 0, 0, 0.8);
+    font-size: 80px;
+    color: rgba(0, 0, 0, 0.3);
+}
+
+.tile.legal-move-capture::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border: 6px solid rgba(0, 0, 0, 0.2); /* Adjust color and opacity as needed */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none; /* Ensure the circle doesn't interfere with clicks */
+    box-sizing: border-box; /* Include border in the element's total width and height */
 }
 
 .piece {
@@ -49,6 +63,11 @@
     background-repeat: no-repeat;
     background-position: center;
     position: absolute;
+}
+
+
+.legal-move {
+    background-color: rgba(0, 255, 0, 0.5); /* Semi-transparent green */
 }
 
 .controls {

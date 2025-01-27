@@ -70,6 +70,10 @@ public class GameService {
         activeGames.remove(gameId);
     }
 
+    // public Collection<Move> getMoves(HttpServletRequest request){
+    //     return activeGames.get((String) request.getSession().getAttribute("gameId")).getMoves();
+    // }
+
     public Game makeMove(HttpServletRequest sessionRequest, MoveRequest moverequest){
         Game game = getGame(sessionRequest);
         currentGameId.set((String) sessionRequest.getSession().getAttribute("gameId"));
@@ -79,9 +83,7 @@ public class GameService {
         }
         
         // Find matching legal move from current position
-        Move move = game.getBoard()
-        .getCurrentPlayer()
-        .getMoves()
+        Move move = game.getMoves()
         .stream()
         .filter(m -> m.getSourceCoordinate() == moverequest.getSourceCoordinate() 
                 && m.getTargetCoordinate() == moverequest.getTargetCoordinate())

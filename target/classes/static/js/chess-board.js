@@ -2,6 +2,7 @@ class ChessGame {
     constructor() {
         this.board = document.getElementById('game-board');
         this.statusElement = document.getElementById('status');
+        this.currentGameState = null;
         this.selectedTile = null;
         this.pieceImages = {
             'WHITE_PAWN': 'images/white_p.png',
@@ -84,6 +85,7 @@ class ChessGame {
             const gameState = await gameResponse.json();
     
             this.updateBoard(gameState);
+            this.currentGameState = gameState;
             this.statusElement.textContent = 'Game started! Your turn (White)';
         } catch (error) {
             console.error('Error starting new game:', error);
@@ -100,12 +102,35 @@ class ChessGame {
 
         if (this.selectedTile === null) {
             // First click - select piece
-            if (this.hasPiece(tile)) {
-                this.selectedTile = position;
-                tile.classList.add('selected');
+            if (this.hasPiece(tile)){
+                const tileData = this.currentGameState.board.tiles.find(t => t.tileCoordinate === position);
+                    const piece = tileData.piece;
+                    if(piece.pieceAlliance === this.currentGameState.board.currentPlayer.alliance){
+                        this.selectedTile = position;
+                        tile.classList.add('selected');
+                        this.showLegalMoves(position); // Show legal moves
+                    }else{
+                        document.querySelector('.selected')?.classList.remove('selected');
+                        this.selectedTile = null;
+                        this.clearLegalMoves();
+                        return;
+                    }
             }
         } else {
+            if (this.hasPiece(tile)){
+                const tileData = this.currentGameState.board.tiles.find(t => t.tileCoordinate === position);
+                const piece = tileData.piece;
+                if(piece.pieceAlliance === this.currentGameState.board.currentPlayer.alliance){
+                    document.querySelector('.selected')?.classList.remove('selected');
+                    this.selectedTile = position;
+                    tile.classList.add('selected');
+                    this.clearLegalMoves();
+                    this.showLegalMoves(position);
+                    return;
+                }
+            }
             // Second click - make move
+            this.clearLegalMoves(); // Clear previous highlights
             const sourceCoordinate = this.selectedTile;
             const targetCoordinate = position;
             
@@ -127,7 +152,8 @@ class ChessGame {
                 
                 const gameState = await response.json();
                 this.updateBoard(gameState);
-                
+                this.currentGameState = gameState;
+
                 if (gameState.gameStatus === 'CHECKMATE') {
                     this.statusElement.textContent = 'Checkmate';
                 } else if (gameState.gameStatus === 'DRAW') {
@@ -140,11 +166,36 @@ class ChessGame {
                 console.error('Error making move:', error);
                 this.statusElement.textContent = 'Invalid move';
             }
-
             // Clear selection
             document.querySelector('.selected')?.classList.remove('selected');
             this.selectedTile = null;
         }
+    }
+
+    showLegalMoves(position) {
+        // Assuming gameState is an object that includes the current legal moves
+        const legalMoves = this.currentGameState.board.currentPlayer.moves; // Ensure this is populated when fetching game state
+    
+        legalMoves.forEach(move => {
+            if (move.sourceCoordinate === position) {
+                const tile = this.board.querySelector(`.tile[data-position='${move.targetCoordinate}']`);
+                if (tile) {
+                    const piece = tile.querySelector('.piece');
+                    if(piece){
+                        tile.classList.add('legal-move-capture');
+                    }else{
+                        tile.classList.add('legal-move-non-capture');
+                    }
+                }
+            }
+        });
+    }
+
+    clearLegalMoves() {
+        const legalMoveTiles = this.board.querySelectorAll('.legal-move-capture, .legal-move-non-capture');
+        legalMoveTiles.forEach(tile => {
+            tile.classList.remove('legal-move-capture', 'legal-move-non-capture');
+        });
     }
 
     hasPiece(tile) {

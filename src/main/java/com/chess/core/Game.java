@@ -56,6 +56,10 @@ public class Game {
         return board;
     }
 
+    public Collection<Move> getMoves(){
+        return board.getCurrentPlayer().getMoves();
+    }
+
     public IBoard getBoard() {
         return board;
     }
