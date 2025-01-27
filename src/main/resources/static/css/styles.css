@@ -1,17 +1,98 @@
 .container {
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 100%;
+    margin: 0;
+    padding: 20px 40px;
+    display: flex;
+    align-items: flex-start;
+    gap: 60px;
+}
+
+.left-section {
+    text-align: left;
+    width: 300px;
+    padding-left: 20px;
+}
+
+.title {
+    font-size: 2.5em;
+    margin: 0;
+    color: #003166;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: 1.2em;
+    color: #681954;
+    margin: 5px 0;
+}
+
+.author-info {
+    margin-top: 20px;
+    font-size: 0.9em;
+    color: #666;
+}
+
+.author-info a {
+    color: #003166;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.author-info a:hover {
+    color: #681954;
+}
+
+.game-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    background: #f8f8f8;
     padding: 20px;
-    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.board-wrapper {
+    position: relative;
+    width: 560px;
+    height: 560px;
+    margin: 0;
+    padding: 30px;
+    background: #333;
 }
 
 .chess-board {
     width: 560px;
     height: 560px;
-    margin: 20px auto;
     border: 2px solid #333;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
+    background: #333;
+}
+
+.rank-labels {
+    position: absolute;
+    left: 10px;
+    top: 30px;
+    bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.file-labels {
+    position: absolute;
+    bottom: 10px;
+    left: 30px;
+    right: 30px;
+    display: flex;
+    justify-content: space-around;
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .tile {
@@ -79,7 +160,8 @@
 }
 
 .controls {
-    margin-top: 20px;
+    padding-top: 30px;
+    width: 200px;
 }
 
 button {
@@ -90,6 +172,7 @@ button {
     color: white;
     border: none;
     border-radius: 4px;
+    width: 100%;
 }
 
 button:hover {
@@ -97,9 +180,13 @@ button:hover {
 }
 
 #status {
-    margin-top: 10px;
+    margin-top: 15px;
     font-size: 18px;
     font-weight: bold;
+    color: #003166;
+    width: 100%;
+    text-align: center;
+    min-height: 27px; /* Prevent jumping when text changes */
 }
 
 .grabbing {
@@ -136,9 +223,9 @@ button:hover {
 }
 
 .tile.light.selected {
-    animation: selectedBreathingLight 2s ease-in-out infinite;
+    animation: selectedBreathingLight 1.5s ease-in-out infinite;
 }
 
 .tile.dark.selected {
-    animation: selectedBreathingDark 2s ease-in-out infinite;
+    animation: selectedBreathingDark 1.5s ease-in-out infinite;
 } 

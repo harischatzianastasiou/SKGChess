@@ -4,14 +4,50 @@
     <title>SKGChess Online</title>
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/chess-board.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>SKGChess Online</h1>
-        <div id="game-board" class="chess-board"></div>
-        <div class="controls">
-            <button id="new-game">New Game</button>
-            <div id="status"></div>
+        <div class="left-section">
+            <h1 class="title">SKGChess</h1>
+            <p class="subtitle">A Custom Chess Engine & Online Chess Game</p>
+            <p class="subtitle">Built From Scratch with Java, Spring Boot and JavaScript ☕</p>
+            <p class="author-info">
+                Created by
+                <br>
+                <a href="https://github.com/harischatzianastasiou" target="_blank">
+                    <i class="fab fa-github"></i> @harischatzianastasiou
+                </a>
+            </p>
+        </div>
+        <div class="game-section">
+            <div class="board-wrapper">
+                <div class="rank-labels">
+                    <span>8</span>
+                    <span>7</span>
+                    <span>6</span>
+                    <span>5</span>
+                    <span>4</span>
+                    <span>3</span>
+                    <span>2</span>
+                    <span>1</span>
+                </div>
+                <div id="game-board" class="chess-board"></div>
+                <div class="file-labels">
+                    <span>a</span>
+                    <span>b</span>
+                    <span>c</span>
+                    <span>d</span>
+                    <span>e</span>
+                    <span>f</span>
+                    <span>g</span>
+                    <span>h</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button id="new-game">New Game</button>
+                <div id="status"></div>
+            </div>
         </div>
     </div>
 </body>
