@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import  com.chess.application.game.GameService;
 import  com.chess.core.Alliance;
-import  com.chess.core.Game;
 import  com.chess.core.moves.Move;
 import  com.chess.core.moves.noncapturing.KingSideCastleMove;
 import  com.chess.core.moves.noncapturing.QueenSideCastleMove;
@@ -27,7 +27,7 @@ public final class CurrentPlayer extends Player {
         this.isCastled = isCastled;
     }
 
-	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer, String gameId) {
+	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer) {
         final List<Piece> pieces = new ArrayList<>();
         final Collection<Move> moves = new ArrayList<>();
         final Collection<Move> opponentCheckingMoves = new ArrayList<>();
@@ -36,7 +36,7 @@ public final class CurrentPlayer extends Player {
         boolean isCastled = false;
 
         // Check if player has castled by looking for castle moves in game history
-        for (Move move : Game.getGame(gameId).getMoveHistory()) {
+        for (Move move : GameService.getGame(GameService.getCurrentGameId()).getMoveHistory()) {
             if ((move instanceof KingSideCastleMove || move instanceof QueenSideCastleMove) && 
                 move.getPieceToMove().getPieceAlliance() == alliance) {
                 isCastled = true;
@@ -53,7 +53,7 @@ public final class CurrentPlayer extends Player {
                 final Piece piece = tile.getPiece();   
                 if (piece.getPieceAlliance() == alliance) {
                     pieces.add(piece);
-                    moves.addAll(piece.calculateMoves(tiles, opponentPlayer, gameId));
+                    moves.addAll(piece.calculateMoves(tiles, opponentPlayer));
                 }
             }
         }  

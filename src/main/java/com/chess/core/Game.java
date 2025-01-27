@@ -3,75 +3,29 @@ package com.chess.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import  java.util.UUID;
-import  java.util.concurrent.ConcurrentHashMap;
 
-import  com.chess.core.board.Board;
-import  com.chess.core.board.IBoard;
+import com.chess.core.board.IBoard;
 import  com.chess.core.moves.Move;
 import  com.chess.core.moves.capturing.CapturingMove;
 import  com.chess.core.pieces.Bishop;
 import  com.chess.core.pieces.Piece;
-import com.chess.core.pieces.Piece.PieceSymbol;
-import com.chess.core.player.CurrentPlayer;
-import com.chess.core.tiles.Tile;
-import com.chess.util.SoundPlayer;
+import  com.chess.core.pieces.Piece.PieceSymbol;
+import  com.chess.core.player.CurrentPlayer;
+import  com.chess.core.tiles.Tile;
+import  com.chess.util.SoundPlayer;
 
 public class Game {
 
-    private static final Map<String, Game> gameInstances = new ConcurrentHashMap<>();
-
-    private final String gameId;
     private IBoard board;
-    private Move lastMove;
     private List<IBoard> boardHistory = new ArrayList<>();
     private List<Move> moveHistory = new ArrayList<>();
     private int moveCount = 0;
     private GameStatus gameStatus = GameStatus.ACTIVE;
     private DrawType drawType;
 
-    private Game(String gameId) {
-        this.gameId = gameId;
-    }
-
-    public static Map<String, Game> createNewGame() {
-        String newGameId = UUID.randomUUID().toString();
-        Game newGame = new Game(newGameId);
-        gameInstances.put(newGameId, newGame);
-        return gameInstances;
-    }
-
-    public static Map<String, Game> addStandardGame(String gameId) {
-        try {
-            IBoard board = Board.createStandardBoard(gameId);
-            gameInstances.get(gameId).board = board;
-            return gameInstances;
-        } catch (Exception e) {
-            System.err.println("Error adding standard game: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    } 
-    
-    public static Map<String, Game> createNewTestGame(String gameId) {
-        Game newGame = new Game(gameId);
-        gameInstances.put(gameId, newGame);
-        return gameInstances;
-    }
-
-    public static Map<String, Game> addTestGame(IBoard board, String gameId) {
-        gameInstances.get(gameId).board = board;
-        return gameInstances;
-    } 
-
-    public static Game getGame(String gameId) {
-        return gameInstances.get(gameId);
-    }
 
     public Game updateGame(Move move) {
         this.board = executeMove(move);
-        this.lastMove = move;
         this.moveHistory.add(move);
         this.boardHistory.add(board);
         this.moveCount++;
@@ -107,7 +61,7 @@ public class Game {
     }
 
     public Move getLastMove() {
-        return lastMove;
+        return moveHistory.get(moveHistory.size() - 1);
     }
 
     public List<IBoard> getBoardHistory() {
@@ -208,7 +162,7 @@ public class Game {
     }
 
     public boolean isFiftyMoveRule() {
-        if (lastMove == null) return false;
+        if (moveHistory.get(moveHistory.size() - 1) == null) return false;
         
         for (int i = moveHistory.size() - 1; i >= 0 && moveCount < 100; i--, moveCount++) {
             Move move = moveHistory.get(i);
@@ -288,8 +242,8 @@ public class Game {
             ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
             ///   Tiles, current player and opponent player are created with the board, and are immutable afterwards.                 //
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            if(selectedMove.execute(gameId)!= null){
-                this.board = selectedMove.execute(gameId); 
+            if(selectedMove.execute()!= null){
+                this.board = selectedMove.execute(); 
             }
     
         CurrentPlayer currentPlayer = (CurrentPlayer) this.getBoard().getCurrentPlayer();
@@ -300,5 +254,9 @@ public class Game {
             SoundPlayer.playCheckSound();
         }
         return this.board;
+    }
+
+    public void setBoard(IBoard board) {
+        this.board = board;
     }
 }

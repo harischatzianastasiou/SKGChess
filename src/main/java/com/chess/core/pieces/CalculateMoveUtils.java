@@ -3,8 +3,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import  com.chess.application.game.GameService;
 import  com.chess.core.Alliance;
-import  com.chess.core.Game;
 import  com.chess.core.moves.Move;
 import  com.chess.core.moves.capturing.CapturingMove;
 import  com.chess.core.moves.capturing.PawnEnPassantAttack;
@@ -35,7 +35,7 @@ public final class CalculateMoveUtils {
 	public static final int NUM_TILES_PER_ROW = 8;
     public static final Collection<Move> NO_LEGAL_MOVES = ImmutableList.copyOf(new ArrayList<>());
 
-    public static Collection<Move> calculate(List<Tile> boardTiles, final Piece piece, final int[] moveOffsets , final Player opponentPlayer, String gameId){
+    public static Collection<Move> calculate(List<Tile> boardTiles, final Piece piece, final int[] moveOffsets , final Player opponentPlayer){
         final Collection<Move> moves = new ArrayList<>();
         final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
         final int MAX_SQUARES = getMaxSquaresMoved(piece);
@@ -79,7 +79,7 @@ public final class CalculateMoveUtils {
                 final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 
                 if(isCandidateTileEmpty(candidateDestinationTile)){
-                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer, gameId));
+                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer));
                 }else{
                     if(isCandidateTileOccupiedByOpponent(piece,candidateDestinationTile))
                         moves.addAll(addCapturingMoves(piece, boardTiles,  candidateDestinationCoordinate, candidateOffset));
@@ -104,7 +104,7 @@ public final class CalculateMoveUtils {
         }
     }
 
-    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer, String gameId){
+    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer){
         final List<Move> moves = new ArrayList<>();
 
         if(!(piece instanceof Pawn)){
@@ -145,7 +145,14 @@ public final class CalculateMoveUtils {
                     if(opponentPlayer == null)
                         ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate);
                     if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
-                        Move lastMove = Game.getGame(gameId).getLastMove();
+                        System.out.println("GameService.getCurrentGameId() : " + GameService.getCurrentGameId());
+                        Move lastMove = GameService.getGame(GameService.getCurrentGameId()).getLastMove();
+                        System.out.println("lastMove : " + lastMove.getSourceCoordinate() + " " + lastMove.getTargetCoordinate());
+                        System.out.println("lastMove instanceof PawnJumpMove : " + (lastMove instanceof PawnJumpMove));
+                        System.out.println("lastMove.getPieceToMove().getPieceAlliance() : " + lastMove.getPieceToMove().getPieceAlliance());
+                        System.out.println("piece.getPieceAlliance() : " + piece.getPieceAlliance());
+                        System.out.println("getCoordinateFile(lastMove.getTargetCoordinate()) : " + getCoordinateFile(lastMove.getTargetCoordinate()));
+                        System.out.println("getCoordinateFile(candidateDestinationCoordinate) : " + getCoordinateFile(candidateDestinationCoordinate));
                         if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
                             return ImmutableList.copyOf(moves);
                         }

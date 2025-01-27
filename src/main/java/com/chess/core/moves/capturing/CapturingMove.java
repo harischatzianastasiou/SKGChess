@@ -46,7 +46,7 @@ public class CapturingMove extends Move {
     }
 
     @Override
-    public IBoard execute(String gameId) {
-        return this.createBuilderAfterCapturingMove().build(gameId);
+    public IBoard execute() {
+        return this.createBuilderAfterCapturingMove().build();
     }
 } 

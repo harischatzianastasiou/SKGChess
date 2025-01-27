@@ -3,7 +3,6 @@ class ChessGame {
         this.board = document.getElementById('game-board');
         this.statusElement = document.getElementById('status');
         this.selectedTile = null;
-        this.gameId = null;
         this.pieceImages = {
             'WHITE_PAWN': 'images/white_p.png',
             'WHITE_KNIGHT': 'images/white_n.png',
@@ -74,10 +73,9 @@ class ChessGame {
             }
     
             const data = await response.json(); 
-            const gameId = data.gameId;
-            this.gameId = gameId;
+            const message = data.message;
     
-            const gameResponse = await fetch(`/api/chess/${gameId}`);
+            const gameResponse = await fetch(`/api/chess/read`);
 
             if (!gameResponse.ok) {
                 throw new Error('Failed to fetch game state');
@@ -94,7 +92,6 @@ class ChessGame {
     }
 
     async handleTileClick(event) {
-        if (!this.gameId) return;
 
         const tile = event.target.closest('.tile');
         if (!tile) return;
@@ -113,7 +110,7 @@ class ChessGame {
             const targetCoordinate = position;
             
             try {
-                const response = await fetch(`/api/chess/${this.gameId}/move`, {
+                const response = await fetch(`/api/chess/move`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'

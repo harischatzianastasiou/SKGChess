@@ -60,5 +60,5 @@ public abstract class Move {
 
     public abstract Piece getCapturedPiece();
 
-    public abstract IBoard execute(String gameId);
+    public abstract IBoard execute();
 } 

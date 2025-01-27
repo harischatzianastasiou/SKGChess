@@ -50,7 +50,7 @@ public class MiniMax {
         this.transpositionTable = Collections.synchronizedMap(new HashMap<>(TRANSPOSITION_TABLE_SIZE));
     }
 
-    public Move findBestMove(IBoard board, String gameId) {
+    public Move findBestMove(IBoard board) {
         startTime = System.currentTimeMillis();
         nodesEvaluated = 0;
         
@@ -68,7 +68,7 @@ public class MiniMax {
         }
         
         List<Move> moves = new ArrayList<>(legalMoves);
-        quickMoveOrder(moves, gameId);
+        quickMoveOrder(moves);
         
         // Iterative deepening with time control
         for (int currentDepth = 1; currentDepth <= searchDepth; currentDepth++) {
@@ -80,10 +80,10 @@ public class MiniMax {
             for (final Move move : moves) {
                 if (isTimeUp()) break;
                 
-                IBoard newBoard = move.execute(gameId);
+                IBoard newBoard = move.execute();
                 if (newBoard == null) continue; // Skip invalid moves
                 
-                int score = -alphaBeta(newBoard, currentDepth - 1, -beta, -alpha, 0, gameId);
+                int score = -alphaBeta(newBoard, currentDepth - 1, -beta, -alpha, 0);
                 
                 if (score > bestScore) {
                     bestScore = score;
@@ -104,7 +104,7 @@ public class MiniMax {
         return System.currentTimeMillis() - startTime > MAX_SEARCH_TIME;
     }
 
-    private int alphaBeta(final IBoard board, final int depth, int alpha, int beta, int qdepth, String gameId) {
+    private int alphaBeta(final IBoard board, final int depth, int alpha, int beta, int qdepth) {
         if (isTimeUp()) return evaluator.evaluate(board, depth);
         
         nodesEvaluated++;
@@ -122,7 +122,7 @@ public class MiniMax {
         if (depth <= 0) {
             return qdepth >= MAX_QUIESCENCE_DEPTH ? 
                    evaluator.evaluate(board, depth) : 
-                   quiescenceSearch(board, alpha, beta, qdepth, gameId);
+                   quiescenceSearch(board, alpha, beta, qdepth);
         }
         
         if (isEndGameScenario(board)) {
@@ -135,7 +135,7 @@ public class MiniMax {
         }
         
         List<Move> moves = new ArrayList<>(legalMoves);
-        quickMoveOrder(moves, gameId);
+        quickMoveOrder(moves);
         
         Move bestMove = null;
         int bestScore = Integer.MIN_VALUE;
@@ -144,10 +144,10 @@ public class MiniMax {
         for (final Move move : moves) {
             if (isTimeUp()) break;
             
-            IBoard newBoard = move.execute(gameId);
+            IBoard newBoard = move.execute();
             if (newBoard == null) continue;
             
-            int score = -alphaBeta(newBoard, depth - 1, -beta, -alpha, qdepth, gameId);
+            int score = -alphaBeta(newBoard, depth - 1, -beta, -alpha, qdepth);
             
             if (score > bestScore) {
                 bestScore = score;
@@ -169,7 +169,7 @@ public class MiniMax {
         return bestScore;
     }
     
-    private int quiescenceSearch(final IBoard board, int alpha, int beta, int qdepth, String gameId) {
+    private int quiescenceSearch(final IBoard board, int alpha, int beta, int qdepth) {
         if (isTimeUp() || board == null) {
             return evaluator.evaluate(board, 0);
         }
@@ -192,15 +192,15 @@ public class MiniMax {
         }
         
         // Simple scoring for tactical moves
-        quickMoveOrder(tacticalMoves, gameId);
+        quickMoveOrder(tacticalMoves);
         
         for (Move move : tacticalMoves) {
             if (isTimeUp()) break;
             
             try {
-                IBoard newBoard = move.execute(gameId);
+                IBoard newBoard = move.execute();
                 if (newBoard != null) {
-                    int score = -quiescenceSearch(newBoard, -beta, -alpha, qdepth + 1, gameId);
+                    int score = -quiescenceSearch(newBoard, -beta, -alpha, qdepth + 1);
                     if (score >= beta) {
                         return beta;
                     }
@@ -235,7 +235,7 @@ public class MiniMax {
         return tacticalMoves;
     }
     
-    private void quickMoveOrder(List<Move> moves, String gameId) {
+    private void quickMoveOrder(List<Move> moves) {
         if (moves == null || moves.size() <= 1) {
             return;
         }
@@ -265,8 +265,8 @@ public class MiniMax {
             if (isCapture2) return 1;
             
             // Then prioritize checks
-            boolean isCheck1 = moveCausesCheck(m1, gameId);
-            boolean isCheck2 = moveCausesCheck(m2, gameId);
+            boolean isCheck1 = moveCausesCheck(m1);
+            boolean isCheck2 = moveCausesCheck(m2);
             
             if (isCheck1 && !isCheck2) return -1;
             if (!isCheck1 && isCheck2) return 1;
@@ -282,9 +282,9 @@ public class MiniMax {
         return victimValue * 6 - attackerValue;
     }
 
-    private boolean moveCausesCheck(Move move, String gameId) {
+    private boolean moveCausesCheck(Move move) {
         try {
-            IBoard newBoard = move.execute(gameId);
+            IBoard newBoard = move.execute();
             CurrentPlayer currentPlayer = (CurrentPlayer) newBoard.getCurrentPlayer();
             
             return newBoard != null && currentPlayer.isInCheck();

@@ -10,7 +10,7 @@ public interface MoveStrategy {
      * @return The best move found
      * @throws IllegalStateException if no legal moves are available
      */
-    Move getBestMove(IBoard board, String gameId);
+    Move getBestMove(IBoard board);
 
     /**
      * Gets the name of this strategy.

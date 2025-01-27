@@ -14,11 +14,11 @@ public class AIPlayer {
         this.alliance = alliance;
     }
 
-    public Move makeMove(IBoard board, String gameId) {
+    public Move makeMove(IBoard board) {
         if (board.getCurrentPlayer().getAlliance() != alliance) {
             throw new IllegalStateException("Not this player's turn");
         }
-        return strategy.getBestMove(board, gameId);
+        return strategy.getBestMove(board);
     }
 
     public Alliance getAlliance() {

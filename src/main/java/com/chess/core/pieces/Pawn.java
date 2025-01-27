@@ -61,8 +61,8 @@ public class Pawn extends Piece {
     }
      
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer, String gameId) {
-		return CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, opponentPlayer, gameId);
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer) {
+		return CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, opponentPlayer);
 	} 
     
     @Override

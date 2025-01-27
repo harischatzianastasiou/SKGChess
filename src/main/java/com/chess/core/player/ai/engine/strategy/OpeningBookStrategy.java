@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.chess.core.Game;
+import com.chess.application.game.GameService;
 import com.chess.core.board.IBoard;
 import  com.chess.core.moves.Move;
 import  com.chess.core.player.ai.OpeningBookCache;
@@ -51,7 +51,7 @@ public class OpeningBookStrategy implements MoveStrategy {
     }
 
     @Override
-    public Move getBestMove(IBoard board, String gameId) {
+    public Move getBestMove(IBoard board) {
         String position = board.getFEN();
         String positionKey = getPositionKey(position);
         List<String> bookMoves = openingBook.get(positionKey);
@@ -64,7 +64,7 @@ public class OpeningBookStrategy implements MoveStrategy {
             }
         }
         
-        return fallbackStrategy.getBestMove(board, gameId);
+        return fallbackStrategy.getBestMove(board);
     }
 
     @Override
@@ -91,9 +91,9 @@ public class OpeningBookStrategy implements MoveStrategy {
             
             try {
                 // Start from initial position
-                Map<String, Game> gameMap = Game.createNewGame();
-                String gameId = gameMap.keySet().iterator().next();
-                IBoard currentBoard = gameMap.get(gameId).getBoard();
+                // Map<String, Game> gameMap = GameService.createNewGame();
+                // String gameId = gameMap.keySet().iterator().next();
+                IBoard currentBoard = GameService.getGame(GameService.getCurrentGameId()).getBoard();//add initial board :TODO
                 String[] moveArray = moves.split("\\s+");
                 
                 // Process first 10 moves (20 plies) of each game
@@ -114,7 +114,7 @@ public class OpeningBookStrategy implements MoveStrategy {
                             book.computeIfAbsent(getPositionKey(fen), k -> new ArrayList<>()).add(longAlgebraic);
                             
                             // Make the move on our board
-                            currentBoard = move.execute(gameId);
+                            currentBoard = move.execute();
                             moveCount++;
                         }
                     } catch (Exception e) {

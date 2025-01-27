@@ -25,14 +25,14 @@ public class Board implements IBoard {
     private final Player currentPlayer;
     private final Player opponentPlayer;
 
-	private Board(final Builder builder, String gameId) {
+	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
-		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null, gameId);
-		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer, gameId);
+		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null);
+		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer);
 	}
 
-	private static IBoard createBoard(Builder builder, String gameId) {
-        return new Board(builder, gameId);
+	private static IBoard createBoard(Builder builder) {
+        return new Board(builder);
     }
 	
 	private static List<Tile> createTiles(final Builder builder) {// list of 64 tiles. each occupied tile gets a piece mapped from the builder. if not mapped the tile is empty
@@ -110,12 +110,12 @@ public class Board implements IBoard {
             return this;
         }
         
-        public IBoard build(String gameId) {//build a new board everytime a move is executed.
-            return Board.createBoard(this, gameId);
+        public IBoard build() {//build a new board everytime a move is executed.
+            return Board.createBoard(this);
         }
 	}
 	
-	public static IBoard createStandardBoard(String gameId) {//Create initial board
+	public static IBoard createStandardBoard() {//Create initial board
 		// create white and black player here once
 	    final Builder builder = new Builder();
 	    
@@ -148,19 +148,19 @@ public class Board implements IBoard {
 	    // Set up current player's color
 	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
 
-	    return createBoard(builder, gameId);
+	    return createBoard(builder);
 	}
 
-    public static IBoard createEmptyBoard(String gameId) {
+    public static IBoard createEmptyBoard() {
         final Builder builder = new Builder();
         
         // Set the first move to WHITE
         builder.setCurrentPlayerAlliance(Alliance.WHITE);
         
-	    return createBoard(builder, gameId);
+	    return createBoard(builder);
     }
 
-    public static IBoard createRandomBoard(Collection<Piece> pieces, String gameId) {
+    public static IBoard createRandomBoard(Collection<Piece> pieces ) {
         final Builder builder = new Builder();
         
         // Place the specified pieces
@@ -193,7 +193,7 @@ public class Board implements IBoard {
         // Set the move to WHITE
         builder.setCurrentPlayerAlliance(Alliance.WHITE);
         
-	    return createBoard(builder, gameId);
+	    return createBoard(builder);
     }
 
 	public Collection<Piece> getAllPieces() {

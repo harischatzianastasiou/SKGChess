@@ -16,7 +16,7 @@ public class PawnPromotionCapturingMove extends CapturingMove {
     }
     
     @Override
-    public IBoard execute(String gameId) {
+    public IBoard execute() {
         // Create a new board builder
         Board.Builder builder = new Board.Builder();
 
@@ -41,7 +41,7 @@ public class PawnPromotionCapturingMove extends CapturingMove {
         // Set the next player's alliance
         builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
 
-        return builder.build(gameId);
+        return builder.build();
 	    }
     
     @Override

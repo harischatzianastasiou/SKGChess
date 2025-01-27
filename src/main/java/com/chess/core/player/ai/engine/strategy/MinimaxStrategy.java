@@ -15,8 +15,8 @@ public class MinimaxStrategy implements MoveStrategy {
     }
 
     @Override
-    public Move getBestMove(IBoard board, String gameId) {
-        return minimax.findBestMove(board, gameId);
+    public Move getBestMove(IBoard board) {
+        return minimax.findBestMove(board);
     }
 
     @Override

@@ -20,8 +20,8 @@ public abstract class Player {
 		this.alliance = alliance;
 	}
 
-	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer, String gameId) {
-	  return opponentPlayer != null ? CurrentPlayer.createCurrentPlayer(tiles, alliance, opponentPlayer, gameId) : OpponentPlayer.createOpponentPlayer(tiles, alliance, gameId);
+	public static Player createPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer) {
+	  return opponentPlayer != null ? CurrentPlayer.createCurrentPlayer(tiles, alliance, opponentPlayer) : OpponentPlayer.createOpponentPlayer(tiles, alliance);
   }
 
 	public Collection<Piece> getPieces(){
