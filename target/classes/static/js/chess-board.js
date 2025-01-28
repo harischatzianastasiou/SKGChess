@@ -9,6 +9,7 @@ class ChessGame {
         this.isDragging = false;
         this.draggedPiece = null;
         this.dragImage = null;
+        this.lastMoveArrow = null;
         this.pieceImages = {
             'WHITE_PAWN': 'images/white_p.png',
             'WHITE_KNIGHT': 'images/white_n.png',
@@ -26,6 +27,7 @@ class ChessGame {
         
         this.initializeBoard();
         this.setupEventListeners();
+        this.initializeArrowMarker();
     }
 
     initializeBoard() {
@@ -85,6 +87,26 @@ class ChessGame {
     }
 
     async startNewGame() {
+        // Clear all visual indicators
+        document.querySelectorAll('.last-move-source, .last-move-target').forEach(tile => {
+            tile.classList.remove('last-move-source', 'last-move-target');
+        });
+        document.querySelector('.selected')?.classList.remove('selected');
+        this.clearLegalMoves();
+        
+        // Remove the last move arrow if it exists
+        if (this.lastMoveArrow) {
+            this.lastMoveArrow.remove();
+        }
+        
+        // Reset all state
+        this.selectedSourceTile = null;
+        this.selectedTargetTile = null;
+        this.isDragging = false;
+        this.draggedPiece = null;
+        this.dragImage = null;
+        this.lastMoveArrow = null;
+
         try {
             const response = await fetch('/api/chess/create', { method: 'POST' });
     
@@ -113,7 +135,6 @@ class ChessGame {
     }
 
     async handleTileClick(event) {
-
         const tile = event.target.closest('.tile');
         if (!tile) return;
 
@@ -175,6 +196,8 @@ class ChessGame {
                 const gameState = await response.json();
                 this.updateBoard(gameState);
                 this.currentGameState = gameState;
+                this.showLastMoveArrow(sourceCoordinate, targetCoordinate);
+                this.highlightLastMove(sourceCoordinate, targetCoordinate);
 
                 if (gameState.gameStatus === 'CHECKMATE') {
                     this.statusElement.textContent = 'Checkmate';
@@ -302,6 +325,8 @@ class ChessGame {
                     const gameState = await response.json();
                     this.updateBoard(gameState);
                     this.currentGameState = gameState;
+                    this.showLastMoveArrow(this.selectedSourceTile, targetPosition);
+                    this.highlightLastMove(this.selectedSourceTile, targetPosition);
 
                     if (gameState.gameStatus === 'CHECKMATE') {
                         this.statusElement.textContent = 'Checkmate';
@@ -386,6 +411,91 @@ class ChessGame {
                 }
             }
         });
+    }
+
+    initializeArrowMarker() {
+        // Create SVG definitions for the arrow marker
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.style.position = 'absolute';
+        svg.style.width = '0';
+        svg.style.height = '0';
+        
+        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+        const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+        marker.setAttribute("id", "arrowhead");
+        marker.setAttribute("markerWidth", "10");
+        marker.setAttribute("markerHeight", "7");
+        marker.setAttribute("refX", "9");
+        marker.setAttribute("refY", "3.5");
+        marker.setAttribute("orient", "auto");
+        
+        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
+        polygon.setAttribute("fill", "rgba(255, 255, 255, 0.7)");
+        
+        marker.appendChild(polygon);
+        defs.appendChild(marker);
+        svg.appendChild(defs);
+        document.body.appendChild(svg);
+    }
+
+    showLastMoveArrow(sourcePos, targetPos) {
+        // Remove existing arrow if any
+        if (this.lastMoveArrow) {
+            this.lastMoveArrow.remove();
+        }
+
+        // Clear previous highlights
+        document.querySelectorAll('.last-move-highlight').forEach(tile => {
+            tile.classList.remove('last-move-highlight');
+        });
+
+        // Create SVG container
+        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        svg.setAttribute("class", "last-move-arrow");
+        svg.style.width = this.board.offsetWidth + "px";
+        svg.style.height = this.board.offsetHeight + "px";
+
+        // Calculate tile centers
+        const tileSize = 70; // Your tile size
+        const sourceRow = Math.floor(sourcePos / 8);
+        const sourceCol = sourcePos % 8;
+        const targetRow = Math.floor(targetPos / 8);
+        const targetCol = targetPos % 8;
+
+        const startX = (sourceCol * tileSize) + (tileSize / 2);
+        const startY = (sourceRow * tileSize) + (tileSize / 2);
+        const endX = (targetCol * tileSize) + (tileSize / 2);
+        const endY = (targetRow * tileSize) + (tileSize / 2);
+
+        // Create path
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
+
+        svg.appendChild(path);
+        this.board.appendChild(svg);
+        this.lastMoveArrow = svg;
+    }
+
+    highlightLastMove(sourcePos, targetPos) {
+        // Clear previous highlights
+        document.querySelectorAll('.last-move-source, .last-move-target').forEach(tile => {
+            tile.classList.remove('last-move-source', 'last-move-target');
+        });
+
+        // // Clear previous arrow
+        // if (this.lastMoveArrow) {
+        //     this.lastMoveArrow.remove();
+        //     this.lastMoveArrow = null;
+        // }
+        // document.querySelector('.last-move-arrow')?.remove();
+
+        // Add highlights to source and target tiles
+        const sourceTile = this.board.querySelector(`.tile[data-position='${sourcePos}']`);
+        const targetTile = this.board.querySelector(`.tile[data-position='${targetPos}']`);
+        
+        if (sourceTile) sourceTile.classList.add('last-move-source');
+        if (targetTile) targetTile.classList.add('last-move-target');
     }
 }
 
