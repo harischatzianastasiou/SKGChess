@@ -119,21 +119,24 @@ class ChessGame {
 
         const position = parseInt(tile.dataset.position);
 
+        // Clear previous selection first
+        document.querySelector('.selected')?.classList.remove('selected');
+
         if (this.selectedSourceTile === null) {
             // First click - select piece
             if (this.hasPiece(tile)){
                 const tileData = this.currentGameState.board.tiles.find(t => t.tileCoordinate === position);
-                    const piece = tileData.piece;
+                const piece = tileData.piece;
                     if(piece.pieceAlliance === this.currentGameState.board.currentPlayer.alliance){
-                        this.selectedSourceTile = position;
-                        tile.classList.add('selected');
+                    this.selectedSourceTile = position;
+                    tile.classList.add('selected');
                         this.showLegalMoves(position); // Show legal moves
                     }else{
                         document.querySelector('.selected')?.classList.remove('selected');
                         this.selectedSourceTile = null;
                         this.clearLegalMoves();
                         return;
-                    }
+                }
             }
         } else {
             if (this.hasPiece(tile)){
@@ -240,11 +243,23 @@ class ChessGame {
         this.dragImage.style.left = (event.clientX - 30) + 'px';
         this.dragImage.style.top = (event.clientY - 30) + 'px';
         
+        // Add hover effect to tile under cursor
+        const hoveredTile = document.elementFromPoint(event.clientX, event.clientY)?.closest('.tile');
+        document.querySelectorAll('.tile.dragover').forEach(tile => {
+            if (tile !== hoveredTile) tile.classList.remove('dragover');
+        });
+        if (hoveredTile) hoveredTile.classList.add('dragover');
+        
         event.preventDefault();
     }
 
     async handleMouseUp(event) {
         if (!this.isDragging) return;
+
+        // Remove any remaining dragover effects
+        document.querySelectorAll('.tile.dragover').forEach(tile => {
+            tile.classList.remove('dragover');
+        });
 
         const targetTile = event.target.closest('.tile');
         if (targetTile) {
@@ -281,6 +296,11 @@ class ChessGame {
                 } catch (error) {
                     console.error('Error making move:', error);
                     this.statusElement.textContent = 'Invalid move';
+                } finally {
+                    // Ensure dragover effects are cleaned up after move attempt
+                    document.querySelectorAll('.tile.dragover').forEach(tile => {
+                        tile.classList.remove('dragover');
+                    });
                 }
             }
         }
