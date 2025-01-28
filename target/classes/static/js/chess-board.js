@@ -195,10 +195,6 @@ class ChessGame {
         const piece = event.target.closest('.piece');
         if (!piece) return;
 
-        // Clear any previous selections first
-        this.clearLegalMoves();
-        document.querySelector('.selected')?.classList.remove('selected');
-
         const tile = piece.parentElement;
         const position = parseInt(tile.dataset.position);
         const tileData = this.currentGameState.board.tiles.find(t => t.tileCoordinate === position);
@@ -230,7 +226,8 @@ class ChessGame {
         // Hide original piece
         this.draggedPiece.style.opacity = '0.3';
 
-        // Show legal moves and highlight selected tile
+        // Show legal moves
+        this.clearLegalMoves();
         tile.classList.add('selected');
         this.showLegalMoves(position);
 
@@ -250,8 +247,6 @@ class ChessGame {
         if (!this.isDragging) return;
 
         const targetTile = event.target.closest('.tile');
-        let moveSuccessful = false;
-
         if (targetTile) {
             const targetPosition = parseInt(targetTile.dataset.position);
             if (this.selectedSourceTile !== targetPosition) {
@@ -272,7 +267,6 @@ class ChessGame {
                     }
                     
                     const gameState = await response.json();
-                    moveSuccessful = true;
                     this.updateBoard(gameState);
                     this.currentGameState = gameState;
 
@@ -294,24 +288,6 @@ class ChessGame {
         // Cleanup
         if (this.draggedPiece) {
             this.draggedPiece.style.opacity = '1';
-            
-            // Add landing animation if move was not successful
-            if (!moveSuccessful) {
-                this.draggedPiece.style.transition = 'all 0.08s ease-out';
-                this.draggedPiece.style.transform = 'scale(0.97)';
-                requestAnimationFrame(() => {
-                    this.draggedPiece.style.transform = 'scale(1)';
-                    this.draggedPiece.animate([
-                        { transform: 'scale(1) translateX(-1px)' },
-                        { transform: 'scale(1) translateX(1px)' },
-                        { transform: 'scale(1) translateX(0)' }
-                    ], {
-                        duration: 50,
-                        easing: 'ease-out',
-                        iterations: 1
-                    });
-                });
-            }
         }
         if (this.dragImage) {
             this.dragImage.remove();
@@ -359,50 +335,17 @@ class ChessGame {
     updateBoard(gameState) {
         const tiles = this.board.querySelectorAll('.tile');
         tiles.forEach((tile, index) => {
-            const existingPiece = tile.querySelector('.piece');
+            tile.innerHTML = '';
             const tileData = gameState.board.tiles.find(t => t.tileCoordinate === index);
-            
-            if (tileData && tileData.tileOccupied && tileData.piece) {
-                const pieceKey = tileData.piece.pieceAlliance + '_' + tileData.piece.pieceSymbol;
-                
-                if (existingPiece) {
-                    // Update existing piece if it's different
-                    if (existingPiece.style.backgroundImage !== `url('${this.pieceImages[pieceKey]}')`) {
-                        existingPiece.style.backgroundImage = `url('${this.pieceImages[pieceKey]}')`;
-                    }
-                } else {
-                    // Create new piece with transition
+            if (tileData && tileData.tileOccupied) {
+                const piece = tileData.piece;
+                if (piece) {
+                    const pieceKey = piece.pieceAlliance + '_' + piece.pieceSymbol;
                     const pieceElement = document.createElement('div');
                     pieceElement.className = 'piece';
                     pieceElement.style.backgroundImage = `url('${this.pieceImages[pieceKey]}')`;
-                    pieceElement.style.transition = 'all 0.15s ease-out';
-                    pieceElement.style.opacity = '0';
-                    pieceElement.style.transform = 'scale(0.95)';
                     tile.appendChild(pieceElement);
-                    
-                    // Trigger landing animation in next frame
-                    requestAnimationFrame(() => {
-                        pieceElement.style.opacity = '1';
-                        pieceElement.style.transform = 'scale(1)';
-                        
-                        // Add subtle shake animation
-                        pieceElement.animate([
-                            { transform: 'scale(1) translateX(-1px)' },
-                            { transform: 'scale(1) translateX(1px)' },
-                            { transform: 'scale(1) translateX(0)' }
-                        ], {
-                            duration: 100,
-                            easing: 'ease-out',
-                            iterations: 1
-                        });
-                    });
                 }
-            } else if (existingPiece) {
-                // Remove piece with subtle fade out
-                existingPiece.style.transition = 'all 0.1s ease-out';
-                existingPiece.style.opacity = '0';
-                existingPiece.style.transform = 'scale(0.95)';
-                setTimeout(() => existingPiece.remove(), 100);
             }
         });
     }
