@@ -261,6 +261,24 @@ class ChessGame {
             tile.classList.remove('dragover');
         });
 
+        // If right click, just cancel the drag
+        if (event.button === 2) {
+            // Cleanup
+            if (this.draggedPiece) {
+                this.draggedPiece.style.opacity = '1';
+            }
+            if (this.dragImage) {
+                this.dragImage.remove();
+            }
+            this.isDragging = false;
+            this.draggedPiece = null;
+            this.dragImage = null;
+            this.selectedSourceTile = null;
+            this.clearLegalMoves();
+            document.querySelector('.selected')?.classList.remove('selected');
+            return;
+        }
+
         const targetTile = event.target.closest('.tile');
         if (targetTile) {
             const targetPosition = parseInt(targetTile.dataset.position);
