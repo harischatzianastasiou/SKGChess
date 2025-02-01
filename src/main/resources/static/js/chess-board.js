@@ -33,6 +33,7 @@ class ChessGame {
         this.stompClient = null;
         this.connected = false;
         this.connectWebSocket();
+        this.setupWebSocketUI();  // Add this line
 
     }
 
@@ -40,29 +41,51 @@ class ChessGame {
         const socket = new SockJS('/chess-websocket');
         this.stompClient = Stomp.over(socket);
         
-        this.stompClient.connect({}, (frame) => {
-            this.connected = true;
-            console.log('Connected to WebSocket');
-            
-            // Subscribe to receive messages
-            this.stompClient.subscribe('/topic/greetings', (message) => {
-                console.log('Received:', message.body);
-            });
-            
-            // Send a test message
-            this.sendTestMessage();
-        }, (error) => {
-            console.log('WebSocket connection error:', error);
-            this.connected = false;
-        });
+        // Update status to "Connecting..."
+        const statusElement = document.getElementById('player-status');
+        statusElement.textContent = 'Connecting...';
+
+        this.stompClient.connect({}, 
+            // Success callback
+            (frame) => {
+                console.log('Connected to WebSocket');
+                statusElement.textContent = 'Connected!';
+                statusElement.style.color = 'green';
+                this.connected = true;
+                console.log('Connected to WebSocket');
+                
+                // Subscribe to receive messages
+                this.stompClient.subscribe('/topic/messages', (message) => {
+                    const messageLog = document.getElementById('message-log');
+                    messageLog.innerHTML += `<div>${message.body}</div>`;
+                });
+
+            },
+            // Error callback
+            (error) => {
+                console.error('WebSocket connection error:', error);
+                statusElement.textContent = 'Connection failed!';
+                statusElement.style.color = 'red';
+            }
+        );
     }
 
-    sendTestMessage() {
-        if (this.connected) {
-            this.stompClient.send("/app/hello", {}, "Hello from chess game!");
-        } else {
-            console.log('Not connected to WebSocket');
-        }
+    setupWebSocketUI() {
+        document.getElementById('send-message').addEventListener('click', () => {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value;
+            
+            if (message && this.stompClient) {
+                this.stompClient.send("/app/message", {}, 
+                    JSON.stringify({
+                        content: message,
+                        timestamp: new Date().toLocaleTimeString()
+                    })
+                );
+                console.log('Message sent to server');  // Add this log
+                messageInput.value = '';
+            }
+        });
     }
 
     initializeBoard() {
