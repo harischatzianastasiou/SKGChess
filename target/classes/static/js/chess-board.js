@@ -28,6 +28,41 @@ class ChessGame {
         this.initializeBoard();
         this.setupEventListeners();
         this.initializeArrowMarker();
+
+        //WebSocket setup
+        this.stompClient = null;
+        this.connected = false;
+        this.connectWebSocket();
+
+    }
+
+    connectWebSocket() {
+        const socket = new SockJS('/chess-websocket');
+        this.stompClient = Stomp.over(socket);
+        
+        this.stompClient.connect({}, (frame) => {
+            this.connected = true;
+            console.log('Connected to WebSocket');
+            
+            // Subscribe to receive messages
+            this.stompClient.subscribe('/topic/greetings', (message) => {
+                console.log('Received:', message.body);
+            });
+            
+            // Send a test message
+            this.sendTestMessage();
+        }, (error) => {
+            console.log('WebSocket connection error:', error);
+            this.connected = false;
+        });
+    }
+
+    sendTestMessage() {
+        if (this.connected) {
+            this.stompClient.send("/app/hello", {}, "Hello from chess game!");
+        } else {
+            console.log('Not connected to WebSocket');
+        }
     }
 
     initializeBoard() {
