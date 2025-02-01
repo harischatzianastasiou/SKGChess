@@ -80,6 +80,11 @@ public class Game {
         return moveCount;
     }
 
+    public GameStatus getGameStatus() {
+        return gameStatus;
+    }
+
+
     public boolean isCheckmate() {
         CurrentPlayer currentPlayer = (CurrentPlayer) board.getCurrentPlayer();
         return currentPlayer.isCheckmate();

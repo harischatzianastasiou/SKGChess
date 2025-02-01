@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import com.chess.application.game.GameService;
 import com.chess.core.board.IBoard;
 import  com.chess.core.moves.Move;
 import  com.chess.core.player.ai.OpeningBookCache;
@@ -15,6 +14,7 @@ import com.chess.db.DatabaseManager;
 import com.chess.pgn.model.PGNGame;
 import com.chess.pgn.repository.SQLitePGNRepository;
 import com.chess.pgn.service.PGNService;
+import com.chess.service.game.GameService;
 
 public class OpeningBookStrategy implements MoveStrategy {
     private final Map<String, List<String>> openingBook;

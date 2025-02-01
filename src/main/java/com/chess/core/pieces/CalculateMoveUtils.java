@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import  com.chess.application.game.GameService;
 import  com.chess.core.Alliance;
 import  com.chess.core.moves.Move;
 import  com.chess.core.moves.capturing.CapturingMove;
@@ -27,6 +26,7 @@ import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerPiec
 import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerQueensideCastleValidation;
 import  com.chess.core.player.Player;
 import com.chess.core.tiles.Tile;
+import com.chess.service.game.GameService;
 import com.google.common.collect.ImmutableList;
 
 public final class CalculateMoveUtils {

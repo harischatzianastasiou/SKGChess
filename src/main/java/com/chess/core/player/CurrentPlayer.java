@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import  com.chess.application.game.GameService;
 import  com.chess.core.Alliance;
 import  com.chess.core.moves.Move;
 import  com.chess.core.moves.noncapturing.KingSideCastleMove;
@@ -12,6 +11,7 @@ import  com.chess.core.moves.noncapturing.QueenSideCastleMove;
 import  com.chess.core.pieces.King;
 import  com.chess.core.pieces.Piece;
 import com.chess.core.tiles.Tile;
+import com.chess.service.game.GameService;
 import com.google.common.collect.ImmutableList;
 
 public final class CurrentPlayer extends Player {
