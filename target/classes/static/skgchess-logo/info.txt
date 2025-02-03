@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: GoudyBookletter1911
+font link: https://fonts.google.com/specimen/Goudy+Bookletter+1911
+font author: Barry Schwartz
+font author site: http://crudfactory.com/
+
+
+icon designer: Julian Norton
+icon designer link: /juliannorton
+        
+{"bg":"#400B2C","icon":"#E8E8EE","font":"#E8E8EE","slogan":"#fcfcff"}
+      

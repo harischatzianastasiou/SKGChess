@@ -1,7 +1,10 @@
 // Wait for DOM to be ready
 document.addEventListener('DOMContentLoaded', function() {
     // Get the form element
-    const form = document.getElementById('signupForm');// Get the whole form instead of just the button submit
+    const form = document.getElementById('signupForm');
+    
+    // Only add event listener if we're on the signup page
+    if (!form) return;
     
     // Listen for form submission
     form.addEventListener('submit', async function(event) {

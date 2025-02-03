@@ -1,15 +1,12 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html>
 <head>
-    <title>SKGChess Online - Game</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/styles.css">
+    <title>SKGChess Online</title>
+    <link rel="stylesheet" href="css/game.css">
+    <script src="static/js/chess-board.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="/js/chess-board.js"></script>
 </head>
 <body>
     <div class="container">
@@ -17,12 +14,6 @@
             <h1 class="title">SKGChess</h1>
             <p class="subtitle">A Custom Chess Engine & Online Chess Game</p>
             <p class="subtitle">Built From Scratch with Java, Spring Boot and JavaScript ☕</p>
-            <div class="user-info" sec:authorize="isAuthenticated()">
-                <span>Welcome, <span sec:authentication="name" id="username"></span>!</span>
-                <form th:action="@{/logout}" method="post" class="logout-form">
-                    <button type="submit" class="btn btn-outline">Logout</button>
-                </form>
-            </div>
             <p class="author-info">
                 Created by
                 <br>
@@ -32,10 +23,6 @@
             </p>
         </div>
         <div class="game-section">
-            <div class="player-info black-player">
-                <span th:text="${game.blackPlayer.username}"></span>
-                <div class="player-status"></div>
-            </div>
             <div class="board-wrapper">
                 <div class="rank-labels">
                     <span>8</span>
@@ -59,68 +46,17 @@
                     <span>h</span>
                 </div>
             </div>
-            <div class="player-info white-player">
-                <span th:text="${game.whitePlayer.username}"></span>
-                <div class="player-status"></div>
-            </div>
             <div class="controls">
-                <div id="status" class="game-status">Waiting for opponent...</div>
-                <div class="move-history">
-                    <h3>Move History</h3>
-                    <div id="pgn-moves" th:text="${game.pgnMoves}"></div>
+                <div class="websocket-test">
+                    <div id="player-status">Not Connected</div>
+                    <input type="text" id="message-input" placeholder="Type a message">
+                    <button id="send-message">Send Message</button>
+                    <div id="message-log"></div>
                 </div>
-                <div class="chat-area">
-                    <div id="chat-messages" class="chat-messages"></div>
-                    <div class="chat-input">
-                        <input type="text" id="message-input" placeholder="Type a message...">
-                        <button id="send-message">Send</button>
-                    </div>
-                </div>
+                <button id="new-game">New Game</button>
+                <div id="status"></div>
             </div>
         </div>
     </div>
-
-    <script th:inline="javascript">
-        // Game data from server
-        const gameData = /*[[${game != null ? 
-            '{' +
-            '"id":"' + game.id + '",' +
-            '"whitePlayer":"' + game.whitePlayer.username + '",' +
-            '"blackPlayer":"' + game.blackPlayer.username + '",' +
-            '"status":"' + game.status + '",' +
-            '"fenPosition":"' + game.fenPosition + '",' +
-            '"pgnMoves":"' + game.pgnMoves + '",' +
-            '"moveCount":' + game.moveCount + ',' +
-            '"isWhitePlayerCastled":' + game.isWhitePlayerCastled + ',' +
-            '"isBlackPlayerCastled":' + game.isBlackPlayerCastled +
-            '}'
-            : 'null'}]]*/ null;
-
-        // Get current user
-        const currentUser = /*[[${#authentication.name}]]*/ null;
-        const isWhitePlayer = gameData && currentUser === gameData.whitePlayer;
-        
-        // Initialize game when page loads
-        document.addEventListener('DOMContentLoaded', () => {
-            const gameBoard = document.getElementById('game-board');
-            const controls = document.querySelector('.controls');
-            
-            if (gameBoard) {
-                console.log('Initializing game with data:', gameData);
-                window.chessGame = new ChessGame(gameData);
-
-                // Add start game button for white player if game is new
-                if (isWhitePlayer && gameData.status === 'NEW') {
-                    const startButton = document.createElement('button');
-                    startButton.id = 'start-game';
-                    startButton.className = 'btn btn-primary';
-                    startButton.textContent = 'Start Game';
-                    controls.insertBefore(startButton, controls.firstChild);
-                }
-            } else {
-                console.error('Game board element not found');
-            }
-        });
-    </script>
 </body>
 </html> 

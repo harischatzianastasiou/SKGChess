@@ -51,3 +51,9 @@ logging:
             sql:
               BasicBinder: TRACE
     web: DEBUG 
+
+
+    
+//Static Resources Definition: Static resources are files that are served directly to the client without any server-side processing. They do not change based on user input or application state.
+
+//View Templates Definition: View templates are files that define the structure and layout of the web pages that are rendered dynamically by the server. They often contain placeholders for data that will be filled in at runtime.

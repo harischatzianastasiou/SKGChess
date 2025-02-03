@@ -22,6 +22,11 @@ public class MainController {
         return "signup";
     }
 
+    @GetMapping("/game")
+    public String game(){
+        return "game";
+    }
+
     @GetMapping("/index")
     public String home(){
         return "index";
