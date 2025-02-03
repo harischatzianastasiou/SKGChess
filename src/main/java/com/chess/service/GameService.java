@@ -23,10 +23,8 @@ import com.google.gson.JsonObject;
 @Transactional
 public class GameService {
     
-    private final SessionManager sessionManager;
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
-    private final SimpMessagingTemplate messagingTemplate;
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     public GameService(GameRepository gameRepository, 
@@ -35,8 +33,6 @@ public class GameService {
                       SessionManager sessionManager) {
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
-        this.messagingTemplate = messagingTemplate;
-        this.sessionManager = sessionManager;
     }
 
     @Transactional
@@ -48,31 +44,6 @@ public class GameService {
             
         Game game = new Game(whitePlayer, blackPlayer);
         return gameRepository.save(game);
-    }
-
-    public Game getGameById(String gameId) {
-        return gameRepository.findById(gameId)
-            .orElseThrow(() -> new GameNotFoundException(gameId));
-    }
-
-    public String getFenPositionByGameId(String gameId) {
-        Game game = getGameById(gameId);
-        return game.getFenPosition();
-    }
-
-    public String getPgnMovesByGameId(String gameId) {
-        Game game = getGameById(gameId);
-        return game.getPgnMoves();
-    }
-
-    public int getMoveCountByGameId(String gameId) {
-        Game game = getGameById(gameId);
-        return game.getMoveCount();
-    }
-
-    public String getLastMovePgnByGameId(String gameId) {
-        Game game = getGameById(gameId);
-        return game.getLastMovePgn();
     }
 
     @Transactional
@@ -140,56 +111,31 @@ public class GameService {
         // game.setLastMoveTime(gameManager.getLastMoveTime());
 
         game = gameRepository.save(game);
-        notifyGameUpdate(game);
         return game;
     }
 
-    public void notifyGameCreated(String whiteSessionId, String blackSessionId, Game game) {
-        logger.info("Notifying players about game creation - gameId: {}, white: {}, black: {}", 
-            game.getId(), game.getWhitePlayer().getId(), game.getBlackPlayer().getId());
-
-        // Notify white player
-        JsonObject whiteMessage = new JsonObject();
-        whiteMessage.addProperty("type", "GAME_CREATED");
-        whiteMessage.addProperty("gameId", game.getId().toString());
-        whiteMessage.addProperty("color", "WHITE");
-        whiteMessage.addProperty("opponent", game.getBlackPlayer().getUsername());
-        messagingTemplate.convertAndSendToUser(
-            whiteSessionId, 
-            "/queue/game", 
-            whiteMessage.toString()
-        );
-
-        // Notify black player
-        JsonObject blackMessage = new JsonObject();
-        blackMessage.addProperty("type", "GAME_CREATED");
-        blackMessage.addProperty("gameId", game.getId().toString());
-        blackMessage.addProperty("color", "BLACK");
-        blackMessage.addProperty("opponent", game.getWhitePlayer().getUsername());
-        messagingTemplate.convertAndSendToUser(
-            blackSessionId, 
-            "/queue/game", 
-            blackMessage.toString()
-        );
+    public Game getGameById(String gameId) {
+        return gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
     }
 
-    public void notifyGameUpdate(Game game) {
-        JsonObject gameState = new JsonObject();
-        gameState.addProperty("type", "GAME_UPDATE");
-        gameState.addProperty("gameId", game.getId().toString());
-        gameState.addProperty("fenPosition", game.getFenPosition());
-        gameState.addProperty("status", game.getStatus().toString());
-        
-        // Notify both players
-        messagingTemplate.convertAndSendToUser(
-            sessionManager.getPlayerIdFromSession(game.getWhitePlayer().getId().toString()), 
-            "/queue/game", 
-            gameState.toString()
-        );
-        messagingTemplate.convertAndSendToUser(
-            sessionManager.getPlayerIdFromSession(game.getBlackPlayer().getId().toString()), 
-            "/queue/game", 
-            gameState.toString()
-        );
+    public String getFenPositionByGameId(String gameId) {
+        Game game = getGameById(gameId);
+        return game.getFenPosition();
+    }
+
+    public String getPgnMovesByGameId(String gameId) {
+        Game game = getGameById(gameId);
+        return game.getPgnMoves();
+    }
+
+    public int getMoveCountByGameId(String gameId) {
+        Game game = getGameById(gameId);
+        return game.getMoveCount();
+    }
+
+    public String getLastMovePgnByGameId(String gameId) {
+        Game game = getGameById(gameId);
+        return game.getLastMovePgn();
     }
 }

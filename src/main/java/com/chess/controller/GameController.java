@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chess.dto.request.MoveRequest;
@@ -19,7 +18,6 @@ import com.chess.service.GameService;
 import com.google.gson.JsonObject;
 
 @Controller
-@RequestMapping("/game")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class GameController {
     
@@ -31,19 +29,25 @@ public class GameController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @MessageMapping("/create")
-    public void createMatchmakingGame(String player1Id, String player2Id) {
+    @MessageMapping("/game/create/{player1Id}/{player2Id}")
+    public void createGame(@PathVariable String player1Id, @PathVariable String player2Id) {
         gameService.createGame(player1Id, player2Id);
+        // JsonObject confirmation = new JsonObject();
+        // confirmation.addProperty("type", "GAME_CREATED");
+        // confirmation.addProperty("message", "Successfully created a game");
+        // messagingTemplate.convertAndSendToUser(
+        //     player1Id,
+        //     "/game/create",
     }
 
-    @GetMapping("/{gameId}")
+    @GetMapping("/game/{gameId}")
     public String getGame(@PathVariable String gameId, Model model) {
         Game game = gameService.getGameById(gameId);
         model.addAttribute("game", game);
         return "game";
     }
 
-    @PostMapping("/{gameId}/move")
+    @PostMapping("/game/{gameId}/move")
     @ResponseBody
     public ResponseEntity<?> makeMove(@PathVariable String gameId, @RequestBody MoveRequest moveRequest) {
         try {

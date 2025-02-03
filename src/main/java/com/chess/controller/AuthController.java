@@ -11,7 +11,7 @@ import com.chess.service.PlayerService;
 
 @RestController
  // @RestController automatically handles JSON responses
-//  Prevents Spring from trying to find a template for the response
+//  Prevents Spring from trying to find a template for the response ( view template like html that main controller handles)
 public class AuthController {
 
     private final PlayerService playerService;
