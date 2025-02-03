@@ -1,14 +1,13 @@
 package com.chess.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.chess.model.session.SessionManager;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,12 +18,13 @@ import com.google.gson.JsonObject;
 public class SessionController {
     
     private static final Logger logger = LoggerFactory.getLogger(SessionController.class);
+    private final SessionManager sessionManager;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @Autowired
-    private SessionManager sessionManager;
-
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    public SessionController(SessionManager sessionManager, SimpMessagingTemplate messagingTemplate) {
+        this.sessionManager = sessionManager;
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @MessageMapping("/session/queue/add")
     public void addPlayerToMatchmakingQueue(@Payload JsonNode payload, SimpMessageHeaderAccessor headerAccessor) {

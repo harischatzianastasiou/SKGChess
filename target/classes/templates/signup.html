@@ -1,56 +1,44 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
-    <title>Sign Up - SKG Chess</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
+  <meta charset="UTF-8">
+  <title>Signup Form</title>
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/signup.js" defer></script>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Create Account</h2>
-        
-        <div th:if="${error}" class="alert alert-error" th:text="${error}">
+  <section>
+
+    <form id="signupForm">
+      <h1>Sign Up</h1>
+        <div class="inputbox">
+            <ion-icon name="person-outline"></ion-icon>
+            <input type="text" id="username" name="username" required>
+            <label for="username">Name</label>
+        </div>
+        <div class="inputbox">
+            <ion-icon name="mail-outline"></ion-icon>
+            <input type="email" id="email" name="email" required>
+            <label for="email">Email</label>
         </div>
         
-        <div th:if="${success}" class="alert alert-success" th:text="${success}">
-        </div>
-        
-        <form th:action="@{/signup}" method="post" th:object="${signupRequest}">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" th:field="*{username}" required 
-                       pattern="^[a-zA-Z0-9_]{3,20}$" 
-                       title="Username must be between 3 and 20 characters and can only contain letters, numbers, and underscores">
-                <small class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></small>
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" th:field="*{email}" required>
-                <small class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" th:field="*{password}" required
-                       pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"
-                       title="Password must be at least 8 characters long and include at least one letter and one number">
-                <small class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
-            </div>
-            
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required>
-                <small class="error" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></small>
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Sign Up</button>
-        </form>
-        
-        <div class="signup-link">
-            <p>Already have an account? <a th:href="@{/login}">Login</a></p>
-        </div>
-    </div>
+        <div class="inputbox">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <input type="password" id="password" name="password" required>
+            <label for="password">Password</label>
+        </div>  
+        <div class="inputbox">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <input type="password" id="confirmPassword" name="confirmPassword" required>
+          <label for="confirmPassword">Confirm Password</label>
+      </div>  
+        <button type="submit">Sign Up</button>
+      <div class="register">
+        <p>Already have an account? <a href="/login">Log In</a></p>
+      </div>
+    </form>
+  </section>
 </body>
 </html>

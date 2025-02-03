@@ -1,6 +1,5 @@
 package com.chess.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -8,41 +7,37 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.chess.dto.request.LoginRequest;
-import com.chess.dto.request.SignupRequest;
-import com.chess.model.entity.Player;
 import com.chess.service.PlayerService;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/player")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class PlayerController {
     
-    @Autowired
-    private PlayerService playerService;
+    private final PlayerService playerService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerPlayer(@Valid @RequestBody SignupRequest signupRequest) {
-        return ResponseEntity.ok(playerService.registerPlayer(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword()));
+    public PlayerController(PlayerService playerService) {
+        this.playerService = playerService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticatePlayer(@Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(playerService.getPlayerByUsernameOrEmail(loginRequest.getUsernameOrEmail()));
-    }
+    // @PostMapping("/signup")
+    // public ResponseEntity<?> registerPlayer(@Valid @RequestBody SignupRequest signupRequest) {
+    //     return ResponseEntity.ok(playerService.registerPlayer(signupRequest.getUsername(), signupRequest.getEmail(), signupRequest.getPassword()));
+    // }
 
-    @GetMapping("/{playerId}")
-    public ResponseEntity<Player> getPlayer(@PathVariable String playerId) {
-        return ResponseEntity.ok(playerService.getPlayerById(playerId));
-    }
+    // @PostMapping("/login")
+    // public ResponseEntity<?> authenticatePlayer(@Valid @RequestBody LoginRequest loginRequest) {
+    //     return ResponseEntity.ok(playerService.getPlayerByUsernameOrEmail(loginRequest.getUsernameOrEmail()));
+    // }
+
+    // @GetMapping("/{playerId}")
+    // public ResponseEntity<Player> getPlayer(@PathVariable String playerId) {
+    //     return ResponseEntity.ok(playerService.getPlayerById(playerId));
+    // }
 
     @GetMapping("/{playerId}/games")
     public ResponseEntity<?> getPlayerAllGames(@PathVariable String playerId) {

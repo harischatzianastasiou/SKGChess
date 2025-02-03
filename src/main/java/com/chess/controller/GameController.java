@@ -1,27 +1,35 @@
 package com.chess.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.chess.dto.request.MoveRequest;
 import com.chess.model.entity.Game;
 import com.chess.service.GameService;
-import com.chess.dto.request.MoveRequest;
 import com.google.gson.JsonObject;
-import org.springframework.http.ResponseEntity;
 
 @Controller
 @RequestMapping("/game")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class GameController {
     
-    @Autowired
-    private GameService gameService;
+    private final GameService gameService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate) {
+        this.gameService = gameService;
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @MessageMapping("/create")
     public void createMatchmakingGame(String player1Id, String player2Id) {

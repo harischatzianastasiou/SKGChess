@@ -1,70 +1,30 @@
 package com.chess.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.chess.dto.request.SignupRequest;
+import com.chess.model.entity.Player;
 import com.chess.service.PlayerService;
 
-import jakarta.validation.Valid;
-
-@Controller
+@RestController
+ // @RestController automatically handles JSON responses
+//  Prevents Spring from trying to find a template for the response
 public class AuthController {
 
-    @Autowired
-    private PlayerService playerService;
+    private final PlayerService playerService;
+    private final PasswordEncoder passwordEncoder;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
+    public AuthController(PlayerService playerService, PasswordEncoder passwordEncoder) {
+        this.playerService = playerService;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @GetMapping("/signup")
-    public String showSignupForm(Model model) {
-        if (!model.containsAttribute("signupRequest")) {
-            model.addAttribute("signupRequest", new SignupRequest());
-        }
-        return "signup";
-    }
-
-    @PostMapping("/signup")
-    public String signup(@Valid @ModelAttribute SignupRequest signupRequest,
-                        BindingResult bindingResult,
-                        RedirectAttributes redirectAttributes) {
-        
-        // Check for validation errors
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.signupRequest", bindingResult);
-            redirectAttributes.addFlashAttribute("signupRequest", signupRequest);
-            redirectAttributes.addFlashAttribute("error", "Please correct the errors in the form");
-            return "redirect:/signup";
-        }
-
-        // Check if passwords match
-        if (!signupRequest.getPassword().equals(signupRequest.getConfirmPassword())) {
-            redirectAttributes.addFlashAttribute("signupRequest", signupRequest);
-            redirectAttributes.addFlashAttribute("error", "Passwords do not match");
-            return "redirect:/signup";
-        }
-
-        try {
-            playerService.registerPlayer(
-                signupRequest.getUsername(), 
-                signupRequest.getEmail(),
-                signupRequest.getPassword()
-            );
-            redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
-            return "redirect:/login";
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("signupRequest", signupRequest);
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/signup";
-        }
+    @PostMapping(value = "/req/signup") // Consumes JSON data ( automatically since it is a rest controller or else set , consumes = "application/json"), then uses @RequestBody to deserialize the JSON into a Player object, Will reject any other content type (causing your 415 error)
+    public ResponseEntity<Player> createUser(@RequestBody Player player){ // ResponseEntity Provides better control over HTTP response // Makes it clear this is a REST endpoint
+        player.setPassword(passwordEncoder.encode(player.getPassword())); // Encode the password
+        return ResponseEntity.ok(playerService.registerPlayer(player)); // Register the player
     }
 } 

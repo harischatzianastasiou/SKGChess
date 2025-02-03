@@ -1,27 +1,23 @@
 package com.chess.service;
 
-import java.util.UUID;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import com.chess.core.Alliance;
+import com.chess.core.GameManager;
 import com.chess.core.moves.Move;
 import com.chess.dto.request.MoveRequest;
+import com.chess.exception.GameNotFoundException;
+import com.chess.exception.InvalidMoveException;
+import com.chess.exception.PlayerNotFoundException;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.Player;
 import com.chess.model.session.SessionManager;
-import com.chess.model.session.SessionManager.QueuedPlayer;
 import com.chess.repository.GameRepository;
 import com.chess.repository.PlayerRepository;
-import com.chess.exception.PlayerNotFoundException;
-import com.chess.exception.GameNotFoundException;
 import com.google.gson.JsonObject;
-import com.chess.core.GameManager;
-import com.chess.exception.InvalidMoveException;
 
 @Service
 @Transactional
@@ -33,7 +29,6 @@ public class GameService {
     private final SimpMessagingTemplate messagingTemplate;
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-    @Autowired
     public GameService(GameRepository gameRepository, 
                       PlayerRepository playerRepository, 
                       SimpMessagingTemplate messagingTemplate,
