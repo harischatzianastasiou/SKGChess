@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         
         // Basic validation
-        const confirmPassword = document.getElementById('confirmPassword').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
         if (userData.password !== confirmPassword) {
             alert('Passwords do not match');
             return;
