@@ -12,7 +12,7 @@ import com.chess.core.player.ai.engine.evaluation.StandardBoardEvaluator;
 import com.chess.core.player.ai.engine.strategy.MinimaxStrategy;
 import com.chess.core.player.ai.engine.strategy.MoveStrategy;
 import com.chess.core.player.ai.engine.strategy.OpeningBookStrategy;
-import com.chess.core.Game;
+import com.chess.core.GameManager;
 import java.util.Map;
 
 class OpeningBookTest {
@@ -20,8 +20,8 @@ class OpeningBookTest {
     @Test
     void testOpeningBook() {
         IBoard board = Board.createStandardBoard("test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         MoveStrategy minimaxStrategy = new MinimaxStrategy(new StandardBoardEvaluator(), 4);
         OpeningBookStrategy openingBook = new OpeningBookStrategy(minimaxStrategy);
         
@@ -33,29 +33,29 @@ Game.addTestGame(board, "test");
         
         // Test d4
         board = Board.createStandardBoard("test");
-        Map<String, Game> gameMap1 = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap1 = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         move = openingBook.getBestMove(board, "test");
         assertNotNull(move, "Expected move for d4");
         
         // Test Nf3
         board = Board.createStandardBoard("test");
-        Map<String, Game> gameMap2 = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap2 = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         move = openingBook.getBestMove(board, "test");
         assertNotNull(move, "Expected move for Nf3");
         
         // Test c4
         board = Board.createStandardBoard("test");
-        Map<String, Game> gameMap3 = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap3 = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         move = openingBook.getBestMove(board, "test");
         assertNotNull(move, "Expected move for c4");
         
         // Test e6
         board = Board.createStandardBoard("test");
-        Map<String, Game> gameMap4 = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap4 = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         move = openingBook.getBestMove(board, "test");
         assertNotNull(move, "Expected move for e6");
     }
@@ -64,8 +64,8 @@ Game.addTestGame(board, "test");
     void testOpeningBookResponse() {
         // Create a board and make e4
         IBoard board = Board.createStandardBoard("test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         Move e4Move = null;
         
         // Find e4 among legal moves
@@ -104,8 +104,8 @@ Game.addTestGame(board, "test");
     void testFallbackToMinimax() {
         // Create a standard board and make a non-book move
         IBoard board = Board.createStandardBoard("test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         Move nonBookMove = null;
         
         // Find h3 (not in opening book) among legal moves
@@ -135,8 +135,8 @@ Game.addTestGame(board, "test");
     void testOpeningBookSecondMove() {
         // Create a board and make e4
         IBoard board = Board.createStandardBoard("test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         Move e4Move = null;
         
         // Find e4 among legal moves

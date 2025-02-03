@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login - SKG Chess</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login to SKG Chess</h2>
+        
+        <div th:if="${param.error}" class="alert alert-error">
+            Invalid username or password.
+        </div>
+        
+        <div th:if="${param.logout}" class="alert alert-success">
+            You have been logged out.
+        </div>
+        
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" required autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        
+        <div class="signup-link">
+            <p>Don't have an account? <a th:href="@{/signup}">Sign up</a></p>
+        </div>
+    </div>
+</body>
+</html>

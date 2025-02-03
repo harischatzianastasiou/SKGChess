@@ -11,7 +11,7 @@ import  com.chess.core.moves.noncapturing.QueenSideCastleMove;
 import  com.chess.core.pieces.King;
 import  com.chess.core.pieces.Piece;
 import com.chess.core.tiles.Tile;
-import com.chess.service.game.GameService;
+import com.chess.service.GameService;
 import com.google.common.collect.ImmutableList;
 
 public final class CurrentPlayer extends Player {
@@ -27,22 +27,22 @@ public final class CurrentPlayer extends Player {
         this.isCastled = isCastled;
     }
 
-	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer) {
+	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer, final Move lastMove, final boolean isCastled) {
         final List<Piece> pieces = new ArrayList<>();
         final Collection<Move> moves = new ArrayList<>();
         final Collection<Move> opponentCheckingMoves = new ArrayList<>();
         boolean isInCheck = false;
         boolean isInCheckmate = false;
-        boolean isCastled = false;
+    
 
-        // Check if player has castled by looking for castle moves in game history
-        for (Move move : GameService.getGame(GameService.getCurrentGameId()).getMoveHistory()) {
-            if ((move instanceof KingSideCastleMove || move instanceof QueenSideCastleMove) && 
-                move.getPieceToMove().getPieceAlliance() == alliance) {
-                isCastled = true;
-                break;
-            }
-        }
+        // // Check if player has castled by looking for castle moves in game history
+        // for (Move move : GameService.getGameById(GameService.getGameById()).getMoveHistory()) {
+        //     if ((move instanceof KingSideCastleMove || move instanceof QueenSideCastleMove) && 
+        //         move.getPieceToMove().getPieceAlliance() == alliance) {
+        //         isCastled = true;
+        //         break;
+        //     }
+        // }
 
         opponentCheckingMoves.addAll(getOpponentCheckingMoves(tiles, alliance, opponentPlayer));
         if(!opponentCheckingMoves.isEmpty()){
@@ -53,7 +53,7 @@ public final class CurrentPlayer extends Player {
                 final Piece piece = tile.getPiece();   
                 if (piece.getPieceAlliance() == alliance) {
                     pieces.add(piece);
-                    moves.addAll(piece.calculateMoves(tiles, opponentPlayer));
+                    moves.addAll(piece.calculateMoves(tiles, opponentPlayer, lastMove));
                 }
             }
         }  

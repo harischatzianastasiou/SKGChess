@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error - SKG Chess</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div class="error-container">
+        <h1>Oops! Something went wrong</h1>
+        <div class="error-details">
+            <p th:if="${status}">Status: <span th:text="${status}"></span></p>
+            <p th:if="${error}">Error: <span th:text="${error}"></span></p>
+            <p th:if="${message}">Message: <span th:text="${message}"></span></p>
+        </div>
+        <div class="error-actions">
+            <a href="/home" class="btn btn-primary">Go to Home</a>
+            <a href="/login" class="btn btn-outline">Go to Login</a>
+        </div>
+    </div>
+</body>
+</html> 

@@ -26,8 +26,8 @@ public class King extends Piece  {
     }
     
 	@Override
-	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer) {
-		return CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, opponentPlayer);
+	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer, final Move lastMove) {
+		return CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, opponentPlayer, lastMove);
 	}
 	
     @Override

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Home - SKG Chess</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <!-- <script src="js/chess-board.js" defer></script> -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"> -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script> -->
+</head>
+<body>
+    <div class="home-container">
+        <header>
+            <h1>Welcome to SKG Chess</h1>
+            <div class="user-info" sec:authorize="isAuthenticated()">
+                <span>Welcome, <span sec:authentication="name" id="username"></span>!</span>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn btn-outline">Logout</button>
+                </form>
+            </div>
+        </header>
+
+        <main>
+            <div class="game-options">
+                <h2>Play Chess</h2>
+                <div class="button-group">
+                    <button onclick="joinMatchmaking()" class="btn btn-primary">Quick Match</button>
+                    <button onclick="createPrivateGame()" class="btn btn-primary">Create Private Game</button>
+                </div>
+            </div>
+
+            <div class="active-games" th:if="${activeGames != null and !activeGames.empty}">
+                <h2>Your Active Games</h2>
+                <div class="games-list">
+                    <!-- List active games here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script th:inline="javascript">
+        let stompClient = null;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+        const username = document.getElementById('username').textContent;
+
+        function connect() {
+            const socket = new SockJS('/chess-websocket');
+            stompClient = Stomp.over(socket);
+            
+            stompClient.connect({}, 
+                function(frame) {
+                    console.log('Connected: ' + frame);
+                    reconnectAttempts = 0;
+                    
+                    // Subscribe to personal queue
+                    stompClient.subscribe('/user/queue/game', function(message) {
+                        handleGameMessage(JSON.parse(message.body));
+                    });
+
+                    // Subscribe to errors
+                    stompClient.subscribe('/user/queue/errors', function(message) {
+                        console.error('Error received:', message.body);
+                        // Handle error message
+                    });
+                },
+                function(error) {
+                    console.error('STOMP error:', error);
+                    handleDisconnect();
+                }
+            );
+
+            socket.onclose = function() {
+                console.log('WebSocket connection closed');
+                handleDisconnect();
+            };
+        }
+
+        function handleDisconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+                stompClient = null;
+            }
+
+            if (reconnectAttempts < maxReconnectAttempts) {
+                console.log('Attempting to reconnect...');
+                reconnectAttempts++;
+                setTimeout(connect, 2000 * Math.pow(2, reconnectAttempts - 1));
+            } else {
+                console.error('Max reconnection attempts reached');
+                // Show user-friendly error message
+            }
+        }
+
+        function joinMatchmaking() {
+            if (stompClient && stompClient.connected) {
+                stompClient.send("/app/session/queue/add", {}, JSON.stringify({
+                    username: username
+                }));
+            } else {
+                console.error('Not connected to WebSocket');
+                // Show user-friendly error message
+            }
+        }
+
+        function createPrivateGame() {
+            if (stompClient && stompClient.connected) {
+                stompClient.send("/app/game/create/private", {}, JSON.stringify({
+                    username: username
+                }));
+            } else {
+                console.error('Not connected to WebSocket');
+                // Show user-friendly error message
+            }
+        }
+
+        function handleGameMessage(message) {
+            switch(message.type) {
+                case 'GAME_CREATED':
+                    window.location.href = '/game/' + message.gameId;
+                    break;
+                case 'GAME_UPDATE':
+                    // Handle game update
+                    break;
+                case 'ERROR':
+                    console.error('Game error:', message.message);
+                    // Show user-friendly error message
+                    break;
+            }
+        }
+
+        // Connect when page loads
+        connect();
+
+        // Cleanup on page unload
+        window.onbeforeunload = function() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+        };
+    </script>
+</body>
+</html> 

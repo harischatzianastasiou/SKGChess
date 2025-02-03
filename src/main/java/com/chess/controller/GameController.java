@@ -1,72 +1,77 @@
 package com.chess.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import com.chess.model.entity.Game;
+import com.chess.service.GameService;
 import com.chess.dto.request.MoveRequest;
-import com.chess.core.Game;
-import com.chess.service.game.GameService;
+import com.google.gson.JsonObject;
+import org.springframework.http.ResponseEntity;
 
-import jakarta.servlet.http.HttpServletRequest;
-
-@RestController
-@RequestMapping("/api/chess")
+@Controller
+@RequestMapping("/game")
+@CrossOrigin(origins = "*", maxAge = 3600)
 public class GameController {
     
     @Autowired
     private GameService gameService;
 
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> createGame(HttpServletRequest request) {
-        try {
-            gameService.createNewGame(request);
-            
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Game created successfully");
-            
-            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(response);
-        } catch (Exception e) {
-            System.err.println("Error creating game: " + e.getMessage());
-            e.printStackTrace();
-            
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("error", "Error creating game");
-            
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).contentType(MediaType.APPLICATION_JSON).body(errorResponse);
-        }
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    @MessageMapping("/create")
+    public void createMatchmakingGame(String player1Id, String player2Id) {
+        gameService.createGame(player1Id, player2Id);
     }
 
-    @GetMapping("/read")
-    public ResponseEntity<Game> getGame(HttpServletRequest request) {
-        // Retrieve the current game
-        Game game = gameService.getGame(request);
-        if (game == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-
-        return ResponseEntity.ok(game);
+    @GetMapping("/{gameId}")
+    public String getGame(@PathVariable String gameId, Model model) {
+        Game game = gameService.getGameById(gameId);
+        model.addAttribute("game", game);
+        return "game";
     }
 
-    @PostMapping("/move")
-    public ResponseEntity<?> makeMove(HttpServletRequest sessionRequest, @RequestBody MoveRequest moveRequest) {  
+    @PostMapping("/{gameId}/move")
+    @ResponseBody
+    public ResponseEntity<?> makeMove(@PathVariable String gameId, @RequestBody MoveRequest moveRequest) {
         try {
-            Game game = gameService.makeMove(sessionRequest, moveRequest);
-            if (game == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Game not found");
+            Game game = gameService.updateGame(moveRequest);
+            
+            if (game != null) {
+                JsonObject gameState = new JsonObject();
+                gameState.addProperty("type", "GAME_UPDATE");
+                gameState.addProperty("gameId", game.getId().toString());
+                gameState.addProperty("fenPosition", game.getFenPosition());
+                gameState.addProperty("status", game.getStatus().toString());
+                gameState.addProperty("pgnMoves", game.getPgnMoves());
+                
+                messagingTemplate.convertAndSend("/topic/game/" + game.getId(), gameState.toString());
+                return ResponseEntity.ok(game);
+            } else {
+                JsonObject errorMessage = new JsonObject();
+                errorMessage.addProperty("type", "MOVE_ERROR");
+                errorMessage.addProperty("message", "Invalid move");
+                messagingTemplate.convertAndSendToUser(
+                    moveRequest.getPlayerId(), 
+                    "/queue/errors", 
+                    errorMessage.toString()
+                );
+                return ResponseEntity.badRequest().body(errorMessage.toString());
             }
-            return ResponseEntity.ok(game); // Return the updated game state
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-        }    
+            JsonObject errorMessage = new JsonObject();
+            errorMessage.addProperty("type", "ERROR");
+            errorMessage.addProperty("message", "An error occurred: " + e.getMessage());
+            messagingTemplate.convertAndSendToUser(
+                moveRequest.getPlayerId(), 
+                "/queue/errors", 
+                errorMessage.toString()
+            );
+            return ResponseEntity.badRequest().body(errorMessage.toString());
+        }
     }
 }

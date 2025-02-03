@@ -1,20 +1,12 @@
 package com.chess.dto.request;
 
+import com.chess.core.moves.Move;
+
+import lombok.Data;
+
+@Data
 public class MoveRequest {
-
-    private final int sourceCoordinate;
-    private final int targetCoordinate;
-
-    public MoveRequest(int sourceCoordinate, int targetCoordinate) {
-        this.sourceCoordinate = sourceCoordinate;
-        this.targetCoordinate = targetCoordinate;
-    }
-
-    public int getSourceCoordinate() {
-        return sourceCoordinate;
-    }
-
-    public int getTargetCoordinate() {
-        return targetCoordinate;
-    }
+    private String gameId;
+    private String playerId;
+    private Move move;
 }

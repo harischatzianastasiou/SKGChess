@@ -27,7 +27,7 @@ public final class OpponentPlayer extends Player {
                 final Piece piece = tile.getPiece();
                 if (piece.getPieceAlliance() == alliance) {
                     pieces.add(piece);
-                    moves.addAll(piece.calculateMoves(tiles, null));
+                    moves.addAll(piece.calculateMoves(tiles, null, null));
                 }
             }
         }   

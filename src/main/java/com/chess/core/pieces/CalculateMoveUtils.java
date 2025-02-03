@@ -26,7 +26,7 @@ import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerPiec
 import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerQueensideCastleValidation;
 import  com.chess.core.player.Player;
 import com.chess.core.tiles.Tile;
-import com.chess.service.game.GameService;
+import com.chess.service.GameService;
 import com.google.common.collect.ImmutableList;
 
 public final class CalculateMoveUtils {
@@ -35,7 +35,7 @@ public final class CalculateMoveUtils {
 	public static final int NUM_TILES_PER_ROW = 8;
     public static final Collection<Move> NO_LEGAL_MOVES = ImmutableList.copyOf(new ArrayList<>());
 
-    public static Collection<Move> calculate(List<Tile> boardTiles, final Piece piece, final int[] moveOffsets , final Player opponentPlayer){
+    public static Collection<Move> calculate(List<Tile> boardTiles, final Piece piece, final int[] moveOffsets , final Player opponentPlayer, final Move lastMove){
         final Collection<Move> moves = new ArrayList<>();
         final Collection<Move> opponentMoves =  (opponentPlayer == null) ? null : opponentPlayer.getMoves();
         final int MAX_SQUARES = getMaxSquaresMoved(piece);
@@ -79,7 +79,7 @@ public final class CalculateMoveUtils {
                 final Tile candidateDestinationTile = boardTiles.get(candidateDestinationCoordinate);
 
                 if(isCandidateTileEmpty(candidateDestinationTile)){
-                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer));
+                   moves.addAll(addNonCapturingMoves(piece, boardTiles, candidateDestinationCoordinate, candidateOffset, opponentPlayer, lastMove));
                 }else{
                     if(isCandidateTileOccupiedByOpponent(piece,candidateDestinationTile))
                         moves.addAll(addCapturingMoves(piece, boardTiles,  candidateDestinationCoordinate, candidateOffset));
@@ -104,7 +104,7 @@ public final class CalculateMoveUtils {
         }
     }
 
-    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer){
+    public static Collection<Move> addNonCapturingMoves(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer, Move lastMove){
         final List<Move> moves = new ArrayList<>();
 
         if(!(piece instanceof Pawn)){
@@ -145,15 +145,7 @@ public final class CalculateMoveUtils {
                     if(opponentPlayer == null)
                         ProtectedCoordinatesTracker.addProtectedCoordinate(candidateDestinationCoordinate);
                     if(pawn.getCurrentRank() == pawn.getEnPassantRank()){
-                        System.out.println("GameService.getCurrentGameId() : " + GameService.getCurrentGameId());
-                        Move lastMove = GameService.getGame(GameService.getCurrentGameId()).getLastMove();
-                        System.out.println("lastMove : " + lastMove.getSourceCoordinate() + " " + lastMove.getTargetCoordinate());
-                        System.out.println("lastMove instanceof PawnJumpMove : " + (lastMove instanceof PawnJumpMove));
-                        System.out.println("lastMove.getPieceToMove().getPieceAlliance() : " + lastMove.getPieceToMove().getPieceAlliance());
-                        System.out.println("piece.getPieceAlliance() : " + piece.getPieceAlliance());
-                        System.out.println("getCoordinateFile(lastMove.getTargetCoordinate()) : " + getCoordinateFile(lastMove.getTargetCoordinate()));
-                        System.out.println("getCoordinateFile(candidateDestinationCoordinate) : " + getCoordinateFile(candidateDestinationCoordinate));
-                        if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
+                       if (!(lastMove instanceof PawnJumpMove) || lastMove.getPieceToMove().getPieceAlliance() == piece.getPieceAlliance() || getCoordinateFile(lastMove.getTargetCoordinate()) != getCoordinateFile(candidateDestinationCoordinate)) {
                             return ImmutableList.copyOf(moves);
                         }
                         Piece pieceToCapture = boardTiles.get(lastMove.getTargetCoordinate()).getPiece();

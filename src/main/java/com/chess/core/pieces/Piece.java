@@ -86,7 +86,7 @@ public abstract class Piece {
         }
 	}
 
-    public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer);
+    public abstract Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer, final Move lastMove);
 
 	public abstract Piece movePiece(int destinationCoordinate);
 }

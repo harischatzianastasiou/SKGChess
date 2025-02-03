@@ -19,7 +19,7 @@ import  com.chess.core.pieces.King;
 import  com.chess.core.pieces.Pawn;
 import com.chess.core.pieces.Rook;
 import com.chess.core.tiles.Tile;
-import com.chess.core.Game;
+import com.chess.core.GameManager;
 import java.util.Map;
 class PawnMovementTest {
     
@@ -30,8 +30,8 @@ class PawnMovementTest {
         Pawn whitePawn = new Pawn(44, Alliance.WHITE); // e4
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whitePawn), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
@@ -51,8 +51,8 @@ Game.addTestGame(board, "test");
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, whitePawn, blackPawnLeft, blackPawnRight), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
@@ -73,8 +73,8 @@ Game.addTestGame(board, "test");
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, whitePawn, blockingPawn), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> moves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
@@ -96,8 +96,8 @@ Game.addTestGame(board, "test");
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, whitePawn), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
@@ -112,8 +112,8 @@ Game.addTestGame(board, "test");
         
         board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, blackPawn),"test");
-        Map<String, Game> gameMap1 = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap1 = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         tiles = board.getTiles();
         
         pawnMoves = blackPawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
@@ -137,8 +137,8 @@ Game.addTestGame(board, "test");
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, whitePawn, blackPawn), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         // Move black pawn two squares forward
@@ -168,8 +168,8 @@ Game.addTestGame(board, "test");
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, whitePawn, blackRook), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
@@ -192,8 +192,8 @@ Game.addTestGame(board, "test");
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(
             whiteKing, blackKing, whitePawn, blackRook), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");

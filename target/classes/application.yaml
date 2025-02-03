@@ -1,0 +1,53 @@
+# Common Configuration
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+
+# Static resources
+spring:
+  # PostgreSQL Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/skgchess
+    username: postgres
+    password: SKGCHESSQPWOEIRUTY
+    driver-class-name: org.postgresql.Driver
+
+  web:
+    resources:
+      static-locations: classpath:/static/
+      add-mappings: true
+  mvc:
+    static-path-pattern: /**
+  
+  # Debug
+  devtools:
+    add-properties: true
+
+  # JPA/Hibernate Properties
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Logging
+logging:
+  level:
+    com:
+      chess: DEBUG
+    org:
+      springframework:
+        web: DEBUG
+        web.servlet.resource: TRACE
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+    web: DEBUG 

@@ -6,7 +6,8 @@ import java.util.List;
 import  com.chess.core.pieces.Piece;
 import  com.chess.core.player.Player;
 import  com.chess.core.tiles.Tile;
-import com.chess.pgn.FENUtils;
+import com.chess.util.FENUtils;
+import com.chess.core.moves.Move;
 
 public interface IBoard {
     List<Tile> getTiles();
@@ -47,6 +48,12 @@ public interface IBoard {
     static IBoard createRandomBoard(Collection<Piece> pieces) {
         return Board.createRandomBoard(pieces);
     }
+
+    static IBoard createBoardFromFEN(String fen, Move lastMove, boolean isCastled) {
+        return Board.createBoardFromFEN(fen, lastMove, isCastled);
+    }
+
+
 
     Collection<Piece> getAllPieces();
 } 

@@ -18,6 +18,7 @@ import  com.chess.core.pieces.Rook;
 import  com.chess.core.player.Player;
 import  com.chess.core.tiles.Tile;
 import com.google.common.collect.ImmutableList;
+import com.chess.core.moves.Move;
 
 public class Board implements IBoard {
 	
@@ -27,12 +28,22 @@ public class Board implements IBoard {
 
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
-		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null);
-		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer);
+		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null, null, false);
+		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer, null, false);
 	}
+
+	private Board(final Builder builder, final Move lastMove, final boolean isCastled) {
+        this.tiles = createTiles(builder);
+        this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null, null, false);
+        this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer, lastMove, isCastled);
+    }
 
 	private static IBoard createBoard(Builder builder) {
         return new Board(builder);
+    }
+
+	private static IBoard createBoard(Builder builder, Move lastMove, boolean isCastled) {
+        return new Board(builder, lastMove, isCastled);
     }
 	
 	private static List<Tile> createTiles(final Builder builder) {// list of 64 tiles. each occupied tile gets a piece mapped from the builder. if not mapped the tile is empty
@@ -110,7 +121,11 @@ public class Board implements IBoard {
             return this;
         }
         
-        public IBoard build() {//build a new board everytime a move is executed.
+        public IBoard build(Move lastMove, boolean isCastled) {//build a new board everytime a move is executed.
+            return Board.createBoard(this, lastMove, isCastled);
+        }
+
+		public IBoard build() {//build a new board everytime a move is executed.
             return Board.createBoard(this);
         }
 	}
@@ -201,5 +216,46 @@ public class Board implements IBoard {
 				.map(Tile::getPiece)
 				.filter(piece -> piece != null)
 				.toList();
+	}
+
+	public static IBoard createBoardFromFEN(String fen, Move lastMove, boolean isCastled) {
+		if (fen == null || fen.trim().isEmpty()) {
+			return null;
+		}
+
+		String[] fenParts = fen.split(" ");
+		String piecePlacement = fenParts[0];
+		Alliance currentPlayerAlliance = fenParts[1].equals("w") ? Alliance.WHITE : Alliance.BLACK;
+
+		Builder builder = new Builder();
+		builder.setCurrentPlayerAlliance(currentPlayerAlliance);
+
+		int rank = 7; // Start from top rank (7)
+		int file = 0; // Start from a-file (0)
+		
+		for (char c : piecePlacement.toCharArray()) {
+			if (c == '/') {
+				rank--;
+				file = 0;
+			} else if (Character.isDigit(c)) {
+				file += Character.getNumericValue(c);
+			} else {
+				int coordinate = rank * 8 + file;
+				Alliance alliance = Character.isUpperCase(c) ? Alliance.WHITE : Alliance.BLACK;
+				char pieceChar = Character.toUpperCase(c);
+				
+				switch (pieceChar) {
+					case 'P': builder.setPiece(new Pawn(coordinate, alliance)); break;
+					case 'R': builder.setPiece(new Rook(coordinate, alliance)); break;
+					case 'N': builder.setPiece(new Knight(coordinate, alliance)); break;
+					case 'B': builder.setPiece(new Bishop(coordinate, alliance)); break;
+					case 'Q': builder.setPiece(new Queen(coordinate, alliance)); break;
+					case 'K': builder.setPiece(new King(coordinate, alliance)); break;
+				}
+				file++;
+			}
+		}
+		
+		return builder.build(lastMove, isCastled);
 	}
 }

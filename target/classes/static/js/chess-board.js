@@ -1,9 +1,14 @@
 class ChessGame {
-    constructor() {
+    constructor(gameData) {
         this.board = document.getElementById('game-board');
+        if (!this.board) {
+            console.error('Chess board element not found');
+            return;
+        }
+        
         this.piece = document.getElementById('piece');
         this.statusElement = document.getElementById('status');
-        this.currentGameState = null;
+        this.currentGameState = gameData || null;
         this.selectedSourceTile = null;
         this.selectedTargetTile = null;
         this.isDragging = false;
@@ -11,70 +16,279 @@ class ChessGame {
         this.dragImage = null;
         this.lastMoveArrow = null;
         this.pieceImages = {
-            'WHITE_PAWN': 'images/white_p.png',
-            'WHITE_KNIGHT': 'images/white_n.png',
-            'WHITE_BISHOP': 'images/white_b.png',
-            'WHITE_ROOK': 'images/white_r.png',
-            'WHITE_QUEEN': 'images/white_q.png',
-            'WHITE_KING': 'images/white_k.png',
-            'BLACK_PAWN': 'images/black_p.png',
-            'BLACK_KNIGHT': 'images/black_n.png',
-            'BLACK_BISHOP': 'images/black_b.png',
-            'BLACK_ROOK': 'images/black_r.png',
-            'BLACK_QUEEN': 'images/black_q.png',
-            'BLACK_KING': 'images/black_k.png'
+            'WHITE_PAWN': '/images/white_p.png',
+            'WHITE_KNIGHT': '/images/white_n.png',
+            'WHITE_BISHOP': '/images/white_b.png',
+            'WHITE_ROOK': '/images/white_r.png',
+            'WHITE_QUEEN': '/images/white_q.png',
+            'WHITE_KING': '/images/white_k.png',
+            'BLACK_PAWN': '/images/black_p.png',
+            'BLACK_KNIGHT': '/images/black_n.png',
+            'BLACK_BISHOP': '/images/black_b.png',
+            'BLACK_ROOK': '/images/black_r.png',
+            'BLACK_QUEEN': '/images/black_q.png',
+            'BLACK_KING': '/images/black_k.png'
         };
-        
-        this.initializeBoard();
-        this.setupEventListeners();
-        this.initializeArrowMarker();
+
+        // Get current player's username
+        const usernameElement = document.getElementById('username');
+        this.currentPlayerUsername = usernameElement ? usernameElement.textContent.trim() : null;
+        console.log('Current player:', this.currentPlayerUsername);
 
         //WebSocket setup
         this.stompClient = null;
         this.connected = false;
         this.connectWebSocket();
-        this.setupWebSocketUI();  // Add this line
 
+        // Initialize board after WebSocket connection
+        if (this.currentGameState) {
+            console.log('Initializing with game data:', this.currentGameState);
+            this.initializeBoard();
+            this.updateGameStatus();
+        }
+
+        // Setup event listeners after board is initialized
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Start game button listener
+        const startGameButton = document.getElementById('start-game');
+        if (startGameButton) {
+            startGameButton.addEventListener('click', () => this.startGame());
+        }
+        
+        if (this.board) {
+            // Remove any existing listeners first
+            const newBoard = this.board.cloneNode(true);
+            this.board.parentNode.replaceChild(newBoard, this.board);
+            this.board = newBoard;
+
+            // Add click listener
+            this.board.addEventListener('click', (e) => this.handleTileClick(e));
+            
+            // Mouse event listeners for dragging
+            this.board.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+            document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+            document.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+
+            this.board.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                if (this.selectedSourceTile !== null) {
+                    this.clearLegalMoves();
+                    document.querySelector('.selected')?.classList.remove('selected');
+                    this.selectedSourceTile = null;
+                }
+            });
+        }
+    }
+
+    startGame() {
+        if (!this.connected) {
+            console.error('WebSocket not connected');
+            return;
+        }
+
+        try {
+            // Send game start message through WebSocket
+            this.stompClient.send("/app/game/start", {}, JSON.stringify({
+                gameId: this.currentGameState.id
+            }));
+            
+            // Update UI
+            const startButton = document.getElementById('start-game');
+            if (startButton) {
+                startButton.remove();
+            }
+            this.statusElement.textContent = 'Starting game...';
+        } catch (error) {
+            console.error('Error starting game:', error);
+            this.statusElement.textContent = 'Error starting game';
+        }
+    }
+
+    handleGameUpdate(gameEvent) {
+        console.log('Handling game update:', gameEvent);
+        
+        if (!gameEvent) return;
+
+        switch(gameEvent.type) {
+            case 'GAME_CREATED':
+                console.log('Game created event received');
+                this.currentGameState = gameEvent.game;
+                this.initializeBoard();
+                this.updateGameStatus();
+                break;
+
+            case 'GAME_STARTED':
+                console.log('Game started event received');
+                this.currentGameState = gameEvent.game;
+                this.initializeBoard();
+                this.updateGameStatus();
+                // Remove start button if it exists
+                document.getElementById('start-game')?.remove();
+                break;
+
+            case 'MOVE_MADE':
+                console.log('Move made event received');
+                this.currentGameState = gameEvent.game;
+                this.updateBoardFromFen(gameEvent.game.fenPosition);
+                this.updateGameStatus();
+                if (gameEvent.move) {
+                    this.highlightLastMove(gameEvent.move.sourcePosition, gameEvent.move.targetPosition);
+                }
+                break;
+
+            case 'GAME_ENDED':
+                console.log('Game ended event received');
+                this.currentGameState = gameEvent.game;
+                this.updateGameStatus();
+                break;
+        }
+    }
+
+    updateGameStatus() {
+        if (!this.currentGameState || !this.statusElement) return;
+
+        const isWhitePlayer = this.currentPlayerUsername === this.currentGameState.whitePlayer;
+        const isBlackPlayer = this.currentPlayerUsername === this.currentGameState.blackPlayer;
+        
+        // Get current turn from FEN
+        const fenParts = this.currentGameState.fenPosition.split(' ');
+        const isWhiteTurn = fenParts[1] === 'w';
+
+        // Update player statuses
+        const whiteStatus = document.querySelector('.white-player .player-status');
+        const blackStatus = document.querySelector('.black-player .player-status');
+        
+        if (whiteStatus) whiteStatus.textContent = isWhiteTurn ? '(Current Turn)' : '';
+        if (blackStatus) blackStatus.textContent = !isWhiteTurn ? '(Current Turn)' : '';
+
+        if (this.currentGameState.status === 'ACTIVE') {
+            if ((isWhiteTurn && isWhitePlayer) || (!isWhiteTurn && isBlackPlayer)) {
+                this.statusElement.textContent = 'Your turn';
+                this.board.classList.add('active-player');
+            } else if (isWhitePlayer || isBlackPlayer) {
+                this.statusElement.textContent = 'Opponent\'s turn';
+                this.board.classList.remove('active-player');
+            } else {
+                this.statusElement.textContent = isWhiteTurn ? 'White\'s turn' : 'Black\'s turn';
+            }
+        } else {
+            this.statusElement.textContent = this.currentGameState.status;
+            this.board.classList.remove('active-player');
+        }
+    }
+
+    updateBoardFromFen(fen) {
+        if (!fen) return;
+        
+        const fenBoard = fen.split(' ')[0];
+        const rows = fenBoard.split('/');
+        
+        this.board.innerHTML = '';
+        let position = 0;
+
+        rows.forEach((row, rowIndex) => {
+            let colIndex = 0;
+            for (let i = 0; i < row.length; i++) {
+                const char = row[i];
+                
+                if (isNaN(char)) {
+                    // It's a piece
+                    const tile = document.createElement('div');
+                    tile.className = `tile ${(rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark'}`;
+                    tile.dataset.position = position;
+                    
+                    const pieceDiv = document.createElement('div');
+                    pieceDiv.className = 'piece';
+                    
+                    const pieceType = this.getPieceTypeFromFen(char);
+                    if (pieceType) {
+                        pieceDiv.style.backgroundImage = `url('${this.pieceImages[pieceType]}')`;
+                        tile.appendChild(pieceDiv);
+                    }
+                    
+                    this.board.appendChild(tile);
+                    position++;
+                    colIndex++;
+                } else {
+                    // It's a number, add empty squares
+                    const emptySquares = parseInt(char);
+                    for (let j = 0; j < emptySquares; j++) {
+                        const tile = document.createElement('div');
+                        tile.className = `tile ${(rowIndex + colIndex) % 2 === 0 ? 'light' : 'dark'}`;
+                        tile.dataset.position = position;
+                        this.board.appendChild(tile);
+                        position++;
+                        colIndex++;
+                    }
+                }
+            }
+        });
+    }
+
+    getPieceTypeFromFen(char) {
+        const pieceMap = {
+            'P': 'WHITE_PAWN',
+            'N': 'WHITE_KNIGHT',
+            'B': 'WHITE_BISHOP',
+            'R': 'WHITE_ROOK',
+            'Q': 'WHITE_QUEEN',
+            'K': 'WHITE_KING',
+            'p': 'BLACK_PAWN',
+            'n': 'BLACK_KNIGHT',
+            'b': 'BLACK_BISHOP',
+            'r': 'BLACK_ROOK',
+            'q': 'BLACK_QUEEN',
+            'k': 'BLACK_KING'
+        };
+        return pieceMap[char];
     }
 
     connectWebSocket() {
         const socket = new SockJS('/chess-websocket');
         this.stompClient = Stomp.over(socket);
-        
-        // Update status to "Connecting..."
-        const statusElement = document.getElementById('player-status');
-        statusElement.textContent = 'Connecting...';
 
         this.stompClient.connect({}, 
-            // Success callback
             (frame) => {
                 console.log('Connected to WebSocket');
-                statusElement.textContent = 'Connected!';
-                statusElement.style.color = 'green';
                 this.connected = true;
-                console.log('Connected to WebSocket');
                 
-                // Subscribe to receive messages
-                this.stompClient.subscribe('/topic/messages', (message) => {
-                    const messageLog = document.getElementById('message-log');
-                    messageLog.innerHTML += `<div>${message.body}</div>`;
+                // Subscribe to game events
+                this.stompClient.subscribe('/user/queue/game', (message) => {
+                    try {
+                        const gameEvent = JSON.parse(message.body);
+                        console.log('Received game event:', gameEvent);
+                        this.handleGameUpdate(gameEvent);
+                    } catch (error) {
+                        console.error('Error handling game event:', error);
+                    }
                 });
 
+                // Subscribe to error messages
+                this.stompClient.subscribe('/user/queue/errors', (message) => {
+                    console.error('Received error:', message.body);
+                });
             },
-            // Error callback
             (error) => {
                 console.error('WebSocket connection error:', error);
-                statusElement.textContent = 'Connection failed!';
-                statusElement.style.color = 'red';
+                this.connected = false;
             }
         );
     }
 
     setupWebSocketUI() {
-        document.getElementById('send-message').addEventListener('click', () => {
+        const sendButton = document.getElementById('send-message');
             const messageInput = document.getElementById('message-input');
+        
+        if (!sendButton || !messageInput) {
+            console.log('WebSocket UI elements not found, skipping setup');
+            return;
+        }
+
+        sendButton.addEventListener('click', () => {
             const message = messageInput.value;
-            
             if (message && this.stompClient) {
                 this.stompClient.send("/app/message", {}, 
                     JSON.stringify({
@@ -82,23 +296,19 @@ class ChessGame {
                         timestamp: new Date().toLocaleTimeString()
                     })
                 );
-                console.log('Message sent to server');  // Add this log
+                console.log('Message sent to server');
                 messageInput.value = '';
             }
         });
     }
 
     initializeBoard() {
-        this.board.innerHTML = '';
-        for (let row = 0; row < 8; row++) {
-            for (let col = 0; col < 8; col++) {
-                const tile = document.createElement('div');
-                tile.className = `tile ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
-                tile.dataset.position = row * 8 + col;
-                this.board.appendChild(tile);
-            }
+        if (this.currentGameState && this.currentGameState.fenPosition) {
+            this.updateBoardFromFen(this.currentGameState.fenPosition);
+        } else {
+            // Default starting position in FEN
+            this.updateBoardFromFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
         }
-        this.placeInitialPieces();
     }
 
     placeInitialPieces() {
@@ -123,73 +333,6 @@ class ChessGame {
                 tile.appendChild(pieceDiv);
             }
         });
-    }
-
-    setupEventListeners() {
-        document.getElementById('new-game').addEventListener('click', () => this.startNewGame());
-        this.board.addEventListener('click', (e) => this.handleTileClick(e));
-        
-        // Mouse event listeners for dragging
-        this.board.addEventListener('mousedown', this.handleMouseDown.bind(this));
-        document.addEventListener('mousemove', this.handleMouseMove.bind(this));
-        document.addEventListener('mouseup', this.handleMouseUp.bind(this));
-
-        this.board.addEventListener('contextmenu', (event) => {
-            event.preventDefault();
-            if (this.selectedSourceTile !== null) {
-                this.clearLegalMoves();
-                document.querySelector('.selected')?.classList.remove('selected');
-                this.selectedSourceTile = null;
-            }
-        });
-    }
-
-    async startNewGame() {
-        // Clear all visual indicators
-        document.querySelectorAll('.last-move-source, .last-move-target').forEach(tile => {
-            tile.classList.remove('last-move-source', 'last-move-target');
-        });
-        document.querySelector('.selected')?.classList.remove('selected');
-        this.clearLegalMoves();
-        
-        // Remove the last move arrow if it exists
-        if (this.lastMoveArrow) {
-            this.lastMoveArrow.remove();
-        }
-        
-        // Reset all state
-        this.selectedSourceTile = null;
-        this.selectedTargetTile = null;
-        this.isDragging = false;
-        this.draggedPiece = null;
-        this.dragImage = null;
-        this.lastMoveArrow = null;
-
-        try {
-            const response = await fetch('/api/chess/create', { method: 'POST' });
-    
-            if (!response.ok) {
-                throw new Error('Failed to start a new game');
-            }
-    
-            const data = await response.json(); 
-            const message = data.message;
-    
-            const gameResponse = await fetch(`/api/chess/read`);
-
-            if (!gameResponse.ok) {
-                throw new Error('Failed to fetch game state');
-            }
-
-            const gameState = await gameResponse.json();
-    
-            this.updateBoard(gameState);
-            this.currentGameState = gameState;
-            this.statusElement.textContent = 'Game started! Your turn (White)';
-        } catch (error) {
-            console.error('Error starting new game:', error);
-            this.statusElement.textContent = 'Error starting game';
-        }
     }
 
     async handleTileClick(event) {
@@ -559,5 +702,21 @@ class ChessGame {
 
 // Initialize the game when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    new ChessGame();
+    const gameBoard = document.getElementById('game-board');
+    if (gameBoard) {
+        // Check if we have game data from the server
+        const gameDataElement = document.getElementById('gameData');
+        let gameData = null;
+        
+        if (gameDataElement) {
+            try {
+                gameData = JSON.parse(gameDataElement.textContent);
+                console.log('Initializing with server game data:', gameData);
+            } catch (error) {
+                console.error('Error parsing game data:', error);
+            }
+        }
+        
+        window.chessGame = new ChessGame(gameData);
+    }
 }); 

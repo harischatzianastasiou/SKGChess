@@ -1,27 +1,82 @@
 package com.chess.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.stomp.StompCommand;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.security.Principal;
+
+import com.chess.model.session.SessionManager;
 
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketConfig.class);
+
+    @Autowired
+    private SessionManager sessionManager;
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        System.out.println("Configuring message broker...");
-        config.enableSimpleBroker("/topic");        //Sets up a message broker prefix /topic for server-to-client messages
-        config.setApplicationDestinationPrefixes("/app");      //Sets /app as the prefix for client-to-server messages
+        config.enableSimpleBroker("/queue", "/topic");
+        config.setApplicationDestinationPrefixes("/app");
+        config.setUserDestinationPrefix("/user");
     }
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        System.out.println("Registering STOMP endpoints...");
         registry.addEndpoint("/chess-websocket")
-               .setAllowedOriginPatterns("http://localhost:[*]")  // For development. In production, specify your domain
-               .withSockJS();
+                .setAllowedOriginPatterns("http://localhost:[*]")  // For development. In production, specify your domain
+                .withSockJS();
+    }
+
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(new ChannelInterceptor() {
+            @Override
+            public Message<?> preSend(Message<?> message, MessageChannel channel) {
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                
+                if (accessor != null) {
+                    logger.debug("Processing message - command: {}, sessionId: {}, destination: {}", 
+                        accessor.getCommand(), accessor.getSessionId(), accessor.getDestination());
+
+                    if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+                        String sessionId = accessor.getSessionId();
+                        logger.info("Client connecting - sessionId: {}", sessionId);
+                        sessionManager.createSession(sessionId, null);
+                    } 
+                    else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                        String sessionId = accessor.getSessionId();
+                        String destination = accessor.getDestination();
+                        logger.info("Client subscribing - sessionId: {}, destination: {}", sessionId, destination);
+                    }
+                    else if (StompCommand.SEND.equals(accessor.getCommand())) {
+                        String sessionId = accessor.getSessionId();
+                        String destination = accessor.getDestination();
+                        logger.info("Client sending message - sessionId: {}, destination: {}", sessionId, destination);
+                    }
+                    else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                        String sessionId = accessor.getSessionId();
+                        logger.info("Client disconnecting - sessionId: {}", sessionId);
+                        sessionManager.removeSession(sessionId);
+                    }
+                }
+                
+                return message;
+            }
+        });
     }
 }

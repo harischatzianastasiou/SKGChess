@@ -19,7 +19,7 @@ import com.chess.core.pieces.Pawn;
 import com.chess.core.pieces.Piece.PieceSymbol;
 import com.chess.core.pieces.Queen;
 import com.chess.core.tiles.Tile;
-import com.chess.core.Game;
+import com.chess.core.GameManager;
 import java.util.Map;
 
 class DrawTest {
@@ -30,9 +30,9 @@ class DrawTest {
         King whiteKing = new King(23, Alliance.WHITE);
         Queen whiteQueen = new Queen(22, Alliance.WHITE);
         
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         IBoard board = IBoard.createRandomBoard(Arrays.asList(blackKing, whiteKing, whiteQueen), "test");
-        Game.addTestGame(board, "test");
+        GameManager.addTestGame(board, "test");
 
         List<Tile> tiles = board.getTiles();
         
@@ -52,8 +52,8 @@ class DrawTest {
         Bishop whiteBishop = new Bishop(61, Alliance.WHITE);
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteBishop), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> whiteMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
@@ -73,8 +73,8 @@ Game.addTestGame(board, "test");
         Pawn whitePawn = new Pawn(52, Alliance.WHITE);
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whitePawn), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
@@ -153,8 +153,8 @@ Game.addTestGame(board, "test");
         King blackKing = new King(4, Alliance.BLACK);
         
         IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing), "test");
-        Map<String, Game> gameMap = Game.createNewTestGame("test");
-Game.addTestGame(board, "test");
+        Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
+GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> whiteKingMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
