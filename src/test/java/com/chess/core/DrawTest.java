@@ -37,7 +37,7 @@ class DrawTest {
         List<Tile> tiles = board.getTiles();
         
         Collection<Move> kingMoves = blackKing.calculateMoves(tiles, board.getCurrentPlayer(), "test");
-        Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Black king should have no legal moves but not be in check
         assertTrue(kingMoves.isEmpty() || kingMoves == null);
@@ -56,9 +56,9 @@ class DrawTest {
 GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> whiteMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> whiteMoves = whiteKing.calculateMoves(tiles, board.getopponentPlayer(), "test");
         Collection<Move> blackMoves = blackKing.calculateMoves(tiles, board.getCurrentPlayer(), "test");
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Both kings and a bishop should be insufficient material
         assertFalse(whiteMoves.isEmpty());
@@ -77,7 +77,7 @@ GameManager.addTestGame(board, "test");
 GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Having a pawn means there's sufficient material
         assertFalse(pawnMoves.isEmpty());
@@ -96,7 +96,7 @@ GameManager.addTestGame(board, "test");
 //        List<Tile> tiles = board.getTiles();
 //        
 //        // Get the specific moves we want to repeat
-//        Collection<Move> whiteKnightMoves = whiteKnight.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+//        Collection<Move> whiteKnightMoves = whiteKnight.calculateMoves(tiles, board.getopponentPlayer(), "test");
 //        Collection<Move> blackKnightMoves = blackKnight.calculateMoves(tiles, board.getCurrentPlayer(), "test");
 //        
 //        Move whiteKnightToF3 = whiteKnightMoves.stream()
@@ -122,7 +122,7 @@ GameManager.addTestGame(board, "test");
 //            
 //            List<Tile> tiles1 = board.getTiles();
 //
-//            Collection<Move> whiteKnightNewMoves = whiteKnight1.calculateMoves(tiles1, board.getOpponentPlayer(), "test");
+//            Collection<Move> whiteKnightNewMoves = whiteKnight1.calculateMoves(tiles1, board.getopponentPlayer(), "test");
 //            Collection<Move> blackKnightNewMoves = blackKnight1.calculateMoves(tiles1, board.getCurrentPlayer(), "test");
 //
 //            // Print available moves for the white knight
@@ -157,7 +157,7 @@ GameManager.addTestGame(board, "test");
 GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> whiteKingMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> whiteKingMoves = whiteKing.calculateMoves(tiles, board.getopponentPlayer(), "test");
         Collection<Move> blackKingMoves = blackKing.calculateMoves(tiles, board.getCurrentPlayer(), "test");
         
         // Get the specific moves for the kings
@@ -180,7 +180,7 @@ GameManager.addTestGame(board, "test");
         assertNotNull(whiteKingMove2);
         assertNotNull(blackKingMove2);
         
-        // Execute 50 moves for each player without pawn moves or captures
+        // Execute 50 moves for each user without pawn moves or captures
         for (int i = 0; i < 25; i++) {
             board = whiteKingMove1.execute("test");
             gameMap.get("test").updateGame(whiteKingMove1);

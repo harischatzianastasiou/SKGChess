@@ -36,8 +36,8 @@ public class NonCapturingMove extends Move {
         Piece movedPiece = super.getPieceToMove().movePiece(super.getTargetCoordinate());
         builder.setPiece(movedPiece);
             
-        // Set the next player's alliance
-        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+        // Set the next user's alliance
+        builder.setcurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
         return builder;
     }
 

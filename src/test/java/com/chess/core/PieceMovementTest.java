@@ -34,7 +34,7 @@ class PieceMovementTest {
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> knightMoves = whiteKnight.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> knightMoves = whiteKnight.calculateMoves(tiles, board.getopponentPlayer(), "test");
  
         // Knight should not be able to move as it's pinned horizontally
         assertTrue(knightMoves.isEmpty());
@@ -52,7 +52,7 @@ class PieceMovementTest {
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Bishop should not be able to move as it's pinned vertically
         assertTrue(bishopMoves.isEmpty());
@@ -70,7 +70,7 @@ class PieceMovementTest {
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> pawnMoves = whitePawn.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Pawn should not be able to move as it's pinned diagonally
         assertTrue(pawnMoves.isEmpty());
@@ -88,8 +88,8 @@ class PieceMovementTest {
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> kingMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
-        Collection<Move> knightMoves = whiteKnight.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> kingMoves = whiteKing.calculateMoves(tiles, board.getopponentPlayer(), "test");
+        Collection<Move> knightMoves = whiteKnight.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // King should have moves to escape check
         assertFalse(kingMoves.isEmpty());
@@ -109,7 +109,7 @@ class PieceMovementTest {
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Bishop should be able to move to e3 to block the check
         assertTrue(bishopMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 44)); 
@@ -127,7 +127,7 @@ class PieceMovementTest {
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Queen should be able to capture the knight
         assertTrue(queenMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 45)); // f3
@@ -150,12 +150,12 @@ class PieceMovementTest {
         List<Tile> tiles = board.getTiles();
         
         // Test movements for each piece
-        assertFalse(whiteRook.calculateMoves(tiles, board.getOpponentPlayer(), "test").isEmpty());
-        assertFalse(whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test").isEmpty());
-        assertFalse(whiteQueen.calculateMoves(tiles, board.getOpponentPlayer(), "test").isEmpty());
-        assertFalse(whiteKnight.calculateMoves(tiles, board.getOpponentPlayer(), "test").isEmpty());
-        assertFalse(whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test").isEmpty());
-        assertFalse(whitePawn.calculateMoves(tiles, board.getOpponentPlayer(), "test").isEmpty());
+        assertFalse(whiteRook.calculateMoves(tiles, board.getopponentPlayer(), "test").isEmpty());
+        assertFalse(whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test").isEmpty());
+        assertFalse(whiteQueen.calculateMoves(tiles, board.getopponentPlayer(), "test").isEmpty());
+        assertFalse(whiteKnight.calculateMoves(tiles, board.getopponentPlayer(), "test").isEmpty());
+        assertFalse(whiteKing.calculateMoves(tiles, board.getopponentPlayer(), "test").isEmpty());
+        assertFalse(whitePawn.calculateMoves(tiles, board.getopponentPlayer(), "test").isEmpty());
     }
     
     @Test
@@ -208,7 +208,7 @@ class PieceMovementTest {
         IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteRook), "test");
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
-        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Rook should be able to move vertically and horizontally
         assertTrue(rookMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 20)); // e5
@@ -221,7 +221,7 @@ class PieceMovementTest {
         board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteBishop), "test");
         tiles = board.getTiles();
         gameMap = GameManager.createNewTestGame("test");
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Bishop should be able to move diagonally
         assertTrue(bishopMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 21)); // f5
@@ -234,7 +234,7 @@ class PieceMovementTest {
         board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteQueen), "test");
         tiles = board.getTiles();
         gameMap = GameManager.createNewTestGame("test");
-        Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Queen should be able to move both like rook and bishop
         assertTrue(queenMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 20)); // e5 (vertical)
@@ -258,7 +258,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteRook, whitePawn1, whitePawn2), "test");
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
-        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Rook should not be able to move through or to squares occupied by own pieces
         assertFalse(rookMoves.stream().anyMatch(move -> 
@@ -273,7 +273,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteBishop, whitePawn3, whitePawn4), "test");
         tiles = board.getTiles();
         gameMap = GameManager.createNewTestGame("test");
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Bishop should not be able to move through or to squares occupied by own pieces
         assertFalse(bishopMoves.stream().anyMatch(move -> 
@@ -295,7 +295,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteRook, blackPawn1, blackPawn2), "test");
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
-        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Rook should be able to capture enemy pieces
         assertTrue(rookMoves.stream().anyMatch(move -> 
@@ -312,7 +312,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteBishop, blackPawn3, blackPawn4), "test");
         tiles = board.getTiles();
         gameMap = GameManager.createNewTestGame("test");
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Bishop should be able to capture enemy pieces
         assertTrue(bishopMoves.stream().anyMatch(move -> 
@@ -336,7 +336,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteRook, blackQueen), "test");
         GameManager.addTestGame(board, "test");
         List<Tile> tiles = board.getTiles();
-        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Rook should be able to block check by moving to F1
         assertTrue(rookMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 61)); // e2
@@ -349,7 +349,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteBishop, blackRook), "test");
         tiles = board.getTiles();
         gameMap = GameManager.createNewTestGame("test");
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Bishop should be able to block check by moving to c2
         assertTrue(bishopMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 59)); // c2
@@ -362,7 +362,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteQueen, blackBishop), "test");
         tiles = board.getTiles();
         gameMap = GameManager.createNewTestGame("test");
-        Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> queenMoves = whiteQueen.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Queen should be able to block check by moving to c2
         assertTrue(queenMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 11)); // c2
@@ -382,7 +382,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteRook, blackQueen), "test");
         Map<String, GameManager> gameMap = GameManager.createNewTestGame("test");
         List<Tile> tiles = board.getTiles();
-        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> rookMoves = whiteRook.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Rook should only be able to move vertically (along the pin)
         assertTrue(rookMoves.stream().anyMatch(move -> move.getTargetCoordinate() == 44)); // e3 (capture queen)
@@ -396,7 +396,7 @@ class PieceMovementTest {
             whiteKing, blackKing, whiteBishop, blackRook), "test");
         tiles = board.getTiles();
         gameMap = GameManager.createNewTestGame("test");
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Bishop should have no legal moves when pinned orthogonally
         assertTrue(bishopMoves.isEmpty());

@@ -20,6 +20,7 @@ public class CurrentPlayerInCheckValidation implements MoveValidationStrategy{
 
     @Override
     public boolean validate(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer) {
+
         final Collection<Move> checkingMoves = CurrentPlayer.getOpponentCheckingMoves(boardTiles, opponentPlayer.getAlliance().getOpposite(), opponentPlayer);
         List<Integer> checkingPieceAttackPath = new ArrayList<>();
         if(!(piece instanceof King)){

@@ -14,6 +14,7 @@ import  com.chess.core.pieces.Piece;
 import  com.chess.core.player.CurrentPlayer;
 import  com.chess.core.player.ai.engine.evaluation.BoardEvaluator;
 
+
 public class MiniMax {
     private final BoardEvaluator evaluator;
     private final int searchDepth;
@@ -310,6 +311,7 @@ public class MiniMax {
         if (currentPlayer.isCheckmate()) {
             return currentPlayer.getAlliance().isWhite() ? 
                 -MATE_SCORE + depth : // Black wins
+
                 MATE_SCORE - depth;  // White wins
         }
         return 0; // Stalemate
@@ -319,6 +321,7 @@ public class MiniMax {
         CurrentPlayer currentPlayer = (CurrentPlayer) board.getCurrentPlayer();
         return currentPlayer.isCheckmate() || currentPlayer.isStalemate();
     }
+
 
     private void cleanTranspositionTable() {
         long currentTime = System.currentTimeMillis();

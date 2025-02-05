@@ -12,36 +12,39 @@ function connect() {
 
     stompClient.connect({}, 
         function(frame) {
-            console.log('Connected: ' + frame); // Log successful connection
-            // statusElement.textContent = 'Connected!';
-            // statusElement.style.color = 'green';
-            reconnectAttempts = 0; // Reset reconnect attempts
+            console.log('Connected: ' + frame);
+            reconnectAttempts = 0;
             
-            // Update subscription paths to match server endpoints
-            stompClient.subscribe('/user/session/queue/join', function(message) {
-                handleGameMessage(JSON.parse(message.body));
+            // Subscribe using the actual session ID
+            const sessionId = frame.headers['user-name']; // Get session ID from connection
+            console.log('Connected with session ID:', sessionId);
+            
+            // Subscribe to the queue messages for this session
+            stompClient.subscribe('/topic/session/queue/' + sessionId, function(message) {
+                console.log('Queue response:', message.body); // Log the raw message
+                handleGameMessage(message.body); // It's already a string
             });
-
-            // stompClient.subscribe('/user/queue/session', function(message) {
-            //     handleGameMessage(JSON.parse(message.body)); // Handle incoming game messages
-            // });
-
-            // // Subscribe to game created
-            // stompClient.subscribe('/user/session/game/create', function(message) {
-            //     handleGameMessage(JSON.parse(message.body)); // Handle incoming game messages
-            // });
 
             // Subscribe to errors
             stompClient.subscribe('/user/queue/errors', function(message) {
                 console.error('Error received:', message.body);
-                // Add visual feedback for the user
                 alert('Error: ' + message.body);
+            });
+
+            stompClient.subscribe('/user/session/queue/join', function(message) {
+                console.log('Queue join response:', message.body);
+                handleGameMessage(JSON.parse(message.body));
+            });
+
+            stompClient.subscribe('/topic/session/queue/join', function(message) {
+                console.log('Queue join response:', message);
+                handleGameMessage(message.body);
             });
 
         },
         function(error) {
-            console.error('STOMP error:', error); // Log STOMP errors
-            handleDisconnect(); // Handle disconnection
+            console.error('STOMP error:', error);
+            handleDisconnect();
         }
     );
 
@@ -53,22 +56,20 @@ function connect() {
 
 // Function to handle incoming game messages
 function handleGameMessage(message) {
-    switch(message.type) {
-        case 'QUEUE_JOIN_SUCCESS':
-            console.log('Joined matchmaking queue successfully');
-            // Show user-friendly message
-            alert('Joined matchmaking queue successfully');
-            break;
-        case 'GAME_CREATED':
-            window.location.href = 'user/game/' + message.gameId; // Redirect to the game
-            break;
-        case 'GAME_UPDATE':
-            // Handle game update
-            break;
-        case 'ERROR':
-            console.error('Game error:', message.message); // Log game errors
-            // Show user-friendly error message
-            break;
+    console.log('Handling message:', message);
+    
+    // If message is already a string, use it directly, otherwise stringify it
+    const messageStr = typeof message === 'string' ? message : JSON.stringify(message);
+    
+    console.log('Processing message:', messageStr);  // Debug log
+    
+    if (messageStr.includes('Game created:')) {
+        const gameId = messageStr.split(':')[2].trim();  // Get the ID and trim whitespace
+        console.log('Game created with ID:', gameId);  // Debug log
+        alert('Game created successfully! Redirecting to game ' + gameId);
+        window.location.href = '/game/' + gameId;
+    } else {
+        alert(messageStr);
     }
 }
 

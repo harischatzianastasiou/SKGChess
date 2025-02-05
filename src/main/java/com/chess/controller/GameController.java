@@ -1,21 +1,20 @@
 package com.chess.controller;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.chess.dto.request.MoveRequest;
+import com.chess.dto.websocket.ChatDTO;
+import com.chess.dto.websocket.MoveDTO;
 import com.chess.model.entity.Game;
+import com.chess.model.session.SessionManager;
 import com.chess.service.GameService;
-import com.google.gson.JsonObject;
 
 @Controller
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -23,67 +22,56 @@ public class GameController {
     
     private final GameService gameService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final SessionManager sessionManager;
 
-    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate) {
+    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate, SessionManager sessionManager) {
         this.gameService = gameService;
         this.messagingTemplate = messagingTemplate;
+        this.sessionManager = sessionManager;
     }
 
-    @MessageMapping("/game/create/{player1Id}/{player2Id}")
-    public void createGame(@PathVariable String player1Id, @PathVariable String player2Id) {
-        gameService.createGame(player1Id, player2Id);
-        // JsonObject confirmation = new JsonObject();
-        // confirmation.addProperty("type", "GAME_CREATED");
-        // confirmation.addProperty("message", "Successfully created a game");
-        // messagingTemplate.convertAndSendToUser(
-        //     player1Id,
-        //     "/game/create",
+    @MessageMapping("/game/create/")
+    @SendTo("/topic/game/{userId1}/{userId2}")  // Only players with this specific topic will receive it
+    public Game createGame(@PathVariable String userId1, @PathVariable String userId2) {
+        return gameService.createGame(userId1,userId2);
     }
 
     @GetMapping("/game/{gameId}")
-    public String getGame(@PathVariable String gameId, Model model) {
+    public String getGame(@PathVariable String gameId, Model model) {//else return game object in json format
         Game game = gameService.getGameById(gameId);
         model.addAttribute("game", game);
-        return "game";
+        return "game";  // This tells Spring to use game.html template
     }
 
-    @PostMapping("/game/{gameId}/move")
-    @ResponseBody
-    public ResponseEntity<?> makeMove(@PathVariable String gameId, @RequestBody MoveRequest moveRequest) {
-        try {
-            Game game = gameService.updateGame(moveRequest);
+    @MessageMapping("/game/{gameId}/move")
+    @SendTo("/topic/game/{gameId}")
+    public MoveDTO handleMove(MoveDTO moveDTO, SimpMessageHeaderAccessor headerAccessor) {
+        String sessionId = headerAccessor.getSessionId();
+        String userId = sessionManager.getUserIdFromSession(sessionId);
+        
+        if (sessionManager.isSessionActive(sessionId) && 
+            userId != null && 
+            userId.equals(moveDTO.getUserId())) {
             
+            Game game = gameService.updateGame(moveDTO);
             if (game != null) {
-                JsonObject gameState = new JsonObject();
-                gameState.addProperty("type", "GAME_UPDATE");
-                gameState.addProperty("gameId", game.getId().toString());
-                gameState.addProperty("fenPosition", game.getFenPosition());
-                gameState.addProperty("status", game.getStatus().toString());
-                gameState.addProperty("pgnMoves", game.getPgnMoves());
-                
-                messagingTemplate.convertAndSend("/topic/game/" + game.getId(), gameState.toString());
-                return ResponseEntity.ok(game);
-            } else {
-                JsonObject errorMessage = new JsonObject();
-                errorMessage.addProperty("type", "MOVE_ERROR");
-                errorMessage.addProperty("message", "Invalid move");
-                messagingTemplate.convertAndSendToUser(
-                    moveRequest.getPlayerId(), 
-                    "/queue/errors", 
-                    errorMessage.toString()
-                );
-                return ResponseEntity.badRequest().body(errorMessage.toString());
+                return moveDTO;
             }
-        } catch (Exception e) {
-            JsonObject errorMessage = new JsonObject();
-            errorMessage.addProperty("type", "ERROR");
-            errorMessage.addProperty("message", "An error occurred: " + e.getMessage());
-            messagingTemplate.convertAndSendToUser(
-                moveRequest.getPlayerId(), 
-                "/queue/errors", 
-                errorMessage.toString()
-            );
-            return ResponseEntity.badRequest().body(errorMessage.toString());
         }
+        return null;
+    }
+
+    @MessageMapping("/game/{gameId}/chat")
+    @SendTo("/topic/game/{gameId}")
+    public ChatDTO handleChat(ChatDTO chatDTO, SimpMessageHeaderAccessor headerAccessor) {
+        String sessionId = headerAccessor.getSessionId();
+        String userId = sessionManager.getUserIdFromSession(sessionId);
+        
+        if (sessionManager.isSessionActive(sessionId) && userId != null) {
+            chatDTO.setTimestamp(System.currentTimeMillis());
+            chatDTO.setSender(userId);
+            return chatDTO;
+        }
+        return null;
     }
 }

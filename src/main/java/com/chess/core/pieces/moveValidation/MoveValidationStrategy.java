@@ -117,11 +117,11 @@ public interface MoveValidationStrategy {
         }
     }
 
-    public static List<Integer> calculateAttackPathOfPinningPiece(Piece piece, List<Tile> boardTiles, Collection<Move> oppositePlayerMoves){
+    public static List<Integer> calculateAttackPathOfPinningPiece(Piece piece, List<Tile> boardTiles, Collection<Move> oppositeuserMoves){
         int numOfPinningPieces = 0;
         final List<Integer> pinningPieceAttackPath = new ArrayList<>();// will be used in pinning
         final int kingCoordinate = CurrentPlayer.getKingCoordinate(boardTiles, piece.getPieceAlliance());     
-        List<Move> movesPinningPiece= oppositePlayerMoves.stream()
+        List<Move> movesPinningPiece= oppositeuserMoves.stream()
             .filter(move -> move.getTargetCoordinate() == piece.getPieceCoordinate())
             .collect(Collectors.toList());
             

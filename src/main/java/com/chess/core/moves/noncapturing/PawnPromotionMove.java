@@ -23,7 +23,7 @@ public class PawnPromotionMove extends NonCapturingMove {
         for (final Tile tile : super.getBoardTiles()) {
             if (tile.isTileOccupied()) {
                 final Piece piece = tile.getPiece();
-                // Iterate over all current player pieces on the board
+                // Iterate over all current user pieces on the board
                 if (!this.getPieceToMove().equals(piece)) {
                     builder.setPiece(piece);
                 }
@@ -38,8 +38,8 @@ public class PawnPromotionMove extends NonCapturingMove {
         Piece promotedPiece = ((Pawn) super.getPieceToMove()).promotePawn(super.getTargetCoordinate(), newPieceType);
         builder.setPiece(promotedPiece);
 
-        // Set the next player's alliance
-        builder.setCurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+        // Set the next user's alliance
+        builder.setcurrentPlayerAlliance(this.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
 
         return builder.build();
 	    }

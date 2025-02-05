@@ -6,18 +6,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller // GET requests to /req/login and /req/signup return HTML templates AS @Controller is for views
 public class MainController {
 
-    // private final PlayerService playerService;
+    // private final userService userService;
 
-    // public MainController(PlayerService playerService) {
-    //     this.playerService = playerService;
+    // public MainController(userService userService) {
+    //     this.userService = userService;
     // }
 
-    @GetMapping("/req/login")
+    @GetMapping("/login")
     public String login(){
         return "login";
     }
     
-    @GetMapping("/req/signup")
+    @GetMapping("/signup")
     public String signup(){
         return "signup";
     }

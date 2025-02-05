@@ -15,6 +15,7 @@ public interface IBoard {
     Player getCurrentPlayer();
     Player getOpponentPlayer();
     
+
     /**
      * Gets the FEN (Forsyth-Edwards Notation) string representation of the current board position.
      * This is used to uniquely identify positions for the opening book.

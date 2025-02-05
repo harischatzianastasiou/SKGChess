@@ -8,15 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.chess.core.GameManager;
 import com.chess.core.moves.Move;
-import com.chess.dto.request.MoveRequest;
+import com.chess.dto.websocket.MoveDTO;
 import com.chess.exception.GameNotFoundException;
 import com.chess.exception.InvalidMoveException;
-import com.chess.exception.PlayerNotFoundException;
+import com.chess.exception.UserNotFoundException;
 import com.chess.model.entity.Game;
-import com.chess.model.entity.Player;
+import com.chess.model.entity.User;
 import com.chess.model.session.SessionManager;
 import com.chess.repository.GameRepository;
-import com.chess.repository.PlayerRepository;
+import com.chess.repository.UserRepository;
 import com.google.gson.JsonObject;
 
 @Service
@@ -24,42 +24,42 @@ import com.google.gson.JsonObject;
 public class GameService {
     
     private final GameRepository gameRepository;
-    private final PlayerRepository playerRepository;
+    private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     public GameService(GameRepository gameRepository, 
-                      PlayerRepository playerRepository, 
+                      UserRepository userRepository, 
                       SimpMessagingTemplate messagingTemplate,
                       SessionManager sessionManager) {
         this.gameRepository = gameRepository;
-        this.playerRepository = playerRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
-    public Game createGame(String whitePlayerId, String blackPlayerId) {
-        Player whitePlayer = playerRepository.findById(whitePlayerId)
-            .orElseThrow(() -> new PlayerNotFoundException(whitePlayerId));
-        Player blackPlayer = playerRepository.findById(blackPlayerId)
-            .orElseThrow(() -> new PlayerNotFoundException(blackPlayerId));
+    public Game createGame(String WhiteUserId, String BlackUserId) {
+        User WhiteUser = userRepository.findById(WhiteUserId)
+            .orElseThrow(() -> new UserNotFoundException(WhiteUserId));
+        User BlackUser = userRepository.findById(BlackUserId)
+            .orElseThrow(() -> new UserNotFoundException(BlackUserId));
             
-        Game game = new Game(whitePlayer, blackPlayer);
+        Game game = new Game(WhiteUser, BlackUser);
         return gameRepository.save(game);
     }
 
     @Transactional
-    public Game updateGame(MoveRequest moveRequest) {
+    public Game updateGame(MoveDTO moveRequest) {
         Game game = gameRepository.findById(moveRequest.getGameId())
             .orElseThrow(() -> new GameNotFoundException(moveRequest.getGameId()));
             
         String boardFen = game.getFenPosition();
         int moveCount = game.getMoveCount();
         String pgnMoves = game.getPgnMoves();
-        boolean hasCurrentPlayerCastled = false;
+        boolean hascurrentPlayerCastled = false;
 
         if(!game.isBlackPlayerCastled() && !game.isWhitePlayerCastled()){
-            // Determine if current player has castled by analyzing PGN moves
+            // Determine if current user has castled by analyzing PGN moves
             if (pgnMoves != null && !pgnMoves.isEmpty()) {
-                // Get current player's color from FEN by finding the turn indicator after the board position
+                // Get current user's color from FEN by finding the turn indicator after the board position
                 String[] fenParts = boardFen.split(" ");
                 boolean isWhiteTurn = fenParts.length > 1 && fenParts[1].equals("w");
 
@@ -75,10 +75,10 @@ public class GameService {
                         // Skip move numbers (e.g., "1.", "2.")
                         if (move.contains(".")) continue;
                         
-                        // Check if this move was made by the current player
-                        boolean isMoveByCurrentPlayer = (i % 2 == 0) == isWhiteTurn;
-                        if (isMoveByCurrentPlayer && (move.equals("O-O") || move.equals("O-O-O"))) {
-                            hasCurrentPlayerCastled = true;
+                        // Check if this move was made by the current user
+                        boolean isMoveBycurrentPlayer = (i % 2 == 0) == isWhiteTurn;
+                        if (isMoveBycurrentPlayer && (move.equals("O-O") || move.equals("O-O-O"))) {
+                            hascurrentPlayerCastled = true;
                             if (isWhiteTurn) {
                                 game.setWhitePlayerCastled(true);
                             } else {
@@ -91,7 +91,7 @@ public class GameService {
             }
         }
 
-        GameManager gameManager = new GameManager(boardFen, moveCount, pgnMoves, hasCurrentPlayerCastled);
+        GameManager gameManager = new GameManager(boardFen, moveCount, pgnMoves, hascurrentPlayerCastled);
 
         Move move = gameManager.getMoves()
                     .stream()

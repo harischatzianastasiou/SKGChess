@@ -42,8 +42,8 @@ public class QueenSideCastleMove extends NonCapturingMove {
 		final Piece movedRook = this.rook.movePiece(this.rookTargetCoordinate);
 		builder.setPiece(movedRook);
 
-		// Set the next player's alliance
-		builder.setCurrentPlayerAlliance(super.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
+		// Set the next user's alliance
+		builder.setcurrentPlayerAlliance(super.getPieceToMove().getPieceAlliance().isWhite() ? Alliance.BLACK : Alliance.WHITE);
 		
 		return builder.build();
 	}

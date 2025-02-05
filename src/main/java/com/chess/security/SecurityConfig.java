@@ -25,20 +25,21 @@ public class SecurityConfig {
        return http
         .formLogin(httpForm -> {
             httpForm
-                .loginPage("/req/login")//Tells Spring where to redirect for login
+                .loginPage("/login")//Tells Spring where to redirect for login
                 .defaultSuccessUrl("/index", true)//Tells Spring where to redirect after successful login
                 .permitAll();//Allows all users to access the login page
         })
         .logout(logout -> {
             logout
-                .logoutSuccessUrl("/req/login?logout")
+                .logoutSuccessUrl("/login?logout")
                 .permitAll();
         })
         .authorizeHttpRequests(registry -> {
-            registry.requestMatchers("/req/signup", "/req/login", "/css/**", "/js/**", "/images/**", "/error").permitAll();
+            registry.requestMatchers("/signup", "/req/signup", "/login", "/game/**", "/css/**", "/js/**", "/images/**", "/error").permitAll();
             registry.requestMatchers("/index").authenticated();
             registry.anyRequest().authenticated();
         })
+
         .csrf(csrf -> csrf.disable())  // Configures Cross-Site Request Forgery protection. Disabling CSRF is generally not recommended for production environments.
         .build();
     }

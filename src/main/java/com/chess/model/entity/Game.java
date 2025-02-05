@@ -27,11 +27,11 @@ public class Game implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "white_player_id", nullable = false)
-    private Player whitePlayer;
+    private User whitePlayer;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "black_player_id", nullable = false)
-    private Player blackPlayer;
+    private User blackPlayer;
 
     @Column(name = "fen_position", columnDefinition = "TEXT")
     private String fenPosition;
@@ -58,7 +58,7 @@ public class Game implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "winner_id")
-    private Player winner;
+    private User winner;
 
     @Column(name = "move_count")
     private int moveCount;
@@ -73,7 +73,7 @@ public class Game implements Serializable {
     private boolean isWhitePlayerCastled;
 
     public enum GameStatus {
-        WAITING_FOR_PLAYERS,
+        WAITING_FOR_userS,
         ACTIVE,
         CHECKMATE,
         DRAW,
@@ -99,7 +99,7 @@ public class Game implements Serializable {
     }
 
     @Builder // Lombok builder pattern
-    public Game(Player whitePlayer, Player blackPlayer) {
+    public Game(User whitePlayer, User blackPlayer) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
         this.startTime = LocalDateTime.now();

@@ -7,7 +7,7 @@ import com.chess.core.tiles.Tile;
  */
 public interface IChessBoard {
     void selectTile(int tileId);
-    void waitForPlayerMove();
+    void waitForuserMove();
     Tile getSourceTile();
     Tile getTargetTile();
     void resetTileSelections();

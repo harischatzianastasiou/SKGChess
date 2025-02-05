@@ -12,7 +12,7 @@ import  com.chess.core.pieces.Piece;
 import  com.chess.core.pieces.Piece.PieceSymbol;
 import  com.chess.core.player.CurrentPlayer;
 import  com.chess.core.tiles.Tile;
-import  com.chess.util.SoundPlayer;
+import  com.chess.util.Sounduser;
 import com.chess.util.PGNParser;
 import java.util.Collection;
 
@@ -122,7 +122,7 @@ public class GameManager {
             }
         }
 
-        return movesWithoutPawnOrCapture >= 100; // 50 moves by each player = 100 half-moves
+        return movesWithoutPawnOrCapture >= 100; // 50 moves by each user = 100 half-moves
     }
 
 
@@ -265,17 +265,17 @@ public class GameManager {
         
         // Play appropriate sound based on move type
         if(selectedMove instanceof CapturingMove) {
-            SoundPlayer.playCaptureSound();
+            Sounduser.playCaptureSound();
         } else {
-            SoundPlayer.playMoveSound();
+            Sounduser.playMoveSound();
         }
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///   With each move a new currentBoard is created to represent the new state of the tiles and the turn of the next players.     //           
+            ///   With each move a new currentBoard is created to represent the new state of the tiles and the turn of the next users.     //           
             ///   At least one tile has now changed to occupied or empty (tiles hold pieces).                                         // 
-            ///   Also Current and Opponent player have changed.                                                                      //
-            ///   The new current player gets the opposite color of the previous current player. Same applies for the opponent.       //
-            ///   Tiles, current player and opponent player are created with the currentBoard, and are immutable afterwards.                 //
+            ///   Also Current and Opponent user have changed.                                                                      //
+            ///   The new current user gets the opposite color of the previous current user. Same applies for the opponent.       //
+            ///   Tiles, current user and opponent user are created with the currentBoard, and are immutable afterwards.                 //
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if(selectedMove.execute()!= null){
                 this.currentBoard = selectedMove.execute(); 
@@ -284,9 +284,9 @@ public class GameManager {
         CurrentPlayer currentPlayer = (CurrentPlayer) this.getBoard().getCurrentPlayer();
 
         if (currentPlayer.isCheckmate()) {
-            SoundPlayer.playCheckmateSound();
+            Sounduser.playCheckmateSound();
         } else if(currentPlayer.isInCheck()) {
-            SoundPlayer.playCheckSound();
+            Sounduser.playCheckSound();
         }
         return this.currentBoard;
     }

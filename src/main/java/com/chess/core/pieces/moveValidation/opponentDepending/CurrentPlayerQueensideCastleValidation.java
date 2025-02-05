@@ -12,6 +12,7 @@ import  com.chess.core.player.CurrentPlayer;
 import  com.chess.core.player.Player;
 import  com.chess.core.tiles.Tile;
 
+
 public class CurrentPlayerQueensideCastleValidation implements MoveValidationStrategy {
 
     @Override

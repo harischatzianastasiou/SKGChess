@@ -36,8 +36,8 @@
     overflow: hidden;
 }
 
-/* Style the player info panels */
-.player-info {
+/* Style the user info panels */
+.user-info {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-color);
@@ -317,4 +317,10 @@ button:hover {
 
 .last-move-target {
     background-color: rgba(106, 88, 197, 0.35) !important; /* Less transparent brown for target */
+}
+
+#gameContainer {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
 }

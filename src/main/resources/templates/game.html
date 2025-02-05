@@ -1,62 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>SKGChess Online</title>
-    <link rel="stylesheet" href="css/game.css">
+    <meta charset="UTF-8">
+    <title>Chess Game</title>
+    <link rel="stylesheet" href="/css/game.css">
     <script src="static/js/chess-board.js" defer></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <div class="left-section">
-            <h1 class="title">SKGChess</h1>
-            <p class="subtitle">A Custom Chess Engine & Online Chess Game</p>
-            <p class="subtitle">Built From Scratch with Java, Spring Boot and JavaScript ☕</p>
-            <p class="author-info">
-                Created by
-                <br>
-                <a href="https://github.com/harischatzianastasiou" target="_blank">
-                    <i class="fab fa-github"></i> @harischatzianastasiou
-                </a>
-            </p>
-        </div>
-        <div class="game-section">
-            <div class="board-wrapper">
-                <div class="rank-labels">
-                    <span>8</span>
-                    <span>7</span>
-                    <span>6</span>
-                    <span>5</span>
-                    <span>4</span>
-                    <span>3</span>
-                    <span>2</span>
-                    <span>1</span>
-                </div>
-                <div id="game-board" class="chess-board"></div>
-                <div class="file-labels">
-                    <span>a</span>
-                    <span>b</span>
-                    <span>c</span>
-                    <span>d</span>
-                    <span>e</span>
-                    <span>f</span>
-                    <span>g</span>
-                    <span>h</span>
-                </div>
+    <div id="gameContainer">
+        <h1>Chess Game</h1>
+        <div id="gameId" th:text="${game.id}" style="display: none;"></div>
+        <div class="container">
+            <div class="left-section">
+                <h1 class="title">SKGChess</h1>
+                <p class="subtitle">A Custom Chess Engine & Online Chess Game</p>
+                <p class="subtitle">Built From Scratch with Java, Spring Boot and JavaScript ☕</p>
+                <p class="author-info">
+                    Created by
+                    <br>
+                    <a href="https://github.com/harischatzianastasiou" target="_blank">
+                        <i class="fab fa-github"></i> @harischatzianastasiou
+                    </a>
+                </p>
             </div>
-            <div class="controls">
-                <div class="websocket-test">
-                    <div id="player-status">Not Connected</div>
-                    <input type="text" id="message-input" placeholder="Type a message">
-                    <button id="send-message">Send Message</button>
-                    <div id="message-log"></div>
+            <div class="game-section">
+                <div class="board-wrapper">
+                    <div class="rank-labels">
+                        <span>8</span>
+                        <span>7</span>
+                        <span>6</span>
+                        <span>5</span>
+                        <span>4</span>
+                        <span>3</span>
+                        <span>2</span>
+                        <span>1</span>
+                    </div>
+                    <div id="game-board" class="chess-board"></div>
+                    <div class="file-labels">
+                        <span>a</span>
+                        <span>b</span>
+                        <span>c</span>
+                        <span>d</span>
+                        <span>e</span>
+                        <span>f</span>
+                        <span>g</span>
+                        <span>h</span>
+                    </div>
                 </div>
-                <button id="new-game">New Game</button>
-                <div id="status"></div>
+                <div class="controls">
+                    <div class="websocket-test">
+                        <div id="user-status">Not Connected</div>
+                        <input type="text" id="message-input" placeholder="Type a message">
+                        <button id="send-message">Send Message</button>
+                        <div id="message-log"></div>
+                    </div>
+                    <button id="new-game">New Game</button>
+                    <div id="status"></div>
+                </div>
             </div>
         </div>
     </div>
+    
+    <script src="/js/game.js"></script>
 </body>
 </html> 

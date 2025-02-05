@@ -16,6 +16,7 @@ public class CurrentPlayerKingsideCastleValidation implements MoveValidationStra
 
     @Override
     public boolean validate(Piece piece, List<Tile> boardTiles, int candidateDestinationCoordinate, int candidateOffset, Player opponentPlayer) {
+
         boolean isCastlingPathSafe = false;
         if(opponentPlayer != null){
             final Collection<Move> checkingMoves = CurrentPlayer.getOpponentCheckingMoves(boardTiles, opponentPlayer.getAlliance().getOpposite(), opponentPlayer);

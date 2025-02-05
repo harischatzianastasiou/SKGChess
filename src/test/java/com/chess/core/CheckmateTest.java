@@ -22,7 +22,7 @@ class CheckmateTest {
     private void assertNoLegalMoves(IBoard board, Alliance alliance) {
         for (Tile tile : board.getTiles()) {
             if (tile.isTileOccupied() && tile.getPiece().getPieceAlliance() == alliance) {
-                Collection<Move> moves = tile.getPiece().calculateMoves(board.getTiles(), board.getOpponentPlayer(), "test");
+                Collection<Move> moves = tile.getPiece().calculateMoves(board.getTiles(), board.getopponentPlayer(), "test");
                 if (moves != null && !moves.isEmpty()) {
                     System.out.println("Piece at " + tile.getTileCoordinate() + " (" + 
                         tile.getPiece().getClass().getSimpleName() + ") has legal moves:");
@@ -45,7 +45,7 @@ class CheckmateTest {
         IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, blackRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> kingMoves = whiteKing.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> kingMoves = whiteKing.calculateMoves(tiles, board.getopponentPlayer(), "test");
         Collection<Move> rookMoves = blackRook.calculateMoves(tiles, board.getCurrentPlayer(), "test");
         
         // King should be in check (rook controls the square)
@@ -68,7 +68,7 @@ class CheckmateTest {
         IBoard board = IBoard.createRandomBoard(Arrays.asList(whiteKing, blackKing, whiteBishop, blackRook), "test");
         List<Tile> tiles = board.getTiles();
         
-        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getOpponentPlayer(), "test");
+        Collection<Move> bishopMoves = whiteBishop.calculateMoves(tiles, board.getopponentPlayer(), "test");
         
         // Bishop should be pinned and have no legal moves
         assertTrue(bishopMoves == null || bishopMoves.isEmpty());

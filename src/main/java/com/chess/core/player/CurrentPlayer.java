@@ -13,6 +13,7 @@ import  com.chess.core.pieces.Piece;
 import com.chess.core.tiles.Tile;
 import com.chess.service.GameService;
 import com.google.common.collect.ImmutableList;
+import com.chess.core.player.Player;
 
 public final class CurrentPlayer extends Player {
 		
@@ -35,7 +36,7 @@ public final class CurrentPlayer extends Player {
         boolean isInCheckmate = false;
     
 
-        // // Check if player has castled by looking for castle moves in game history
+        // // Check if user has castled by looking for castle moves in game history
         // for (Move move : GameService.getGameById(GameService.getGameById()).getMoveHistory()) {
         //     if ((move instanceof KingSideCastleMove || move instanceof QueenSideCastleMove) && 
         //         move.getPieceToMove().getPieceAlliance() == alliance) {
@@ -64,7 +65,7 @@ public final class CurrentPlayer extends Player {
         return new CurrentPlayer(ImmutableList.copyOf(pieces), ImmutableList.copyOf(moves), alliance, isInCheck, isInCheckmate, isCastled);    
     }
 
-    public static Collection<Move> getOpponentCheckingMoves(final List<Tile> tiles, final Alliance alliance, final Player opponentPlayer) {// moves that are checking the current player's king
+    public static Collection<Move> getOpponentCheckingMoves(final List<Tile> tiles, final Alliance alliance, final Player opponentPlayer) {// moves that are checking the current user's king
         Collection<Move> checkingMoves = new ArrayList<>();
         for (Move move : opponentPlayer.getMoves()) {
             if (move.getTargetCoordinate() == getKingCoordinate(tiles, alliance)) {
@@ -85,7 +86,7 @@ public final class CurrentPlayer extends Player {
                 }
             }
         }
-        throw new RuntimeException("No king found for this player");
+        throw new RuntimeException("No king found for this user");
     }
 
     public boolean isCheckmate() {

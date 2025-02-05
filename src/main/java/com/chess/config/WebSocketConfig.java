@@ -1,5 +1,7 @@
 package com.chess.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -13,9 +15,6 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.security.Principal;
 
 import com.chess.model.session.SessionManager;
 
@@ -29,10 +28,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private SessionManager sessionManager;
 
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/queue", "/topic");
+    public void configureMessageBroker(MessageBrokerRegistry config) { // ets up an in-memory message broker with one or more destinations for sending and receiving messages. The destination prefix /topic is used for messages to be carried to all subscribed clients via the pub-sub model.
+        config.enableSimpleBroker("/topic");  
         config.setApplicationDestinationPrefixes("/app");
-        config.setUserDestinationPrefix("/user");
     }
 
     @Override

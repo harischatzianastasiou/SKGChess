@@ -30,10 +30,10 @@ class ChessGame {
             'BLACK_KING': '/images/black_k.png'
         };
 
-        // Get current player's username
+        // Get current user's username
         const usernameElement = document.getElementById('username');
         this.currentPlayerUsername = usernameElement ? usernameElement.textContent.trim() : null;
-        console.log('Current player:', this.currentPlayerUsername);
+        console.log('Current user:', this.currentPlayerUsername);
 
         //WebSocket setup
         this.stompClient = null;
@@ -150,33 +150,33 @@ class ChessGame {
     updateGameStatus() {
         if (!this.currentGameState || !this.statusElement) return;
 
-        const isWhitePlayer = this.currentPlayerUsername === this.currentGameState.whitePlayer;
-        const isBlackPlayer = this.currentPlayerUsername === this.currentGameState.blackPlayer;
+        const isWhiteUser = this.currentPlayerUsername === this.currentGameState.WhiteUser;
+        const isBlackUser = this.currentPlayerUsername === this.currentGameState.BlackUser;
         
         // Get current turn from FEN
         const fenParts = this.currentGameState.fenPosition.split(' ');
         const isWhiteTurn = fenParts[1] === 'w';
 
-        // Update player statuses
-        const whiteStatus = document.querySelector('.white-player .player-status');
-        const blackStatus = document.querySelector('.black-player .player-status');
+        // Update user statuses
+        const whiteStatus = document.querySelector('.white-user .user-status');
+        const blackStatus = document.querySelector('.black-user .user-status');
         
         if (whiteStatus) whiteStatus.textContent = isWhiteTurn ? '(Current Turn)' : '';
         if (blackStatus) blackStatus.textContent = !isWhiteTurn ? '(Current Turn)' : '';
 
         if (this.currentGameState.status === 'ACTIVE') {
-            if ((isWhiteTurn && isWhitePlayer) || (!isWhiteTurn && isBlackPlayer)) {
+            if ((isWhiteTurn && isWhiteUser) || (!isWhiteTurn && isBlackUser)) {
                 this.statusElement.textContent = 'Your turn';
-                this.board.classList.add('active-player');
-            } else if (isWhitePlayer || isBlackPlayer) {
+                this.board.classList.add('active-user');
+            } else if (isWhiteUser || isBlackUser) {
                 this.statusElement.textContent = 'Opponent\'s turn';
-                this.board.classList.remove('active-player');
+                this.board.classList.remove('active-user');
             } else {
                 this.statusElement.textContent = isWhiteTurn ? 'White\'s turn' : 'Black\'s turn';
             }
         } else {
             this.statusElement.textContent = this.currentGameState.status;
-            this.board.classList.remove('active-player');
+            this.board.classList.remove('active-user');
         }
     }
 
@@ -379,7 +379,7 @@ class ChessGame {
             const targetCoordinate = position;
             
             try {
-                const response = await fetch(`/api/chess/move`, {
+                const response = await fetch(`/game/{gameId}/move`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -701,22 +701,8 @@ class ChessGame {
 }
 
 // Initialize the game when the page loads
-document.addEventListener('DOMContentLoaded', () => {
-    const gameBoard = document.getElementById('game-board');
-    if (gameBoard) {
-        // Check if we have game data from the server
-        const gameDataElement = document.getElementById('gameData');
-        let gameData = null;
-        
-        if (gameDataElement) {
-            try {
-                gameData = JSON.parse(gameDataElement.textContent);
-                console.log('Initializing with server game data:', gameData);
-            } catch (error) {
-                console.error('Error parsing game data:', error);
-            }
-        }
-        
-        window.chessGame = new ChessGame(gameData);
-    }
+document.addEventListener('DOMContentLoaded', function() {
+    const gameId = document.getElementById('gameId').textContent;
+    console.log('Game initialized with ID:', gameId);
+    // Add your game initialization code here
 }); 

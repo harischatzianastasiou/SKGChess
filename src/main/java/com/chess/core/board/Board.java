@@ -116,7 +116,7 @@ public class Board implements IBoard {
 			return this;
 		}
 		
-		public Builder setCurrentPlayerAlliance(final Alliance currentPlayerAlliance) {
+		public Builder setcurrentPlayerAlliance(final Alliance currentPlayerAlliance) {
             this.currentPlayerAlliance = currentPlayerAlliance;
             return this;
         }
@@ -131,7 +131,7 @@ public class Board implements IBoard {
 	}
 	
 	public static IBoard createStandardBoard() {//Create initial board
-		// create white and black player here once
+		// create white and black user here once
 	    final Builder builder = new Builder();
 	    
 	    //Set up Black pieces
@@ -160,8 +160,8 @@ public class Board implements IBoard {
 	        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
 	    }
 	   
-	    // Set up current player's color
-	    builder.setCurrentPlayerAlliance( Alliance.WHITE);
+	    // Set up current user's color
+	    builder.setcurrentPlayerAlliance( Alliance.WHITE);
 
 	    return createBoard(builder);
 	}
@@ -170,7 +170,7 @@ public class Board implements IBoard {
         final Builder builder = new Builder();
         
         // Set the first move to WHITE
-        builder.setCurrentPlayerAlliance(Alliance.WHITE);
+        builder.setcurrentPlayerAlliance(Alliance.WHITE);
         
 	    return createBoard(builder);
     }
@@ -206,7 +206,7 @@ public class Board implements IBoard {
         }
         
         // Set the move to WHITE
-        builder.setCurrentPlayerAlliance(Alliance.WHITE);
+        builder.setcurrentPlayerAlliance(Alliance.WHITE);
         
 	    return createBoard(builder);
     }
@@ -228,7 +228,7 @@ public class Board implements IBoard {
 		Alliance currentPlayerAlliance = fenParts[1].equals("w") ? Alliance.WHITE : Alliance.BLACK;
 
 		Builder builder = new Builder();
-		builder.setCurrentPlayerAlliance(currentPlayerAlliance);
+		builder.setcurrentPlayerAlliance(currentPlayerAlliance);
 
 		int rank = 7; // Start from top rank (7)
 		int file = 0; // Start from a-file (0)

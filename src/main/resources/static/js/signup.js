@@ -50,10 +50,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (response.ok) {
                 // If successful, parse the response to see what the server sent back
-                const player = await response.json();
-                console.log('Created player:', player);
+                const user = await response.json();
+                console.log('Created user:', user);
                 alert('Signup successful!');
-                window.location.href = '/req/login';
+                window.location.href = '/login';
             } else {
                 // If there's an error, try to get the error message
                 const errorText = await response.text();

@@ -1,10 +1,12 @@
 package com.chess.core.player.ai.engine.evaluation;
 
+
 import  com.chess.core.Alliance;
 import  com.chess.core.board.IBoard;
 import  com.chess.core.pieces.Piece;
 import  com.chess.core.pieces.Piece.PieceSymbol;
 import  com.chess.core.player.CurrentPlayer;
+import  com.chess.core.player.Player;
 
 public final class StandardBoardEvaluator implements BoardEvaluator {
     // Piece values (in centipawns)
@@ -105,9 +107,12 @@ public final class StandardBoardEvaluator implements BoardEvaluator {
         score += evaluatePosition(board, alliance);
         
         // Mobility
+
+
         score += mobility(currentPlayer) * MOBILITY_MULTIPLIER;
         
         // King safety
+
         score += evaluateKingSafety(board, alliance);
         
         // Pawn structure
@@ -224,17 +229,21 @@ public final class StandardBoardEvaluator implements BoardEvaluator {
         return currentPlayer.getMoves().size() * MOBILITY_MULTIPLIER;
     }
 
+
     private static int check(final CurrentPlayer currentPlayer) {
         return currentPlayer.isInCheck() ? CHECK_BONUS : 0;
     }
+
 
     private static int checkmate(final CurrentPlayer currentPlayer, final int depth) {
         return currentPlayer.isCheckmate() ? CHECKMATE_BONUS : 0;
     }
 
+
     private static int castled(final CurrentPlayer currentPlayer) {
         return currentPlayer.isCastled() ? CASTLED_BONUS : 0;
     }
+
 
     private static int getPieceValue(Piece piece) {
         switch (piece.getPieceSymbol()) {

@@ -20,7 +20,7 @@ public final class OpponentPlayer extends Player {
 	public static OpponentPlayer createOpponentPlayer(final List<Tile> tiles, final Alliance alliance) {
         final List<Piece> pieces = new ArrayList<>();
         final List<Move> moves = new ArrayList<>();
-        CalculateMoveUtils.ProtectedCoordinatesTracker.clear(); // every time an opponent player calculates his moves we clear the ProtectedCoordinatesTracker
+        CalculateMoveUtils.ProtectedCoordinatesTracker.clear(); // every time an opponent user calculates his moves we clear the ProtectedCoordinatesTracker
 
         for (final Tile tile : tiles) {
             if (tile.isTileOccupied()) {
