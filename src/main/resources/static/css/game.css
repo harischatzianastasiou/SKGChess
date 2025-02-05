@@ -1,16 +1,21 @@
 .container {
     max-width: 100%;
     margin: 0;
-    padding: 20px 40px;
+    padding: 0;
     display: flex;
     align-items: flex-start;
-    gap: 60px;
+    background-color: rgba(72, 18, 52, 0.95);
+    position: relative;
+    min-height: 100vh;
+    border-radius: 0;
+    left:20px;
 }
 
 .left-section {
     text-align: left;
     width: 300px;
     padding-left: 20px;
+    margin-top: 100px;
 }
 
 .title {
@@ -22,34 +27,34 @@
 
 .subtitle {
     font-size: 1.2em;
-    color: #681954;
+    color: white;
     margin: 5px 0;
 }
 
 .author-info {
     margin-top: 20px;
     font-size: 0.9em;
-    color: #666;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .author-info a {
-    color: #003166;
+    color: white;
     text-decoration: none;
     transition: color 0.3s;
 }
 
 .author-info a:hover {
-    color: #681954;
+    color: rgba(255, 255, 255, 0.8);
 }
 
 .game-section {
     display: flex;
     align-items: flex-start;
-    gap: 30px;
-    background: #f8f8f8;
+    background: transparent;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 1);
+    left: 50%;
 }
 
 .board-wrapper {
@@ -75,7 +80,7 @@
     position: absolute;
     left: 10px;
     top: 30px;
-    bottom: 30px;
+    bottom: 60px;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -108,11 +113,11 @@
 }
 
 .tile.light {
-    background-color: #681954;
+    background-color: #481234;
 }
 
 .tile.dark {
-    background-color: #003166;
+    background-color: #ffffff;
 }
 
 .tile.selected {
@@ -261,4 +266,52 @@ button:hover {
 
 .last-move-target {
     background-color: rgba(106, 88, 197, 0.35) !important; /* Less transparent brown for target */
+}
+
+.rocket {
+    position: fixed;
+    /* right: 20px;
+    bottom: 20%; */
+    left: 96%;
+    top: 80%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+}
+
+.rocket img {
+    width: 300px; 
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+}
+
+* Logo styling */
+.logo {
+    text-align: left;
+    margin-bottom: 20px;
+    background: transparent;
+    margin-right: 0;
+}
+
+.logo-img {
+    width: 280px;
+    height: auto;
+    margin-bottom: 20px;
+    margin-top: 0;
+    filter: brightness(1.1);
+}
+
+.logo h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 0px;
+}
+
+@media (max-width: 768px) {
+    .split-container {
+        flex-direction: column;
+    }
+    
+    .login-side {
+        padding: 20px;
+    }
 }
