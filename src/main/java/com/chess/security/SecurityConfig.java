@@ -35,7 +35,16 @@ public class SecurityConfig {
                 .permitAll();
         })
         .authorizeHttpRequests(registry -> {
-            registry.requestMatchers("/signup", "/req/signup", "/login", "/game/**", "/css/**", "/js/**", "/images/**", "/error").permitAll();
+            registry.requestMatchers(
+                "/signup", 
+                "/req/signup", 
+                "/login", 
+                "/game/**",  // Allow access to game URLs
+                "/css/**",   // Allow access to CSS files
+                "/js/**",    // Allow access to JS files
+                "/images/**", 
+                "/error"
+            ).permitAll();
             registry.requestMatchers("/index").authenticated();
             registry.anyRequest().authenticated();
         })
