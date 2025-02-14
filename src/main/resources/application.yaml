@@ -7,6 +7,9 @@ server:
 
 # Static resources
 spring:
+  main:
+    banner-mode: off
+    
   # PostgreSQL Configuration
   datasource:
     url: jdbc:postgresql://localhost:5432/skgchess
