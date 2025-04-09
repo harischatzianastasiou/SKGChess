@@ -26,11 +26,11 @@ public class Game implements Serializable {
     private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "white_player_id", nullable = false)
+    @JoinColumn(name = "white_player_id", nullable = true)
     private User whitePlayer;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "black_player_id", nullable = false)
+    @JoinColumn(name = "black_player_id", nullable = true)
     private User blackPlayer;
 
     @Column(name = "fen_position", columnDefinition = "TEXT")
@@ -42,19 +42,10 @@ public class Game implements Serializable {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "game_status", nullable = false)
-    private GameStatus status = GameStatus.ACTIVE;
+    private GameStatus status = GameStatus.WAITING_FOR_OPPONENT;
 
-    @Column(name = "server_instance_id")
-    private String serverInstanceId;
-
-    @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime;
-
-    @Column(name = "last_move_time")
-    private LocalDateTime lastMoveTime;
-
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "winner_id")
@@ -73,11 +64,13 @@ public class Game implements Serializable {
     private boolean isWhitePlayerCastled;
 
     public enum GameStatus {
-        WAITING_FOR_userS,
+        WAITING_FOR_OPPONENT,
+        IN_PROGRESS,
+        COMPLETED,
+        ABANDONED,
         ACTIVE,
         CHECKMATE,
         DRAW,
-        ABANDONED
     }
 
     public enum DrawType {
@@ -99,12 +92,9 @@ public class Game implements Serializable {
     }
 
     @Builder // Lombok builder pattern
-    public Game(User whitePlayer, User blackPlayer) {
-        this.whitePlayer = whitePlayer;
-        this.blackPlayer = blackPlayer;
-        this.startTime = LocalDateTime.now();
-        this.lastMoveTime = LocalDateTime.now();
+    public Game(User user) {
+        this.whitePlayer = user;
         this.fenPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        this.status = GameStatus.ACTIVE;
+        this.status = GameStatus.WAITING_FOR_OPPONENT;
     }
 } 

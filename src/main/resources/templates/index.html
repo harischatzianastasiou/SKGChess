@@ -9,7 +9,7 @@
     <link rel="icon" type="image/svg+xml" href="/images/skgchessicon.png">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script th:inline="javascript" src="/js/matchmaking.js" defer></script>
+    <script th:inline="javascript" src="/js/index.js" defer></script>
 </head>
 <body>
     <div class="home-container">
@@ -27,7 +27,8 @@
             <div class="game-options">
                 <h2>Play Chess</h2>
                 <div class="button-group">
-                    <button onclick="joinMatchmaking()" class="btn btn-primary">Quick Match</button>
+                    <button onclick="newGame()" class="btn btn-primary">New Game</button>
+                    <button onclick="joinGame()" class="btn btn-primary">Join Game</button>
                 </div>
             </div>
 

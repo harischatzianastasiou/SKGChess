@@ -10,14 +10,15 @@ import com.chess.core.GameManager;
 import com.chess.core.moves.Move;
 import com.chess.dto.websocket.MoveDTO;
 import com.chess.exception.GameNotFoundException;
+import com.chess.exception.GameNotWaitingForOpponentException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
 import com.chess.model.entity.Game;
+import com.chess.model.entity.Game.GameStatus;
 import com.chess.model.entity.User;
-import com.chess.model.session.SessionManager;
 import com.chess.repository.GameRepository;
 import com.chess.repository.UserRepository;
-import com.google.gson.JsonObject;
+
 
 @Service
 @Transactional
@@ -29,25 +30,50 @@ public class GameService {
 
     public GameService(GameRepository gameRepository, 
                       UserRepository userRepository, 
-                      SimpMessagingTemplate messagingTemplate,
-                      SessionManager sessionManager) {
+                      SimpMessagingTemplate messagingTemplate) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
     }
 
     @Transactional
-    public Game createGame(String WhiteUserId, String BlackUserId) {
-        User WhiteUser = userRepository.findById(WhiteUserId)
-            .orElseThrow(() -> new UserNotFoundException(WhiteUserId));
-        User BlackUser = userRepository.findById(BlackUserId)
-            .orElseThrow(() -> new UserNotFoundException(BlackUserId));
-            
-        Game game = new Game(WhiteUser, BlackUser);
+    public Game createGame(String UserId) {
+        //Check if user exists
+        User user = userRepository.findById(UserId)
+            .orElseThrow(() -> new UserNotFoundException(UserId));    
+
+        //Create new game
+        Game game = new Game(user);
+
+        //Save game
+        return gameRepository.save(game);
+    }
+
+    @Transactional
+    public Game joinGame(String gameId, String UserId) {
+        //Check if user exists
+        User user = userRepository.findById(UserId)
+            .orElseThrow(() -> new UserNotFoundException(UserId));
+
+        //Check if game exists
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        //Check if game is waiting for opponent
+        if(game.getStatus() != GameStatus.WAITING_FOR_OPPONENT){
+            throw new GameNotWaitingForOpponentException(gameId);
+        }
+
+        //Set black player and new status of game
+        game.setBlackPlayer(user);
+        game.setStatus(GameStatus.IN_PROGRESS);
+
+        //Save game
         return gameRepository.save(game);
     }
 
     @Transactional
     public Game updateGame(MoveDTO moveRequest) {
+        //Check if game exists
         Game game = gameRepository.findById(moveRequest.getGameId())
             .orElseThrow(() -> new GameNotFoundException(moveRequest.getGameId()));
             
@@ -137,5 +163,15 @@ public class GameService {
     public String getLastMovePgnByGameId(String gameId) {
         Game game = getGameById(gameId);
         return game.getLastMovePgn();
+    }
+
+    /**
+     * Find the oldest game with WAITING_FOR_OPPONENT status
+     * @return The game ID of the oldest waiting game, or null if none found
+     */
+    public String findOldestWaitingGameId() {
+        return gameRepository.findOldestWaitingGame()
+                .map(Game::getId)
+                .orElse(null);
     }
 }

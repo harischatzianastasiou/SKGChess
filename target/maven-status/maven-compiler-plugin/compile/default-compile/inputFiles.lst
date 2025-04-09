@@ -7,12 +7,10 @@ c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclip
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\service\UserService.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\ProtectedCoordinatesTracker.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\Bishop.java
-c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\model\session\SessionManager.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\noncapturing\KingSideCastleMove.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\search\MiniMax.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\strategy\MoveStrategy.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\ChessWebApplication.java
-c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\controller\SessionController.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\evaluation\StandardBoardEvaluator.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\noncapturing\PawnPromotionMove.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\Player.java
@@ -24,7 +22,6 @@ c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclip
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\dto\websocket\MoveDTO.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\moveValidation\opponentDepending\CurrentPlayerInCheckValidation.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\repository\UserRepository.java
-c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\service\AIService.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\moveValidation\opponentDepending\CurrentPlayerQueensideCastleValidation.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\strategy\MinimaxStrategy.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\security\SecurityConfig.java
@@ -54,6 +51,7 @@ c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclip
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\dto\websocket\ChatDTO.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\strategy\OpeningBookStrategy.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\config\DatabaseConfig.java
+c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\exception\GameNotWaitingForOpponentException.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\util\FENUtils.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\moveValidation\MoveValidationStrategy.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\moveValidation\CoordinateInBoundsValidation.java
@@ -70,5 +68,5 @@ c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclip
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\capturing\PawnEnPassantAttack.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\AIuser.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\CalculateMoveUtils.java
-c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\config\RedisConfig.java
+c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\dto\GameDTO.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\Move.java
