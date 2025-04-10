@@ -28,7 +28,10 @@
                 <h2>Play Chess</h2>
                 <div class="button-group">
                     <button onclick="newGame()" class="btn btn-primary">New Game</button>
-                    <button onclick="joinGame()" class="btn btn-primary">Join Game</button>
+                    <div class="join-game-container">
+                        <input type="text" id="gameId" placeholder="Enter Game ID" class="game-id-input">
+                        <button onclick="joinGame(document.getElementById('gameId').value)" class="btn btn-primary">Join Game</button>
+                    </div>
                 </div>
             </div>
 
