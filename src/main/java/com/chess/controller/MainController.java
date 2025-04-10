@@ -34,7 +34,7 @@ public class MainController {
         return "game";
     }
 
-    @GetMapping(value = "/{gameId}")
+    @GetMapping(value = "/games/{gameId}")
     public String getGame(@PathVariable String gameId, Model model) {
         // Get the game data from service
         Game game = gameService.getGameById(gameId);

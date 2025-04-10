@@ -69,7 +69,7 @@ public class UserController {
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping(value = "/signup", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserRequestDTO requestDTO){
         // Create a new User entity from the DTO
         User user = new User();

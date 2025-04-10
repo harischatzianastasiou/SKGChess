@@ -56,10 +56,10 @@ public class GameService {
     }
 
     @Transactional
-    public Game joinGame(String gameId, String UserId) {
+    public Game joinGame(String gameId, String username) {
         //Check if user exists
-        User user = userRepository.findById(UserId)
-            .orElseThrow(() -> new UserNotFoundException(UserId));
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
 
         //Check if game exists
         Game game = gameRepository.findById(gameId)
