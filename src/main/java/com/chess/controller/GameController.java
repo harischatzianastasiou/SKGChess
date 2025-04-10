@@ -5,9 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.ui.Model;
 
-import com.chess.dto.request.CreateGameRequestDTO;
-import com.chess.dto.request.JoinGameRequestDTO;
-import com.chess.dto.response.GameDTO;
-import com.chess.dto.websocket.MoveDTO;
+import com.chess.dto.rest.request.CreateGameRequestDTO;
+import com.chess.dto.rest.request.JoinGameRequestDTO;
+import com.chess.dto.rest.response.GameDTO;
 import com.chess.model.entity.Game;
 import com.chess.service.GameService;
 
@@ -114,23 +109,7 @@ public class GameController {
         }
     }
 
-    @MessageMapping("{gameId}/move")
-    @SendTo("/topic/game/{gameId}")
-    public MoveDTO handleMove(MoveDTO moveDTO, SimpMessageHeaderAccessor headerAccessor) {
-        String sessionId = headerAccessor.getSessionId();
-        // String userId = sessionManager.getUserIdFromSession(sessionId);
-        
-        // if (sessionManager.isSessionActive(sessionId) && 
-        //     userId != null && 
-        //     userId.equals(moveDTO.getUserId())) {
-            
-            Game game = gameService.updateGame(moveDTO);
-            if (game != null) {
-                return moveDTO;
-            }
-        
-        return null;
-    }
+    
 
     // @MessageMapping("/game/{gameId}/chat")
     // @SendTo("/topic/game/{gameId}")

@@ -1,11 +1,11 @@
 package com.chess.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.ui.Model;
 
-import com.chess.dto.response.GameDTO;
+import com.chess.dto.rest.response.GameDTO;
 import com.chess.model.entity.Game;
 import com.chess.service.GameService;
 
