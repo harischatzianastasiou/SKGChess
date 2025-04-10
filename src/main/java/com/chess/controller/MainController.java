@@ -2,15 +2,22 @@ package com.chess.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.ui.Model;
+
+import com.chess.dto.response.GameDTO;
+import com.chess.model.entity.Game;
+import com.chess.service.GameService;
+
 
 @Controller // GET requests to /req/login and /req/signup return HTML templates AS @Controller is for views
 public class MainController {
 
-    // private final userService userService;
+    private final GameService gameService;
 
-    // public MainController(userService userService) {
-    //     this.userService = userService;
-    // }
+    public MainController(GameService gameService) {
+        this.gameService = gameService;
+    }
 
     @GetMapping("/login")
     public String login(){
@@ -24,6 +31,16 @@ public class MainController {
 
     @GetMapping("/game")
     public String game(){
+        return "game";
+    }
+
+    @GetMapping(value = "/{gameId}")
+    public String getGame(@PathVariable String gameId, Model model) {
+        // Get the game data from service
+        Game game = gameService.getGameById(gameId);
+        // Add the game data to the model so it's available in the template
+        model.addAttribute("game", GameDTO.fromGame(game));
+        // Return the template name (Spring will look for game.html in templates folder)
         return "game";
     }
 

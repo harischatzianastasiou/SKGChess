@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             // Send data to server
-            const response = await fetch('users/req/signup', {
+            const response = await fetch('api/users/req/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

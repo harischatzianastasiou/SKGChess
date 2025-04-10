@@ -1,16 +1,23 @@
 package com.chess.model.entity;
 
-import jakarta.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-import lombok.Builder;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.io.Serializable;
-import jakarta.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -26,14 +33,14 @@ public class Game implements Serializable {
     private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "white_player_id", nullable = true)
+    @JoinColumn(name = "white_player_id", nullable = false)
     private User whitePlayer;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "black_player_id", nullable = true)
     private User blackPlayer;
 
-    @Column(name = "fen_position", columnDefinition = "TEXT")
+    @Column(name = "fen_position", columnDefinition = "TEXT", nullable = false)
     private String fenPosition;
 
     @Column(name = "pgn_moves", columnDefinition = "TEXT")
@@ -63,6 +70,18 @@ public class Game implements Serializable {
     @Column(name = "is_white_player_castled")
     private boolean isWhitePlayerCastled;
 
+    @Column(name = "game_type", nullable = true)
+    private String gameType = "standard";
+
+    @Column(name = "time_control_minutes", nullable = true)
+    private Integer timeControlMinutes = 10;
+
+    @Column(name = "is_rated", nullable = true)
+    private Boolean isRated = true;
+
+    @Column(name = "custom_rules", columnDefinition = "TEXT", nullable = true)
+    private String customRules = "";
+
     public enum GameStatus {
         WAITING_FOR_OPPONENT,
         IN_PROGRESS,
@@ -89,12 +108,5 @@ public class Game implements Serializable {
         public String getDescription() {
             return description;
         }
-    }
-
-    @Builder // Lombok builder pattern
-    public Game(User user) {
-        this.whitePlayer = user;
-        this.fenPosition = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        this.status = GameStatus.WAITING_FOR_OPPONENT;
     }
 } 

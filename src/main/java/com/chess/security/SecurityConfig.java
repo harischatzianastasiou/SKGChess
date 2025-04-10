@@ -37,13 +37,14 @@ public class SecurityConfig {
         .authorizeHttpRequests(registry -> {
             registry.requestMatchers(
                 "/signup", 
-                "/users/req/signup", 
+                "/api/users/req/signup", 
                 "/login", 
                 "/game/**",  // Allow access to game URLs
                 "/css/**",   // Allow access to CSS files
                 "/js/**",    // Allow access to JS files
                 "/images/**", 
-                "/error"
+                "/error",
+                "/api/games/**"  // Allow access to games API endpoints
             ).permitAll();
             registry.requestMatchers("/index").authenticated();
             registry.anyRequest().authenticated();

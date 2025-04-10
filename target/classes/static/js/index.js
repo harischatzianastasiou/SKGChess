@@ -67,53 +67,43 @@ function newGame() {
     const username = document.getElementById('username').textContent;
     console.log("Username for matchmaking:", username);
     
-    // First fetch the user ID using the username
-    fetch(`/users/${username}`)
-        .then(response => {
-            console.log("User fetch response status:", response.status);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch user: ${response.status} ${response.statusText}`);
-            }
-            return response.json();
-        })
-        .then(user => {
-            console.log("User data:", user);
-            if (!user || !user.userId) {
-                throw new Error('User ID not found in response');
-            }
-            const userId = user.userId;
-            console.log("User ID for game creation:", userId);
-            
-            // Call the game creation endpoint
-            console.log("Calling game creation endpoint:", `/game/create/${userId}`);
-            return fetch(`/game/create/${userId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+    // Create the request body according to CreateGameRequestDTO
+    const requestBody = {
+        username: username
+        // Other fields will use default values
+    };
+    
+    console.log("Calling game creation endpoint with request:", requestBody);
+    
+    // Call the create game endpoint with the request body
+    fetch('/api/games', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+        console.log("Game creation response status:", response.status);
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(`Failed to create game: ${response.status} ${response.statusText}. ${text}`);
             });
-        })
-        .then(response => {
-            console.log("Game creation response status:", response.status);
-            if (!response.ok) {
-                return response.text().then(text => {
-                    throw new Error(`Failed to create game: ${response.status} ${response.statusText}. ${text}`);
-                });
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Game created:", data);
-            if (!data || !data.id) {
-                throw new Error('Game ID not found in response');
-            }
-            // Redirect to the game page
-            window.location.href = `/game/${data.id}`;
-        })
-        .catch(error => {
-            console.error("Error in matchmaking:", error);
-            alert(`Error starting matchmaking: ${error.message}`);
-        });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Game created:", data);
+        if (!data || !data.id) {
+            throw new Error('Game ID not found in response');
+        }
+        // Redirect to the game page
+        window.location.href = `/games/${data.id}`;
+    })
+    .catch(error => {
+        console.error("Error in matchmaking:", error);
+        alert(`Error starting matchmaking: ${error.message}`);
+    });
 }
 
 function joinGame() {
@@ -122,7 +112,7 @@ function joinGame() {
     console.log("Username for joining game:", username);
     
     // First fetch the user ID using the username
-    fetch(`/users/${username}`)
+    fetch(`api/users/${username}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Failed to fetch user: ${response.status} ${response.statusText}`);
@@ -138,7 +128,7 @@ function joinGame() {
             console.log("User ID for joining game:", userId);
             
             // Call the join game endpoint
-            return fetch(`/game/join/${userId}`, {
+            return fetch(`/api/games/join/${userId}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -163,7 +153,7 @@ function joinGame() {
             }
             console.log("Joined game:", data);
             // Redirect to the game page
-            window.location.href = `/game/${data.id}`;
+            window.location.href = `/api/games/${data.id}`;
         })
         .catch(error => {
             console.error("Error joining game:", error);
@@ -173,7 +163,7 @@ function joinGame() {
 
 // Function to fetch user ID by username
 function fetchUserIdByUsername(username) {
-    return fetch(`/users/${username}`)
+    return fetch(`/api/users/${username}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error('User not found');
@@ -211,7 +201,7 @@ function handleGameMessage(message) {
         if (jsonData && jsonData.id) {
             console.log('Game created with ID:', jsonData.id);
             alert('Game created successfully! Redirecting to game ' + jsonData.id);
-            window.location.href = '/game/' + jsonData.id;
+            window.location.href = '/api/games/' + jsonData.id;
             return;
         }
     } catch (e) {
@@ -237,7 +227,7 @@ function handleGameCreated(game) {
     if (game && game.id) {
         console.log('Game created with ID:', game.id);
         alert('Game created successfully! Redirecting to game ' + game.id);
-        window.location.href = '/game/' + game.id;
+        window.location.href = '/api/games/' + game.id;
     } else {
         // Handle error case
         console.error('Invalid game data received:', game);

@@ -1,5 +1,9 @@
 package com.chess.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -13,12 +17,12 @@ import com.chess.exception.GameNotFoundException;
 import com.chess.exception.GameNotWaitingForOpponentException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
+import com.chess.exception.GameAlreadyJoinedException;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.Game.GameStatus;
 import com.chess.model.entity.User;
 import com.chess.repository.GameRepository;
 import com.chess.repository.UserRepository;
-
 
 @Service
 @Transactional
@@ -36,15 +40,18 @@ public class GameService {
     }
 
     @Transactional
-    public Game createGame(String UserId) {
-        //Check if user exists
-        User user = userRepository.findById(UserId)
-            .orElseThrow(() -> new UserNotFoundException(UserId));    
-
-        //Create new game
-        Game game = new Game(user);
-
-        //Save game
+    public Game createGame(String username, String gameType, Integer timeControlMinutes, Boolean isRated, String customRules) {
+        Game game = new Game();
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
+        game.setWhitePlayer(user);
+        game.setFenPosition("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
+        game.setGameType(Optional.ofNullable(gameType).orElse("standard"));
+        game.setTimeControlMinutes(Optional.ofNullable(timeControlMinutes).orElse(10));
+        game.setIsRated(Optional.ofNullable(isRated).orElse(true));
+        game.setCustomRules(Optional.ofNullable(customRules).orElse(""));
+        game.setStatus(GameStatus.WAITING_FOR_OPPONENT);
+        game.setCreatedAt(LocalDateTime.now());
         return gameRepository.save(game);
     }
 
@@ -61,6 +68,11 @@ public class GameService {
         //Check if game is waiting for opponent
         if(game.getStatus() != GameStatus.WAITING_FOR_OPPONENT){
             throw new GameNotWaitingForOpponentException(gameId);
+        }
+
+        //Check if user is already in the game
+        if(game.getBlackPlayer() != null){
+            throw new GameAlreadyJoinedException(gameId);
         }
 
         //Set black player and new status of game
@@ -143,6 +155,10 @@ public class GameService {
     public Game getGameById(String gameId) {
         return gameRepository.findById(gameId)
             .orElseThrow(() -> new GameNotFoundException(gameId));
+    }
+
+    public List<Game> getAllGames() {
+        return gameRepository.findAll();
     }
 
     public String getFenPositionByGameId(String gameId) {

@@ -1,0 +1,30 @@
+package com.chess.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateGameRequestDTO {
+    // Required field with validation
+    @NotBlank(message = "Username is required")
+    private String username;
+    
+    // Optional field with default value
+    @Builder.Default
+    private String gameType = "standard";
+    
+    // Optional field for time control
+    private Integer timeControlMinutes = 10;
+    
+    // Optional field for game settings
+    private Boolean isRated = false;
+    
+    // Optional field for custom rules
+    private String customRules;
+}

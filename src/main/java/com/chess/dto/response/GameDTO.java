@@ -1,4 +1,4 @@
-package com.chess.dto;
+package com.chess.dto.response;
 
 import java.time.LocalDateTime;
 
@@ -50,6 +50,24 @@ public class GameDTO {
      * @param game The Game entity to convert
      * @return A new GameDTO with data from the Game entity
      */
+            //else use GameMapper
+            /*@Component
+            public class GameMapper {
+                public GameDTO toDTO(Game game) {
+                    return GameDTO.builder()
+                            .id(game.getId())
+                            .whitePlayerId(game.getWhitePlayer() != null ? game.getWhitePlayer().getId() : null)
+                            // ... other mappings
+                            .build();
+                }
+                
+                // Could also include methods for converting collections, or DTO to entity
+                public List<GameDTO> toDTOList(List<Game> games) {
+                    return games.stream()
+                            .map(this::toDTO)
+                            .collect(Collectors.toList());
+                }
+            } */
     public static GameDTO fromGame(com.chess.model.entity.Game game) {
         return GameDTO.builder()
                 .id(game.getId())

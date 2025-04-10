@@ -1,23 +1,36 @@
 package com.chess.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.ui.Model;
 
-import com.chess.dto.GameDTO;
+import com.chess.dto.request.CreateGameRequestDTO;
+import com.chess.dto.request.JoinGameRequestDTO;
+import com.chess.dto.response.GameDTO;
 import com.chess.dto.websocket.MoveDTO;
 import com.chess.model.entity.Game;
 import com.chess.service.GameService;
 
-@Controller
+import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RestController
+@RequestMapping("/api/games")
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class GameController {
     
@@ -29,37 +42,79 @@ public class GameController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    @PostMapping("/game/create/{userId}")
-    @ResponseBody
-    public GameDTO createGame(@PathVariable String userId) {
-        Game game = gameService.createGame(userId);
-        return GameDTO.fromGame(game);
-    }
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    public ResponseEntity<GameDTO> createGame(@RequestBody @Valid CreateGameRequestDTO request) {
+        try {
+            // Create game with parameters from the request
+            Game game = gameService.createGame(
+                request.getUsername(),
+                request.getGameType(),
+                request.getTimeControlMinutes(),
+                request.getIsRated(),
+                request.getCustomRules()
+            );
 
-    @PostMapping("/game/join/{userId}")
-    @ResponseBody
-    public GameDTO joinGame(@PathVariable String userId) {
-        // Find the oldest game with WAITING_FOR_OPPONENT status
-        String gameId = gameService.findOldestWaitingGameId();
+            return ResponseEntity.ok()
+                .body(GameDTO.fromGame(game));
+        } catch (Exception e) {
+            // Log the exception
+            log.error("Error creating game", e);
         
-        // If no waiting game found, return null
-        if (gameId == null) {
-            return null;
+            // Return an error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping(produces = "application/json")
+    public ResponseEntity<List<GameDTO>> getAllGames() {
+        try {
+            // Get all games from the service
+            List<Game> games = gameService.getAllGames();
+            
+            // Return the games with proper headers
+            return ResponseEntity.ok()
+                .body(games.stream()
+                    .map(GameDTO::fromGame)
+                    .collect(Collectors.toList()));
+        } catch (Exception e) {
+            // Log the error and return a 500 status
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(value = "/{gameId}", produces = "application/json")
+    public ResponseEntity<GameDTO> getGame(@PathVariable String gameId) {
+        try{
+            // Get the game data from service
+            Game game = gameService.getGameById(gameId);
+            // Add the game data to the model so it's available in the template
+            return ResponseEntity.ok(GameDTO.fromGame(game));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping(value = "/{gameId}/join/{username}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<GameDTO> joinGame(@RequestBody @Valid JoinGameRequestDTO request) {
+        try{
+            // Join the game
+            Game game = gameService.joinGame(
+                request.getGameId(), 
+                request.getUsername()
+            );
+
+            return ResponseEntity.ok()
+                    .body(GameDTO.fromGame(game));
+        } catch (Exception e) {
+            // Log the exception
+            log.error("Error creating game", e);
         
-        // Join the game
-        Game game = gameService.joinGame(gameId, userId);
-        return GameDTO.fromGame(game);
+            // Return an error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
-    @GetMapping("/game/{gameId}")
-    public String getGame(@PathVariable String gameId, Model model) {//else return game object in json format
-        Game game = gameService.getGameById(gameId);
-        model.addAttribute("game", game);
-        return "game";  // This tells Spring to use game.html template
-    }
-
-    @MessageMapping("/game/{gameId}/move")
+    @MessageMapping("{gameId}/move")
     @SendTo("/topic/game/{gameId}")
     public MoveDTO handleMove(MoveDTO moveDTO, SimpMessageHeaderAccessor headerAccessor) {
         String sessionId = headerAccessor.getSessionId();
