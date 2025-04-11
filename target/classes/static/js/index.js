@@ -115,7 +115,7 @@ function joinGame(gameId) {
     
     console.log("Calling game creation endpoint with request:", requestBody);
     // Call the join game endpoint
-    fetch(`/api/games/${gameId}/join/${username}`, {
+    fetch(`/api/games/join}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

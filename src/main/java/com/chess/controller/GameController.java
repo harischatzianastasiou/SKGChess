@@ -89,7 +89,7 @@ public class GameController {
         }
     }
 
-    @PostMapping(value = "/{gameId}/join/{username}", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/join", consumes = "application/json", produces = "application/json")
     public ResponseEntity<GameDTO> joinGame(@RequestBody @Valid JoinGameRequestDTO request) {
         try{
             // Join the game

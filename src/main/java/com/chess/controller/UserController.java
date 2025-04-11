@@ -35,6 +35,17 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
+//     Advantages of Using Username:
+// Human-readable URLs: URLs with usernames are more intuitive and user-friendly
+// SEO-friendly: Search engines can index these URLs better
+// Bookmarkable: Users can bookmark profiles directly
+// No need to look up IDs: Frontend doesn't need to store or retrieve IDs
+// Disadvantages of Using Username:
+// Security concerns: Exposing usernames in URLs might reveal information about your user base
+// Performance: Username lookups are typically slower than ID lookups in databases
+// Usability issues: Usernames might contain special characters that need URL encoding
+// Consistency: If usernames can change, the URLs become invalid
+
     @GetMapping(value = "/{username}", produces = "application/json")
     @ResponseBody
     public ResponseEntity<UserDTO> getUser(@PathVariable String username) {

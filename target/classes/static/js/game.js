@@ -116,7 +116,8 @@ class ChessGame {
         this.lastMoveArrow = null;
 
         try {
-            const response = await fetch('/api/chess/create', { method: 'POST' });
+            
+            const response = await fetch(`/api/games/${gameId}`, { method: 'GET' });
     
             if (!response.ok) {
                 throw new Error('Failed to start a new game');
@@ -125,13 +126,13 @@ class ChessGame {
             const data = await response.json(); 
             const message = data.message;
     
-            const gameResponse = await fetch(`/api/chess/read`);
+            // const gameResponse = await fetch(`/api/chess/read`);
 
-            if (!gameResponse.ok) {
-                throw new Error('Failed to fetch game state');
-            }
+            // if (!gameResponse.ok) {
+            //     throw new Error('Failed to fetch game state');
+            // }
 
-            const gameState = await gameResponse.json();
+            const gameState = await response.json();
     
             this.updateBoard(gameState);
             this.currentGameState = gameState;

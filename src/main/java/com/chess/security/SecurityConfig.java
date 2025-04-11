@@ -36,8 +36,7 @@ public class SecurityConfig {
         })
         .authorizeHttpRequests(registry -> {
             registry.requestMatchers(
-                "/signup", 
-                "/api/users/req/signup", 
+                "/signup",
                 "/login", 
                 "/game/**",  // Allow access to game URLs
                 "/css/**",   // Allow access to CSS files
