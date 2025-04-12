@@ -19,6 +19,7 @@ com\chess\core\player\ai\engine\AIuser.class
 com\chess\exception\InvalidMoveException.class
 com\chess\core\board\IChessBoard.class
 com\chess\core\player\ai\engine\evaluation\StandardBoardEvaluator.class
+com\chess\dto\rest\response\MoveResultDTO.class
 com\chess\core\player\ai\engine\search\MiniMax$1.class
 com\chess\core\player\ai\engine\search\MiniMax$TranspositionEntry.class
 com\chess\model\entity\Game$GameStatus.class
@@ -48,7 +49,6 @@ com\chess\core\player\ai\OpeningBookCache$1.class
 com\chess\dto\rest\request\CreateUserRequestDTO.class
 com\chess\core\moves\noncapturing\PawnPromotionMove.class
 com\chess\exception\GameNotFoundException.class
-com\chess\controller\MoveWebSocketController.class
 com\chess\core\player\ai\engine\strategy\MoveStrategy.class
 com\chess\core\board\IBoard.class
 com\chess\dto\websocket\ChatDTO.class
@@ -57,9 +57,11 @@ com\chess\core\player\ai\engine\search\MiniMax.class
 com\chess\core\tiles\OccupiedTile.class
 com\chess\repository\GameRepository.class
 com\chess\config\WebSocketConfig.class
+com\chess\dto\rest\request\MakeMoveRequestDTO.class
 com\chess\model\entity\User$UserBuilder.class
 com\chess\core\pieces\CalculateMoveUtils$1.class
 com\chess\core\pieces\moveValidation\opponentDepending\CurrentPlayerKingsideCastleValidation.class
+com\chess\repository\PositionRepository.class
 com\chess\core\pieces\Pawn.class
 com\chess\config\DatabaseConfig.class
 com\chess\core\pieces\moveValidation\CandidateRankAndFileValidation$1.class
@@ -77,6 +79,7 @@ com\chess\core\moves\noncapturing\KingSideCastleMove.class
 com\chess\dto\rest\response\GameDTO$GameDTOBuilder.class
 com\chess\core\pieces\CalculateMoveUtils.class
 com\chess\core\pieces\moveValidation\AllianceOfTileValidation.class
+com\chess\dto\rest\response\MoveResultDTO$MoveResultDTOBuilder.class
 com\chess\core\pieces\Rook.class
 com\chess\service\UserService.class
 com\chess\model\entity\Game.class
@@ -85,13 +88,14 @@ com\chess\core\pieces\Knight.class
 com\chess\core\pieces\King.class
 com\chess\core\board\Board$1.class
 com\chess\core\pieces\moveValidation\opponentDepending\CurrentPlayerQueensideCastleValidation.class
-com\chess\dto\websocket\MoveDTO.class
 com\chess\core\player\ai\engine\evaluation\StandardBoardEvaluator$1.class
 com\chess\core\player\ai\engine\utils\MoveConverter.class
 com\chess\core\moves\noncapturing\NonCapturingMove.class
+com\chess\core\utils\FenUtils.class
 com\chess\core\board\Board$Builder.class
 com\chess\controller\UserController.class
 com\chess\dto\rest\response\GameDTO.class
+com\chess\model\entity\Position.class
 com\chess\core\pieces\Piece.class
 com\chess\dto\rest\request\JoinGameRequestDTO.class
 com\chess\core\pieces\moveValidation\CoordinateInBoundsValidation.class
@@ -100,3 +104,4 @@ com\chess\core\moves\noncapturing\QueenSideCastleMove.class
 com\chess\service\GameService.class
 com\chess\core\tiles\Tile.class
 com\chess\core\pieces\Bishop.class
+com\chess\core\utils\FenTest.class

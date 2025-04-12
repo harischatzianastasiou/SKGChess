@@ -2,6 +2,7 @@ package com.chess.dto.rest.response;
 
 import java.time.LocalDateTime;
 
+import com.chess.core.board.IBoard;
 import com.chess.model.entity.Game.GameStatus;
 
 import lombok.AllArgsConstructor;
@@ -76,7 +77,6 @@ public class GameDTO {
                 .whitePlayerUsername(game.getWhitePlayer() != null ? game.getWhitePlayer().getUsername() : null)
                 .blackPlayerUsername(game.getBlackPlayer() != null ? game.getBlackPlayer().getUsername() : null)
                 .fenPosition(game.getFenPosition())
-                .pgnMoves(game.getPgnMoves())
                 .status(game.getStatus())
                 .createdAt(game.getCreatedAt())
                 .winnerId(game.getWinner() != null ? game.getWinner().getId() : null)

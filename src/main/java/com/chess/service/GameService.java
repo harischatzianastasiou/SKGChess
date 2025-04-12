@@ -11,17 +11,18 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chess.core.GameManager;
-import com.chess.core.moves.Move;
-import com.chess.dto.websocket.MoveDTO;
+import com.chess.core.board.IBoard;
+import com.chess.exception.GameAlreadyJoinedException;
 import com.chess.exception.GameNotFoundException;
 import com.chess.exception.GameNotWaitingForOpponentException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
-import com.chess.exception.GameAlreadyJoinedException;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.Game.GameStatus;
+import com.chess.model.entity.Position;
 import com.chess.model.entity.User;
 import com.chess.repository.GameRepository;
+import com.chess.repository.PositionRepository;
 import com.chess.repository.UserRepository;
 
 @Service
@@ -29,14 +30,19 @@ import com.chess.repository.UserRepository;
 public class GameService {
     
     private final GameRepository gameRepository;
+    private final PositionRepository positionRepository;
     private final UserRepository userRepository;
+    private final SimpMessagingTemplate messagingTemplate;
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     public GameService(GameRepository gameRepository, 
+                      PositionRepository positionRepository,
                       UserRepository userRepository, 
                       SimpMessagingTemplate messagingTemplate) {
         this.gameRepository = gameRepository;
+        this.positionRepository = positionRepository;
         this.userRepository = userRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @Transactional
@@ -52,11 +58,12 @@ public class GameService {
         game.setCustomRules(Optional.ofNullable(customRules).orElse(""));
         game.setStatus(GameStatus.WAITING_FOR_OPPONENT);
         game.setCreatedAt(LocalDateTime.now());
+        game.setIsPlayerTurn(com.chess.core.Alliance.WHITE);
         return gameRepository.save(game);
     }
 
     @Transactional
-    public Game joinGame(String gameId, String username) {
+    public IBoard joinGame(String gameId, String username) {
         //Check if user exists
         User user = userRepository.findByUsername(username)
             .orElseThrow(() -> new UserNotFoundException(username));
@@ -80,76 +87,24 @@ public class GameService {
         game.setStatus(GameStatus.IN_PROGRESS);
 
         //Save game
-        return gameRepository.save(game);
-    }
+        Game savedGame = gameRepository.save(game);
 
-    @Transactional
-    public Game updateGame(MoveDTO moveRequest) {
-        //Check if game exists
-        Game game = gameRepository.findById(moveRequest.getGameId())
-            .orElseThrow(() -> new GameNotFoundException(moveRequest.getGameId()));
-            
-        String boardFen = game.getFenPosition();
+        // Get current game state
+        String currentFen = game.getFenPosition();
+        String lastMovePgn = game.getLastMovePgn();
         int moveCount = game.getMoveCount();
-        String pgnMoves = game.getPgnMoves();
-        boolean hascurrentPlayerCastled = false;
-
-        if(!game.isBlackPlayerCastled() && !game.isWhitePlayerCastled()){
-            // Determine if current user has castled by analyzing PGN moves
-            if (pgnMoves != null && !pgnMoves.isEmpty()) {
-                // Get current user's color from FEN by finding the turn indicator after the board position
-                String[] fenParts = boardFen.split(" ");
-                boolean isWhiteTurn = fenParts.length > 1 && fenParts[1].equals("w");
-
-                if(
-                    (isWhiteTurn && !game.isWhitePlayerCastled())
-                    ||
-                    (!isWhiteTurn && !game.isBlackPlayerCastled())
-                ){
-                    // Split PGN moves and check for castling
-                    String[] moves = pgnMoves.split("\\s+");
-                    for (int i = 0; i < moves.length; i++) {
-                        String move = moves[i];
-                        // Skip move numbers (e.g., "1.", "2.")
-                        if (move.contains(".")) continue;
-                        
-                        // Check if this move was made by the current user
-                        boolean isMoveBycurrentPlayer = (i % 2 == 0) == isWhiteTurn;
-                        if (isMoveBycurrentPlayer && (move.equals("O-O") || move.equals("O-O-O"))) {
-                            hascurrentPlayerCastled = true;
-                            if (isWhiteTurn) {
-                                game.setWhitePlayerCastled(true);
-                            } else {
-                                game.setBlackPlayerCastled(true);
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        GameManager gameManager = new GameManager(boardFen, moveCount, pgnMoves, hascurrentPlayerCastled);
-
-        Move move = gameManager.getMoves()
-                    .stream()
-                    .filter(m -> m.getSourceCoordinate() == moveRequest.getMove().getSourceCoordinate() 
-                            && m.getTargetCoordinate() == moveRequest.getMove().getTargetCoordinate())
-                    .findFirst()
-                    .orElseThrow(() -> new InvalidMoveException("Invalid move"));
-
-        // game.setPgnMoves(gameManager.getPgnMoves());
-        // game.setFenPosition(gameManager.getFenPosition());
-        // game.setMoveCount(gameManager.getMoveCount());
-        // game.setLastMovePgn(gameManager.getLastMovePgn());
-        // game.setStatus(gameManager.getGameStatus());
-        // game.setDrawType(gameManager.getDrawType());
-        // game.setWinner(gameManager.getWinner());
-        // game.setEndTime(gameManager.getEndTime());
-        // game.setLastMoveTime(gameManager.getLastMoveTime());
-
-        game = gameRepository.save(game);
-        return game;
+        boolean isWhitePlayerCastled = game.isWhitePlayerCastled();
+        boolean isBlackPlayerCastled = game.isBlackPlayerCastled();
+        
+        // Create game manager with current state
+        GameManager gameManager = new GameManager(currentFen, lastMovePgn, game.getIsPlayerTurn() == com.chess.core.Alliance.WHITE ? isWhitePlayerCastled : isBlackPlayerCastled, moveCount);
+        IBoard board = gameManager.getBoard();
+        
+        // Send WebSocket notification to the white player that the game has started
+        logger.info("Sending game started notification for game ID: {}", gameId);
+        
+        
+        return board;
     }
 
     public Game getGameById(String gameId) {
@@ -161,33 +116,73 @@ public class GameService {
         return gameRepository.findAll();
     }
 
-    public String getFenPositionByGameId(String gameId) {
-        Game game = getGameById(gameId);
-        return game.getFenPosition();
-    }
+    @Transactional
+    public IBoard makeMove(String gameId, int sourceCoordinate, int targetCoordinate) {
+        // Check if game exists
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Get current game state
+        String currentFen = game.getFenPosition();
+        String lastMovePgn = game.getLastMovePgn();
+        int moveCount = game.getMoveCount();
+        boolean isWhitePlayerCastled = game.isWhitePlayerCastled();
+        boolean isBlackPlayerCastled = game.isBlackPlayerCastled();
+        
+        // Create game manager with current state
+        GameManager gameManager = new GameManager(currentFen, lastMovePgn, game.getIsPlayerTurn() == com.chess.core.Alliance.WHITE ? isWhitePlayerCastled : isBlackPlayerCastled, moveCount);
+        
+        // Find the move from legal moves
+        com.chess.core.moves.Move move = gameManager.getMoves()
+            .stream()
+            .filter(m -> m.getSourceCoordinate() == sourceCoordinate 
+                    && m.getTargetCoordinate() == targetCoordinate)
+            .findFirst()
+            .orElseThrow(() -> new InvalidMoveException("Invalid move"));
+        
+        // Execute the move
+        com.chess.core.board.IBoard newBoard = gameManager.executeMove(move);
+        
+        // Create a new position record
+        Position newPosition = new Position();
+        newPosition.setFen(newBoard.getFEN());
+        newPosition.setMoveNumber(moveCount + 1);
+        newPosition.setNextPlayerTurn(newBoard.getCurrentPlayer().getAlliance());
+        newPosition.setWhiteCastled(game.isWhitePlayerCastled());
+        newPosition.setBlackCastled(game.isBlackPlayerCastled());
+        newPosition.setLastMovePgn(move.toString());
+        newPosition.setGame(game);
+        
+        // Update game state
+        game.setFenPosition(newBoard.getFEN());
+        game.setMoveCount(moveCount + 1);
+        game.setLastMovePgn(move.toString());
+        game.setIsPlayerTurn(newBoard.getCurrentPlayer().getAlliance());
+        
+        // Check for castling
+        if (move.toString().equals("O-O") || move.toString().equals("O-O-O")) {
+            if (game.getIsPlayerTurn() == com.chess.core.Alliance.WHITE) {
+                game.setWhitePlayerCastled(true);
+            } else {
+                game.setBlackPlayerCastled(true);
+            }
+        }
+        
+        // Update game status based on the new board state
+        if (gameManager.isCheckmate()) {
+            game.setStatus(Game.GameStatus.CHECKMATE);
+        } else if (gameManager.getGameStatus() == GameManager.GameStatus.DRAW) {
+            game.setStatus(Game.GameStatus.DRAW);
+        } else {
+            game.setStatus(Game.GameStatus.IN_PROGRESS);
+        }
+        
+        // Add the new position to the game
+        game.getPositions().add(newPosition);
+        
+        // Save the game (which will cascade to save the position)
+        game = gameRepository.save(game);
 
-    public String getPgnMovesByGameId(String gameId) {
-        Game game = getGameById(gameId);
-        return game.getPgnMoves();
-    }
-
-    public int getMoveCountByGameId(String gameId) {
-        Game game = getGameById(gameId);
-        return game.getMoveCount();
-    }
-
-    public String getLastMovePgnByGameId(String gameId) {
-        Game game = getGameById(gameId);
-        return game.getLastMovePgn();
-    }
-
-    /**
-     * Find the oldest game with WAITING_FOR_OPPONENT status
-     * @return The game ID of the oldest waiting game, or null if none found
-     */
-    public String findOldestWaitingGameId() {
-        return gameRepository.findOldestWaitingGame()
-                .map(Game::getId)
-                .orElse(null);
+        return newBoard;
     }
 }

@@ -14,15 +14,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.chess.core.board.IBoard;
 import com.chess.dto.rest.request.CreateGameRequestDTO;
 import com.chess.dto.rest.request.JoinGameRequestDTO;
+import com.chess.dto.rest.request.MakeMoveRequestDTO;
 import com.chess.dto.rest.response.GameDTO;
+import com.chess.dto.rest.response.MoveResultDTO;
 import com.chess.model.entity.Game;
 import com.chess.service.GameService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @RestController
 @RequestMapping("/api/games")
@@ -31,10 +34,12 @@ public class GameController {
     
     private final GameService gameService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final ObjectMapper objectMapper;
 
-    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate) {
+    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate, ObjectMapper objectMapper) {
         this.gameService = gameService;
         this.messagingTemplate = messagingTemplate;
+        this.objectMapper = objectMapper;
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
@@ -93,11 +98,30 @@ public class GameController {
     public ResponseEntity<GameDTO> joinGame(@RequestBody @Valid JoinGameRequestDTO request) {
         try{
             // Join the game
-            Game game = gameService.joinGame(
+            IBoard board = gameService.joinGame(
                 request.getGameId(), 
                 request.getUsername()
             );
 
+            Game game = gameService.getGameById(request.getGameId());
+
+            // Create a message that includes both game status and board information
+            String message = String.format(
+                "{\"type\":\"GAME_STARTED\"," +
+                "\"message\":\"Game is now in progress\"," +
+                "\"gameId\":\"%s\"," +
+                "\"gameStatus\":\"IN_PROGRESS\"," +
+                "\"whitePlayer\":\"%s\"," +
+                "\"blackPlayer\":\"%s\"," +
+                "\"boardDTO\":%s}",
+                request.getGameId(),
+                game.getWhitePlayer().getUsername(),
+                game.getBlackPlayer().getUsername(),
+                objectMapper.writeValueAsString(board)
+            );
+
+            messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
+    
             return ResponseEntity.ok()
                     .body(GameDTO.fromGame(game));
         } catch (Exception e) {
@@ -109,8 +133,50 @@ public class GameController {
         }
     }
 
-    
+    @PostMapping(value = "/{gameId}/move", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Void> makeMove(@RequestBody @Valid MakeMoveRequestDTO request) {
+        try {
+            // Make the move using the service
+            IBoard updatedBoard = gameService.makeMove(
+                request.getGameId(), 
+                request.getSourceCoordinate(), 
+                request.getTargetCoordinate()
+            );
 
+            Game updatedGame = gameService.getGameById(request.getGameId());
+            
+            // Send a WebSocket notification about the move
+            MoveResultDTO moveResult = MoveResultDTO.builder()
+                .gameDTO(GameDTO.fromGame(updatedGame))
+                .board(updatedBoard)
+                .build();
+                
+            messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), 
+                "{\"type\":\"MOVE_MADE\",\"message\":\"A move was made\",\"gameId\":\"" + request.getGameId() + "\",\"fenPosition\":\"" + updatedGame.getFenPosition() + "\",\"moveResult\":" + objectMapper.writeValueAsString(moveResult) + "}");
+            
+            // Return the updated game state
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error making move", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping(value = "/{gameId}/initialBoard", produces = "application/json")
+    public ResponseEntity<IBoard> getGameInitialBoard(@PathVariable String gameId) {
+        try {
+            // Get the game data from service
+            Game game = gameService.getGameById(gameId);
+            // Add the game data to the model so it's available in the template
+            return ResponseEntity.ok(IBoard.createBoardFromFEN(game.getFenPosition(),
+            null, 
+            false));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    
     // @MessageMapping("/game/{gameId}/chat")
     // @SendTo("/topic/game/{gameId}")
     // public ChatDTO handleChat(ChatDTO chatDTO, SimpMessageHeaderAccessor headerAccessor) {

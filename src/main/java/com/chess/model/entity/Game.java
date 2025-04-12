@@ -2,7 +2,10 @@ package com.chess.model.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,11 +16,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.chess.core.Alliance;
 
 @Getter
 @Setter
@@ -30,57 +36,66 @@ public class Game implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "game_id")
     private String id;
 
+    // Essential Game Information
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "white_player_id", nullable = false)
+    @JoinColumn(name = "game_user_whiteId", nullable = false)
     private User whitePlayer;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "black_player_id", nullable = true)
+    @JoinColumn(name = "game_user_blackId", nullable = true)
     private User blackPlayer;
-
-    @Column(name = "fen_position", columnDefinition = "TEXT", nullable = false)
-    private String fenPosition;
-
-    @Column(name = "pgn_moves", columnDefinition = "TEXT")
-    private String pgnMoves = "";
 
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "game_status", nullable = false)
     private GameStatus status = GameStatus.WAITING_FOR_OPPONENT;
 
-    @Column(name = "createdAt", nullable = false)
+    @Column(name = "game_createdAt", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "winner_id")
+    @JoinColumn(name = "game_winnerId")
     private User winner;
-
-    @Column(name = "move_count")
-    private int moveCount;
-
-    @Column(name = "last_move_pgn")
-    private String lastMovePgn;
-
-    @Column(name = "is_black_player_castled")
-    private boolean isBlackPlayerCastled;
-
-    @Column(name = "is_white_player_castled")
-    private boolean isWhitePlayerCastled;
 
     @Column(name = "game_type", nullable = true)
     private String gameType = "standard";
 
-    @Column(name = "time_control_minutes", nullable = true)
+    @Column(name = "game_timeControlMinutes", nullable = true)
     private Integer timeControlMinutes = 10;
 
-    @Column(name = "is_rated", nullable = true)
+    @Column(name = "game_isRated", nullable = true)
     private Boolean isRated = true;
 
-    @Column(name = "custom_rules", columnDefinition = "TEXT", nullable = true)
+    @Column(name = "game_customRules", columnDefinition = "TEXT", nullable = true)
     private String customRules = "";
+
+    // Game State Information
+    @Column(name = "game_fenPosition", columnDefinition = "TEXT", nullable = false)
+    private String fenPosition;
+
+    @Column(name = "game_moveCount")
+    private int moveCount;
+
+    @Column(name = "game_lastMovePgn")
+    private String lastMovePgn;
+
+    @Column(name = "game_isBlackPlayerCastled")
+    private boolean isBlackPlayerCastled;
+
+    @Column(name = "game_isWhitePlayerCastled")
+    private boolean isWhitePlayerCastled;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "game_isPlayerTurn", nullable = false)
+    private Alliance isPlayerTurn = Alliance.WHITE; // Default to WHITE's turn
+
+    // Game History Information
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("positionNumber ASC")
+    private List<Position> positions = new ArrayList<>();
 
     public enum GameStatus {
         WAITING_FOR_OPPONENT,

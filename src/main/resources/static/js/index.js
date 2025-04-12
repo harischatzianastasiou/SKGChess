@@ -113,9 +113,9 @@ function joinGame(gameId) {
         gameId : gameId
     };
     
-    console.log("Calling game creation endpoint with request:", requestBody);
+    console.log("Calling join game endpoint with request:", requestBody);
     // Call the join game endpoint
-    fetch(`/api/games/join}`, {
+    fetch('/api/games/join', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -139,6 +139,7 @@ function joinGame(gameId) {
             throw new Error('Game ID not found in response');
         }
         console.log("Joined game:", data);
+        
         // Redirect to the game page
         window.location.href = `/games/${data.id}`;
     })

@@ -62,6 +62,7 @@ public class Pawn extends Piece {
      
 	@Override
 	public Collection<Move> calculateMoves(final List<Tile> boardTiles, final Player opponentPlayer, final Move lastMove) {
+        System.out.println("Calculating moves for pawn");
 		return CalculateMoveUtils.calculate(boardTiles, this, CANDIDATE_MOVE_OFFSETS, opponentPlayer, lastMove);
 	} 
     

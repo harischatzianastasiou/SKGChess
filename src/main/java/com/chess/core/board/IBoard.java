@@ -54,7 +54,5 @@ public interface IBoard {
         return Board.createBoardFromFEN(fen, lastMove, isCastled);
     }
 
-
-
     Collection<Piece> getAllPieces();
 } 

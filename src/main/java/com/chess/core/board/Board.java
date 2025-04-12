@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import  com.chess.core.Alliance;
+import  com.chess.core.moves.Move;
 import  com.chess.core.pieces.Bishop;
 import  com.chess.core.pieces.CalculateMoveUtils;
 import  com.chess.core.pieces.King;
@@ -16,9 +17,9 @@ import  com.chess.core.pieces.Piece;
 import  com.chess.core.pieces.Queen;
 import  com.chess.core.pieces.Rook;
 import  com.chess.core.player.Player;
-import  com.chess.core.tiles.Tile;
+import com.chess.core.tiles.Tile;
+import com.chess.core.utils.FenUtils;
 import com.google.common.collect.ImmutableList;
-import com.chess.core.moves.Move;
 
 public class Board implements IBoard {
 	
@@ -218,44 +219,24 @@ public class Board implements IBoard {
 				.toList();
 	}
 
+	/**
+	 * Creates a board from a FEN string
+	 * 
+	 * @param fen The FEN string to parse
+	 * @param lastMove The last move made
+	 * @param isCastled Whether the current player has castled
+	 * @return A new Board object representing the FEN position
+	 */
 	public static IBoard createBoardFromFEN(String fen, Move lastMove, boolean isCastled) {
-		if (fen == null || fen.trim().isEmpty()) {
-			return null;
-		}
-
-		String[] fenParts = fen.split(" ");
-		String piecePlacement = fenParts[0];
-		Alliance currentPlayerAlliance = fenParts[1].equals("w") ? Alliance.WHITE : Alliance.BLACK;
-
-		Builder builder = new Builder();
-		builder.setcurrentPlayerAlliance(currentPlayerAlliance);
-
-		int rank = 7; // Start from top rank (7)
-		int file = 0; // Start from a-file (0)
-		
-		for (char c : piecePlacement.toCharArray()) {
-			if (c == '/') {
-				rank--;
-				file = 0;
-			} else if (Character.isDigit(c)) {
-				file += Character.getNumericValue(c);
-			} else {
-				int coordinate = rank * 8 + file;
-				Alliance alliance = Character.isUpperCase(c) ? Alliance.WHITE : Alliance.BLACK;
-				char pieceChar = Character.toUpperCase(c);
-				
-				switch (pieceChar) {
-					case 'P': builder.setPiece(new Pawn(coordinate, alliance)); break;
-					case 'R': builder.setPiece(new Rook(coordinate, alliance)); break;
-					case 'N': builder.setPiece(new Knight(coordinate, alliance)); break;
-					case 'B': builder.setPiece(new Bishop(coordinate, alliance)); break;
-					case 'Q': builder.setPiece(new Queen(coordinate, alliance)); break;
-					case 'K': builder.setPiece(new King(coordinate, alliance)); break;
-				}
-				file++;
-			}
-		}
-		
-		return builder.build(lastMove, isCastled);
+		return FenUtils.fenToBoard(fen, lastMove, isCastled);
+	}
+	
+	/**
+	 * Converts the current board to a FEN string
+	 * 
+	 * @return FEN string representation of the board
+	 */
+	public String toFen() {
+		return FenUtils.boardToFen(this);
 	}
 }

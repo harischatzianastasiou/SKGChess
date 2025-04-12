@@ -1,20 +1,17 @@
 package com.chess.core;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import com.chess.core.board.IBoard;
-import  com.chess.core.moves.Move;
+import com.chess.core.moves.Move;
 import  com.chess.core.moves.capturing.CapturingMove;
 import  com.chess.core.pieces.Bishop;
 import  com.chess.core.pieces.Piece;
 import  com.chess.core.pieces.Piece.PieceSymbol;
 import  com.chess.core.player.CurrentPlayer;
-import  com.chess.core.tiles.Tile;
+import  com.chess.util.PGNParser;
 import  com.chess.util.Sounduser;
-import com.chess.util.PGNParser;
-import java.util.Collection;
 
 public class GameManager {
 
@@ -22,42 +19,38 @@ public class GameManager {
     private GameStatus gameStatus;
     private DrawType drawType;
     private int moveCount;
-    private String pgnMoves;
     private Move lastMove;
 
-    public GameManager(String fen, int moveCount, String pgn, boolean isCastled) {
-        this.lastMove = getLastMoveFromPgn();
-        this.currentBoard = IBoard.createBoardFromFEN(fen,lastMove,isCastled);
-        this.gameStatus = updateGameStatus();
+    public GameManager(String fen, String lastMovePgn, boolean isCastled, int moveCount) {
+        // First create the current board from FEN
+        this.currentBoard = IBoard.createBoardFromFEN(fen, null, isCastled);
+        
+        // Then construct the last move by working backward from the current position
+        this.lastMove = getLastMoveFromPgn(lastMovePgn);
+        
+        // Update game status based on the PGN
+        this.gameStatus = updateGameStatus(lastMovePgn);
+        
+        // Update the board with the last move
+        this.currentBoard = IBoard.createBoardFromFEN(fen, this.lastMove, isCastled);
         this.moveCount = moveCount;
-        this.pgnMoves = pgn; 
     }
 
-    public Move getLastMoveFromPgn() {
-        if (pgnMoves == null || pgnMoves.trim().isEmpty()) {
+    public Move getLastMoveFromPgn(String pgn) {
+        if (pgn == null || pgn.trim().isEmpty()) {
             return null;
         }
         
-        List<String> moves = PGNParser.parseMoves(pgnMoves);
+        List<String> moves = PGNParser.parseMoves(pgn);
         if (moves.isEmpty()) {
             return null;
         }
         
-        String lastMoveNotation = moves.get(moves.size() - 1);
-        // Convert the PGN move notation to a Move object using the current board state
-        Collection<Move> legalMoves = currentBoard.getCurrentPlayer().getMoves();
-        
-        // Find the matching move from legal moves based on the PGN notation
-        for (Move move : legalMoves) {
-            if (move.toString().equals(lastMoveNotation)) {
-                return move;
-            }
-        }
         return null;
     }
 
-    public boolean isThreefoldRepetitionFromPgn() {
-        if (pgnMoves == null || pgnMoves.trim().isEmpty()) {
+    public boolean isThreefoldRepetitionFromPgn(String pgn) {
+        if (pgn == null || pgn.trim().isEmpty()) {
             return false;
         }
 
@@ -69,7 +62,7 @@ public class GameManager {
         int repetitionCount = 1; // Current position counts as 1
         IBoard boardState = IBoard.createBoardFromFEN("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", null, false);
         
-        List<String> moves = PGNParser.parseMoves(pgnMoves);
+        List<String> moves = PGNParser.parseMoves(pgn);
         for (String moveNotation : moves) {
             Collection<Move> legalMoves = boardState.getCurrentPlayer().getMoves();
             for (Move move : legalMoves) {
@@ -92,12 +85,12 @@ public class GameManager {
         return false;
     }
 
-    public boolean isFiftyMoveRuleFromPgn() {
-        if (pgnMoves == null || pgnMoves.trim().isEmpty()) {
+    public boolean isFiftyMoveRuleFromPgn(String pgn) {
+        if (pgn == null || pgn.trim().isEmpty()) {
             return false;
         }
 
-        List<String> moves = PGNParser.parseMoves(pgnMoves);
+        List<String> moves = PGNParser.parseMoves(pgn);
         if (moves.isEmpty()) {
             return false;
         }
@@ -126,11 +119,11 @@ public class GameManager {
     }
 
 
-    public GameStatus updateGameStatus() {
+    public GameStatus updateGameStatus(String pgn) {
         if (isCheckmate()) {
             return GameStatus.CHECKMATE;
-        }else if(getDrawType() != null) {
-            this.drawType = getDrawType();
+        }else if(getDrawType(pgn) != null) {
+            this.drawType = getDrawType(pgn);
             return GameStatus.DRAW;
         }else{
             return GameStatus.ACTIVE;
@@ -190,17 +183,17 @@ public class GameManager {
         }
     }
 
-    private DrawType getDrawType() {
+    private DrawType getDrawType(String pgn) {
         CurrentPlayer currentPlayer = (CurrentPlayer) currentBoard.getCurrentPlayer();
         
         // Check all draw conditions
         if (!currentPlayer.isInCheck() && currentPlayer.getMoves().isEmpty()) {
             return DrawType.STALEMATE;
         } 
-        if (isThreefoldRepetitionFromPgn()) {
+        if (isThreefoldRepetitionFromPgn(pgn)) {
             return DrawType.THREEFOLD_REPETITION;
         } 
-        if (isFiftyMoveRuleFromPgn()) {
+        if (isFiftyMoveRuleFromPgn(pgn)) {
             return DrawType.FIFTY_MOVE_RULE;
         } 
         if (isInsufficientMaterial()) {
