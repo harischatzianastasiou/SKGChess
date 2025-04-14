@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>SKGChess Online</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -17,6 +18,12 @@
             </div>
             <p class="subtitle">A Custom Chess Engine & Online Chess Game</p>
             <p class="subtitle">Built From Scratch with Java, Spring Boot and JavaScript ☕</p>
+            <div class="user-info" sec:authorize="isAuthenticated()">
+                <span>Welcome, <span sec:authentication="name" id="username"></span>!</span>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn btn-outline">Logout</button>
+                </form>
+            </div>
             <p class="author-info">
                 Created by
                 <br>
