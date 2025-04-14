@@ -54,5 +54,9 @@ public interface IBoard {
         return Board.createBoardFromFEN(fen, lastMove, isCastled);
     }
 
+    String serialize();
+    static IBoard deserialize(String serialized, String lastMoveSerialized, boolean isCastled) {
+        return Board.deserialize(serialized, lastMoveSerialized, isCastled);
+    }
     Collection<Piece> getAllPieces();
 } 

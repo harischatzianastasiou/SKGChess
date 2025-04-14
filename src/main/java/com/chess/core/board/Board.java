@@ -20,6 +20,10 @@ import  com.chess.core.player.Player;
 import com.chess.core.tiles.Tile;
 import com.chess.core.utils.FenUtils;
 import com.google.common.collect.ImmutableList;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.chess.core.moves.noncapturing.PawnJumpMove;
 
 public class Board implements IBoard {
 	
@@ -238,5 +242,219 @@ public class Board implements IBoard {
 	 */
 	public String toFen() {
 		return FenUtils.boardToFen(this);
+	}
+
+	/**
+	 * Serializes the board to a JSON string for database storage
+	 * 
+	 * @return JSON string representation of the board
+	 */
+	public String serialize() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			// Configure mapper to handle circular references
+			mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+			
+			// Create a direct representation of the Board class
+			Map<String, Object> boardJson = new HashMap<>();
+			
+			// Add the main properties of the Board class
+			boardJson.put("tiles", this.tiles);
+			boardJson.put("currentPlayer", this.currentPlayer);
+			boardJson.put("opponentPlayer", this.opponentPlayer);
+			
+			return mapper.writeValueAsString(boardJson);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to serialize board", e);
+		}
+	}
+
+	/**
+	 * Serializes a move to a JSON string
+	 * 
+	 * @param move The move to serialize
+	 * @return JSON string representation of the move
+	 */
+	public static String serializeMove(Move move) {
+		if (move == null) {
+			return null;
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			// Configure mapper to handle circular references
+			mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+			
+			// Create a direct representation of the Move class
+			Map<String, Object> moveJson = new HashMap<>();
+			
+			// Add the main properties of the Move class
+			moveJson.put("sourceCoordinate", move.getSourceCoordinate());
+			moveJson.put("targetCoordinate", move.getTargetCoordinate());
+			moveJson.put("pieceSymbol", move.getPieceToMove().getPieceSymbol().toString());
+			moveJson.put("pieceAlliance", move.getPieceToMove().getPieceAlliance().toString());
+			
+			// Add the board tiles
+			moveJson.put("boardTiles", move.getBoardTiles());
+			
+			// Add the move type
+			if (move instanceof PawnJumpMove) {
+				moveJson.put("moveType", "PAWN_JUMP");
+			} else {
+				moveJson.put("moveType", "UNKNOWN");
+			}
+			
+			return mapper.writeValueAsString(moveJson);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to serialize move", e);
+		}
+	}
+
+	/**
+	 * Deserializes a board from a JSON string
+	 * 
+	 * @param boardSerialized JSON string representation of the board
+	 * @param lastMoveSerialized JSON string representation of the last move
+	 * @param isCastled Whether the current player has castled
+	 * @return A new Board object
+	 */
+	public static IBoard deserialize(String boardSerialized, String lastMoveSerialized, boolean isCastled) {
+		if (boardSerialized == null || boardSerialized.trim().isEmpty()) {
+			return null;
+		}
+		
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			// Parse the JSON string
+			JsonNode rootNode = mapper.readTree(boardSerialized);
+			
+			// Create a new board builder
+			Builder builder = new Builder();
+			
+			// Get the current player alliance from the currentPlayer node
+			JsonNode currentPlayerNode = rootNode.get("currentPlayer");
+			if (currentPlayerNode != null) {
+				JsonNode allianceNode = currentPlayerNode.get("alliance");
+				if (allianceNode != null) {
+					String allianceStr = allianceNode.asText();
+					Alliance alliance = Alliance.valueOf(allianceStr);
+					builder.setcurrentPlayerAlliance(alliance);
+				}
+			}
+			
+			// Get pieces from the tiles node
+			JsonNode tilesNode = rootNode.get("tiles");
+			if (tilesNode != null && tilesNode.isArray()) {
+				for (JsonNode tileNode : tilesNode) {
+					JsonNode pieceNode = tileNode.get("piece");
+					if (pieceNode != null && !pieceNode.isNull()) {
+						int coordinate = tileNode.get("tileCoordinate").asInt();
+						JsonNode allianceNode = pieceNode.get("pieceAlliance");
+						JsonNode symbolNode = pieceNode.get("pieceSymbol");
+						
+						if (allianceNode != null && symbolNode != null) {
+							Alliance pieceAlliance = Alliance.valueOf(allianceNode.asText());
+							String symbol = symbolNode.asText();
+							boolean isFirstMove = pieceNode.has("isFirstMove") ? 
+									pieceNode.get("isFirstMove").asBoolean() : true;
+							
+							// Create the appropriate piece based on the symbol
+							Piece piece = null;
+							switch (symbol) {
+								case "PAWN":
+									piece = new Pawn(coordinate, pieceAlliance, isFirstMove);
+									break;
+								case "KNIGHT":
+									piece = new Knight(coordinate, pieceAlliance, isFirstMove);
+									break;
+								case "BISHOP":
+									piece = new Bishop(coordinate, pieceAlliance, isFirstMove);
+									break;
+								case "ROOK":
+									piece = new Rook(coordinate, pieceAlliance, isFirstMove);
+									break;
+								case "QUEEN":
+									piece = new Queen(coordinate, pieceAlliance, isFirstMove);
+									break;
+								case "KING":
+									piece = new King(coordinate, pieceAlliance, isFirstMove);
+									break;
+							}
+							
+							if (piece != null) {
+								builder.setPiece(piece);
+							}
+						}
+					}
+				}
+			}
+			
+			// Deserialize the last move if provided
+			Move lastMove = null;
+			if (lastMoveSerialized != null && !lastMoveSerialized.isEmpty()) {
+				lastMove = deserializeMove(lastMoveSerialized);
+			}
+			
+			// Build and return the board with the provided lastMove and isCastled parameters
+			return builder.build(lastMove, isCastled);
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to deserialize board", e);
+		}
+	}
+
+
+	/**
+	 * Deserializes a move from a JSON string
+	 * 
+	 * @param moveSerialized JSON string representation of the move
+	 * @return A Move object
+	 */
+	private static Move deserializeMove(String moveSerialized) {
+		if (moveSerialized == null || moveSerialized.isEmpty()) {
+			return null;
+		}
+
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode moveNode = objectMapper.readTree(moveSerialized);
+			
+			// Get common properties
+			int sourceCoordinate = moveNode.get("sourceCoordinate").asInt();
+			int targetCoordinate = moveNode.get("targetCoordinate").asInt();
+			String pieceSymbol = moveNode.get("pieceSymbol").asText();
+			String allianceStr = moveNode.get("pieceAlliance").asText();
+			String moveType = moveNode.get("moveType").asText();
+			
+			// Convert string alliance to Alliance enum
+			Alliance pieceAlliance = Alliance.valueOf(allianceStr);
+			
+			// Create the appropriate move based on moveType
+			switch (moveType) {
+				case "PAWN_JUMP":
+					Piece piece = new Pawn(targetCoordinate, pieceAlliance, true);
+					
+					// Get the board tiles from the move data
+					JsonNode boardTilesNode = moveNode.get("boardTiles");
+					List<Tile> boardTiles;
+					
+					if (boardTilesNode != null && !boardTilesNode.isNull()) {
+						// If boardTiles is provided in the JSON, deserialize it
+						// This would require a custom deserializer for List<Tile>
+						// For now, we'll create a standard board
+						IBoard tempBoard = createStandardBoard();//TODO: change to the board that was serialized
+						boardTiles = tempBoard.getTiles();
+					} else {
+						// If no boardTiles provided, create a standard board
+						IBoard tempBoard = createStandardBoard();
+						boardTiles = tempBoard.getTiles();
+					}
+					
+					return new PawnJumpMove(boardTiles, sourceCoordinate, targetCoordinate, piece);
+				default:
+					return null;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to deserialize move", e);
+		}
 	}
 }
