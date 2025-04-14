@@ -33,6 +33,8 @@ public class GameDTO {
     // Game state
     private String fenPosition;
     private String pgnMoves;
+    private String board;
+    private String lastMoveData;
     private GameStatus status;
     private LocalDateTime createdAt;
     
@@ -77,12 +79,13 @@ public class GameDTO {
                 .whitePlayerUsername(game.getWhitePlayer() != null ? game.getWhitePlayer().getUsername() : null)
                 .blackPlayerUsername(game.getBlackPlayer() != null ? game.getBlackPlayer().getUsername() : null)
                 .fenPosition(game.getFenPosition())
+                .board(game.getBoard())
+                .lastMoveData(game.getLastMoveData())
                 .status(game.getStatus())
                 .createdAt(game.getCreatedAt())
                 .winnerId(game.getWinner() != null ? game.getWinner().getId() : null)
                 .winnerUsername(game.getWinner() != null ? game.getWinner().getUsername() : null)
                 .moveCount(game.getMoveCount())
-                .lastMovePgn(game.getLastMovePgn())
                 .isBlackPlayerCastled(game.isBlackPlayerCastled())
                 .isWhitePlayerCastled(game.isWhitePlayerCastled())
                 .build();

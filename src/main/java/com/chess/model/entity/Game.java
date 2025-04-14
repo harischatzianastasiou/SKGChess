@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.chess.core.Alliance;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +25,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.chess.core.Alliance;
 
 @Getter
 @Setter
@@ -73,14 +74,17 @@ public class Game implements Serializable {
     private String customRules = "";
 
     // Game State Information
-    @Column(name = "game_fenPosition", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "game_fenPosition", columnDefinition = "TEXT", nullable = true)
     private String fenPosition;
 
     @Column(name = "game_moveCount")
     private int moveCount;
 
-    @Column(name = "game_lastMovePgn")
-    private String lastMovePgn;
+    @Column(name = "game_lastMoveData")
+    private String lastMoveData;
+
+    @Column(name = "game_board", columnDefinition = "TEXT", nullable = true)
+    private String board;
 
     @Column(name = "game_isBlackPlayerCastled")
     private boolean isBlackPlayerCastled;
