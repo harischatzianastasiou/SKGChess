@@ -45,9 +45,6 @@ public class Position {
     @Column(name = "position_isBlackCastled")
     private boolean isBlackCastled;
     
-    @Column(name = "position_lastMovePgn")
-    private String lastMovePgn;
-    
     @ManyToOne
     @JoinColumn(name = "position_game_id")
     private Game game;

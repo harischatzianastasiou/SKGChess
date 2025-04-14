@@ -3,17 +3,24 @@ package com.chess.core;
 import java.util.Collection;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.chess.core.board.IBoard;
 import com.chess.core.moves.Move;
-import  com.chess.core.moves.capturing.CapturingMove;
-import  com.chess.core.pieces.Bishop;
-import  com.chess.core.pieces.Piece;
-import  com.chess.core.pieces.Piece.PieceSymbol;
-import  com.chess.core.player.CurrentPlayer;
-import  com.chess.util.PGNParser;
-import  com.chess.util.Sounduser;
+import com.chess.core.moves.capturing.CapturingMove;
+import com.chess.core.moves.noncapturing.PawnJumpMove;
+import com.chess.core.pieces.Bishop;
+import com.chess.core.pieces.Piece;
+import com.chess.core.pieces.Piece.PieceSymbol;
+import com.chess.core.player.CurrentPlayer;
+import com.chess.util.PGNParser;
+import com.chess.util.Sounduser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GameManager {
+    private static final Logger logger = LoggerFactory.getLogger(GameManager.class);
 
     private IBoard currentBoard;
     private GameStatus gameStatus;
@@ -21,32 +28,17 @@ public class GameManager {
     private int moveCount;
     private Move lastMove;
 
-    public GameManager(String fen, String lastMovePgn, boolean isCastled, int moveCount) {
-        // First create the current board from FEN
-        this.currentBoard = IBoard.createBoardFromFEN(fen, null, isCastled);
+    public GameManager(String lastMoveData, boolean isCastled, int moveCount) {
+        this.currentBoard = IBoard.createStandardBoard();
         
         // Then construct the last move by working backward from the current position
-        this.lastMove = getLastMoveFromPgn(lastMovePgn);
+        // this.lastMove = getLastMoveFromData(lastMoveData);
         
         // Update game status based on the PGN
-        this.gameStatus = updateGameStatus(lastMovePgn);
+        // this.gameStatus = updateGameStatus(lastMoveData);
         
         // Update the board with the last move
-        this.currentBoard = IBoard.createBoardFromFEN(fen, this.lastMove, isCastled);
         this.moveCount = moveCount;
-    }
-
-    public Move getLastMoveFromPgn(String pgn) {
-        if (pgn == null || pgn.trim().isEmpty()) {
-            return null;
-        }
-        
-        List<String> moves = PGNParser.parseMoves(pgn);
-        if (moves.isEmpty()) {
-            return null;
-        }
-        
-        return null;
     }
 
     public boolean isThreefoldRepetitionFromPgn(String pgn) {
@@ -119,16 +111,16 @@ public class GameManager {
     }
 
 
-    public GameStatus updateGameStatus(String pgn) {
-        if (isCheckmate()) {
-            return GameStatus.CHECKMATE;
-        }else if(getDrawType(pgn) != null) {
-            this.drawType = getDrawType(pgn);
-            return GameStatus.DRAW;
-        }else{
-            return GameStatus.ACTIVE;
-        }
-    }
+    // public GameStatus updateGameStatus(String pgn) {
+    //     if (isCheckmate()) {
+    //         return GameStatus.CHECKMATE;
+    //     }else if(getDrawType(pgn) != null) {
+    //         this.drawType = getDrawType(pgn);
+    //         return GameStatus.DRAW;
+    //     }else{
+    //         return GameStatus.ACTIVE;
+    //     }
+    // }
 
     public IBoard executeMove(Move move) {
         Collection<Move> currentPlayerMoves = currentBoard.getCurrentPlayer().getMoves();
@@ -143,6 +135,11 @@ public class GameManager {
     }
 
     public Collection<Move> getMoves(){
+        logger.info("Getting moves for current board: {}", currentBoard.getFEN());
+        logger.info("Current player: {}", currentBoard.getCurrentPlayer().getAlliance());
+        for (Move move : currentBoard.getCurrentPlayer().getMoves()) {
+            logger.info("Move: {}", move.getPieceToMove().getPieceSymbol() + " " + move.getSourceCoordinate() + " " + move.getTargetCoordinate());
+        }
         return currentBoard.getCurrentPlayer().getMoves();
     }
 
@@ -287,4 +284,36 @@ public class GameManager {
     public void setBoard(IBoard currentBoard) {
         this.currentBoard = currentBoard;
     }
+
+//     private Move getLastMoveFromData(String lastMoveData) {
+//         if (lastMoveData == null || lastMoveData.isEmpty()) {
+//             return null;
+//         }
+
+//         try {
+//             ObjectMapper objectMapper = new ObjectMapper();
+//             JsonNode moveNode = objectMapper.readTree(lastMoveData);
+            
+//             // Get common properties
+//             int sourceCoordinate = moveNode.get("sourceCoordinate").asInt();
+//             int targetCoordinate = moveNode.get("targetCoordinate").asInt();
+//             String pieceSymbol = moveNode.get("pieceSymbol").asText();
+//             String pieceAlliance = moveNode.get("pieceAlliance").asText();
+//             String moveType = moveNode.get("moveType").asText();
+            
+            
+//             // Create the appropriate move based on moveType
+//             switch (moveType) {
+//                 case "PAWN_JUMP":
+//                     Piece piece = currentBoard.getTile(targetCoordinate).getPiece();
+//                     return new PawnJumpMove(currentBoard.getTiles(), sourceCoordinate, targetCoordinate, piece);
+//                 default:
+//                     return null;
+//             }
+//         } catch (Exception e) {
+//             logger.error("Failed to reconstruct move from data", e);
+//             return null;
+//         }
+//     }
+// }
 }
