@@ -4,7 +4,8 @@
     padding: 0;
     display: flex;
     align-items: flex-start;
-    background-color: rgba(72, 18, 52, 0.95);
+    /* background-color: #2b1600; */
+    background-color: #2c2016;
     position: relative;
     min-height: 100vh;
     border-radius: 0;
@@ -48,13 +49,13 @@
 }
 
 .game-section {
-    display: flex;
+    /* display: flex;
     align-items: flex-start;
     background: transparent;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 1);
-    left: 50%;
+    left: 50%; */
 }
 
 .board-wrapper {
@@ -63,42 +64,22 @@
     height: 560px;
     margin: 0;
     padding: 30px;
-    background: #333;
+    background: #2c2016;
     display: block;
 }
 
 .chess-board {
     width: 560px;
     height: 560px;
-    border: 2px solid #333;
+    border: 2px solid #332211;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     background: #333;
+    position: relative;
 }
 
-.rank-labels {
-    position: absolute;
-    left: 10px;
-    top: 30px;
-    bottom: 60px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-.file-labels {
-    position: absolute;
-    bottom: 10px;
-    left: 30px;
-    right: 30px;
-    display: flex;
-    justify-content: space-around;
-    color: white;
-    font-weight: bold;
-    font-size: 14px;
+.rank-labels, .file-labels {
+    display: none;
 }
 
 .tile {
@@ -112,12 +93,59 @@
     transition: transform 0.15s ease;
 }
 
+/* Create coordinate elements */
+.coordinate-file,
+.coordinate-rank {
+    position: absolute;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.coordinate-file {
+    bottom: 5px;
+    left: 1px;
+}
+
+.coordinate-rank {
+    top: 5px;
+    right: 2px;
+}
+
+/* Color coordinates based on tile color */
+.tile.light .coordinate-file,
+.tile.light .coordinate-rank {
+    color: #261c13;
+}
+
+.tile.dark .coordinate-file,
+.tile.dark .coordinate-rank {
+    color: #c1945e;
+}
+
+/* Only show rank numbers on the rightmost column */
+.tile:not([data-file="h"]) .coordinate-rank {
+    display: none;
+}
+
+/* Only show file letters on the bottom row */
+.tile:not([data-rank="1"]) .coordinate-file {
+    display: none;
+}
+
 .tile.light {
-    background-color: #481234;
+    /* Using background image for light tiles */
+    background-image: url('../images/light_tile.png');
+    background-size: cover; /* Ensures the image covers the entire tile */
+    background-position: center; /* Centers the image within the tile */
 }
 
 .tile.dark {
-    background-color: #ffffff;
+    /* Using background image for dark tiles */
+    background-image: url('../images/dark_tile.png');
+    background-size: cover; /* Ensures the image covers the entire tile */
+    background-position: center; /* Centers the image within the tile */
 }
 
 .tile.selected {

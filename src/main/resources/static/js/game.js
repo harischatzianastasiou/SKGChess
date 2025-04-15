@@ -1,6 +1,11 @@
 class ChessGame {
     constructor() {
         this.statusElement = document.getElementById('status');
+        if (!this.statusElement) {
+            this.statusElement = document.createElement('div');
+            this.statusElement.id = 'status';
+            document.querySelector('.game-section').appendChild(this.statusElement);
+        }
         this.board = document.getElementById('game-board');
         this.piece = document.getElementById('piece');
         this.boardDTO = null;
@@ -75,11 +80,29 @@ class ChessGame {
     initializeBoard() {
         console.log('Setting up board...');
         this.board.innerHTML = '';
+        const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+        
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
                 const tile = document.createElement('div');
                 tile.className = `tile ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
                 tile.dataset.position = row * 8 + col;
+                tile.dataset.file = files[col];
+                tile.dataset.rank = ranks[row];
+                
+                // Add file letter (a-h)
+                const fileLabel = document.createElement('div');
+                fileLabel.className = 'coordinate-file';
+                fileLabel.textContent = files[col];
+                tile.appendChild(fileLabel);
+                
+                // Add rank number (1-8)
+                const rankLabel = document.createElement('div');
+                rankLabel.className = 'coordinate-rank';
+                rankLabel.textContent = ranks[row];
+                tile.appendChild(rankLabel);
+                
                 this.board.appendChild(tile);
             }
         }
@@ -631,9 +654,31 @@ class ChessGame {
             }
         }
         
+        // Update status message based on game status and turn
+        if (this.gameStatus === 'CHECKMATE') {
+            this.statusElement.textContent = 'Checkmate! Game Over';
+        } else if (this.gameStatus === 'DRAW') {
+            this.statusElement.textContent = 'Game ended in a Draw';
+        } else if (this.gameStatus === 'IN_PROGRESS') {
+            if (this.isPlayerTurn) {
+                this.statusElement.textContent = 'Your turn to move';
+            } else {
+                this.statusElement.textContent = 'Waiting for opponent\'s move...';
+            }
+        }
+        
         const tiles = this.board.querySelectorAll('.tile');
         tiles.forEach((tile, index) => {
+            // Save coordinate elements if they exist
+            const fileCoord = tile.querySelector('.coordinate-file');
+            const rankCoord = tile.querySelector('.coordinate-rank');
+            
+            // Clear tile content
             tile.innerHTML = '';
+            
+            // Restore coordinate elements if they existed
+            if (fileCoord) tile.appendChild(fileCoord);
+            if (rankCoord) tile.appendChild(rankCoord);
             
             // Check if the board has tiles property
             if (!this.boardDTO.tiles || !Array.isArray(this.boardDTO.tiles)) {
@@ -641,23 +686,7 @@ class ChessGame {
                 return;
             }
             
-            // Map the visual index to the correct tileCoordinate based on board orientation
-            let tileCoordinate;
-            // if (this.boardOrientation === 'WHITE') {
-                // For white player, keep the standard orientation (white at bottom)
-                // Map visual index to tileCoordinate (0-63)
-                tileCoordinate = index;
-            // } else if (this.boardOrientation === 'BLACK') {
-            //     // For black player, flip the board (black at bottom)
-            //     // Map visual index to flipped tileCoordinate
-            //     const row = Math.floor(index / 8);
-            //     const col = index % 8;
-            //     const flippedRow = 7 - row;
-            //     tileCoordinate = flippedRow * 8 + col;
-            // } else {
-            //     // Default to standard orientation if orientation is not set
-                tileCoordinate = index;
-            // }
+            let tileCoordinate = index;
             
             const tileData = this.boardDTO.tiles.find(t => t.tileCoordinate === tileCoordinate);
             if (tileData && tileData.tileOccupied) {

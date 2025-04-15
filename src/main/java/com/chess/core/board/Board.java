@@ -356,7 +356,7 @@ public class Board implements IBoard {
 							Alliance pieceAlliance = Alliance.valueOf(allianceNode.asText());
 							String symbol = symbolNode.asText();
 							boolean isFirstMove = pieceNode.has("isFirstMove") ? 
-									pieceNode.get("isFirstMove").asBoolean() : true;
+									pieceNode.get("isFirstMove").asBoolean() : false;
 							
 							// Create the appropriate piece based on the symbol
 							Piece piece = null;

@@ -29,7 +29,7 @@
 
 /* Heading styles */
 h2 {
-    color: white;
+    color: rgba(255, 255, 255, 0.8);
     text-align: left;
     margin-bottom: 5px;
 }
@@ -54,7 +54,7 @@ h2 {
     border: none;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: rgba(255, 255, 255, 0.8);
     font-size: 1em;
     outline: none;
     transition: 0.3s;
@@ -395,9 +395,9 @@ form {
 
 /* Base colors and variables */
 :root {
-    --primary-color: #481234;
+    --primary-color: #221811;
     --secondary-color: #ffffff;
-    --accent-color: #003166;
+    --accent-color: #221811;
     --text-color: #333333;
     --border-color: rgba(255, 255, 255, 0.2);
 }
