@@ -1,13 +1,19 @@
 /* Main layout */
+:root {
+    --font-primary: 'Playfair Display', 'Times New Roman', serif;
+    --font-secondary: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
 .game-layout {
     display: flex;
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    background-color: #0d0705;
+    background-color: #1a0f0a;
     overflow: hidden;
     margin: 0;
     padding: 0;
+    font-family: var(--font-secondary);
 }
 
 /* Header styling */
@@ -37,6 +43,8 @@
     align-items: center;
     gap: 15px;
     color: white;
+    font-family: var(--font-primary);
+    letter-spacing: 0.3px;
 }
 
 .btn-outline {
@@ -140,6 +148,8 @@
     color: #f0d9b5;
     font-size: 1.1rem;
     font-weight: 600;
+    font-family: var(--font-primary);
+    letter-spacing: 0.5px;
 }
 
 .player-rating {
@@ -148,6 +158,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    font-family: var(--font-secondary);
 }
 
 .player-rating::before {
@@ -158,7 +169,7 @@
 }
 
 .player-timer {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-primary);
     font-size: 1.3rem;
     font-weight: 700;
     color: #f0d9b5;
@@ -194,6 +205,8 @@
     justify-content: center;
     gap: 8px;
     font-size: 0.95rem;
+    font-family: var(--font-primary);
+    letter-spacing: 0.3px;
 }
 
 .game-controls button i {
@@ -247,6 +260,8 @@
     border-radius: 6px;
     border: 1px solid rgba(193, 148, 94, 0.15);
     transition: all 0.3s ease;
+    font-family: var(--font-primary);
+    letter-spacing: 0.3px;
 }
 
 #status.your-turn {
@@ -277,6 +292,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    font-family: var(--font-primary);
+    letter-spacing: 0.5px;
 }
 
 .move-history h3::before {
@@ -293,7 +310,7 @@
     border-radius: 8px;
     padding: 12px;
     color: #f0d9b5;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-secondary);
     font-size: 0.9rem;
     line-height: 1.6;
     border: 1px solid rgba(193, 148, 94, 0.15);
@@ -320,6 +337,8 @@
     display: flex;
     align-items: center;
     gap: 8px;
+    font-family: var(--font-primary);
+    letter-spacing: 0.5px;
 }
 
 .game-chat h3::before {
@@ -338,6 +357,7 @@
     margin-bottom: 0;
     color: #f0d9b5;
     border: 1px solid rgba(193, 148, 94, 0.15);
+    font-family: var(--font-secondary);
 }
 
 .chat-input {
@@ -354,6 +374,7 @@
     color: #f0d9b5;
     font-size: 0.95rem;
     transition: all 0.2s ease;
+    font-family: var(--font-secondary);
 }
 
 .chat-input input:focus {
@@ -377,6 +398,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: var(--font-primary);
+    letter-spacing: 0.3px;
 }
 
 .chat-input button:hover {
@@ -418,6 +441,8 @@
 .author-info {
     font-size: 0.8rem;
     color: #c1945e;
+    font-family: var(--font-primary);
+    letter-spacing: 0.3px;
 }
 
 .author-info a {
@@ -470,9 +495,9 @@
 .coordinate-file,
 .coordinate-rank {
     position: absolute;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-primary);
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 500;
     pointer-events: none;
 }
 

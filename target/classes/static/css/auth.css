@@ -29,13 +29,13 @@
 
 /* Heading styles */
 h2 {
-    color:#9a7845;
+    color: white;
     text-align: left;
     margin-bottom: 5px;
 }
 
 .subtitle {
-    color:#9a7845;
+    color: white;
     text-align: center;
     margin-bottom: 30px;
     font-size: 0.9em;
@@ -54,7 +54,7 @@ h2 {
     border: none;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.1);
-    color:#9a7845;
+    color: white;
     font-size: 1em;
     outline: none;
     transition: 0.3s;
@@ -66,7 +66,7 @@ h2 {
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color:#9a7845;
+    color: white;
     pointer-events: none;
     transition: 0.3s;
 }
@@ -92,7 +92,7 @@ h2 {
     align-items: center;
     gap: 8px;
     margin-bottom: 15px;
-    color:#9a7845;
+    color: white;
 }
 
 /* Button styling */
@@ -102,7 +102,7 @@ button {
     background: rgba(0, 0, 0, 0.7);
     border: 1px solid rgba(193, 148, 94, 0.2);
     border-radius: 8px;
-    color:#9a7845;
+    color: #9a7845;
     font-size: 1em;
     cursor: pointer;
     transition: all 0.3s;
@@ -118,11 +118,11 @@ button:hover {
 .signup-link {
     text-align: center;
     margin-top: 20px;
-    color:#9a7845;
+    color: white;
 }
 
 .signup-link a {
-    color: #23d5ab;
+    color: #9a7845;
     text-decoration: none;
     font-weight: bold;
 }
@@ -219,14 +219,14 @@ h2 {
 }
 
 .signup-prompt {
-    color:#9a7845;
+    color: white;
     margin-bottom: 12px;
     text-align: left;
     background: transparent;
 }
 
 .signup-prompt a {
-    color:#9a7845;
+    color: #9a7845;
     text-decoration: none;
     font-weight: bold;
     padding: 5px 10px;
@@ -246,37 +246,35 @@ h2 {
 }
 
 .form-group label {
-    display: block;
+    color: white;
     margin-bottom: 8px;
-    color: var(--secondary-color);
+    display: block;
 }
 
 .form-group input {
     width: 100%;
     padding: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    font-size: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
     background: rgba(255, 255, 255, 0.1);
-    color: var(--secondary-color);
+    color: white;
+    font-size: 1em;
 }
 
 .form-group input::placeholder {
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 .remember-me {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 15px;
+    color: white;
+    margin: 15px 0;
 }
 
 .login-btn {
     width: 100%;
     padding: 12px;
     background: #0d0705;
-    color: var(--secondary-color);
+    color: #9a7845;
     border: 1px solid rgba(193, 148, 94, 0.2);
     border-radius: 4px;
     font-size: 16px;
@@ -291,33 +289,30 @@ h2 {
 }
 
 .forgot-password {
-    text-align: left;
-    margin-top: 20px;
+    text-align: right;
+    margin-top: 10px;
 }
 
 .forgot-password a {
-    color:#9a7845;
+    color: white;
     text-decoration: none;
 }
 
 /* Footer */
 .footer {
-    margin-top: 25px;
-    text-align: left;
-    color: #9a7845;
-    font-size: 12px;
-    background: transparent;
+    text-align: center;
+    margin-top: 30px;
+    color: white;
 }
 
 .footer-links {
     margin-top: 10px;
-    text-align: left;
-    background: transparent;
 }
 
 .footer-links a {
-    color:#9a7845;
+    color: white;
     text-decoration: none;
+    margin: 0 10px;
 }
 
 /* Scene elements */
