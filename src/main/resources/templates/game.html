@@ -2,64 +2,136 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>SKGChess Online</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Chess Game - SKG Chess</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Font imports for consistent styling -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/game.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/images/skgchessicon.png">
+    <!-- WebSocket libraries -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <link rel="stylesheet" href="/css/game.css">
-    <script src="/js/game.js" defer></script>
+    <!-- Chess.js for game logic -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script th:inline="javascript" src="/js/game.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <div id="gameId" style="display: none;" th:text="${game.id}"></div>
-        <div class="left-section">
-            <div class="logo">
+    <div class="game-layout">
+        <!-- Header with logo and user info -->
+        <header class="game-header">
+            <div class="logo-container">
                 <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo-img">
             </div>
-            <p class="subtitle">A Custom Chess Engine & Online Chess Game</p>
-            <p class="subtitle">Built From Scratch with Java, Spring Boot and JavaScript ☕</p>
             <div class="user-info" sec:authorize="isAuthenticated()">
                 <span>Welcome, <span sec:authentication="name" id="username"></span>!</span>
                 <form th:action="@{/logout}" method="post" class="logout-form">
                     <button type="submit" class="btn btn-outline">Logout</button>
                 </form>
             </div>
-            <p class="author-info">
-                Created by
-                <br>
-                <a href="https://github.com/harischatzianastasiou" target="_blank">
-                    <i class="fab fa-github"></i> @harischatzianastasiou
-                </a>
-            </p>
-        </div>
-        <div class="game-section">
-            <div class="board-wrapper">
-                <div class="rank-labels">
-                    <span>8</span>
-                    <span>7</span>
-                    <span>6</span>
-                    <span>5</span>
-                    <span>4</span>
-                    <span>3</span>
-                    <span>2</span>
-                    <span>1</span>
+        </header>
+
+        <!-- Main game area -->
+        <div class="game-container">
+            <!-- Left panel with player info and controls -->
+            <div class="left-panel">
+                <!-- Black player info -->
+                <div class="player-card black-player">
+                    <div class="player-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="player-details">
+                        <h3 id="black-player-name">Black Player</h3>
+                        <span class="player-rating">Rating: 1500</span>
+                    </div>
+                    <div class="player-timer">10:00</div>
                 </div>
-                <div id="game-board" class="chess-board"></div>
-                <div class="file-labels">
-                    <span>a</span>
-                    <span>b</span>
-                    <span>c</span>
-                    <span>d</span>
-                    <span>e</span>
-                    <span>f</span>
-                    <span>g</span>
-                    <span>h</span>
+
+                <!-- Game controls -->
+                <div class="game-controls">
+                    <button id="resign-btn" class="btn btn-danger"><i class="fas fa-flag"></i> Resign</button>
+                    <button id="draw-btn" class="btn btn-warning"><i class="fas fa-handshake"></i> Offer Draw</button>
+                    <button id="new-game-btn" class="btn btn-primary"><i class="fas fa-plus"></i> New Game</button>
+                    <div id="status">White to move</div>
+                </div>
+
+                <!-- Move history -->
+                <div class="move-history">
+                    <h3>Move History</h3>
+                    <div id="moves-list" class="moves-list"></div>
+                </div>
+            </div>
+
+            <!-- Center panel with chess board -->
+            <div class="center-panel">
+                <div class="board-wrapper">
+                    <div class="rank-labels">
+                        <span>8</span>
+                        <span>7</span>
+                        <span>6</span>
+                        <span>5</span>
+                        <span>4</span>
+                        <span>3</span>
+                        <span>2</span>
+                        <span>1</span>
+                    </div>
+                    <div id="game-board" class="chess-board"></div>
+                    <div class="file-labels">
+                        <span>a</span>
+                        <span>b</span>
+                        <span>c</span>
+                        <span>d</span>
+                        <span>e</span>
+                        <span>f</span>
+                        <span>g</span>
+                        <span>h</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right panel with white player and chat -->
+            <div class="right-panel">
+                <!-- White player info -->
+                <div class="player-card white-player">
+                    <div class="player-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="player-details">
+                        <h3 id="white-player-name">White Player</h3>
+                        <span class="player-rating">Rating: 1500</span>
+                    </div>
+                    <div class="player-timer">10:00</div>
+                </div>
+
+                <!-- Game chat -->
+                <div class="game-chat">
+                    <h3>Game Chat</h3>
+                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-input">
+                        <input type="text" id="chat-input" placeholder="Type a message...">
+                        <button id="send-message" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+
+                <!-- Footer with author info -->
+                <div class="game-footer">
+                    <p class="author-info">
+                        Created by
+                        <a href="https://github.com/harischatzianastasiou" target="_blank">
+                            <i class="fab fa-github"></i> @harischatzianastasiou
+                        </a>
+                    </p>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="rocket">
-        <img src="/images/rocket.jpg" alt="Rocket">
     </div>
 </body>
 </html> 
