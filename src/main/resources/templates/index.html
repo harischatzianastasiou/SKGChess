@@ -7,18 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/modern-chess.css">
     <link rel="stylesheet" href="/css/game.css">
+    <link rel="stylesheet" href="/css/index.css">
     <link rel="icon" type="image/svg+xml" href="/images/skgchessicon.png">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js"></script>
     <script th:inline="javascript" src="/js/index.js" defer></script>
+    <script src="/js/chess-features.js" defer></script>
 </head>
 <body>
     <div class="home-container">
-        <!-- Header Section -->
+        <!-- Modern Header Section -->
         <header class="game-header">
             <div class="header-left">
                 <a href="/" class="logo-container">
@@ -27,63 +30,53 @@
                 <nav class="main-nav">
                     <a href="/play" class="nav-link"><i class="fas fa-chess"></i> Play</a>
                     <a href="/puzzles" class="nav-link"><i class="fas fa-puzzle-piece"></i> Puzzles</a>
-                    <a href="/learn" class="nav-link"><i class="fas fa-graduation-cap"></i> Learn</a>
-                    <a href="/leaderboard" class="nav-link"><i class="fas fa-trophy"></i> Leaderboard</a>
+                    <a href="/friends" class="nav-link"><i class="fas fa-users"></i> Friends</a>
+                    <a href="/my-games" class="nav-link"><i class="fas fa-gamepad"></i> My Games</a>
                 </nav>
             </div>
-            <div class="user-info" sec:authorize="isAuthenticated()">
-                <span class="welcome-text">Welcome, <span sec:authentication="name" id="username"></span>!</span>
-                <form th:action="@{/logout}" method="post" class="logout-form">
-                    <button type="submit" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                </form>
-            </div>
-            <div class="user-info" sec:authorize="!isAuthenticated()">
-                <a href="/login" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+            <div class="header-right">
+                <div class="social-links">
+                    <a href="https://github.com/skgchess" target="_blank" class="social-link">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="https://linkedin.com/company/skgchess" target="_blank" class="social-link">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+                <div class="user-info" sec:authorize="isAuthenticated()">
+                    <span class="welcome-text">Welcome, <span sec:authentication="name" id="username"></span>!</span>
+                    <form th:action="@{/logout}" method="post" class="logout-form">
+                        <button type="submit" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </form>
+                </div>
+                <div class="user-info" sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+                </div>
             </div>
         </header>
 
         <main class="main-content">
-            <!-- Hero Section with Thessaloniki Background -->
-            <section class="hero-section">
-                <div class="water-container">
-                    <div class="welcome-text">
-                        <h1>Welcome to SKG Chess</h1>
-                        <p>Play chess, solve puzzles, and improve your game</p>
-                    </div>
-                    
-                    <!-- Featured Player Card -->
-                    <div class="featured-player">
-                        <div class="player-image">
-                            <img src="/images/magnus-carlsen.jpg" alt="Magnus Carlsen">
-                            <div class="player-info">
-                                <h3>Magnus Carlsen</h3>
-                                <p>World Chess Champion 2013-2022</p>
-                                <span class="rating"><i class="fas fa-star"></i> FIDE Rating: 2830</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
             <!-- Quick Actions Section -->
             <section class="quick-actions">
                 <div class="quick-actions-grid">
-                    <div class="action-card primary-action">
+                    <div class="action-card primary-action glass-effect">
                         <div class="action-content">
-                            <div class="action-icon"><i class="fas fa-chess"></i></div>
-                            <h2>Quick Play</h2>
-                            <p>Start a game instantly with players worldwide</p>
-                            <button onclick="newGame()" class="btn btn-primary"><i class="fas fa-play"></i> Play Now</button>
+                            <div class="action-icon"><i class="fas fa-chess-board"></i></div>
+                            <h2>Create Private Game</h2>
+                            <p>Challenge a friend to a private match</p>
+                            <button onclick="newGame()" class="btn btn-primary">
+                                <i class="fas fa-plus-circle"></i> Create Game
+                            </button>
                         </div>
                     </div>
                     
-                    <div class="action-card">
+                    <div class="action-card glass-effect">
                         <div class="action-content">
-                            <div class="action-icon"><i class="fas fa-door-open"></i></div>
-                            <h2>Join Game</h2>
-                            <p>Enter an existing game ID to join</p>
+                            <div class="action-icon"><i class="fas fa-handshake"></i></div>
+                            <h2>Join Private Game</h2>
+                            <p>Enter your friend's game ID to join</p>
                             <div class="join-controls">
-                                <input type="text" id="gameId" placeholder="Enter Game ID" class="game-id-input">
+                                <input type="text" id="gameId" placeholder="Enter game ID" class="game-id-input">
                                 <button onclick="joinGame(document.getElementById('gameId').value)" class="btn btn-primary">
                                     <i class="fas fa-sign-in-alt"></i> Join
                                 </button>
@@ -93,83 +86,140 @@
                 </div>
             </section>
 
-            <!-- News Section with Skewed Design -->
-            <section class="news-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-newspaper"></i> Chess News & Updates</h2>
+            <!-- Hero Section with Parallax Effect -->
+            <section class="hero-section parallax">
+                <div class="hero-content">
+                    <h1>Welcome to SKG Chess</h1>
+                    <p>Experience chess in the heart of Thessaloniki</p>
+                    <div class="cta-buttons">
+                        <a href="#learn" class="btn btn-primary">Start Learning</a>
+                        <a href="#community" class="btn btn-secondary">Join Community</a>
+                    </div>
                 </div>
-                <div class="news-grid">
-                    <div class="news-section">
-                        <div class="news-content">
-                            <h3><i class="fas fa-trophy"></i> Latest Tournament Results</h3>
-                            <p>Magnus Carlsen wins the Champions Chess Tour Finals</p>
+            </section>
+
+            <!-- My Games Section -->
+            <section class="my-games-section" sec:authorize="isAuthenticated()">
+                <div class="section-header">
+                    <h2><i class="fas fa-chess-knight"></i> My Games</h2>
+                </div>
+                <div class="games-dashboard">
+                    <div class="games-stats">
+                        <div class="stat-card">
+                            <h3>Rating</h3>
+                            <span class="rating" th:text="${userRating ?: '1200'}">1200</span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Games Played</h3>
+                            <span class="games-count" th:text="${gamesPlayed ?: '0'}">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Win Rate</h3>
+                            <span class="win-rate" th:text="${winRate ?: '0%'}">0%</span>
                         </div>
                     </div>
-                    <div class="news-section">
-                        <div class="news-content">
-                            <h3><i class="fas fa-book"></i> Chess Strategy</h3>
-                            <p>Master the Sicilian Defense with our new guide</p>
-                        </div>
-                    </div>
-                    <div class="news-section">
-                        <div class="news-content">
-                            <h3><i class="fas fa-users"></i> Community News</h3>
-                            <p>Join our upcoming weekend tournament</p>
-                        </div>
-                    </div>
-                    <div class="news-section">
-                        <div class="news-content">
-                            <h3><i class="fas fa-lightbulb"></i> Chess Tips</h3>
-                            <p>Improve your endgame with these essential techniques</p>
-                        </div>
-                    </div>
-                    <div class="news-section">
-                        <div class="news-content">
-                            <h3><i class="fas fa-robot"></i> Featured Article</h3>
-                            <p>The evolution of chess engines and AI in modern chess</p>
+                    <div class="recent-games">
+                        <h3>Recent Games</h3>
+                        <div class="games-list" id="recentGames">
+                            <!-- Dynamically populated by JavaScript -->
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Features Section -->
-            <section class="features-section">
+            <!-- Explore Thessaloniki Section -->
+            <section class="thessaloniki-section">
                 <div class="section-header">
-                    <h2><i class="fas fa-star"></i> Featured Content</h2>
+                    <h2><i class="fas fa-map-marker-alt"></i> Explore Thessaloniki</h2>
                 </div>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
-                        <h3>Daily Puzzle</h3>
-                        <p>Train your skills with our puzzle of the day</p>
-                        <a href="/puzzles" class="btn btn-primary"><i class="fas fa-brain"></i> Solve Puzzle</a>
-                    </div>
+                <div class="thessaloniki-content">
+                    <div class="city-info">
+                        <div class="city-gallery">
+                            <img src="/images/thessaloniki.jpg" alt="White Tower of Thessaloniki" class="city-image main-image">
+                            <div class="city-highlights">
+                                <img src="/images/aristotelous.jpg" alt="Aristotelous Square" class="highlight-image">
+                                <img src="/images/seafront.jpg" alt="Thessaloniki Seafront" class="highlight-image">
+                                <img src="/images/rotunda.jpg" alt="Rotunda Monument" class="highlight-image">
+                            </div>
+                        </div>
+                        <div class="city-text">
+                            <h3>Welcome to Thessaloniki</h3>
+                            <p class="city-description">Discover the vibrant cultural heart of Northern Greece. A city where history meets modernity, where Byzantine monuments stand alongside contemporary art galleries, and where the warmth of Greek hospitality welcomes every visitor.</p>
+                            
+                            <div class="city-features">
+                                <div class="feature-card">
+                                    <i class="fas fa-utensils"></i>
+                                    <h4>Culinary Paradise</h4>
+                                    <p>Experience the famous Thessaloniki food scene, from traditional tavernas to modern cuisine</p>
+                                </div>
+                                <div class="feature-card">
+                                    <i class="fas fa-monument"></i>
+                                    <h4>Rich History</h4>
+                                    <p>Explore UNESCO World Heritage sites and 2,300 years of multicultural history</p>
+                                </div>
+                                <div class="feature-card">
+                                    <i class="fas fa-umbrella-beach"></i>
+                                    <h4>Waterfront Living</h4>
+                                    <p>Enjoy the iconic 5km promenade with stunning views of Mount Olympus</p>
+                                </div>
+                                <div class="feature-card">
+                                    <i class="fas fa-coffee"></i>
+                                    <h4>Café Culture</h4>
+                                    <p>Immerse yourself in the city's famous café culture and nightlife</p>
+                                </div>
+                            </div>
 
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
-                        <h3>Learn Chess</h3>
-                        <p>Master the game with our interactive lessons</p>
-                        <a href="/learn" class="btn btn-primary"><i class="fas fa-book-open"></i> Start Learning</a>
+                            <div class="city-cta">
+                                <a href="https://thessaloniki.travel" target="_blank" class="btn btn-primary">
+                                    <i class="fas fa-compass"></i> Discover More
+                                </a>
+                                <a href="/local-events" class="btn btn-secondary">
+                                    <i class="fas fa-calendar-alt"></i> Local Events
+                                </a>
+                            </div>
+                        </div>
                     </div>
+                </div>
+            </section>
 
-                    <div class="feature-card">
-                        <div class="feature-icon"><i class="fas fa-trophy"></i></div>
-                        <h3>Tournaments</h3>
-                        <p>Compete in daily and weekly tournaments</p>
-                        <a href="/tournaments" class="btn btn-primary"><i class="fas fa-medal"></i> View Tournaments</a>
-                    </div>
+            <!-- Live Chess News Section -->
+            <section class="news-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-newspaper"></i> Live Chess News</h2>
+                </div>
+                <div class="news-container" id="chessNews">
+                    <!-- Dynamically populated by JavaScript -->
                 </div>
             </section>
         </main>
         
         <footer class="site-footer">
             <div class="footer-content">
-                <p>&copy; 2023 SKG Chess. All rights reserved.</p>
-                <div class="footer-links">
-                    <a href="/about">About</a>
-                    <a href="/contact">Contact</a>
-                    <a href="/privacy">Privacy Policy</a>
+                <div class="footer-section">
+                    <h3>About SKG Chess</h3>
+                    <p>Your premier destination for online chess in Thessaloniki</p>
+                    <div class="social-links">
+                        <a href="https://github.com/skgchess" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://linkedin.com/company/skgchess" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    </div>
                 </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                        <li><a href="/privacy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> contact@skgchess.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Thessaloniki, Greece</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SKG Chess. All rights reserved.</p>
             </div>
         </footer>
     </div>
