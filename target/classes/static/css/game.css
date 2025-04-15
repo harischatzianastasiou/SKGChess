@@ -387,8 +387,10 @@
 
 .tile.legal-move-non-capture::after {
     content: "•";
-    font-size: 80px;
-    color: rgba(0, 0, 0, 0.4);
+    font-size: 40px;
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    animation: pulseMove 2s ease-in-out infinite;
 }
 
 .tile.legal-move-capture::after {
@@ -396,13 +398,14 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: 100%;
-    height: 100%;
-    border: 6px solid rgba(0, 0, 0, 0.4);
+    width: 90%;
+    height: 90%;
+    border: 3px solid rgba(255, 255, 255, 0.6);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
     box-sizing: border-box;
+    animation: pulseBorder 2s ease-in-out infinite;
 }
 
 .tile.dragover {
@@ -416,14 +419,14 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: repeating-linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.1),
-        rgba(255, 255, 255, 0.1) 2px,
-        transparent 2px,
-        transparent 8px
+    background: radial-gradient(
+        circle at center,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.05) 100%
     );
     pointer-events: none;
+    animation: glowPulse 1.5s ease-in-out infinite;
 }
 
 .tile.light.selected {
@@ -442,18 +445,26 @@
     background-position: center;
     opacity: 1;
     cursor: grab;
-    transition: opacity 0.15s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: center;
+}
+
+.piece:hover {
+    transform: scale(1.1);
+    filter: brightness(1.1);
 }
 
 .dragging-piece {
     cursor: grabbing;
     pointer-events: none;
-    transition: transform 0.05s ease-out;
-    width: 65px !important;
-    height: 65px !important;
+    transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
+    width: 75px !important;
+    height: 75px !important;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+    z-index: 1000;
 }
 
 .legal-move {
@@ -464,22 +475,30 @@
     cursor: grabbing;
 }
 
-@keyframes selectedBreathingLight {
-    0% { background-color: #681954; filter: brightness(1.2); }
-    50% { background-color: #681954; filter: brightness(1); }
-    100% { background-color: #681954; filter: brightness(1.2); }
+@keyframes pulseMove {
+    0% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+    100% { opacity: 0.5; transform: scale(1); }
 }
 
-@keyframes selectedBreathingDark {
-    0% { background-color: #003166; filter: brightness(1.2); }
-    50% { background-color: #003166; filter: brightness(1); }
-    100% { background-color: #003166; filter: brightness(1.2); }
+@keyframes pulseBorder {
+    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.6; }
+}
+
+@keyframes glowPulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
 }
 
 .last-move-arrow {
     position: absolute;
     pointer-events: none;
     z-index: 10;
+    opacity: 0;
+    animation: fadeInArrow 0.3s ease-out forwards;
 }
 
 .last-move-arrow svg {
@@ -487,21 +506,59 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .last-move-arrow path {
-    stroke: rgba(255, 255, 255, 0.7);
-    stroke-width: 3;
+    stroke: rgba(255, 255, 255, 0.85);
+    stroke-width: 4;
     fill: none;
     marker-end: url(#arrowhead);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawArrow 0.6s ease-out forwards;
 }
 
 .last-move-source {
-    background-color: rgba(68, 130, 212, 0.15) !important;
+    background-color: rgba(68, 130, 212, 0.2) !important;
+    animation: fadeHighlight 0.5s ease-out;
 }
 
 .last-move-target {
-    background-color: rgba(106, 88, 197, 0.35) !important;
+    background-color: rgba(106, 88, 197, 0.4) !important;
+    animation: fadeHighlight 0.5s ease-out;
+}
+
+@keyframes fadeInArrow {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes drawArrow {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fadeHighlight {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes selectedBreathingLight {
+    0% { background-color: rgba(104, 25, 84, 0.7); filter: brightness(1.2); }
+    50% { background-color: rgba(104, 25, 84, 0.5); filter: brightness(1); }
+    100% { background-color: rgba(104, 25, 84, 0.7); filter: brightness(1.2); }
+}
+
+@keyframes selectedBreathingDark {
+    0% { background-color: rgba(0, 49, 102, 0.7); filter: brightness(1.2); }
+    50% { background-color: rgba(0, 49, 102, 0.5); filter: brightness(1); }
+    100% { background-color: rgba(0, 49, 102, 0.7); filter: brightness(1.2); }
 }
 
 /* Responsive design */
