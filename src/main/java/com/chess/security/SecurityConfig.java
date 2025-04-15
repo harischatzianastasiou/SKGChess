@@ -46,6 +46,7 @@ public class SecurityConfig {
             registry.requestMatchers(
                 "/",           // Allow access to root path
                 "/signup",
+                "/api/users/signup",  // Add this line to allow access to signup API
                 "/login", 
                 "/game/**",  // Allow access to game URLs
                 "/css/**",   // Allow access to CSS files

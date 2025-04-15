@@ -40,29 +40,45 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             // Send data to server
-            const response = await fetch('/signup', {
+            const response = await fetch('/api/users/signup', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
                 },
                 body: JSON.stringify(userData)
             });
             
-            if (response.ok) {
-                // If successful, parse the response to see what the server sent back
-                const user = await response.json();
-                console.log('Created user:', user);
-                alert('Signup successful!');
-                window.location.href = '/login';
+            // Check the content type of the response
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                // Handle JSON response
+                const data = await response.json();
+                if (response.ok) {
+                    console.log('Created user:', data);
+                    alert('Signup successful!');
+                    window.location.href = '/login';
+                } else {
+                    // Handle JSON error response
+                    const errorMessage = data.error || data.message || 'Unknown error occurred';
+                    console.error('Server error:', data);
+                    alert('Signup failed: ' + errorMessage);
+                }
             } else {
-                // If there's an error, try to get the error message
+                // Handle non-JSON response
                 const errorText = await response.text();
-                console.error('Server error:', errorText);
-                alert('Signup failed: ' + (errorText || 'Unknown error'));
+                console.error('Server returned non-JSON response:', errorText);
+                if (response.status === 403) {
+                    alert('Access denied. Please try again later.');
+                } else if (response.status === 400) {
+                    alert('Invalid input. Please check your details and try again.');
+                } else {
+                    alert('An error occurred during signup. Please try again later.');
+                }
             }
         } catch (error) {
             console.error('Network error:', error);
-            alert('An error occurred. Please try again.');
+            alert('Network error occurred. Please check your connection and try again.');
         }
     });
 });
