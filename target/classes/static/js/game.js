@@ -399,7 +399,6 @@ class ChessGame {
                     }
                 }
                 
-                this.showLastMoveArrow(this.selectedSourceTile, position);
                 this.highlightLastMove(this.selectedSourceTile, position);
             } catch (error) {
                 console.error('Error making move:', error);
@@ -567,7 +566,6 @@ class ChessGame {
                     }
                     
                     // Show visual indicators for the move
-                    this.showLastMoveArrow(this.selectedSourceTile, targetPosition);
                     this.highlightLastMove(this.selectedSourceTile, targetPosition);
                     
                     // Clear selection
@@ -638,32 +636,36 @@ class ChessGame {
     }
 
     updateBoard() {        
-        // Check if boardDTO exists and has the expected structure
-        if (!this.boardDTO) {
-            console.error('Board data is missing or invalid');
-            return;
-        }
+        console.log('Updating board with:', this.boardDTO);
         
-        // If boardDTO is a string, try to parse it
-        if (typeof this.boardDTO === 'string') {
-            try {
-                this.boardDTO = JSON.parse(this.boardDTO);
-            } catch (e) {
-                console.error('Error parsing board JSON in updateBoard:', e);
-                return;
-            }
+        // Update game status and turn indicator
+        if (this.boardDTO.currentPlayer.alliance === this.playerColor) {
+            this.statusElement.textContent = 'Your turn to move';
+            this.statusElement.classList.add('your-turn');
+            this.isPlayerTurn = true;
+        } else {
+            this.statusElement.textContent = `Waiting for ${this.boardDTO.currentPlayer.alliance.toLowerCase()} to move`;
+            this.statusElement.classList.remove('your-turn');
+            this.isPlayerTurn = false;
         }
-        
-        // Update status message based on game status and turn
-        if (this.gameStatus === 'CHECKMATE') {
-            this.statusElement.textContent = 'Checkmate! Game Over';
-        } else if (this.gameStatus === 'DRAW') {
-            this.statusElement.textContent = 'Game ended in a Draw';
-        } else if (this.gameStatus === 'IN_PROGRESS') {
+
+        // Check for game end conditions
+        if (this.boardDTO.checkmate) {
+            this.statusElement.textContent = 'Checkmate!';
+            this.statusElement.classList.remove('your-turn');
+        } else if (this.boardDTO.stalemate) {
+            this.statusElement.textContent = 'Stalemate - Game Draw';
+            this.statusElement.classList.remove('your-turn');
+        } else if (this.boardDTO.draw) {
+            this.statusElement.textContent = 'Game Draw';
+            this.statusElement.classList.remove('your-turn');
+        } else if (this.boardDTO.check) {
             if (this.isPlayerTurn) {
-                this.statusElement.textContent = 'Your turn to move';
+                this.statusElement.textContent = 'Your turn - You are in check!';
+                this.statusElement.classList.add('your-turn');
             } else {
-                this.statusElement.textContent = 'Waiting for opponent\'s move...';
+                this.statusElement.textContent = 'Opponent in check';
+                this.statusElement.classList.remove('your-turn');
             }
         }
         
@@ -715,7 +717,6 @@ class ChessGame {
             // Clear selection
             document.querySelector('.selected')?.classList.remove('selected');
             this.selectedSourceTile = null;
-            this.showLastMoveArrow(lastMoveSourceCoordinate, lastMoveTargetCoordinate);
             this.highlightLastMove(lastMoveSourceCoordinate, lastMoveTargetCoordinate);
         } else {
             // If no last move data, just clear selections
@@ -799,13 +800,6 @@ class ChessGame {
         document.querySelectorAll('.last-move-source, .last-move-target').forEach(tile => {
             tile.classList.remove('last-move-source', 'last-move-target');
         });
-
-        // // Clear previous arrow
-        // if (this.lastMoveArrow) {
-        //     this.lastMoveArrow.remove();
-        //     this.lastMoveArrow = null;
-        // }
-        // document.querySelector('.last-move-arrow')?.remove();
 
         // Add highlights to source and target tiles
         const sourceTile = this.board.querySelector(`.tile[data-position='${sourcePos}']`);
