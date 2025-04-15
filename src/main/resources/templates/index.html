@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/game.css">
     <link rel="icon" type="image/svg+xml" href="/images/skgchessicon.png">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
@@ -17,10 +18,11 @@
 </head>
 <body>
     <div class="home-container">
-        <header>
+        <!-- Header Section -->
+        <header class="game-header">
             <div class="header-left">
                 <a href="/" class="logo-container">
-                    <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo">
+                    <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo-img">
                 </a>
                 <nav class="main-nav">
                     <a href="/play" class="nav-link"><i class="fas fa-chess"></i> Play</a>
@@ -40,105 +42,124 @@
             </div>
         </header>
 
-        <div class="hero-section">
-            <div class="featured-player">
-                <div class="player-image">
-                    <img src="/images/magnus-carlsen.jpg" alt="Magnus Carlsen">
-                    <div class="player-info">
-                        <h3>Magnus Carlsen</h3>
-                        <p>World Chess Champion 2013-2022</p>
-                        <span class="rating"><i class="fas fa-star"></i> FIDE Rating: 2830</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="welcome-banner">
+        <main class="main-content">
+            <!-- Hero Section with Thessaloniki Background -->
+            <section class="hero-section">
                 <div class="water-container">
                     <div class="welcome-text">
                         <h1>Welcome to SKG Chess</h1>
                         <p>Play chess, solve puzzles, and improve your game</p>
                     </div>
-                    <div class="news-grid">
-                        <a href="#" class="news-section">
-                            <div class="news-content">
-                                <h3><i class="fas fa-trophy"></i> Latest Tournament Results</h3>
-                                <p>Magnus Carlsen wins the Champions Chess Tour Finals</p>
+                    
+                    <!-- Featured Player Card -->
+                    <div class="featured-player">
+                        <div class="player-image">
+                            <img src="/images/magnus-carlsen.jpg" alt="Magnus Carlsen">
+                            <div class="player-info">
+                                <h3>Magnus Carlsen</h3>
+                                <p>World Chess Champion 2013-2022</p>
+                                <span class="rating"><i class="fas fa-star"></i> FIDE Rating: 2830</span>
                             </div>
-                        </a>
-                        <a href="#" class="news-section">
-                            <div class="news-content">
-                                <h3><i class="fas fa-book"></i> Chess Strategy</h3>
-                                <p>Master the Sicilian Defense with our new guide</p>
-                            </div>
-                        </a>
-                        <a href="#" class="news-section">
-                            <div class="news-content">
-                                <h3><i class="fas fa-users"></i> Community News</h3>
-                                <p>Join our upcoming weekend tournament</p>
-                            </div>
-                        </a>
-                        <a href="#" class="news-section">
-                            <div class="news-content">
-                                <h3><i class="fas fa-lightbulb"></i> Chess Tips</h3>
-                                <p>Improve your endgame with these essential techniques</p>
-                            </div>
-                        </a>
-                        <a href="#" class="news-section">
-                            <div class="news-content">
-                                <h3><i class="fas fa-robot"></i> Featured Article</h3>
-                                <p>The evolution of chess engines and AI in modern chess</p>
-                            </div>
-                        </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <main>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-chess"></i></div>
-                    <h3>Quick Play</h3>
-                    <p>Start a game instantly with players worldwide</p>
-                    <button onclick="newGame()" class="btn btn-primary"><i class="fas fa-play"></i> Play Now</button>
+            <!-- Quick Actions Section -->
+            <section class="quick-actions">
+                <div class="quick-actions-grid">
+                    <div class="action-card primary-action">
+                        <div class="action-content">
+                            <div class="action-icon"><i class="fas fa-chess"></i></div>
+                            <h2>Quick Play</h2>
+                            <p>Start a game instantly with players worldwide</p>
+                            <button onclick="newGame()" class="btn btn-primary"><i class="fas fa-play"></i> Play Now</button>
+                        </div>
+                    </div>
+                    
+                    <div class="action-card">
+                        <div class="action-content">
+                            <div class="action-icon"><i class="fas fa-door-open"></i></div>
+                            <h2>Join Game</h2>
+                            <p>Enter an existing game ID to join</p>
+                            <div class="join-controls">
+                                <input type="text" id="gameId" placeholder="Enter Game ID" class="game-id-input">
+                                <button onclick="joinGame(document.getElementById('gameId').value)" class="btn btn-primary">
+                                    <i class="fas fa-sign-in-alt"></i> Join
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
-                    <h3>Daily Puzzle</h3>
-                    <p>Train your skills with our puzzle of the day</p>
-                    <a href="/puzzles" class="btn btn-primary"><i class="fas fa-brain"></i> Solve Puzzle</a>
-                </div>
+            </section>
 
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <h3>Learn Chess</h3>
-                    <p>Master the game with our interactive lessons</p>
-                    <a href="/learn" class="btn btn-primary"><i class="fas fa-book-open"></i> Start Learning</a>
+            <!-- News Section with Skewed Design -->
+            <section class="news-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-newspaper"></i> Chess News & Updates</h2>
                 </div>
+                <div class="news-grid">
+                    <div class="news-section">
+                        <div class="news-content">
+                            <h3><i class="fas fa-trophy"></i> Latest Tournament Results</h3>
+                            <p>Magnus Carlsen wins the Champions Chess Tour Finals</p>
+                        </div>
+                    </div>
+                    <div class="news-section">
+                        <div class="news-content">
+                            <h3><i class="fas fa-book"></i> Chess Strategy</h3>
+                            <p>Master the Sicilian Defense with our new guide</p>
+                        </div>
+                    </div>
+                    <div class="news-section">
+                        <div class="news-content">
+                            <h3><i class="fas fa-users"></i> Community News</h3>
+                            <p>Join our upcoming weekend tournament</p>
+                        </div>
+                    </div>
+                    <div class="news-section">
+                        <div class="news-content">
+                            <h3><i class="fas fa-lightbulb"></i> Chess Tips</h3>
+                            <p>Improve your endgame with these essential techniques</p>
+                        </div>
+                    </div>
+                    <div class="news-section">
+                        <div class="news-content">
+                            <h3><i class="fas fa-robot"></i> Featured Article</h3>
+                            <p>The evolution of chess engines and AI in modern chess</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                <div class="feature-card">
-                    <div class="feature-icon"><i class="fas fa-trophy"></i></div>
-                    <h3>Tournaments</h3>
-                    <p>Compete in daily and weekly tournaments</p>
-                    <a href="/tournaments" class="btn btn-primary"><i class="fas fa-medal"></i> View Tournaments</a>
+            <!-- Features Section -->
+            <section class="features-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-star"></i> Featured Content</h2>
                 </div>
-            </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-puzzle-piece"></i></div>
+                        <h3>Daily Puzzle</h3>
+                        <p>Train your skills with our puzzle of the day</p>
+                        <a href="/puzzles" class="btn btn-primary"><i class="fas fa-brain"></i> Solve Puzzle</a>
+                    </div>
 
-            <div class="join-section">
-                <h2><i class="fas fa-door-open"></i> Join Existing Game</h2>
-                <div class="join-game-container">
-                    <input type="text" id="gameId" placeholder="Enter Game ID" class="game-id-input">
-                    <button onclick="joinGame(document.getElementById('gameId').value)" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Join Game</button>
-                </div>
-            </div>
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-graduation-cap"></i></div>
+                        <h3>Learn Chess</h3>
+                        <p>Master the game with our interactive lessons</p>
+                        <a href="/learn" class="btn btn-primary"><i class="fas fa-book-open"></i> Start Learning</a>
+                    </div>
 
-            <div class="stats-section" th:if="${activeGames != null and !activeGames.empty}">
-                <h2><i class="fas fa-list"></i> Your Active Games</h2>
-                <div class="games-list">
-                    <!-- List active games here -->
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-trophy"></i></div>
+                        <h3>Tournaments</h3>
+                        <p>Compete in daily and weekly tournaments</p>
+                        <a href="/tournaments" class="btn btn-primary"><i class="fas fa-medal"></i> View Tournaments</a>
+                    </div>
                 </div>
-            </div>
+            </section>
         </main>
         
         <footer class="site-footer">
