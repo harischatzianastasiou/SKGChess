@@ -4,7 +4,7 @@
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    background-color: #2a1f17;
+    background-color: #0d0705;
     overflow: hidden;
     margin: 0;
     padding: 0;
@@ -16,7 +16,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 5px 20px;
-    background-color: #1a120d;
+    background-color: #0d0705;
     height: 50px;
     margin: 0;
 }
@@ -66,8 +66,8 @@
 /* Left panel */
 .left-panel {
     width: 280px;
-    background-color: #1a120d;
-    border-right: 1px solid rgba(193, 148, 94, 0.2);
+    background-color: #0d0705;
+    border-right: 1px solid rgba(193, 148, 94, 0.15);
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -81,16 +81,16 @@
     justify-content: center;
     align-items: center;
     padding: 10px;
-    background-color: #2a1f17;
+    background-color: #0d0705;
     margin: 0;
 }
 
 /* Right panel */
 .right-panel {
     width: 280px;
-    background-color: #1a120d;
+    background-color: #0d0705;
     border-right: none;
-    border-left: 1px solid rgba(193, 148, 94, 0.2);
+    border-left: 1px solid rgba(193, 148, 94, 0.15);
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -259,14 +259,14 @@
 /* Move history */
 .move-history {
     flex: 1;
-    background: linear-gradient(145deg, #221811, #2a1f17);
-    border: 1px solid rgba(193, 148, 94, 0.2);
+    background: linear-gradient(145deg, #0d0705, #1a0f0a);
+    border: 1px solid rgba(193, 148, 94, 0.15);
     border-radius: 10px;
     padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .move-history h3 {
@@ -393,7 +393,7 @@
 
 .moves-list::-webkit-scrollbar-track,
 .chat-messages::-webkit-scrollbar-track {
-    background: rgba(26, 18, 13, 0.6);
+    background: rgba(13, 7, 5, 0.8);
     border-radius: 3px;
 }
 
