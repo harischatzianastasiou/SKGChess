@@ -5,6 +5,9 @@
     <title>Home - SKG Chess</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/index.css">
     <link rel="icon" type="image/svg+xml" href="/images/skgchessicon.png">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
@@ -14,28 +17,120 @@
 <body>
     <div class="home-container">
         <header>
-            <h1>Welcome to SKG Chess</h1>
+            <div class="header-left">
+                <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo">
+                <nav class="main-nav">
+                    <a href="/play" class="nav-link">Play</a>
+                    <a href="/puzzles" class="nav-link">Puzzles</a>
+                    <a href="/learn" class="nav-link">Learn</a>
+                    <a href="/leaderboard" class="nav-link">Leaderboard</a>
+                </nav>
+            </div>
             <div class="user-info" sec:authorize="isAuthenticated()">
                 <span>Welcome, <span sec:authentication="name" id="username"></span>!</span>
                 <form th:action="@{/logout}" method="post" class="logout-form">
                     <button type="submit" class="btn btn-outline">Logout</button>
                 </form>
             </div>
+            <div class="user-info" sec:authorize="!isAuthenticated()">
+                <a href="/login" class="btn btn-outline">Sign In</a>
+            </div>
         </header>
 
-        <main>
-            <div class="game-options">
-                <h2>Play Chess</h2>
-                <div class="button-group">
-                    <button onclick="newGame()" class="btn btn-primary">New Game</button>
-                    <div class="join-game-container">
-                        <input type="text" id="gameId" placeholder="Enter Game ID" class="game-id-input">
-                        <button onclick="joinGame(document.getElementById('gameId').value)" class="btn btn-primary">Join Game</button>
+        <div class="hero-section">
+            <div class="featured-player">
+                <div class="player-image">
+                    <img src="/images/magnus-carlsen.jpg" alt="Magnus Carlsen">
+                    <div class="player-info">
+                        <h3>Magnus Carlsen</h3>
+                        <p>World Chess Champion 2013-2022</p>
+                        <span class="rating">FIDE Rating: 2830</span>
                     </div>
                 </div>
             </div>
+            
+            <div class="welcome-banner">
+                <div class="water-container">
+                    <div class="welcome-text">
+                        <h1>Welcome to SKG Chess</h1>
+                        <p>Play chess, solve puzzles, and improve your game</p>
+                    </div>
+                    <div class="news-grid">
+                        <a href="#" class="news-section">
+                            <div class="news-content">
+                                <h3>Latest Tournament Results</h3>
+                                <p>Magnus Carlsen wins the Champions Chess Tour Finals</p>
+                            </div>
+                        </a>
+                        <a href="#" class="news-section">
+                            <div class="news-content">
+                                <h3>Chess Strategy</h3>
+                                <p>Master the Sicilian Defense with our new guide</p>
+                            </div>
+                        </a>
+                        <a href="#" class="news-section">
+                            <div class="news-content">
+                                <h3>Community News</h3>
+                                <p>Join our upcoming weekend tournament</p>
+                            </div>
+                        </a>
+                        <a href="#" class="news-section">
+                            <div class="news-content">
+                                <h3>Chess Tips</h3>
+                                <p>Improve your endgame with these essential techniques</p>
+                            </div>
+                        </a>
+                        <a href="#" class="news-section">
+                            <div class="news-content">
+                                <h3>Featured Article</h3>
+                                <p>The evolution of chess engines and AI in modern chess</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <div class="active-games" th:if="${activeGames != null and !activeGames.empty}">
+        <main>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">♟️</div>
+                    <h3>Quick Play</h3>
+                    <p>Start a game instantly with players worldwide</p>
+                    <button onclick="newGame()" class="btn btn-primary">Play Now</button>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🧩</div>
+                    <h3>Daily Puzzle</h3>
+                    <p>Train your skills with our puzzle of the day</p>
+                    <a href="/puzzles" class="btn btn-primary">Solve Puzzle</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Learn Chess</h3>
+                    <p>Master the game with our interactive lessons</p>
+                    <a href="/learn" class="btn btn-primary">Start Learning</a>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Tournaments</h3>
+                    <p>Compete in daily and weekly tournaments</p>
+                    <a href="/tournaments" class="btn btn-primary">View Tournaments</a>
+                </div>
+            </div>
+
+            <div class="join-section">
+                <h2>Join Existing Game</h2>
+                <div class="join-game-container">
+                    <input type="text" id="gameId" placeholder="Enter Game ID" class="game-id-input">
+                    <button onclick="joinGame(document.getElementById('gameId').value)" class="btn btn-primary">Join Game</button>
+                </div>
+            </div>
+
+            <div class="stats-section" th:if="${activeGames != null and !activeGames.empty}">
                 <h2>Your Active Games</h2>
                 <div class="games-list">
                     <!-- List active games here -->

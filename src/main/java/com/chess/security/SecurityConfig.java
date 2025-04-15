@@ -29,13 +29,22 @@ public class SecurityConfig {
                 .defaultSuccessUrl("/index", true)//Tells Spring where to redirect after successful login
                 .permitAll();//Allows all users to access the login page
         })
+        .rememberMe(remember -> {
+            remember
+                .key("uniqueAndSecretKey") // Change this to a secure random key in production
+                .tokenValiditySeconds(86400) // 24 hours
+                .rememberMeParameter("remember") // matches the checkbox name in your form
+                .rememberMeCookieName("remember-me-cookie");
+        })
         .logout(logout -> {
             logout
                 .logoutSuccessUrl("/login?logout")
+                .deleteCookies("remember-me-cookie") // Delete remember-me cookie on logout
                 .permitAll();
         })
         .authorizeHttpRequests(registry -> {
             registry.requestMatchers(
+                "/",           // Allow access to root path
                 "/signup",
                 "/login", 
                 "/game/**",  // Allow access to game URLs
@@ -43,9 +52,9 @@ public class SecurityConfig {
                 "/js/**",    // Allow access to JS files
                 "/images/**", 
                 "/error",
-                "/api/games/**"  // Allow access to games API endpoints
+                "/api/games/**",  // Allow access to games API endpoints
+                "/index"     // Allow access to index page without authentication
             ).permitAll();
-            registry.requestMatchers("/index").authenticated();
             registry.anyRequest().authenticated();
         })
 
