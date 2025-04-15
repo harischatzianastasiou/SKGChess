@@ -29,13 +29,13 @@
 
 /* Heading styles */
 h2 {
-    color: rgba(255, 255, 255, 0.8);
+    color: #f0d9b5;
     text-align: left;
     margin-bottom: 5px;
 }
 
 .subtitle {
-    color: rgba(255, 255, 255, 0.8);
+    color: #f0d9b5;
     text-align: center;
     margin-bottom: 30px;
     font-size: 0.9em;
@@ -54,7 +54,7 @@ h2 {
     border: none;
     border-radius: 8px;
     background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
+    color: #f0d9b5;
     font-size: 1em;
     outline: none;
     transition: 0.3s;
@@ -66,7 +66,7 @@ h2 {
     left: 15px;
     top: 50%;
     transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.8);
+    color: #f0d9b5;
     pointer-events: none;
     transition: 0.3s;
 }
@@ -92,7 +92,7 @@ h2 {
     align-items: center;
     gap: 8px;
     margin-bottom: 15px;
-    color: white;
+    color: #f0d9b5;
 }
 
 /* Button styling */
@@ -102,7 +102,7 @@ button {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     border-radius: 8px;
-    color: white;
+    color: #f0d9b5;
     font-size: 1em;
     cursor: pointer;
     transition: 0.3s;
@@ -117,7 +117,7 @@ button:hover {
 .signup-link {
     text-align: center;
     margin-top: 20px;
-    color: white;
+    color: #f0d9b5;
 }
 
 .signup-link a {
@@ -218,14 +218,14 @@ h2 {
 }
 
 .signup-prompt {
-    color: rgba(255, 255, 255, 0.8);
+    color: #f0d9b5;
     margin-bottom: 12px;
     text-align: left;
     background: transparent;
 }
 
 .signup-prompt a {
-    color: #f2f4f6;
+    color: #f0d9b5;
     text-decoration: none;
     font-weight: bold;
     padding: 5px 10px;
@@ -294,7 +294,7 @@ h2 {
 }
 
 .forgot-password a {
-    color: #f2f4f6;
+    color: #f0d9b5;
     text-decoration: none;
 }
 
@@ -314,7 +314,7 @@ h2 {
 }
 
 .footer-links a {
-    color: rgba(255, 255, 255, 0.8);
+    color: #f0d9b5;
     text-decoration: none;
 }
 
@@ -357,7 +357,7 @@ h2 {
     bottom: 0;
     width: 100%;
     height: 30%;
-    background: linear-gradient(45deg, #dee2e5, #d7dade);
+    background: linear-gradient(45deg, #8f764e, #8f764e);
     clip-path: polygon(0 100%, 15% 65%, 30% 85%, 50% 60%, 70% 85%, 85% 65%, 100% 85%, 100% 100%);
     z-index: 0;
 }
@@ -396,7 +396,7 @@ form {
 /* Base colors and variables */
 :root {
     --primary-color: #2a1f17;;
-    --secondary-color: #ffffff;
+    --secondary-color: #f0d9b5;
     --accent-color: #221811;
     --text-color: #333333;
     --border-color: rgba(255, 255, 255, 0.2);
