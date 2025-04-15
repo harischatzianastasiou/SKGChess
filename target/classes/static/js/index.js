@@ -87,6 +87,7 @@ function newGame() {
         console.log("Game creation response status:", response.status);
         if (!response.ok) {
             return response.text().then(text => {
+                console.error("Server error details:", text);
                 throw new Error(`Failed to create game: ${response.status} ${response.statusText}. ${text}`);
             });
         }
@@ -102,7 +103,18 @@ function newGame() {
     })
     .catch(error => {
         console.error("Error in matchmaking:", error);
-        alert(`Error starting matchmaking: ${error.message}`);
+        // Display a more user-friendly error message
+        const errorMessage = error.message.includes("Failed to create game") 
+            ? `Error starting matchmaking: ${error.message}` 
+            : `An unexpected error occurred: ${error.message}`;
+        
+        // Show error in a more visible way
+        const errorDiv = document.getElementById('error-message') || createErrorElement();
+        errorDiv.textContent = errorMessage;
+        errorDiv.style.display = 'block';
+        
+        // Also show in alert for immediate attention
+        alert(errorMessage);
     });
 }
 
@@ -246,4 +258,27 @@ window.onbeforeunload = function() {
     if (stompClient !== null) {
         stompClient.disconnect(); // Disconnect on page unload
     }
-}; 
+};
+
+// Helper function to create error element if it doesn't exist
+function createErrorElement() {
+    const errorDiv = document.createElement('div');
+    errorDiv.id = 'error-message';
+    errorDiv.className = 'alert alert-danger';
+    errorDiv.style.marginTop = '20px';
+    errorDiv.style.padding = '10px';
+    errorDiv.style.borderRadius = '5px';
+    errorDiv.style.backgroundColor = '#f8d7da';
+    errorDiv.style.color = '#721c24';
+    errorDiv.style.border = '1px solid #f5c6cb';
+    
+    // Insert after the form
+    const form = document.querySelector('form');
+    if (form) {
+        form.parentNode.insertBefore(errorDiv, form.nextSibling);
+    } else {
+        document.body.appendChild(errorDiv);
+    }
+    
+    return errorDiv;
+} 

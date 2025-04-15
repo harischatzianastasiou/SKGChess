@@ -1,20 +1,19 @@
 class ChessGame {
     constructor() {
-        console.log('Initializing chess game...');
-        this.board = document.getElementById('game-board');
-        if (!this.board) {
-            console.error('Could not find game board element');
-            return;
-        }
-        console.log('Found game board, initializing...');
-        this.piece = document.getElementById('piece');
         this.statusElement = document.getElementById('status');
+        if (!this.statusElement) {
+            this.statusElement = document.createElement('div');
+            this.statusElement.id = 'status';
+            document.querySelector('.game-section').appendChild(this.statusElement);
+        }
+        this.board = document.getElementById('game-board');
+        this.piece = document.getElementById('piece');
         this.boardDTO = null;
-        this.selectedSourceTile = null;
-        this.selectedTargetTile = null;
-        this.isDragging = false;
-        this.draggedPiece = null;
-        this.dragImage = null;
+        this.gameId = null;
+        this.gameStatus = null;
+        this.boardOrientation = null;
+        this.playerColor = null;
+        this.isPlayerTurn = null;
         this.lastMoveArrow = null;
         this.pieceImages = {
             'WHITE_PAWN': '/images/white_p.png',
@@ -30,57 +29,86 @@ class ChessGame {
             'BLACK_QUEEN': '/images/black_q.png',
             'BLACK_KING': '/images/black_k.png'
         };
-        
+
         this.initializeBoard();
         this.setupEventListeners();
         this.initializeArrowMarker();
-        this.gameId= null;
+        
+        // Initialize gameId from URL
+        this.gameId = window.location.pathname.split('/')[window.location.pathname.split('/').length - 1];
+        console.log('Game ID from URL:', this.gameId);
+        
+        this.username = document.getElementById('username').textContent; // Get the username from the HTML
+        this.userId = null; // Will be set after fetching
+        this.boardOrientation = null;
         this.stompClient = null;
         this.reconnectAttempts = 0;
         this.maxReconnectAttempts = 5;
-        console.log('Board initialized');
+        
+        // Clear all visual indicators
+        document.querySelectorAll('.last-move-source, .last-move-target').forEach(tile => {
+            tile.classList.remove('last-move-source', 'last-move-target');
+        });
+        document.querySelector('.selected')?.classList.remove('selected');
+        this.clearLegalMoves();
+        
+        // Remove the last move arrow if it exists
+        if (this.lastMoveArrow) {
+            this.lastMoveArrow.remove();
+        }
+        
+        // Reset all state
+        this.selectedSourceTile = null;
+        
+        // Initialize the game asynchronously
+        this.initializeGame();
+    }
+    
+    // Initialize the game asynchronously
+    async initializeGame() {
+        // Fetch user ID
+        this.userId = await this.fetchUserIdByUsername(this.username);
+        console.log('User ID fetched:', this.userId);
+        
+        // Connect to WebSocket after user ID is fetched
+        this.connectWebSocket();
+        
+        // Fetch initial game state
+        await this.fetchGame();
     }
 
     initializeBoard() {
         console.log('Setting up board...');
         this.board.innerHTML = '';
+        const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+        const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+        
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
                 const tile = document.createElement('div');
                 tile.className = `tile ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
                 tile.dataset.position = row * 8 + col;
+                tile.dataset.file = files[col];
+                tile.dataset.rank = ranks[row];
+                
+                // Add file letter (a-h)
+                const fileLabel = document.createElement('div');
+                fileLabel.className = 'coordinate-file';
+                fileLabel.textContent = files[col];
+                tile.appendChild(fileLabel);
+                
+                // Add rank number (1-8)
+                const rankLabel = document.createElement('div');
+                rankLabel.className = 'coordinate-rank';
+                rankLabel.textContent = ranks[row];
+                tile.appendChild(rankLabel);
+                
                 this.board.appendChild(tile);
             }
         }
-        this.placeInitialPieces();
-    }
-
-    placeInitialPieces() {
-        const initialPositions = [
-            'BLACK_ROOK', 'BLACK_KNIGHT', 'BLACK_BISHOP', 'BLACK_QUEEN', 'BLACK_KING', 'BLACK_BISHOP', 'BLACK_KNIGHT', 'BLACK_ROOK',
-            'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN', 'BLACK_PAWN',
-            null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null,
-            'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN', 'WHITE_PAWN',
-            'WHITE_ROOK', 'WHITE_KNIGHT', 'WHITE_BISHOP', 'WHITE_QUEEN', 'WHITE_KING', 'WHITE_BISHOP', 'WHITE_KNIGHT', 'WHITE_ROOK'
-        ];
-
-        const tiles = this.board.querySelectorAll('.tile');
-        tiles.forEach((tile, index) => {
-            const piece = initialPositions[index];
-            if (piece) {
-                const pieceDiv = document.createElement('div');
-                pieceDiv.className = 'piece';
-                pieceDiv.style.backgroundImage = `url('${this.pieceImages[piece]}')`;
-                tile.appendChild(pieceDiv);
-            }
-        });
     }
 
     setupEventListeners() {
-        document.getElementById('new-game').addEventListener('click', () => this.startNewGame());
         this.board.addEventListener('click', (e) => this.handleTileClick(e));
         
         // Mouse event listeners for dragging
@@ -98,34 +126,106 @@ class ChessGame {
         });
     }
 
-    async startNewGame() {
-        console.log('Starting new game...');
-        
-        // Clear all visual indicators
-        document.querySelectorAll('.last-move-source, .last-move-target').forEach(tile => {
-            tile.classList.remove('last-move-source', 'last-move-target');
+    // Function to fetch user ID by username
+    async fetchUserIdByUsername(username) {
+        try {
+            const response = await fetch(`/api/users/${username}`);
+            if (!response.ok) {
+                throw new Error('User not found');
+            }
+            const user = await response.json();
+            console.log("User data:", user);
+            if (!user || !user.id) {
+                throw new Error('User ID not found in response');
+            }
+            console.log("User ID:", user.id);
+            return user.id;
+        } catch (error) {
+            console.error("Error fetching user ID:", error);
+            return null;
+        }
+    }
+
+    async fetchGame() {
+        console.log('Fetching game...');
+
+        const response = await fetch(`/api/games/${this.gameId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
-        document.querySelector('.selected')?.classList.remove('selected');
-        this.clearLegalMoves();
         
-        // Remove the last move arrow if it exists
-        if (this.lastMoveArrow) {
-            this.lastMoveArrow.remove();
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Fetching game failed:', response.status, errorText);
+            throw new Error('Fetching game failed');
         }
         
-        // Reset all state
-        this.selectedSourceTile = null;
-        this.selectedTargetTile = null;
-        this.isDragging = false;
-        this.draggedPiece = null;
-        this.dragImage = null;
-        this.lastMoveArrow = null;
-        this.boardDTO = null;
-        this.connectWebSocket();
-    }
+        // Get the response data
+        const gameData = await response.json();
+        console.log('Game data received:', gameData);
+        
+        // Check if the board data is directly in the response or nested
+        if (gameData.board) {
+            // Check if board is a string (JSON) that needs to be parsed
+            if (typeof gameData.board === 'string') {
+                try {
+                    this.boardDTO = JSON.parse(gameData.board);
+                } catch (e) {
+                    console.error('Error parsing board JSON:', e);
+                    this.boardDTO = gameData.board;
+                }
+            } else {
+                this.boardDTO = gameData.board;
+            }
+        } else {
+            // If the board data is directly in the response
+            this.boardDTO = gameData;
+        }
+        
+        // Debug the board data structure
+        console.log('Board DTO structure:', this.boardDTO);
+        console.log('Has tiles property:', this.boardDTO.hasOwnProperty('tiles'));
+        console.log('Tiles is array:', Array.isArray(this.boardDTO.tiles));
+        
+        this.gameStatus = gameData.status;
+        this.gameId = gameData.id;
+        this.lastMoveData = gameData.lastMoveData; // Store lastMoveData in the class
+        if (gameData.whitePlayerId === this.userId) {
+            this.boardOrientation = 'WHITE';
+            this.playerColor = 'WHITE';
+        } else if (gameData.blackPlayerId === this.userId) {
+            this.boardOrientation = 'BLACK';
+            this.playerColor = 'BLACK';
+        }
+        if(this.boardDTO.currentPlayer.alliance === this.playerColor) {
+            this.isPlayerTurn = true;
+        } else {
+            this.isPlayerTurn = false;
+        }
+        this.updateBoard();
+    } catch (error) {
+        console.error('Error fetching game:', error);
+        this.statusElement.textContent = 'Error fetching game';
+    } 
 
     connectWebSocket() {
         console.log('Connecting to WebSocket...');
+        console.log('Username for WebSocket connection:', this.username);
+        
+        // Make sure we have a valid gameId before attempting to connect
+        if (!this.gameId) {
+            console.error('Cannot connect to WebSocket: gameId is undefined');
+            return;
+        }
+        
+        // Make sure we have a valid userId before attempting to connect
+        if (!this.userId) {
+            console.error('Cannot connect to WebSocket: userId is undefined');
+            return;
+        }
+        
         const socket = new SockJS('/chess-websocket'); // Create a new SockJS connection
         this.stompClient = Stomp.over(socket); // Wrap the socket with Stomp
         
@@ -141,50 +241,45 @@ class ChessGame {
                 
                 // Subscribe to the queue messages for this session
                 console.log('Subscribing to /topic/game/' + this.gameId);
-                this.stompClient.subscribe('/topic/game/' + this.gameId, (message) => {
-                    console.log('Received WebSocket message for game ID:', this.gameId, 'Message:', message.body);
-                    
-                    try {
-                        // Parse the message body as JSON
-                        const data = JSON.parse(message.body);
-                        console.log('Parsed WebSocket message:', data);
-                        
-                        // Handle different message types
-                        if (data.type === 'GAME_STARTED') {
-                            console.log('Game started notification received');
-                            this.boardDTO = data.boardDTO;
-                            this.updateBoard();
-                            this.statusElement.textContent = 'Game in progress - Your turn';
-                        } else if (data.type === 'MOVE_MADE') {
-                            console.log('Move made notification received');
+                
+                // Check if stompClient is valid before subscribing
+                if (this.stompClient && this.stompClient.connected) {
+                    this.stompClient.subscribe('/topic/game/' + this.gameId, async (message) => {
+                        console.log('Received WebSocket message for game ID:', this.gameId, 'Message:', message.body);
+                        try {
+                            // Parse the message body as JSON
+                            const moveData = JSON.parse(message.body);
+                            console.log('Parsed WebSocket message:', moveData);
                             
-                            // If moveResult is included in the message, use it to update the board
-                            if (data.moveResult) {
-                                const moveResult = data.moveResult;
-                                console.log('Move result received:', moveResult);
-                                
-                                this.boardDTO = moveResult.board;
-                                // Update the board with the new game state
-                                this.updateBoard();
+                            // Handle different message types
+                            if (moveData.type === 'GAME_STARTED') {
+                                this.statusElement.textContent = 'Game in progress - Your turn';
+                            } else if (moveData.type === 'MOVE_MADE') {
+                                console.log('Move made, fetching updated game state');
+                                await this.fetchGame();
+                                // No need to call updateBoard() here as it's called inside fetchGame()
                                 
                                 // Update status message based on game status
-                                if (moveResult.gameDTO.status === 'CHECKMATE') {
+                                if (this.gameStatus === 'CHECKMATE') {
                                     this.statusElement.textContent = 'Checkmate';
-                                } else if (moveResult.gameDTO.status === 'DRAW') {
-                                    this.statusElement.textContent = moveResult.gameDTO.drawType ? moveResult.gameDTO.drawType.description : 'Draw';
-                                } else {
-                                    this.statusElement.textContent = 'Your turn';
+                                } else if (this.gameStatus === 'DRAW') {
+                                    this.statusElement.textContent = 'Draw';
+                                } else if (this.gameStatus === 'IN_PROGRESS') {
+                                    // Check if it's the current player's turn
+                                    const isCurrentPlayerTurn = 
+                                        (this.playerColor === 'WHITE' && this.boardDTO.currentPlayer.alliance === 'WHITE') ||
+                                        (this.playerColor === 'BLACK' && this.boardDTO.currentPlayer.alliance === 'BLACK');
+                                    
+                                    this.statusElement.textContent = isCurrentPlayerTurn ? 'Your turn' : 'Opponent\'s turn';
                                 }
-                            } else {
-                                // Fallback to refreshing the game state if moveResult is not included
-                                this.refreshGameState();
                             }
+                        } catch (error) {
+                            console.error('Error parsing WebSocket message:', error);
                         }
-                    } catch (error) {
-                        console.error('Error parsing WebSocket message:', error);
-                    }
-                });
-    
+                    });
+                } else {
+                    console.error('Cannot subscribe: stompClient is not connected');
+                }
             },
             (error) => {
                 console.error('STOMP connection error:', error);
@@ -198,11 +293,16 @@ class ChessGame {
     }
 
     async handleTileClick(event) {
+        if(!this.isPlayerTurn) {
+            console.log('Not your turn, ignoring...');
+            return;
+        }
         const tile = event.target.closest('.tile');
         if (!tile) return;
 
         const position = parseInt(tile.dataset.position);
-        console.log('Tile clicked at position:', position);
+        console.log('function handleTileClick start');
+        console.log('1. Tile clicked at position:', position);
 
         // Clear previous selection first
         document.querySelector('.selected')?.classList.remove('selected');
@@ -211,23 +311,23 @@ class ChessGame {
             // First click - select piece
             if (this.hasPiece(tile)) {
                 const tileData = this.boardDTO.tiles.find(t => t.tileCoordinate === position);
-                console.log('Tile data:', tileData);
                 
                 if (!tileData || !tileData.piece) {
-                    console.error('No piece data found for tile at position:', position);
+                    console.error('2. Tile has no piece at position:' + position + '... returning');
                     return;
                 }
                 
                 const piece = tileData.piece;
-                console.log('Piece at position:', piece);
-                
-                if (piece.pieceAlliance === this.boardDTO.currentPlayer.alliance) {
+                console.log('2. Piece at position:' + position + ' is ' + piece.pieceAlliance + ' and current player is ' + this.boardDTO.currentPlayer.alliance);
+                if ((this.playerColor === 'WHITE' && piece.pieceAlliance === 'WHITE') || 
+                    (this.playerColor === 'BLACK' && piece.pieceAlliance === 'BLACK')) {
                     console.log('Piece belongs to current player, selecting...');
                     this.selectedSourceTile = position;
                     tile.classList.add('selected');
                     this.showLegalMoves(position); // Show legal moves
+                    console.log('3. Legal moves shown for position:' + position + ' and piece:' + piece);
                 } else {
-                    console.log('Piece does not belong to current player, ignoring...');
+                    console.log('2. Piece does not belong to current player, ignoring...');
                     document.querySelector('.selected')?.classList.remove('selected');
                     this.selectedSourceTile = null;
                     this.clearLegalMoves();
@@ -237,11 +337,13 @@ class ChessGame {
             // Second click - make move
             if (this.hasPiece(tile)) {
                 const tileData = this.boardDTO.tiles.find(t => t.tileCoordinate === position);
+                console.log('Second click - make move');
+                console.log('1. Tile coordinate selected on second click:' + tileData.tileCoordinate);
                 const piece = tileData?.piece;
                 
                 if (piece && piece.pieceAlliance === this.boardDTO.currentPlayer.alliance) {
                     // If clicking on another piece of the same color, select that piece instead
-                    console.log('Selecting different piece of same color');
+                    console.log('Selecting different piece of same color so clearing previous selection and selecting new piece');
                     document.querySelector('.selected')?.classList.remove('selected');
                     this.selectedSourceTile = position;
                     tile.classList.add('selected');
@@ -251,59 +353,62 @@ class ChessGame {
                 }
             }
             
-            // Check if the target position is a legal move
-            const isLegalMove = this.boardDTO.currentPlayer.moves.some(
-                move => move.sourceCoordinate === this.selectedSourceTile && move.targetCoordinate === position
-            );
+         
+            console.log('Making move from', this.selectedSourceTile, 'to', position);
+            this.clearLegalMoves(); // Clear previous highlights
             
-            if (isLegalMove) {
-                console.log('Making move from', this.selectedSourceTile, 'to', position);
-                this.clearLegalMoves(); // Clear previous highlights
+            try {
+                // Get the game ID from the URL path
+                const pathParts = window.location.pathname.split('/');
+                this.gameId = pathParts[pathParts.length - 1];
+                console.log('Game ID for move:', this.gameId);
                 
-                try {
-                    // Get the game ID from the URL path
-                    const pathParts = window.location.pathname.split('/');
-                    this.gameId = pathParts[pathParts.length - 1];
-                    console.log('Game ID for move:', this.gameId);
-                    
-                    const response = await fetch(`/api/games/${this.gameId}/move`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            gameId: this.gameId,
-                            sourceCoordinate: this.selectedSourceTile,
-                            targetCoordinate: position
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.error('Move failed:', response.status, errorText);
-                        throw new Error('Invalid move');
+                const response = await fetch(`/api/games/${this.gameId}/move`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        gameId: this.gameId,
+                        sourceCoordinate: this.selectedSourceTile,
+                        targetCoordinate: position
+                    })
+                });
+                
+                // Log the response status and headers for debugging
+                console.log('Move response status:', response.status);
+                console.log('Move response headers:', [...response.headers.entries()]);
+                
+                // Try to get the response text regardless of status
+                const responseText = await response.text();
+                console.log('Move response text:', responseText);
+                
+                if (!response.ok) {
+                    console.error('Move failed:', response.status, responseText);
+                    // Don't throw an error, just log it and continue
+                    // The move might have been processed despite the error
+                } else {
+                    // Try to parse the response as JSON if it's not empty
+                    if (responseText) {
+                        try {
+                            const moveResult = JSON.parse(responseText);
+                            console.log('Move result:', moveResult);
+                        } catch (e) {
+                            console.error('Error parsing move result:', e);
+                        }
                     }
-                    
-                    // Get the response data
-                    const moveResult = await response.json();
-                    console.log('Move result received:', moveResult);
-                    
-                    // We'll let the WebSocket message handle the board update
-                    // to avoid race conditions
-                    
-                    this.showLastMoveArrow(this.selectedSourceTile, position);
-                    this.highlightLastMove(this.selectedSourceTile, position);
-                } catch (error) {
-                    console.error('Error making move:', error);
-                    this.statusElement.textContent = 'Invalid move';
-                } finally {
-                    // Ensure dragover effects are cleaned up after move attempt
-                    document.querySelectorAll('.tile.dragover').forEach(tile => {
-                        tile.classList.remove('dragover');
-                    });
                 }
-            } else {
-                console.log('Not a legal move, ignoring...');
+                
+                this.showLastMoveArrow(this.selectedSourceTile, position);
+                this.highlightLastMove(this.selectedSourceTile, position);
+            } catch (error) {
+                console.error('Error making move:', error);
+                this.statusElement.textContent = 'Error making move, but it might have been processed';
+            } finally {
+                // Ensure dragover effects are cleaned up after move attempt
+                document.querySelectorAll('.tile.dragover').forEach(tile => {
+                    tile.classList.remove('dragover');
+                });
             }
             
             // Clear selection
@@ -313,6 +418,10 @@ class ChessGame {
     }
 
     handleMouseDown(event) {
+        if(!this.isPlayerTurn) {
+            console.log('Not your turn, ignoring...');
+            return;
+        }
         const piece = event.target.closest('.piece');
         if (!piece) return;
 
@@ -356,6 +465,10 @@ class ChessGame {
     }
 
     handleMouseMove(event) {
+        if(!this.isPlayerTurn) {
+            console.log('Not your turn, ignoring...');
+            return;
+        }
         if (!this.isDragging || !this.dragImage) return;
         
         this.dragImage.style.left = (event.clientX - 30) + 'px';
@@ -372,6 +485,10 @@ class ChessGame {
     }
 
     async handleMouseUp(event) {
+        if(!this.isPlayerTurn) {
+            console.log('Not your turn, ignoring...');
+            return;
+        }
         if (!this.isDragging) return;
 
         // Remove any remaining dragover effects
@@ -431,23 +548,39 @@ class ChessGame {
                     const moveResult = await response.json();
                     console.log('Move result received:', moveResult);
                     
-                    // We'll let the WebSocket message handle the board update
-                    // to avoid race conditions
+                    // Update the board immediately with the move result
+                    if (moveResult.board) {
+                        // Check if board is a string (JSON) that needs to be parsed
+                        if (typeof moveResult.board === 'string') {
+                            try {
+                                this.boardDTO = JSON.parse(moveResult.board);
+                            } catch (e) {
+                                console.error('Error parsing board JSON:', e);
+                                this.boardDTO = moveResult.board;
+                            }
+                        } else {
+                            this.boardDTO = moveResult.board;
+                        }
+                        
+                        // Update the board visually
+                        this.updateBoard();
+                    }
                     
+                    // Show visual indicators for the move
                     this.showLastMoveArrow(this.selectedSourceTile, targetPosition);
                     this.highlightLastMove(this.selectedSourceTile, targetPosition);
+                    
+                    // Clear selection
+                    this.selectedSourceTile = null;
+                    this.clearLegalMoves();
+                    document.querySelector('.selected')?.classList.remove('selected');
                 } catch (error) {
                     console.error('Error making move:', error);
-                    this.statusElement.textContent = 'Invalid move';
-                } finally {
-                    // Ensure dragover effects are cleaned up after move attempt
-                    document.querySelectorAll('.tile.dragover').forEach(tile => {
-                        tile.classList.remove('dragover');
-                    });
+                    this.statusElement.textContent = 'Error making move: ' + error.message;
                 }
             }
         }
-
+        
         // Cleanup
         if (this.draggedPiece) {
             this.draggedPiece.style.opacity = '1';
@@ -458,17 +591,10 @@ class ChessGame {
         this.isDragging = false;
         this.draggedPiece = null;
         this.dragImage = null;
-        this.selectedSourceTile = null;
-        this.clearLegalMoves();
-        document.querySelector('.selected')?.classList.remove('selected');
-
-        event.preventDefault();
     }
 
     showLegalMoves(position) {
         // Log the position being checked and current board state
-        console.log('Showing legal moves for position:', position);
-        console.log('Current board state:', this.boardDTO);
         
         // Check if boardDTO and currentPlayer exist
         if (!this.boardDTO || !this.boardDTO.currentPlayer) {
@@ -478,7 +604,6 @@ class ChessGame {
         
         // Get the moves array from currentPlayer
         const moves = this.boardDTO.currentPlayer.moves;
-        console.log('Moves:', moves);
         
         // Validate moves array
         if (!moves || !Array.isArray(moves)) {
@@ -488,17 +613,13 @@ class ChessGame {
         
         // Filter moves for the selected position
         const legalMoves = moves.filter(move => move.sourceCoordinate === position);
-        console.log('Legal moves:', legalMoves);
         // Highlight each legal move
         legalMoves.forEach(move => {
             const targetTile = this.board.querySelector(`.tile[data-position='${move.targetCoordinate}']`);
-            console.log('Target tile:', targetTile);
             if (targetTile) {
                 // Check if the move is a capture
                 const targetTileData = this.boardDTO.tiles.find(t => t.tileCoordinate === move.targetCoordinate);
-                console.log('Target tile data:', targetTileData);
                 const isCapture = targetTileData && targetTileData.tileOccupied;
-                console.log('Is capture:', isCapture);
                 // Add appropriate highlight class - using the correct CSS class names
                 targetTile.classList.add(isCapture ? 'legal-move-capture' : 'legal-move-non-capture');
             }
@@ -516,27 +637,60 @@ class ChessGame {
         return tile.querySelector('.piece') !== null;
     }
 
-    updateBoard() {
-        console.log('Updating board with data:', this.boardDTO);
-        
+    updateBoard() {        
         // Check if boardDTO exists and has the expected structure
         if (!this.boardDTO) {
             console.error('Board data is missing or invalid');
             return;
         }
         
+        // If boardDTO is a string, try to parse it
+        if (typeof this.boardDTO === 'string') {
+            try {
+                this.boardDTO = JSON.parse(this.boardDTO);
+            } catch (e) {
+                console.error('Error parsing board JSON in updateBoard:', e);
+                return;
+            }
+        }
+        
+        // Update status message based on game status and turn
+        if (this.gameStatus === 'CHECKMATE') {
+            this.statusElement.textContent = 'Checkmate! Game Over';
+        } else if (this.gameStatus === 'DRAW') {
+            this.statusElement.textContent = 'Game ended in a Draw';
+        } else if (this.gameStatus === 'IN_PROGRESS') {
+            if (this.isPlayerTurn) {
+                this.statusElement.textContent = 'Your turn to move';
+            } else {
+                this.statusElement.textContent = 'Waiting for opponent\'s move...';
+            }
+        }
+        
         const tiles = this.board.querySelectorAll('.tile');
         tiles.forEach((tile, index) => {
+            // Save coordinate elements if they exist
+            const fileCoord = tile.querySelector('.coordinate-file');
+            const rankCoord = tile.querySelector('.coordinate-rank');
+            
+            // Clear tile content
             tile.innerHTML = '';
+            
+            // Restore coordinate elements if they existed
+            if (fileCoord) tile.appendChild(fileCoord);
+            if (rankCoord) tile.appendChild(rankCoord);
             
             // Check if the board has tiles property
             if (!this.boardDTO.tiles || !Array.isArray(this.boardDTO.tiles)) {
-                console.error('Board data does not have tiles array');
+                console.error('Board data does not have tiles array. Board DTO:', JSON.stringify(this.boardDTO));
                 return;
             }
             
-            const tileData = this.boardDTO.tiles.find(t => t.tileCoordinate === index);
+            let tileCoordinate = index;
+            
+            const tileData = this.boardDTO.tiles.find(t => t.tileCoordinate === tileCoordinate);
             if (tileData && tileData.tileOccupied) {
+                console.log('Tile ' + index + ' is occupied by ' + tileData.piece.pieceAlliance + ' ' + tileData.piece.pieceSymbol);
                 const piece = tileData.piece;
                 if (piece) {
                     const pieceKey = piece.pieceAlliance + '_' + piece.pieceSymbol;
@@ -547,6 +701,33 @@ class ChessGame {
                 }
             }
         });
+
+        // Check if lastMoveData exists before trying to use it
+        if (this.lastMoveData) {
+            const lastMoveDataArray = JSON.parse(this.lastMoveData);
+            const lastMoveSourceCoordinate = lastMoveDataArray[0];
+            const lastMoveTargetCoordinate = lastMoveDataArray[1];
+            document.querySelector('.selected')?.classList.remove('selected');
+            this.clearLegalMoves();
+            document.querySelectorAll('.tile.dragover').forEach(tile => {
+                tile.classList.remove('dragover');
+            });
+            // Clear selection
+            document.querySelector('.selected')?.classList.remove('selected');
+            this.selectedSourceTile = null;
+            this.showLastMoveArrow(lastMoveSourceCoordinate, lastMoveTargetCoordinate);
+            this.highlightLastMove(lastMoveSourceCoordinate, lastMoveTargetCoordinate);
+        } else {
+            // If no last move data, just clear selections
+            document.querySelector('.selected')?.classList.remove('selected');
+            this.clearLegalMoves();
+            document.querySelectorAll('.tile.dragover').forEach(tile => {
+                tile.classList.remove('dragover');
+            });
+            // Clear selection
+            document.querySelector('.selected')?.classList.remove('selected');
+            this.selectedSourceTile = null;
+        }
     }
 
     initializeArrowMarker() {
@@ -654,8 +835,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.chessGame.gameId = gameId;
             // Start the game automatically
             if (window.chessGame) {
-                console.log('Starting game automatically...');
-                window.chessGame.startNewGame();
+                console.log('Fetching game automatically...');
+                window.chessGame.fetchGame();
             }
         } else {
             console.error('Could not find game ID in URL path');
