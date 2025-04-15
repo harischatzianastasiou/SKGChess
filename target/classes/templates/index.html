@@ -32,6 +32,7 @@
                     <a href="/puzzles" class="nav-link"><i class="fas fa-puzzle-piece"></i> Puzzles</a>
                     <a href="/friends" class="nav-link"><i class="fas fa-users"></i> Friends</a>
                     <a href="/my-games" class="nav-link"><i class="fas fa-gamepad"></i> My Games</a>
+                    <a href="#explore" class="nav-link"><i class="fas fa-compass"></i> Explore Thessaloniki</a>
                 </nav>
             </div>
             <div class="header-right">
@@ -42,15 +43,15 @@
                     <a href="https://linkedin.com/company/skgchess" target="_blank" class="social-link">
                         <i class="fab fa-linkedin"></i>
                     </a>
-                </div>
-                <div class="user-info" sec:authorize="isAuthenticated()">
-                    <span class="welcome-text">Welcome, <span sec:authentication="name" id="username"></span>!</span>
-                    <form th:action="@{/logout}" method="post" class="logout-form">
-                        <button type="submit" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                    </form>
-                </div>
-                <div class="user-info" sec:authorize="!isAuthenticated()">
-                    <a href="/login" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+            </div>
+            <div class="user-info" sec:authorize="isAuthenticated()">
+                <span class="welcome-text">Welcome, <span sec:authentication="name" id="username"></span>!</span>
+                <form th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </form>
+            </div>
+            <div class="user-info" sec:authorize="!isAuthenticated()">
+                <a href="/login" class="btn btn-outline"><i class="fas fa-sign-in-alt"></i> Sign In</a>
                 </div>
             </div>
         </header>
@@ -138,7 +139,7 @@
             </section>
 
             <!-- Explore Thessaloniki Section -->
-            <section class="thessaloniki-section">
+            <section class="thessaloniki-section" id="explore">
                 <div class="section-header">
                     <h2><i class="fas fa-map-marker-alt"></i> Explore Thessaloniki</h2>
                 </div>
@@ -192,7 +193,7 @@
                             </div>
                         </div>
                         <div class="city-text">
-                            <h3>Welcome to Thessaloniki</h3>
+                            <h3>Discover Thessaloniki</h3>
                             <p class="city-description">Discover the vibrant cultural heart of Northern Greece. A city where history meets modernity, where Byzantine monuments stand alongside contemporary art galleries, and where the warmth of Greek hospitality welcomes every visitor.</p>
                             
                             <div class="city-features">
@@ -206,24 +207,21 @@
                                     <h4>Rich History</h4>
                                     <p>Explore UNESCO World Heritage sites and 2,300 years of multicultural history</p>
                                 </div>
-                                <div class="feature-card">
+                    <div class="feature-card">
                                     <i class="fas fa-umbrella-beach"></i>
                                     <h4>Waterfront Living</h4>
                                     <p>Enjoy the iconic 5km promenade with stunning views of Mount Olympus</p>
-                                </div>
-                                <div class="feature-card">
+                    </div>
+                    <div class="feature-card">
                                     <i class="fas fa-coffee"></i>
                                     <h4>Café Culture</h4>
                                     <p>Immerse yourself in the city's famous café culture and nightlife</p>
                                 </div>
-                            </div>
+                    </div>
 
                             <div class="city-cta">
                                 <a href="https://thessaloniki.travel" target="_blank" class="btn btn-primary">
                                     <i class="fas fa-compass"></i> Discover More
-                                </a>
-                                <a href="/local-events" class="btn btn-secondary">
-                                    <i class="fas fa-calendar-alt"></i> Local Events
                                 </a>
                             </div>
                         </div>
