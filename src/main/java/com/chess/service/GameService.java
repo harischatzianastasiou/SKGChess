@@ -10,11 +10,12 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.chess.core.Alliance;
 import com.chess.core.board.IBoard;
-import com.chess.exception.GameAlreadyJoinedException;
+import com.chess.core.moves.Move;
+import com.chess.core.moves.capturing.CapturingMove;
+import com.chess.core.player.CurrentPlayer;
+import com.chess.core.player.Player;
 import com.chess.exception.GameNotFoundException;
-import com.chess.exception.GameNotWaitingForOpponentException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
 import com.chess.model.entity.Game;
@@ -24,15 +25,10 @@ import com.chess.model.entity.User;
 import com.chess.repository.GameRepository;
 import com.chess.repository.PositionRepository;
 import com.chess.repository.UserRepository;
+import com.chess.util.Sounduser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.chess.core.player.Player;
-import com.chess.core.moves.Move;
-import com.chess.core.moves.capturing.CapturingMove;
-import com.chess.core.player.CurrentPlayer;
-import com.chess.core.board.IBoard;
-import com.chess.util.Sounduser;
 @Service
 @Transactional
 public class GameService {
@@ -93,41 +89,34 @@ public class GameService {
             
             // Save and return the game
             return gameRepository.save(game);
-        } catch (UserNotFoundException e) {
-            // Re-throw user not found exception
-            throw e;
         } catch (Exception e) {
-            // Log and wrap other exceptions
-            logger.error("Error creating game: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to create game: " + e.getMessage(), e);
+            logger.error("Error creating game", e);
+            throw new RuntimeException("Failed to create game", e);
         }
     }
 
     @Transactional
     public Game joinGame(String gameId, String username) {
-        //Check if user exists
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UserNotFoundException(username));
-
-        //Check if game exists
+        // Find the game
         Game game = gameRepository.findById(gameId)
             .orElseThrow(() -> new GameNotFoundException(gameId));
+
+        // Check if game is already full
+        if (game.getBlackPlayer() != null) {
+            throw new IllegalStateException("Game is already full");
+        }
+
+        // Find the joining user
+        User joiningUser = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
+
+        // Set the black player
+        game.setBlackPlayer(joiningUser);
         
-        //Check if game is waiting for opponent
-        if(game.getStatus() != GameStatus.WAITING_FOR_OPPONENT){
-            throw new GameNotWaitingForOpponentException(gameId);
-        }
-
-        //Check if user is already in the game
-        if(game.getBlackPlayer() != null){
-            throw new GameAlreadyJoinedException(gameId);
-        }
-
-        //Set black player and new status of game
-        game.setBlackPlayer(user);
+        // Update game status to IN_PROGRESS
         game.setStatus(GameStatus.IN_PROGRESS);
-
-        //Save game
+        
+        // Save and return the updated game
         return gameRepository.save(game);
     }
 
@@ -145,6 +134,11 @@ public class GameService {
         // Check if game exists
         Game game = gameRepository.findById(gameId)
             .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Check if game has started by checking status
+        if (game.getStatus() == GameStatus.WAITING_FOR_OPPONENT) {
+            throw new IllegalStateException("Cannot make moves until opponent joins");
+        }
         
         // Get current game state
         IBoard currentBoard = IBoard.deserialize(game.getBoard(), game.getLastMoveData(), game.getIsPlayerTurn() == com.chess.core.Alliance.WHITE ? game.isWhitePlayerCastled() : game.isBlackPlayerCastled());

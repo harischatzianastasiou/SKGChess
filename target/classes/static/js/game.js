@@ -257,13 +257,23 @@ class ChessGame {
                     this.stompClient.subscribe('/topic/game/' + this.gameId, async (message) => {
                         console.log('Received WebSocket message for game ID:', this.gameId, 'Message:', message.body);
                         try {
-                            // Parse the message body as JSON
                             const moveData = JSON.parse(message.body);
-                            console.log('Parsed WebSocket message:', moveData);
                             
                             // Handle different message types
                             if (moveData.type === 'GAME_STARTED') {
-                                this.statusElement.textContent = 'Game in progress - Your turn';
+                                this.showGameStartAnimation();
+                                
+                                // Fetch and update the game state
+                                await this.fetchGame();
+                                
+                                // Update the status based on player color
+                                if (this.playerColor === 'WHITE') {
+                                    this.statusElement.textContent = 'Your turn';
+                                    this.isPlayerTurn = true;
+                                } else {
+                                    this.statusElement.textContent = 'Opponent\'s turn';
+                                    this.isPlayerTurn = false;
+                                }
                             } else if (moveData.type === 'MOVE_MADE') {
                                 console.log('Move made, fetching updated game state');
                                 await this.fetchGame();
@@ -303,8 +313,14 @@ class ChessGame {
     }
 
     async handleTileClick(event) {
-        if(!this.isPlayerTurn) {
-            console.log('Not your turn, ignoring...');
+        // Prevent moves if game hasn't started
+        if (this.gameStatus === 'WAITING_FOR_OPPONENT') {
+            console.log('Game has not started yet');
+            return;
+        }
+        
+        if (!this.isPlayerTurn) {
+            console.log('Not your turn');
             return;
         }
         const tile = event.target.closest('.tile');
@@ -494,8 +510,14 @@ class ChessGame {
     }
 
     async handleMouseUp(event) {
-        if(!this.isPlayerTurn) {
-            console.log('Not your turn, ignoring...');
+        // Prevent moves if game hasn't started
+        if (this.gameStatus === 'WAITING_FOR_OPPONENT') {
+            console.log('Game has not started yet');
+            return;
+        }
+        
+        if (!this.isPlayerTurn) {
+            console.log('Not your turn');
             return;
         }
         if (!this.isDragging) return;
@@ -647,6 +669,14 @@ class ChessGame {
 
     updateBoard() {        
         console.log('Updating board with:', this.boardDTO);
+        
+        // If game hasn't started, show waiting message
+        if (this.gameStatus === 'WAITING_FOR_OPPONENT') {
+            this.statusElement.textContent = 'Waiting for opponent to join...';
+            this.statusElement.classList.remove('your-turn');
+            this.isPlayerTurn = false;
+            return;
+        }
         
         // Update game status and turn indicator
         if (this.boardDTO.currentPlayer.alliance === this.playerColor) {
@@ -817,6 +847,16 @@ class ChessGame {
         
         if (sourceTile) sourceTile.classList.add('last-move-source');
         if (targetTile) targetTile.classList.add('last-move-target');
+    }
+
+    showGameStartAnimation() {
+        const overlay = document.getElementById('game-start-overlay');
+        overlay.classList.add('show');
+        
+        // Remove the show class after animation completes
+        setTimeout(() => {
+            overlay.classList.remove('show');
+        }, 2000);
     }
 
 }

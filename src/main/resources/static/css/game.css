@@ -813,3 +813,103 @@
     font-family: var(--font-primary);
     letter-spacing: 0.5px;
 }
+
+/* Game Start Animation */
+.game-start-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.game-start-overlay.show {
+    opacity: 1;
+    animation: fadeInOut 2s ease-in-out forwards;
+}
+
+.game-start-content {
+    position: relative;
+    text-align: center;
+}
+
+.game-start-text {
+    font-family: var(--font-primary);
+    font-size: 4rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(193, 148, 94, 0.8);
+    transform: scale(0);
+    animation: popIn 0.5s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+.game-start-sparkles {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+}
+
+.game-start-sparkles::before,
+.game-start-sparkles::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 120%;
+    height: 120%;
+    background: radial-gradient(circle, rgba(193, 148, 94, 0.8) 0%, transparent 70%);
+    transform: translate(-50%, -50%) scale(0);
+    animation: sparkleExpand 1s ease-out forwards;
+}
+
+.game-start-sparkles::after {
+    animation-delay: 0.2s;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+@keyframes popIn {
+    0% { 
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% { 
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes sparkleExpand {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}

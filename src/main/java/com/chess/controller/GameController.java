@@ -14,12 +14,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.chess.core.board.IBoard;
 import com.chess.dto.rest.request.CreateGameRequestDTO;
 import com.chess.dto.rest.request.JoinGameRequestDTO;
 import com.chess.dto.rest.request.MakeMoveRequestDTO;
 import com.chess.dto.rest.response.GameDTO;
-import com.chess.dto.rest.response.MoveResultDTO;
 import com.chess.exception.GameNotFoundException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
@@ -107,7 +105,7 @@ public class GameController {
 
     @PostMapping(value = "/join", consumes = "application/json", produces = "application/json")
     public ResponseEntity<GameDTO> joinGame(@RequestBody @Valid JoinGameRequestDTO request) {
-        try{
+        try {
             // Join the game
             Game game = gameService.joinGame(
                 request.getGameId(), 
@@ -130,12 +128,12 @@ public class GameController {
             );
 
             messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
-    
+
             return ResponseEntity.ok()
                     .body(GameDTO.fromGame(game));
         } catch (Exception e) {
             // Log the exception
-            log.error("Error creating game", e);
+            log.error("Error joining game", e);
         
             // Return an error response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

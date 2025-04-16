@@ -94,7 +94,7 @@ public class Game implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "game_isPlayerTurn", nullable = false)
-    private Alliance isPlayerTurn = Alliance.WHITE; // Default to WHITE's turn
+    private Alliance isPlayerTurn = Alliance.WHITE;
 
     // Game History Information
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -126,6 +126,18 @@ public class Game implements Serializable {
 
         public String getDescription() {
             return description;
+        }
+    }
+
+    public boolean isGameStarted() {
+        return status != GameStatus.WAITING_FOR_OPPONENT;
+    }
+
+    public void setGameStarted(boolean gameStarted) {
+        if (gameStarted) {
+            status = GameStatus.IN_PROGRESS;
+        } else {
+            status = GameStatus.WAITING_FOR_OPPONENT;
         }
     }
 } 
