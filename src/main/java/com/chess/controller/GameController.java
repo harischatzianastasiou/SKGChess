@@ -112,18 +112,22 @@ public class GameController {
                 request.getUsername()
             );
 
-            // Create a message that includes both game status and board information
+            // Create a message that includes both game status, board information, and player usernames
             String message = String.format(
                 "{\"type\":\"GAME_STARTED\"," +
                 "\"message\":\"Game is now in progress\"," +
                 "\"gameId\":\"%s\"," +
                 "\"gameStatus\":\"IN_PROGRESS\"," +
                 "\"whitePlayerId\":\"%s\"," +
+                "\"whitePlayerUsername\":\"%s\"," +
                 "\"blackPlayerId\":\"%s\"," +
+                "\"blackPlayerUsername\":\"%s\"," +
                 "\"boardDTO\":%s}",
                 request.getGameId(),
                 game.getWhitePlayer().getId(),
+                game.getWhitePlayer().getUsername(),
                 game.getBlackPlayer().getId(),
+                game.getBlackPlayer().getUsername(),
                 objectMapper.writeValueAsString(game.getBoard())
             );
 

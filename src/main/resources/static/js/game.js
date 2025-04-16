@@ -75,6 +75,11 @@ class ChessGame {
         
         // Fetch initial game state
         await this.fetchGame();
+
+        // If this is the black player joining, show game start animation
+        if (this.playerColor === 'BLACK') {
+            this.showGameStartAnimation();
+        }
     }
 
     initializeBoard() {
@@ -261,6 +266,18 @@ class ChessGame {
                             
                             // Handle different message types
                             if (moveData.type === 'GAME_STARTED') {
+                                // Update opponent's username in the UI
+                                const opponentPlayerName = document.getElementById('opponent-player-name');
+                                if (opponentPlayerName) {
+                                    if (this.userId === moveData.whitePlayerId) {
+                                        // If I'm white, opponent is black
+                                        opponentPlayerName.textContent = moveData.blackPlayerUsername;
+                                    } else if (this.userId === moveData.blackPlayerId) {
+                                        // If I'm black, opponent is white
+                                        opponentPlayerName.textContent = moveData.whitePlayerUsername;
+                                    }
+                                }
+
                                 this.showGameStartAnimation();
                                 
                                 // Fetch and update the game state
