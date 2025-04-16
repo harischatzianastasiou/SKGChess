@@ -43,14 +43,14 @@
         <div class="game-container">
             <!-- Left panel with player info and controls -->
             <div class="left-panel">
-                <!-- Black player info -->
-                <div class="player-card black-player">
+                <!-- Current player info -->
+                <div class="player-card">
                     <div class="player-avatar">
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="player-details">
-                        <h3 id="black-player-name">Black Player</h3>
-                        <span class="player-rating">Rating: 1500</span>
+                        <h3 id="current-player-name" th:text="${username}">Current Player</h3>
+                        <div class="player-color-indicator" th:classappend="${userId == whitePlayerId ? 'white-player' : 'black-player'}"></div>
                     </div>
                     <div class="player-timer">10:00</div>
                 </div>
@@ -97,16 +97,16 @@
                 </div>
             </div>
 
-            <!-- Right panel with white player and chat -->
+            <!-- Right panel with opponent and chat -->
             <div class="right-panel">
-                <!-- White player info -->
-                <div class="player-card white-player">
+                <!-- Opponent info -->
+                <div class="player-card">
                     <div class="player-avatar">
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="player-details">
-                        <h3 id="white-player-name">White Player</h3>
-                        <span class="player-rating">Rating: 1500</span>
+                        <h3 id="opponent-player-name" th:text="${userId == whitePlayerId ? blackPlayerUsername : whitePlayerUsername}">Opponent</h3>
+                        <div class="player-color-indicator" th:classappend="${userId == whitePlayerId ? 'black-player' : 'white-player'}"></div>
                     </div>
                     <div class="player-timer">10:00</div>
                 </div>
