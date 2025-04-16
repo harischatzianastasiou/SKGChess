@@ -86,7 +86,17 @@ class ChessGame {
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
                 const tile = document.createElement('div');
-                tile.className = `tile ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                const isDark = (row + col) % 2 !== 0;
+                
+                // Base tile class
+                tile.className = `tile ${isDark ? 'dark' : 'light'}`;
+                
+                // If it's a dark tile, randomly assign one of two variants
+                if (isDark) {
+                    const variant = Math.floor(Math.random() * 2) + 1;
+                    tile.classList.add(`dark-variant-${variant}`);
+                }
+                
                 tile.dataset.position = row * 8 + col;
                 tile.dataset.file = files[col];
                 tile.dataset.rank = ranks[row];

@@ -539,9 +539,21 @@
 }
 
 .tile.dark {
-    background-image: url('../images/dark_tile.png');
+    /* Base dark tile properties */
     background-size: cover;
     background-position: center;
+}
+
+.dark-variant-1 {
+    background-image: url('../images/dark_tilev2.png');
+}
+
+.dark-variant-2 {
+    background-image: url('../images/dark_tilev3.png');
+}
+
+.dark-variant-3 {
+    background-image: url('../images/dark_tilev3.png');
 }
 
 .tile.selected {
