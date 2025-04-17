@@ -484,16 +484,11 @@ class ChessGame {
         this.dragImage = document.createElement('div');
         this.dragImage.className = 'piece dragging-piece';
         this.dragImage.style.backgroundImage = piece.style.backgroundImage;
-        this.dragImage.style.width = '60px';
-        this.dragImage.style.height = '60px';
-        this.dragImage.style.position = 'fixed';
-        this.dragImage.style.pointerEvents = 'none';
-        this.dragImage.style.zIndex = '1000';
         document.body.appendChild(this.dragImage);
 
-        // Set initial position
-        this.dragImage.style.left = (event.clientX - 30) + 'px';
-        this.dragImage.style.top = (event.clientY - 30) + 'px';
+        // Set initial position (centered on cursor)
+        this.dragImage.style.left = event.clientX + 'px';
+        this.dragImage.style.top = event.clientY + 'px';
 
         // Hide original piece
         this.draggedPiece.style.opacity = '0.3';
@@ -513,8 +508,9 @@ class ChessGame {
         }
         if (!this.isDragging || !this.dragImage) return;
         
-        this.dragImage.style.left = (event.clientX - 30) + 'px';
-        this.dragImage.style.top = (event.clientY - 30) + 'px';
+        // Update dragging piece position (centered on cursor)
+        this.dragImage.style.left = event.clientX + 'px';
+        this.dragImage.style.top = event.clientY + 'px';
         
         // Add hover effect to tile under cursor
         const hoveredTile = document.elementFromPoint(event.clientX, event.clientY)?.closest('.tile');

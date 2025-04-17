@@ -1,19 +1,57 @@
 /* Main layout */
 :root {
+    /* Typography */
     --font-primary: 'Playfair Display', 'Times New Roman', serif;
     --font-secondary: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    
+    /* Dynamic base unit that adapts to screen size */
+    --base-unit: clamp(0.0325rem, 0.0325rem + 0.01vw, 0.04rem);
+    
+    /* Spacing scale using rem and viewport units */
+    --space-xs: max(0.25rem, calc(4 * var(--base-unit)));
+    --space-sm: max(0.375rem, calc(6 * var(--base-unit)));
+    --space-md: max(0.5rem, calc(8 * var(--base-unit)));
+    --space-lg: max(0.75rem, calc(12 * var(--base-unit)));
+    --space-xl: max(1rem, calc(16 * var(--base-unit)));
+    
+    /* Viewport-aware font sizes */
+    --fs-base: clamp(0.75rem, 0.75rem + 0.1vw, 0.875rem);
+    --fs-small: clamp(0.675rem, 0.675rem + 0.1vw, 0.75rem);
+    --fs-large: clamp(0.875rem, 0.875rem + 0.1vw, 1rem);
+    
+    /* Adaptive component sizes */
+    --header-height: clamp(2.5rem, 3vh + 1rem, 3rem);
+    --panel-width: clamp(12rem, 15vw, 20rem);
+    
+    /* Colors */
+    --color-primary: #c1945e;
+    --color-bg-dark: #2f2e2a;
+    --color-bg-main: #2f2e2a;
+}
+
+/* Game Layout */
+body {
+    background-color: #2f2e2a;
+    color: #f0d9b5;
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .game-layout {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
     width: 100%;
-    background-color: #1a0f0a;
+    background-color: var(--color-bg-main);
     overflow: hidden;
     margin: 0;
     padding: 0;
     font-family: var(--font-secondary);
+    font-size: var(--fs-base);
 }
 
 /* Header styling */
@@ -21,9 +59,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 5px 20px;
-    background-color: #0d0705;
-    height: 50px;
+    padding: var(--space-sm) var(--space-md);
+    background-color: var(--color-bg-dark);
+    height: var(--header-height);
     margin: 0;
 }
 
@@ -33,7 +71,7 @@
 }
 
 .logo-img {
-    height: 40px;
+    height: calc(var(--header-height) * 0.8);
     width: auto;
     filter: brightness(1.1);
 }
@@ -51,10 +89,11 @@
     background-color: transparent;
     border: 1px solid #c1945e;
     color: #c1945e;
-    padding: 5px 10px;
+    padding: var(--space-xs) var(--space-md);
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
+    font-size: var(--fs-small);
 }
 
 .btn-outline:hover {
@@ -64,22 +103,24 @@
 
 /* Main game container */
 .game-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: var(--panel-width) 1fr var(--panel-width);
+    gap: var(--space-md);
     flex: 1;
     overflow: hidden;
     margin: 0;
-    padding: 0;
+    padding: var(--space-md);
 }
 
 /* Left panel */
 .left-panel {
-    width: 280px;
-    background-color: #0d0705;
+    width: var(--panel-width);
+    background-color: #2f2e2a;
     border-right: 1px solid rgba(193, 148, 94, 0.15);
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    gap: 20px;
+    padding: var(--space-sm);
+    gap: var(--space-sm);
 }
 
 /* Center panel with chess board */
@@ -89,46 +130,49 @@
     justify-content: center;
     align-items: center;
     padding: 10px;
-    background-color: #0d0705;
+    background-color: #2f2e2a;
     margin: 0;
 }
 
 /* Right panel */
 .right-panel {
-    width: 280px;
-    background-color: #0d0705;
-    border-right: none;
-    border-left: 1px solid rgba(193, 148, 94, 0.15);
+    width: var(--panel-width);
+    padding: var(--space-sm);
+    gap: var(--space-sm);
     display: flex;
     flex-direction: column;
-    padding: 20px;
-    gap: 20px;
+    min-height: 0;  /* Important for flex container */
+    max-height: calc(100vh - var(--header-height));
+    background-color: #2f2e2a;
 }
 
 /* Player card styling */
 .player-card {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: #2a1f17;
+    gap: calc(var(--space-xs) * 0.8);
+    padding: calc(var(--space-xs) * 0.8) var(--space-sm);
+    background: #3a3935;  /* Slightly lighter than the base color */
     border: 1px solid rgba(193, 148, 94, 0.2);
-    border-radius: 8px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .player-avatar {
-    width: 40px;
-    height: 40px;
+    width: calc(22 * var(--base-unit));
+    height: calc(22 * var(--base-unit));
     background: #c1945e;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 22px;
+    min-height: 22px;
 }
 
 .player-avatar i {
     color: #1a120d;
-    font-size: 1.2rem;
+    font-size: 1rem;
 }
 
 .player-details {
@@ -136,11 +180,12 @@
 }
 
 .player-details h3 {
-    margin: 0 0 4px 0;
+    margin: 0 0 var(--space-xs) 0;
     color: #f0d9b5;
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 0.95rem;
+    font-weight: 600;
     font-family: var(--font-primary);
+    letter-spacing: 0.3px;
 }
 
 .player-color-indicator {
@@ -161,30 +206,41 @@
 
 .player-timer {
     font-family: var(--font-primary);
-    font-size: 1.1rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #f0d9b5;
-    padding: 4px 8px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-    min-width: 60px;
+    padding: var(--space-xs) var(--space-sm);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    min-width: 70px;
     text-align: center;
+    letter-spacing: 0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Add hover effect to make timer more prominent */
+.player-timer:hover {
+    background: rgba(0, 0, 0, 0.4);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
 }
 
 /* Game controls */
 .game-controls {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 15px;
-    background: rgba(26, 18, 13, 0.6);
+    gap: var(--space-xs);
+    padding: var(--space-sm);
+    background: #3a3935;
     border-radius: 10px;
     border: 1px solid rgba(193, 148, 94, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .game-controls button {
     width: 100%;
-    padding: 10px 15px;
+    padding: var(--space-xs) var(--space-sm);
     border: none;
     border-radius: 6px;
     cursor: pointer;
@@ -194,7 +250,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    font-size: 0.95rem;
+    font-size: var(--fs-small);
     font-family: var(--font-primary);
     letter-spacing: 0.3px;
 }
@@ -264,14 +320,16 @@
 /* Move history */
 .move-history {
     flex: 1;
-    background: linear-gradient(145deg, #0d0705, #1a0f0a);
+    min-height: 0;  /* Important for flex container */
+    max-height: calc(50vh - var(--header-height));
+    background: #3a3935;
     border: 1px solid rgba(193, 148, 94, 0.15);
     border-radius: 10px;
-    padding: 15px;
+    padding: var(--space-sm);
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    gap: var(--space-xs);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .move-history h3 {
@@ -295,28 +353,31 @@
 
 .moves-list {
     flex: 1;
+    min-height: 0;  /* Important for scroll */
     overflow-y: auto;
-    background: rgba(26, 18, 13, 0.6);
+    background: #35342f;
     border-radius: 8px;
-    padding: 12px;
+    padding: var(--space-sm);
     color: #f0d9b5;
     font-family: var(--font-secondary);
-    font-size: 0.9rem;
-    line-height: 1.6;
-    border: 1px solid rgba(193, 148, 94, 0.15);
+    font-size: var(--fs-small);
+    line-height: 1.4;
+    border: 1px solid rgba(193, 148, 94, 0.1);
 }
 
 /* Game chat */
 .game-chat {
     flex: 1;
-    background: linear-gradient(145deg, #221811, #2a1f17);
+    min-height: 0;  /* Important for flex container */
+    background: #3a3935;
     border: 1px solid rgba(193, 148, 94, 0.2);
     border-radius: 10px;
-    padding: 15px;
+    padding: var(--space-sm);
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    gap: var(--space-xs);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-height: calc(50vh - var(--header-height));
 }
 
 .game-chat h3 {
@@ -340,37 +401,39 @@
 
 .chat-messages {
     flex: 1;
+    min-height: 0;  /* Important for scroll */
     overflow-y: auto;
-    background: rgba(26, 18, 13, 0.6);
+    background: #35342f;
     border-radius: 8px;
-    padding: 12px;
+    padding: var(--space-sm);
     margin-bottom: 0;
     color: #f0d9b5;
-    border: 1px solid rgba(193, 148, 94, 0.15);
+    border: 1px solid rgba(193, 148, 94, 0.1);
     font-family: var(--font-secondary);
+    font-size: var(--fs-small);
 }
 
 .chat-input {
     display: flex;
-    gap: 8px;
+    gap: var(--space-xs);
+    min-height: calc(20 * var(--base-unit));
 }
 
 .chat-input input {
     flex: 1;
-    padding: 10px 12px;
+    padding: var(--space-xs) var(--space-sm);
     border: 1px solid rgba(193, 148, 94, 0.2);
     border-radius: 6px;
-    background: rgba(26, 18, 13, 0.6);
+    background: #35342f;
     color: #f0d9b5;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    font-family: var(--font-secondary);
+    font-size: var(--fs-small);
+    min-height: calc(20 * var(--base-unit));
 }
 
 .chat-input input:focus {
     outline: none;
-    border-color: #c1945e;
-    box-shadow: 0 0 0 2px rgba(193, 148, 94, 0.1);
+    border-color: rgba(193, 148, 94, 0.4);
+    background: #3a3935;
 }
 
 .chat-input input::placeholder {
@@ -448,18 +511,19 @@
 /* Chess board styling */
 .board-wrapper {
     position: relative;
-    width: 640px;
-    height: 640px;
-    padding: 20px;
-    background: #2c2016;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    width: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
+    height: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
+    padding: var(--space-sm);
+    border-radius: calc(4 * var(--base-unit));
+    margin: auto;
+    background-color: #0d0705;  /* Back to original dark color */
 }
 
 .chess-board {
-    width: 620px;
-    height: 620px;
-    border: 5px solid #332211;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
+    border: calc(2 * var(--base-unit)) solid #332211;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     background: #333;
@@ -471,14 +535,14 @@
 }
 
 .tile {
-    width: 75px;
-    height: 75px;
+    position: relative;
+    width: 100%;  /* Will be 1/8 of board due to grid */
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    position: relative;
-    transition: transform 0.15s ease;
+    box-sizing: border-box;
 }
 
 /* Create coordinate elements */
@@ -486,7 +550,7 @@
 .coordinate-rank {
     position: absolute;
     font-family: var(--font-primary);
-    font-size: 12px;
+    font-size: clamp(0.5rem, 0.5rem + 0.1vw, 0.65rem);
     font-weight: 500;
     pointer-events: none;
 }
@@ -552,10 +616,16 @@
 
 .tile.legal-move-non-capture::after {
     content: "•";
-    font-size: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.5em;
     color: rgba(255, 255, 255, 0.5);
     text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
     animation: pulseMove 2s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 2;
 }
 
 .tile.legal-move-capture::after {
@@ -565,12 +635,14 @@
     left: 50%;
     width: 90%;
     height: 90%;
-    border: 3px solid rgba(255, 255, 255, 0.6);
+    border: 4px solid rgba(255, 255, 255, 0.8);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
     box-sizing: border-box;
     animation: pulseBorder 2s ease-in-out infinite;
+    z-index: 2;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
 .tile.dragover {
@@ -592,6 +664,7 @@
     );
     pointer-events: none;
     animation: glowPulse 1.5s ease-in-out infinite;
+    z-index: 1;
 }
 
 .tile.light.selected {
@@ -602,16 +675,19 @@
     animation: selectedBreathingDark 1.5s ease-in-out infinite;
 }
 
+/* Piece sizing - using viewport units for consistent sizing */
 .piece {
-    width: 65px;
-    height: 65px;
+    width: 80%;  /* Base size for all screens */
+    height: 80%;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     opacity: 1;
     cursor: grab;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     transform-origin: center;
+    pointer-events: auto;
+    box-sizing: border-box;
 }
 
 .piece:hover {
@@ -620,16 +696,17 @@
 }
 
 .dragging-piece {
+    position: fixed;
+    width: 60px !important;  /* Fixed size for dragging piece */
+    height: 60px !important;
     cursor: grabbing;
     pointer-events: none;
-    transition: transform 0.12s cubic-bezier(0.2, 0, 0, 1);
-    width: 75px !important;
-    height: 75px !important;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
     z-index: 1000;
+    transform: translate(-50%, -50%); /* Center the piece on cursor */
 }
 
 .legal-move {
@@ -641,15 +718,15 @@
 }
 
 @keyframes pulseMove {
-    0% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 0.7; transform: scale(1.1); }
-    100% { opacity: 0.5; transform: scale(1); }
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
+    100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
 }
 
 @keyframes pulseBorder {
-    0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.6; }
-    50% { transform: translate(-50%, -50%) scale(1.05); opacity: 0.8; }
-    100% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.6; }
+    0% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.6; }
 }
 
 @keyframes glowPulse {
@@ -726,52 +803,19 @@
     100% { background-color: rgba(0, 49, 102, 0.7); filter: brightness(1.2); }
 }
 
-/* Responsive design */
-@media (max-width: 1200px) {
-    .game-container {
-        flex-direction: column;
+/* Screen size specific adjustments */
+@media screen and (max-width: 1600px) {
+    .piece {
+        width: 80%;
+        height: 80%;
     }
-    
-    .left-panel, .right-panel {
-        width: 100%;
-        flex-direction: row;
-        flex-wrap: wrap;
-        padding: 10px;
-    }
-    
-    .player-card {
-        width: calc(50% - 10px);
-        margin-right: 10px;
-    }
-    
-    .game-controls {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    
-    .game-controls button {
-        width: calc(33.33% - 10px);
-        margin-bottom: 0;
-    }
-    
-    .move-history, .game-chat {
-        width: calc(50% - 10px);
-        margin-right: 10px;
-    }
-    
-    .board-wrapper {
-        width: 100%;
-        max-width: 620px;
-        height: auto;
-        aspect-ratio: 1;
-    }
-    
-    .chess-board {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 1;
+}
+
+/* High DPI displays */
+@media screen and (min-resolution: 192dpi) {
+    .piece {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
     }
 }
 
@@ -911,5 +955,51 @@
     100% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 0;
+    }
+}
+
+/* Update the media queries for consistent piece sizing */
+@media screen and (min-width: 1920px) {
+    .dragging-piece {
+        width: 90px !important;
+        height: 90px !important;
+    }
+}
+
+@media screen and (min-width: 2560px) {
+    .dragging-piece {
+        width: 80px !important;
+        height: 80px !important;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .dragging-piece {
+        width: 50px !important;
+        height: 50px !important;
+    }
+}
+
+/* Laptop screens (between 1200px and 1920px) */
+@media screen and (min-width: 1200px) and (max-width: 1919px) {
+    .piece {
+        width: 85%;  /* Slightly bigger for laptop screens */
+        height: 85%;
+    }
+    
+    .dragging-piece {
+        width: 75px !important;  /* Slightly bigger dragging piece */
+        height: 75px !important;
+    }
+}
+
+@media screen and (max-width: 1199px) {
+    .piece {
+        width: 80%;
+        height: 80%;
+    }
+    .dragging-piece {
+        width: 60px !important;
+        height: 60px !important;
     }
 }
