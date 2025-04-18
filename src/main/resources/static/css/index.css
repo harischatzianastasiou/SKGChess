@@ -1,7 +1,7 @@
 :root {
     --font-primary: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --color-primary: #6b46c1;
-    --color-primary-dark: #553c9a;
+    --color-primary-dark: #6b46c1;
     --color-secondary: #ffffff;
     --color-text: #e9d8fd;
     --color-text-dark: #a0a0a0;
@@ -72,6 +72,7 @@ header {
     height: 40px;
     width: auto;
     transition: transform var(--transition-speed);
+    margin-top: 50px;
 }
 
 .logo:hover {
@@ -277,7 +278,7 @@ header {
 }
 
 .section-header h2 {
-    color: #f0d9b5;
+    color: #8321ad;
     font-size: 1.8em;
     font-weight: 500;
     display: flex;
@@ -286,7 +287,7 @@ header {
 }
 
 .section-header h2 i {
-    color: #c1945e;
+    color: #8321ad;
 }
 
 /* Hero Section with Chess Board Banner */
@@ -408,7 +409,7 @@ header {
     right: 0;
     padding: 20px;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7) 60%, transparent);
-    color: #a828bf;
+    color: #8321ad;
     transform: translateY(0);
     transition: all 0.3s ease;
 }
@@ -452,7 +453,7 @@ header {
     transition: all 0.3s ease;
     transform: skew(-20deg);
     background: rgba(26, 18, 13, 0.8);
-    border-right: 2px solid #a828bf;
+    border-right: 2px solid #8321ad;
     height: 100%;
     display: flex;
     align-items: stretch;
@@ -570,7 +571,7 @@ header {
     .news-section {
         transform: none;
         border-right: none;
-        border-bottom: 1px solid #a828bf;
+        border-bottom: 1px solid #8321ad;
     }
 
     .news-content {
@@ -626,7 +627,7 @@ header {
     font-size: 2.5rem;
     color: var(--color-primary);
     margin-bottom: 1rem;
-    background: linear-gradient(135deg, #6b46c1, #9f7aea);
+    background: linear-gradient(135deg, #a520de, #8321ad);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     transition: all 0.3s ease;
@@ -680,7 +681,7 @@ header {
     padding: 12px 20px;
     font-size: 1.1em;
     font-weight: 500;
-    background: #a828bf;
+    background: #8321ad;
     color: #1a120d;
     border: none;
     border-radius: 8px;
@@ -739,13 +740,13 @@ header {
 }
 
 .feature-card h3 {
-    color: #a828bf;
+    color: #8321ad;
     font-size: 1.4em;
     margin-bottom: 15px;
 }
 
 .feature-card p {
-    color: #a828bf;
+    color: #8321ad;
     margin-bottom: 25px;
 }
 
@@ -777,14 +778,14 @@ header {
     display: inline-block;
     padding: 5px 12px;
     background: rgba(193, 148, 94, 0.2);
-    color: #a828bf;
+    color: #8321ad;
     border-radius: 20px;
     font-size: 0.9em;
     margin-bottom: 15px;
 }
 
 .news-content h3 {
-    color: #a828bf;
+    color: #8321ad;
     font-size: 1.3em;
     margin-bottom: 10px;
     display: flex;
@@ -793,11 +794,11 @@ header {
 }
 
 .news-content h3 i {
-    color: #a828bf;
+    color: #8321ad;
 }
 
 .news-content p {
-    color: #a828bf;
+    color: #8321ad;
     margin: 0;
     line-height: 1.5;
 }
@@ -830,7 +831,7 @@ header {
 }
 
 .footer-links a:hover {
-    color: #a828bf;
+    color: #6b46c1;
 }
 
 /* Responsive Design */
@@ -972,6 +973,32 @@ header {
     background: linear-gradient(135deg, #6b46c1, #9f7aea);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+.rocket {
+    position: absolute;
+    left: 100%;
+    top: 100%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    opacity: 0.8;
+}
+
+.rocket img {
+    width: 300px; 
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
+}
+
+/* User welcome message */
+.user-info span {
+    color: white;
+    margin-right: 16px;
+}
+
+/* Logout form */
+.user-info form {
+    display: inline;
 }
 
 

@@ -434,8 +434,8 @@
             </a>
             <div class="header-right">
                 <div sec:authorize="isAuthenticated()">
-                    <span style="color: white; margin-right: 16px;">Welcome, <span sec:authentication="name" id="username"></span>!</span>
-                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <span>Welcome, <span sec:authentication="name" id="username"></span>!</span>
+                    <form th:action="@{/logout}" method="post">
                         <button type="submit" class="btn btn-sign-in">Sign Out</button>
                     </form>
                 </div>
@@ -643,6 +643,14 @@
         </div>
         <div class="footer-bottom">
             <p>&copy; 2024 SKG Chess. All rights reserved.</p>
+        </div>
+        <div class="scene">
+            <div class="rocket">
+                <img src="/images/rocket.jpg" alt="Rocket">
+            </div>
+            <div class="stars"></div>
+            <div class="clouds"></div>
+            <div class="mountains"></div>
         </div>
     </footer>
 

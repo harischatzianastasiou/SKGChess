@@ -317,22 +317,6 @@ h2 {
     position: relative;
     z-index: 2;
 }
-
-.rocket {
-    position: fixed;
-    left: 95%;
-    top: 88%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    opacity: 0.6;
-}
-
-.rocket img {
-    width: 300px; 
-    height: auto;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
-}
-
 /* .stars {
     position: absolute;
     width: 100%;

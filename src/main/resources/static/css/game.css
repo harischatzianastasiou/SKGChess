@@ -97,20 +97,22 @@ body {
 .btn-outline {
     background: transparent;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: var(--color-primary);
+    color: #e9d8fd;  /* Light lavender color for better visibility */
     display: flex;
     align-items: center;
     gap: 8px;
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
-    transition: all var(--transition-speed);
+    transition: all 0.3s ease;
 }
 
 .btn-outline:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: #9f7aea;  /* Brighter purple on hover */
+    border-color: #9f7aea;
+    color: #ffffff;  /* Pure white text on hover */
     transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(159, 122, 234, 0.4);
 }
 
 /* Main game container */
@@ -501,12 +503,20 @@ body {
 }
 
 .tile.dark {
-    background: #8b5e3c; /* Dark wooden color */
-    background-image: linear-gradient(45deg, 
-        rgba(139, 94, 60, 0.9) 25%, 
-        rgba(121, 82, 52, 0.9) 50%, 
-        rgba(139, 94, 60, 0.9) 75%
-    );
+    background: #8b5e3c; /* Base dark wooden color */
+    background-image: 
+        linear-gradient(
+            90deg,
+            rgba(139, 94, 60, 0.97) 0%,
+            rgba(121, 82, 52, 0.95) 35%,
+            rgba(139, 94, 60, 0.97) 100%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(139, 94, 60, 0.98) 0%,
+            rgba(121, 82, 52, 0.96) 50%,
+            rgba(139, 94, 60, 0.98) 100%
+        );
 }
 
 .dark-variant-1 {
@@ -550,8 +560,10 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 2.5em;
-    color: rgba(255, 255, 255, 0.5);
-    text-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 
+        0 0 4px rgba(0, 0, 0, 0.5),
+        0 0 8px rgba(255, 255, 255, 0.3);
     animation: pulseMove 2s ease-in-out infinite;
     pointer-events: none;
     z-index: 2;
@@ -629,9 +641,9 @@ body {
 }
 
 @keyframes pulseMove {
-    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-    50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
-    100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+    0% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 255, 255, 0.3); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); text-shadow: 0 0 6px rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 255, 255, 0.4); }
+    100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 255, 255, 0.3); }
 }
 
 @keyframes pulseBorder {
