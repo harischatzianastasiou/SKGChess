@@ -100,9 +100,9 @@ button {
     width: 100%;
     padding: 12px;
     background: rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(193, 148, 94, 0.2);
+    border: 1px solid rgba(155, 107, 158, 0.2);
     border-radius: 8px;
-    color: #9a7845;
+    color: #ffffff;
     font-size: 1em;
     cursor: pointer;
     transition: all 0.3s;
@@ -122,7 +122,7 @@ button:hover {
 }
 
 .signup-link a {
-    color: #9a7845;
+    color: #ffffff;
     text-decoration: none;
     font-weight: bold;
 }
@@ -146,11 +146,14 @@ button:hover {
     top: 0;
     left: 0;
     overflow: hidden;
-    background-color: var(--primary-color);
     position: relative;
+    background-image: url('/images/boardBanner.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-/* Add geometric pattern */
+/* Add overlay for background opacity */
 .split-container::before {
     content: '';
     position: absolute;
@@ -158,14 +161,8 @@ button:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--primary-color);
-    background-image: 
-      linear-gradient(30deg, rgba(255,255,255,0.1) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.1) 87.5%, rgba(255,255,255,0.1)),
-      linear-gradient(150deg, rgba(255,255,255,0.1) 12%, transparent 12.5%, transparent 87%, rgba(255,255,255,0.1) 87.5%, rgba(255,255,255,0.1));
-    background-size: 80px 140px;
-    background-position: 0 0, 0 0, 40px 70px, 40px 70px, 0 0, 40px 70px;
-    opacity: 0.8;
-    z-index: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Adjust the last value (0.6) for opacity level */
+    z-index: 1;
 }
 
 /* Left side - Login form */
@@ -226,11 +223,11 @@ h2 {
 }
 
 .signup-prompt a {
-    color: #9a7845;
+    color: #ffffff;
     text-decoration: none;
     font-weight: bold;
     padding: 5px 10px;
-    background: #0d0705;
+    background: #1a121b;
     border-radius: 4px;
     transition: all 0.2s ease;
 }
@@ -273,9 +270,9 @@ h2 {
 .login-btn {
     width: 100%;
     padding: 12px;
-    background: #0d0705;
-    color: #9a7845;
-    border: 1px solid rgba(193, 148, 94, 0.2);
+    background: #1a121b;
+    color: #ffffff;
+    border: 1px solid rgba(155, 107, 158, 0.2);
     border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
@@ -317,27 +314,23 @@ h2 {
 
 /* Scene elements */
 .scene {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
+    position: relative;
+    z-index: 2;
 }
 
 .rocket {
-    position: absolute;
-    left: 96%;
-    top: 80%;
+    position: fixed;
+    left: 95%;
+    top: 88%;
     transform: translate(-50%, -50%);
-    /* animation: float 12s ease-in-out infinite; */
-    z-index: 1;
+    z-index: 2;
+    opacity: 0.6;
 }
 
 .rocket img {
     width: 300px; 
     height: auto;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
 }
 
 /* .stars {
@@ -354,15 +347,22 @@ h2 {
     bottom: 0;
     width: 100%;
     height: 30%;
-    background: linear-gradient(45deg, #0c0a05e9, #9a7845de);
+    background: linear-gradient(45deg, #1a121be9, #9e2ba7de);
     clip-path: polygon(0 100%, 15% 65%, 30% 85%, 50% 60%, 70% 85%, 85% 65%, 100% 85%, 100% 100%);
     z-index: 0;
 }
 
 /* Animations */
 @keyframes float {
-    0%, 100% { transform: translate(-50%, -50%); }
-    50% { transform: translate(-50%, -60%); }
+    0% {
+        transform: translate(-50%, -50%);
+    }
+    50% {
+        transform: translate(-50%, -60%);
+    }
+    100% {
+        transform: translate(-50%, -50%);
+    }
 }
 
 @keyframes twinkle {
@@ -392,9 +392,9 @@ form {
 
 /* Base colors and variables */
 :root {
-    --primary-color: #2a1f17;
-    --secondary-color: #9a7845;
-    --accent-color: #0d0705;
+    --primary-color: #2d1f2e;
+    --secondary-color: #ffffff;
+    --accent-color: #1a121b;
     --text-color: #333333;
     --border-color: rgba(255, 255, 255, 0.2);
 }
