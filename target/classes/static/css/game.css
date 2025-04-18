@@ -5,16 +5,16 @@
     --font-secondary: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     
     /* Colors matching index.css */
-    --color-primary: #c1945e;
-    --color-primary-dark: #357abd;
-    --color-secondary: #f0d9b5;
-    --color-text: #f0d9b5;
+    --color-primary: #6b46c1;
+    --color-primary-dark: #553c9a;
+    --color-secondary: #ffffff;
+    --color-text: #e9d8fd;
     --color-text-dark: #a0a0a0;
-    --color-background: #2f2e2a;
+    --color-background: #1a1625;
     --color-card: rgba(255, 255, 255, 0.05);
     --color-card-hover: rgba(255, 255, 255, 0.08);
     --transition-speed: 0.3s;
-    --color-accent: #c43728;
+    --color-accent: #9f7aea;
     
     /* Dynamic base unit that adapts to screen size */
     --base-unit: clamp(0.0325rem, 0.0325rem + 0.01vw, 0.04rem);
@@ -65,8 +65,8 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem 2rem;
-    background: #1a120d;
-    border-bottom: 1px solid rgba(193, 148, 94, 0.2);
+    background: #14121d;
+    border-bottom: 1px solid rgba(107, 70, 193, 0.2);
     height: var(--header-height);
 }
 
@@ -120,29 +120,29 @@ body {
     gap: 20px;
     flex: 1;
     padding: 20px;
-    background: linear-gradient(135deg, #2f2e2a, #35342f);
+    background: linear-gradient(135deg, #1a1625, #2d1f54);
 }
 
 /* Left panel */
 .left-panel {
-    background: #1a120d;
+    background: #14121d;
     border-radius: 16px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    border: 1px solid rgba(193, 148, 94, 0.1);
+    border: 1px solid rgba(107, 70, 193, 0.1);
 }
 
 /* Player card styling */
 .player-card {
-    background: linear-gradient(135deg, rgba(26, 31, 37, 0.92), rgba(42, 63, 85, 0.85));
+    background: linear-gradient(135deg, rgba(26, 22, 37, 0.92), rgba(42, 33, 85, 0.85));
     border-radius: 12px;
     padding: 15px;
     display: flex;
     align-items: center;
     gap: 12px;
-    border: 1px solid rgba(193, 148, 94, 0.2);
+    border: 1px solid rgba(107, 70, 193, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -163,7 +163,7 @@ body {
 }
 
 .player-avatar i {
-    color: #1a120d;
+    color: #14121d;
     font-size: 1.2rem;
 }
 
@@ -210,9 +210,9 @@ body {
     flex-direction: column;
     gap: 10px;
     padding: 15px;
-    background: rgba(26, 18, 13, 0.8);
+    background: rgba(26, 22, 37, 0.8);
     border-radius: 12px;
-    border: 1px solid rgba(193, 148, 94, 0.15);
+    border: 1px solid rgba(107, 70, 193, 0.15);
 }
 
 .game-controls button {
@@ -272,13 +272,13 @@ body {
 
 /* Move history */
 .move-history {
-    background: rgba(26, 18, 13, 0.8);
+    background: rgba(26, 22, 37, 0.8);
     border-radius: 12px;
     padding: 15px;
     flex: 1;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(193, 148, 94, 0.15);
+    border: 1px solid rgba(107, 70, 193, 0.15);
 }
 
 .move-history h3 {
@@ -310,13 +310,13 @@ body {
 
 /* Right panel */
 .right-panel {
-    background: #1a120d;
+    background: #14121d;
     border-radius: 16px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    border: 1px solid rgba(193, 148, 94, 0.1);
+    border: 1px solid rgba(107, 70, 193, 0.1);
 }
 
 /* Game chat */
@@ -324,10 +324,10 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: rgba(26, 18, 13, 0.8);
+    background: rgba(26, 22, 37, 0.8);
     border-radius: 12px;
     padding: 15px;
-    border: 1px solid rgba(193, 148, 94, 0.15);
+    border: 1px solid rgba(107, 70, 193, 0.15);
 }
 
 .game-chat h3 {
@@ -363,7 +363,7 @@ body {
 .chat-input input {
     flex: 1;
     padding: 10px 15px;
-    border: 1px solid rgba(193, 148, 94, 0.3);
+    border: 1px solid rgba(107, 70, 193, 0.3);
     border-radius: 8px;
     background: rgba(0, 0, 0, 0.2);
     color: var(--color-text);
@@ -395,7 +395,7 @@ body {
 .game-footer {
     text-align: center;
     padding-top: 15px;
-    border-top: 1px solid rgba(193, 148, 94, 0.15);
+    border-top: 1px solid rgba(107, 70, 193, 0.15);
 }
 
 .author-info {
@@ -421,14 +421,14 @@ body {
     padding: var(--space-sm);
     border-radius: calc(4 * var(--base-unit));
     margin: auto;
-    background-color: #0d0705;  /* Back to original dark color */
+    background-color: #14121d;  /* Dark purple background */
 }
 
 .chess-board {
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
-    border: calc(2 * var(--base-unit)) solid #332211;
+    border: calc(2 * var(--base-unit)) solid #2d1f54;  /* Dark purple border */
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     background: #333;
@@ -473,12 +473,12 @@ body {
 /* Color coordinates based on tile color */
 .tile.light .coordinate-file,
 .tile.light .coordinate-rank {
-    color: #261c13;
+    color: #2d1f54;  /* Dark purple for light tiles */
 }
 
 .tile.dark .coordinate-file,
 .tile.dark .coordinate-rank {
-    color: #c1945e;
+    color: #e9d8fd;  /* Light purple for dark tiles */
 }
 
 /* Only show rank numbers on the rightmost column */
@@ -492,11 +492,11 @@ body {
 }
 
 .tile.light {
-    background: #f0d9b5;  /* Light squares color */
+    background: #e9d8fd;  /* Light purple squares */
 }
 
 .tile.dark {
-    background: #b58863;  /* Dark squares color */
+    background: #6b46c1;  /* Dark purple squares */
 }
 
 .dark-variant-1 {
@@ -547,7 +547,7 @@ body {
 }
 
 .tile.dragover {
-    box-shadow: inset 0 0 0 3px rgba(193, 148, 94, 0.8);
+    box-shadow: inset 0 0 0 3px rgba(107, 70, 193, 0.8);  /* Purple highlight */
 }
 
 .tile.selected::before {
@@ -559,9 +559,9 @@ body {
     bottom: 0;
     background: radial-gradient(
         circle at center,
-        rgba(193, 148, 94, 0.25) 0%,
-        rgba(193, 148, 94, 0.15) 50%,
-        rgba(193, 148, 94, 0.1) 100%
+        rgba(107, 70, 193, 0.25) 0%,
+        rgba(107, 70, 193, 0.15) 50%,
+        rgba(107, 70, 193, 0.1) 100%
     );
     pointer-events: none;
     animation: glowPulse 1.5s ease-in-out infinite;
@@ -653,7 +653,7 @@ body {
 }
 
 .last-move-arrow path {
-    stroke: rgba(193, 148, 94, 0.85);
+    stroke: rgba(107, 70, 193, 0.85);  /* Purple arrow */
     stroke-width: 4;
     fill: none;
     marker-end: url(#arrowhead);
@@ -663,12 +663,12 @@ body {
 }
 
 .last-move-source {
-    background-color: rgba(193, 148, 94, 0.25) !important;
+    background-color: rgba(107, 70, 193, 0.25) !important;
     animation: fadeHighlight 0.5s ease-out;
 }
 
 .last-move-target {
-    background-color: rgba(193, 148, 94, 0.4) !important;
+    background-color: rgba(107, 70, 193, 0.4) !important;
     animation: fadeHighlight 0.5s ease-out;
 }
 
@@ -693,15 +693,15 @@ body {
 }
 
 @keyframes selectedBreathingLight {
-    0% { background-color: rgba(193, 148, 94, 0.3); }
-    50% { background-color: rgba(193, 148, 94, 0.15); }
-    100% { background-color: rgba(193, 148, 94, 0.3); }
+    0% { background-color: rgba(107, 70, 193, 0.3); }
+    50% { background-color: rgba(107, 70, 193, 0.15); }
+    100% { background-color: rgba(107, 70, 193, 0.3); }
 }
 
 @keyframes selectedBreathingDark {
-    0% { background-color: rgba(193, 148, 94, 0.4); }
-    50% { background-color: rgba(193, 148, 94, 0.25); }
-    100% { background-color: rgba(193, 148, 94, 0.4); }
+    0% { background-color: rgba(107, 70, 193, 0.4); }
+    50% { background-color: rgba(107, 70, 193, 0.25); }
+    100% { background-color: rgba(107, 70, 193, 0.4); }
 }
 
 /* Screen size specific adjustments */

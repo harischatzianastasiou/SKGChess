@@ -88,14 +88,14 @@
         }
 
         .btn-sign-in {
-            background: #c1945e;
+            background: #8321ad;
             color: white;
             border: none;
             text-decoration: none;
         }
 
         .btn-sign-in:hover {
-            background: #a17a4d;
+            background: #8321ad;
         }
 
         .main-content {
@@ -145,7 +145,8 @@
         }
 
         .action-card {
-            background: rgba(140, 47, 47, 0.1);
+            background: rgba(26, 22, 37, 0.3);
+            border: 1px solid rgba(107, 70, 193, 0.15);
             border-radius: 10px;
             padding: 30px;
             text-align: center;
@@ -171,7 +172,7 @@
 
         .action-icon {
             font-size: 40px;
-            color: #c1945e;
+            color: #8321ad;
             margin-bottom: 10px;
         }
 
@@ -187,7 +188,7 @@
         }
 
         .btn-primary {
-            background: #c1945e;
+            background: var(--color-primary);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -201,7 +202,7 @@
         }
 
         .btn-primary:hover {
-            background: #a17a4d;
+            background: var(--color-primary-dark);
         }
 
         .join-controls {
@@ -215,7 +216,7 @@
             padding: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 4px;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(26, 22, 37, 0.4);
             color: white;
             font-size: 16px;
             width: 100%;
@@ -223,6 +224,11 @@
 
         .game-id-input::placeholder {
             color: #999;
+        }
+
+        .game-id-input:focus {
+            border-color: var(--color-primary);
+            outline: none;
         }
 
         .join-game-container {
@@ -368,7 +374,7 @@
         .feature-card i {
             font-size: 32px;
             margin-bottom: 15px;
-            color: #c1945e;
+            color: #8321ad;
         }
 
         .feature-card h4 {
@@ -409,7 +415,7 @@
         }
 
         .footer-section a:hover {
-            color: #c1945e;
+            color: #8321ad;
         }
 
         .footer-bottom {
@@ -445,28 +451,58 @@
             
             <section class="quick-actions">
                 <div class="quick-actions-grid">
-                    <div class="action-card primary-action glass-effect">
+                    <div class="action-card glass-effect">
                         <div class="action-content">
-                            <div class="action-icon"><i class="fas fa-chess-board"></i></div>
-                            <h2>Create Private Game</h2>
-                            <p>Challenge a friend to a private match</p>
-                            <button onclick="newGame()" class="btn-primary">
-                                <i class="fas fa-plus-circle"></i> Create Game
-                            </button>
+                            <div class="action-icon my-games"></div>
+                            <h2>My Games</h2>
+                            <p>View your game history, analyze past matches, and track your progress.</p>
+                            <a href="/my-games" class="btn btn-primary">
+                                <i class="fas fa-chess-board"></i>
+                                View Games
+                            </a>
                         </div>
                     </div>
                     
                     <div class="action-card glass-effect">
                         <div class="action-content">
-                            <div class="action-icon"><i class="fas fa-handshake"></i></div>
-                            <h2>Join Private Game</h2>
-                            <p>Enter your friend's game ID to join</p>
+                            <div class="action-icon live-chess"></div>
+                            <h2>Live Chess</h2>
+                            <p>Join a live game or create a new one to challenge other players.</p>
                             <div class="join-controls">
-                                <input type="text" id="gameId" placeholder="Enter game ID" class="game-id-input">
-                                <button onclick="joinGame(document.getElementById('gameId').value)" class="btn-primary">
-                                    <i class="fas fa-sign-in-alt"></i> Join Game
+                                <input type="text" id="gameId" class="game-id-input" placeholder="Enter Game ID to join...">
+                                <button onclick="joinGame(document.getElementById('gameId').value)" class="btn btn-primary">
+                                    <i class="fas fa-play"></i>
+                                    Join Game
+                                </button>
+                                <button onclick="newGame()" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i>
+                                    Create Game
                                 </button>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="action-card glass-effect">
+                        <div class="action-content">
+                            <div class="action-icon news"></div>
+                            <h2>Chess News</h2>
+                            <p>Stay updated with the latest chess news, tournaments, and events.</p>
+                            <a href="/news" class="btn btn-primary">
+                                <i class="fas fa-newspaper"></i>
+                                Read News
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="action-card glass-effect">
+                        <div class="action-content">
+                            <div class="action-icon explore"></div>
+                            <h2>Explore Thessaloniki</h2>
+                            <p>Discover the rich chess culture and history of Thessaloniki.</p>
+                            <a href="/explore" class="btn btn-primary">
+                                <i class="fas fa-compass"></i>
+                                Explore
+                            </a>
                         </div>
                     </div>
                 </div>
