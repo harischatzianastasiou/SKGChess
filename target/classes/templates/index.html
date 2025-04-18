@@ -92,10 +92,18 @@
             color: white;
             border: none;
             text-decoration: none;
+            transition: all 0.3s ease; /* Add smooth transition */
         }
 
         .btn-sign-in:hover {
-            background: #8321ad;
+            background: #9b27d0; /* Lighter purple on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 4px 8px rgba(131, 33, 173, 0.3); /* Subtle shadow */
+        }
+
+        .btn-sign-in:active {
+            transform: translateY(0); /* Press effect */
+            box-shadow: 0 2px 4px rgba(131, 33, 173, 0.2); /* Smaller shadow when pressed */
         }
 
         .main-content {
