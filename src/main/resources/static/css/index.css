@@ -296,7 +296,8 @@ header {
     text-align: center;
     color: var(--color-text);
     overflow: hidden;
-    isolation: isolate;  /* Creates a new stacking context */
+    isolation: isolate;
+    background: linear-gradient(135deg, rgba(42, 31, 23, 0.98), rgba(26, 18, 13, 0.98));
 }
 
 .hero-section::before {
@@ -306,24 +307,19 @@ header {
     left: -10%;
     right: -10%;
     bottom: -10%;
-    background-image: url('../images/boardBanner.jpg');
-    background-size: cover;
-    background-position: center;
+    background: linear-gradient(135deg, rgba(47, 46, 42, 0.95), rgba(26, 18, 13, 0.95));
     z-index: -1;
-    animation: slowPan 30s ease-in-out infinite;
-    opacity: 0.8;  /* Slightly dim the background */
-    filter: brightness(0.7);  /* Darken it a bit to make text more readable */
 }
 
-/* Add a subtle overlay to improve text readability */
+/* Add a subtle overlay for depth */
 .hero-section::after {
     content: '';
     position: absolute;
     inset: 0;
     background: linear-gradient(
         to bottom,
-        rgba(47, 46, 42, 0.7),
-        rgba(47, 46, 42, 0.5)
+        rgba(193, 148, 94, 0.05),  /* Very subtle gold tint */
+        rgba(47, 46, 42, 0.05)
     );
     z-index: -1;
 }

@@ -131,6 +131,17 @@ class ChessGame {
         document.addEventListener('mousemove', this.handleMouseMove.bind(this));
         document.addEventListener('mouseup', this.handleMouseUp.bind(this));
 
+        // Add click event listener to clear selections when clicking outside the board
+        document.addEventListener('click', (event) => {
+            // Check if the click is outside the game board
+            if (!event.target.closest('#game-board')) {
+                // Clear selection and highlights
+                document.querySelector('.selected')?.classList.remove('selected');
+                this.selectedSourceTile = null;
+                this.clearLegalMoves();
+            }
+        });
+
         this.board.addEventListener('contextmenu', (event) => {
             event.preventDefault();
             if (this.selectedSourceTile !== null) {
@@ -394,9 +405,24 @@ class ChessGame {
                     this.showLegalMoves(position);
                     return;
                 }
+
+                // Check if the target position is a legal move
+                const moves = this.boardDTO.currentPlayer.moves;
+                const isLegalMove = moves.some(move => 
+                    move.sourceCoordinate === this.selectedSourceTile && 
+                    move.targetCoordinate === position
+                );
+
+                if (!isLegalMove) {
+                    // If not a legal move, clear selection and highlights
+                    console.log('Not a legal move, clearing selection');
+                    document.querySelector('.selected')?.classList.remove('selected');
+                    this.selectedSourceTile = null;
+                    this.clearLegalMoves();
+                    return;
+                }
             }
             
-         
             console.log('Making move from', this.selectedSourceTile, 'to', position);
             this.clearLegalMoves(); // Clear previous highlights
             
