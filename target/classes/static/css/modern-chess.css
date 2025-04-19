@@ -11,6 +11,8 @@
     --warning-color: #ecc94b;
     --danger-color: #f56565;
     --border-color: rgba(107, 70, 193, 0.15);
+    --color-background: #1a1625;
+    --card-focus: rgba(38, 33, 49, 0.95);  /* Slightly lighter than background for focus state */
 }
 
 /* Global Styles */
@@ -201,6 +203,19 @@ body {
     margin-top: 2rem;
 }
 
+/* Content Sections Focus States */
+.content-section {
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.content-section:focus,
+.content-section:focus-within {
+    background: var(--card-focus) !important;
+    transform: scale(1.01);
+    box-shadow: 0 0 0 2px var(--border-color);
+}
+
 /* My Games Section */
 .my-games-section {
     padding: 2rem;
@@ -256,6 +271,8 @@ body {
     background: var(--card-background);
     position: relative;
     overflow: hidden;
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
 }
 
 .thessaloniki-section::before {
@@ -265,7 +282,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(26, 22, 37, 0.8), rgba(26, 22, 37, 0.4));
+    background: transparent;  /* Remove the gradient overlay */
     z-index: 1;
 }
 
@@ -343,6 +360,8 @@ body {
     overflow: hidden;
     border-radius: 10px;
     transition: all 0.3s ease;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
 }
 
 .gallery-item.large {
@@ -352,6 +371,7 @@ body {
 
 .gallery-item:hover {
     transform: translateY(-5px);
+    background: var(--card-hover);
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
@@ -414,7 +434,7 @@ body {
 }
 
 .feature-card {
-    background: rgba(26, 22, 37, 0.3);
+    background: var(--card-background);
     padding: 1.25rem;
     border-radius: 10px;
     transition: all 0.3s ease;
@@ -423,7 +443,7 @@ body {
 
 .feature-card:hover {
     transform: translateY(-5px);
-    background: rgba(26, 22, 37, 0.4);
+    background: var(--card-hover);
 }
 
 .feature-card i {
@@ -458,11 +478,13 @@ body {
 /* News Section */
 .news-section {
     padding: 4rem 2rem;
-    background: var(--background-color);
+    background: var(--card-background);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
 }
 
 .section-header {
@@ -496,7 +518,7 @@ body {
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -506,6 +528,7 @@ body {
 .news-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    background: var(--card-hover);
 }
 
 .news-image {
@@ -536,10 +559,12 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    background: linear-gradient(to bottom, 
-        rgba(26, 22, 37, 0.95),
-        rgba(26, 22, 37, 0.98)
-    );
+    background: var(--card-background);
+    transition: background-color 0.3s ease;
+}
+
+.news-content:hover {
+    background: var(--card-hover);
 }
 
 .news-content h3 {
