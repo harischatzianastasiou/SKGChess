@@ -437,6 +437,16 @@ body {
     position: relative;
 }
 
+/* Add rotation for black's perspective */
+.chess-board.black-perspective {
+    transform: rotate(180deg);
+}
+
+/* Rotate pieces and coordinates back when board is rotated */
+.chess-board.black-perspective .tile {
+    transform: rotate(180deg);
+}
+
 .rank-labels, .file-labels {
     display: none;
 }

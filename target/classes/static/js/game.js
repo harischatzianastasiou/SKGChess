@@ -217,24 +217,24 @@ class ChessGame {
         
         this.gameStatus = gameData.status;
         this.gameId = gameData.id;
-        this.lastMoveData = gameData.lastMoveData; // Store lastMoveData in the class
+        this.lastMoveData = gameData.lastMoveData;
+
+        // Set player color and board orientation
         if (gameData.whitePlayerId === this.userId) {
-            this.boardOrientation = 'WHITE';
             this.playerColor = 'WHITE';
+            this.board.classList.remove('black-perspective');
         } else if (gameData.blackPlayerId === this.userId) {
-            this.boardOrientation = 'BLACK';
             this.playerColor = 'BLACK';
+            this.board.classList.add('black-perspective');
         }
+
         if(this.boardDTO.currentPlayer.alliance === this.playerColor) {
             this.isPlayerTurn = true;
         } else {
             this.isPlayerTurn = false;
         }
         this.updateBoard();
-    } catch (error) {
-        console.error('Error fetching game:', error);
-        this.statusElement.textContent = 'Error fetching game';
-    } 
+    }
 
     connectWebSocket() {
         console.log('Connecting to WebSocket...');
@@ -354,7 +354,13 @@ class ChessGame {
         const tile = event.target.closest('.tile');
         if (!tile) return;
 
-        const position = parseInt(tile.dataset.position);
+        let position = parseInt(tile.dataset.position);
+        
+        // // Transform position if player is black
+        // if (this.playerColor === 'BLACK') {
+        //     position = 63 - position;
+        // }
+
         console.log('function handleTileClick start');
         console.log('1. Tile clicked at position:', position);
 
@@ -855,10 +861,18 @@ class ChessGame {
 
         // Calculate tile centers
         const tileSize = 70; // Your tile size
-        const sourceRow = Math.floor(sourcePos / 8);
-        const sourceCol = sourcePos % 8;
-        const targetRow = Math.floor(targetPos / 8);
-        const targetCol = targetPos % 8;
+        let sourceRow = Math.floor(sourcePos / 8);
+        let sourceCol = sourcePos % 8;
+        let targetRow = Math.floor(targetPos / 8);
+        let targetCol = targetPos % 8;
+
+        // Transform coordinates if player is black
+        if (this.playerColor === 'BLACK') {
+            sourceRow = 7 - sourceRow;
+            sourceCol = 7 - sourceCol;
+            targetRow = 7 - targetRow;
+            targetCol = 7 - targetCol;
+        }
 
         const startX = (sourceCol * tileSize) + (tileSize / 2);
         const startY = (sourceRow * tileSize) + (tileSize / 2);
