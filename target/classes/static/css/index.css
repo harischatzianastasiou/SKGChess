@@ -1801,3 +1801,48 @@ header {
     background: var(--card-hover) !important;
     transform: translateY(-2px);
 }
+
+.my-games-section .section-header h2 {
+    color: white;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.my-games-section .section-header h2 i {
+    color: white;
+}
+
+.my-games-section .stat-card {
+    background: rgba(131, 33, 173, 0.2);
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    border: 1px solid rgba(131, 33, 173, 0.3);
+}
+
+.my-games-section .stat-card h3 {
+    color: #e9d8fd;  /* Lighter, more visible color */
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.my-games-section .stat-card span {
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.my-games-section .recent-games {
+    background: rgba(131, 33, 173, 0.2);
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 1px solid rgba(131, 33, 173, 0.3);
+}
+
+.my-games-section .recent-games h3 {
+    color: #e9d8fd;  /* Matching lighter color */
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}

@@ -215,7 +215,16 @@
         </main>
     </div>
 
-    <!-- Add back previous content sections -->
+    <!-- Content sections in new order -->
+    <section class="content-section news-section">
+        <div class="section-header">
+            <h2><i class="fas fa-newspaper"></i> Live Chess News</h2>
+        </div>
+        <div class="news-container" id="chessNews">
+            <!-- Dynamically populated by JavaScript -->
+        </div>
+    </section>
+
     <section class="content-section my-games-section" sec:authorize="isAuthenticated()">
         <div class="section-header">
             <h2><i class="fas fa-chess-knight"></i> My Games</h2>
@@ -241,15 +250,6 @@
                     <!-- Dynamically populated by JavaScript -->
                 </div>
             </div>
-        </div>
-    </section>
-
-    <section class="content-section news-section">
-        <div class="section-header">
-            <h2><i class="fas fa-newspaper"></i> Live Chess News</h2>
-        </div>
-        <div class="news-container" id="chessNews">
-            <!-- Dynamically populated by JavaScript -->
         </div>
     </section>
 
