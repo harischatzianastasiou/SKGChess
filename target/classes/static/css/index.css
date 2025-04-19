@@ -975,7 +975,7 @@ header {
     -webkit-text-fill-color: transparent;
 }
 
-.rocket {
+/* .rocket {
     position: absolute;
     left: 100%;
     top: 100%;
@@ -988,7 +988,7 @@ header {
     width: 300px; 
     height: auto;
     filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8));
-}
+} */
 
 /* User welcome message */
 .user-info span {

@@ -18,31 +18,241 @@
     <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js"></script>
     <script th:inline="javascript" src="/js/index.js" defer></script>
     <script src="/js/chess-features.js" defer></script>
-    <script>
-        // Handle header background change on scroll
-        document.addEventListener('DOMContentLoaded', function() {
-            const header = document.querySelector('.game-header');
-            const scrollThreshold = 50;
-
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > scrollThreshold) {
-                    header.classList.add('scrolled');
-                } else {
-                    header.classList.remove('scrolled');
-                }
-            });
-        });
-    </script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Optimized scrolling styles */
+        html {
+            scroll-behavior: smooth;
+            overflow-y: auto;
+            scrollbar-gutter: stable;
         }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: black;
+            -webkit-overflow-scrolling: touch;
+            margin: 0; /* Ensure no default margins */
+            min-height: 100vh;
+        }
+
+        /* Hide sections by default */
+        .content-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            will-change: opacity, transform;
+        }
+
+        /* Show sections when they become visible */
+        .content-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Header containment and positioning */
+        .header {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transform: translateZ(0);
+            will-change: transform;
+            padding: 10px 20px; /* Add consistent padding */
+            box-sizing: border-box; /* Include padding in width calculation */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px; /* Fixed height for header */
+            overflow: visible; /* Allow dropdowns to be visible */
+        }
+
+        /* Logo container improvements */
+        .logo-container {
+            width: 150px;
+            height: 60px; /* Fixed height */
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            width: 100%;
+            height: auto;
+            max-height: 100%; /* Prevent overflow */
+            object-fit: contain; /* Maintain aspect ratio */
+        }
+
+        /* Header right section containment */
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            height: 100%; /* Match header height */
+        }
+
+        /* Sign in button improvements */
+        .btn-sign-in {
+            background: #8321ad;
+            color: white;
+            border: none;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex; /* Better alignment */
+            align-items: center;
+            justify-content: center;
+            height: 36px; /* Fixed height */
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .btn-sign-in:hover {
+            background: #9b27d0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(131, 33, 173, 0.3);
+        }
+
+        /* Add scroll padding to account for fixed header */
+        html {
+            scroll-padding-top: 80px;
+        }
+
+        /* Optimize animations */
+        .action-card, .main-content {
+            will-change: transform;
+            transform: translateZ(0);
+        }
+
+        /* Custom scrollbar for ultra-smooth appearance */
+        ::-webkit-scrollbar {
+            width: 10px;
+            background-color: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(131, 33, 173, 0.6);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: content-box;
+            transition: all 0.3s ease;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: rgba(131, 33, 173, 0.8);
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: transparent;
+        }
+
+        /* Main content box enhancements */
+        .main-content {
+            color: white;
+            text-align: center;
+            padding: 145px 0;
+            max-width: 950px;
+            margin: 0 auto;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.7);
+            background-image: url('/images/boardOnTop.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .main-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Action cards enhancements */
+        .action-card {
+            background: rgba(26, 22, 37, 0.3);
+            border: 1px solid rgba(107, 70, 193, 0.15);
+            border-radius: 20px; /* Increased border radius */
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+            overflow: hidden; /* Ensure content respects rounded corners */
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(45deg, rgba(131, 33, 173, 0.3), rgba(155, 39, 208, 0.3));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Smooth animations for all interactive elements */
+        .btn, .action-card, .main-content, .logo-img {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Enhanced button styles */
+        .btn-primary, .btn-sign-in {
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-primary::after, .btn-sign-in::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(131, 33, 173, 0.2), rgba(155, 39, 208, 0.2));
+            z-index: -1;
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .btn-primary:hover::after, .btn-sign-in:hover::after {
+            opacity: 1;
+        }
+
+        /* Smooth scroll snap */
+        .home-container {
+            scroll-snap-type: y proximity;
+            overflow-y: auto;
+        }
+
+        section {
+            scroll-snap-align: start;
+        }
+
+        /* Prevent content jumping during scroll */
+        * {
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         .home-container {
@@ -52,15 +262,6 @@
                         url('/images/boardBanner.png') no-repeat center center;
             background-size: cover;
             position: relative;
-        }
-
-        .header {
-            padding: 20px 50px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-            z-index: 10;
         }
 
         .logo-container {
@@ -106,20 +307,6 @@
             box-shadow: 0 2px 4px rgba(131, 33, 173, 0.2); /* Smaller shadow when pressed */
         }
 
-        .main-content {
-            color: white;
-            text-align: center;
-            padding: 145px 0;
-            max-width: 950px;
-            margin: 0 auto;
-            position: relative;
-            background-color: rgba(0, 0, 0, 0.5);
-            background-image: url('/images/boardOnTop.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
         .main-content h1 {
             font-size: 48px;
             font-weight: 700;
@@ -143,27 +330,17 @@
         .quick-actions {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 40px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 30px;
+            margin-top: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
         .quick-actions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-        }
-
-        .action-card {
-            background: rgba(26, 22, 37, 0.3);
-            border: 1px solid rgba(107, 70, 193, 0.15);
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
-        }
-
-        .action-card:hover {
-            transform: translateY(-5px);
         }
 
         .glass-effect {
@@ -248,12 +425,6 @@
         }
 
         /* Additional styles for content sections */
-        .content-section {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 40px 0;
-            color: white;
-        }
-
         .section-header {
             text-align: center;
             margin-bottom: 30px;
@@ -434,6 +605,116 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
     </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Optimize scroll performance
+            let scrollTimeout;
+            const body = document.body;
+            
+            // Intersection Observer for progressive loading
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // Lazy load images in the visible section
+                        const lazyImages = entry.target.querySelectorAll('img[data-src]');
+                        lazyImages.forEach(img => {
+                            img.src = img.dataset.src;
+                            img.removeAttribute('data-src');
+                        });
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '50px'
+            });
+
+            // Observe all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                observer.observe(section);
+            });
+
+            // Optimize scroll handling
+            window.addEventListener('scroll', () => {
+                if (!scrollTimeout) {
+                    requestAnimationFrame(() => {
+                        // Add class during scroll
+                        body.classList.add('is-scrolling');
+                        
+                        if (scrollTimeout) {
+                            clearTimeout(scrollTimeout);
+                        }
+                        
+                        // Remove class after scroll ends
+                        scrollTimeout = setTimeout(() => {
+                            body.classList.remove('is-scrolling');
+                            scrollTimeout = null;
+                        }, 100);
+                    });
+                }
+            }, { passive: true });
+
+            // Handle header background change with optimized performance
+            const header = document.querySelector('.header');
+            const scrollThreshold = 50;
+            let lastScrollY = window.scrollY;
+            let ticking = false;
+
+            window.addEventListener('scroll', () => {
+                lastScrollY = window.scrollY;
+
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        if (lastScrollY > scrollThreshold) {
+                            header.classList.add('scrolled');
+                        } else {
+                            header.classList.remove('scrolled');
+                        }
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+
+            // Smooth scroll to sections
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Optimize image loading
+        function lazyLoadImages() {
+            const imageObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                });
+            });
+
+            document.querySelectorAll('img[data-src]').forEach(img => {
+                imageObserver.observe(img);
+            });
+        }
+
+        // Initialize lazy loading
+        window.addEventListener('load', lazyLoadImages);
+    </script>
 </head>
 <body>
     <div class="home-container">
@@ -648,9 +929,6 @@
                 <h3>Contact Us</h3>
                 <p><i class="fas fa-envelope"></i> contact@skgchess.com</p>
                 <p><i class="fas fa-map-marker-alt"></i> Thessaloniki, Greece</p>
-                <div class="rocket">
-                    <img src="/images/rocket.jpg" alt="Rocket">
-                </div>
             </div>
         </div>
         <div class="footer-bottom">
