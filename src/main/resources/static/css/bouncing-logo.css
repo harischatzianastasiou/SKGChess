@@ -29,9 +29,37 @@
     filter: brightness(1.2) drop-shadow(0 0 10px rgba(131, 33, 173, 0.5));
     left: 0;
     top: 0;
+    transition: opacity 0.3s ease;
 }
 
 .bouncing-logo.hit-edge {
     filter: brightness(1.5) drop-shadow(0 0 20px rgba(131, 33, 173, 0.8));
     transition: filter 0.2s ease-out;
+}
+
+/* View Games Button Styling */
+.action-card:first-child .action-content {
+    position: relative;
+    z-index: 1;
+}
+
+.action-card:first-child .action-icon.my-games {
+    opacity: 1;
+    transition: transform 0.3s ease;
+}
+
+.action-card:first-child .btn {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+}
+
+.action-card:first-child:hover .bouncing-logo {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.action-card:first-child:hover .btn {
+    opacity: 1;
+    transform: translateY(0);
 } 

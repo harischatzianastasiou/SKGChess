@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Create logo
     const logo = document.createElement('img');
-    logo.src = '/images/skgchess.svg';
+    logo.src = '/images/skgchessicon.png';
     logo.className = 'bouncing-logo';
     logo.alt = 'SKG Chess Logo';
     container.appendChild(logo);
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let dx = speed * (Math.random() < 0.5 ? -1 : 1);  // Random direction
     let dy = speed * (Math.random() < 0.5 ? -1 : 1);  // Random direction
     let lastTime = 0;
+    let isAnimating = true;
 
     // Set initial position
     logo.style.position = 'absolute';
@@ -30,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
     logo.style.top = y + 'px';
 
     function animate(currentTime) {
+        if (!isAnimating) return;
+
         // Calculate time delta
         if (!lastTime) lastTime = currentTime;
         const delta = currentTime - lastTime;
@@ -77,6 +80,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         requestAnimationFrame(animate);
     }
+
+    // Handle card hover
+    gamesCard.addEventListener('mouseenter', () => {
+        isAnimating = false;
+    });
+
+    gamesCard.addEventListener('mouseleave', () => {
+        isAnimating = true;
+        lastTime = 0;
+        requestAnimationFrame(animate);
+    });
 
     // Handle card resize
     const resizeObserver = new ResizeObserver(() => {
