@@ -117,16 +117,20 @@ class ChessGame {
                 tile.dataset.file = files[col];
                 tile.dataset.rank = ranks[row];
                 
-                // Add file letter (a-h)
+                // Add file letter (a-h) with correct perspective
                 const fileLabel = document.createElement('div');
                 fileLabel.className = 'coordinate-file';
-                fileLabel.textContent = files[col];
+                fileLabel.textContent = this.playerColor === 'BLACK' ? 
+                    files[7 - col] :  // Reverse for black's view
+                    files[col];       // Normal for white's view
                 tile.appendChild(fileLabel);
                 
-                // Add rank number (1-8)
+                // Add rank number (1-8) with correct perspective
                 const rankLabel = document.createElement('div');
                 rankLabel.className = 'coordinate-rank';
-                rankLabel.textContent = ranks[row];
+                rankLabel.textContent = this.playerColor === 'BLACK' ? 
+                    ranks[7 - row] :  // Reverse for black's view
+                    ranks[row];       // Normal for white's view
                 tile.appendChild(rankLabel);
                 
                 this.board.appendChild(tile);
