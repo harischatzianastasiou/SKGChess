@@ -30,7 +30,7 @@ class ChessGame {
             'BLACK_KING': '/images/black_k.png'
         };
 
-        this.initializeBoard();
+        // this.initializeBoard();
         this.setupEventListeners();
         this.initializeArrowMarker();
         
@@ -85,8 +85,19 @@ class ChessGame {
     initializeBoard() {
         console.log('Setting up board...');
         this.board.innerHTML = '';
-        const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-        const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+        
+        // Define files and ranks based on player color
+        let files, ranks;
+        
+        // Base arrays for files and ranks
+        if (this.playerColor === 'WHITE') {
+             files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+             ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+        } else if (this.playerColor === 'BLACK') {
+            // For black's perspective, we want to show the coordinates reversed but keep the internal positions the same
+            files = ['h', 'g', 'f', 'e', 'd', 'c', 'b', 'a'];
+            ranks = ['1', '2', '3', '4', '5', '6', '7', '8'];
+        }
         
         for (let row = 0; row < 8; row++) {
             for (let col = 0; col < 8; col++) {
@@ -228,6 +239,9 @@ class ChessGame {
             this.board.classList.add('black-perspective');
         }
 
+        // Reinitialize the board with correct coordinate labels
+        this.initializeBoard();
+
         if(this.boardDTO.currentPlayer.alliance === this.playerColor) {
             this.isPlayerTurn = true;
         } else {
@@ -356,10 +370,6 @@ class ChessGame {
 
         let position = parseInt(tile.dataset.position);
         
-        // // Transform position if player is black
-        // if (this.playerColor === 'BLACK') {
-        //     position = 63 - position;
-        // }
 
         console.log('function handleTileClick start');
         console.log('1. Tile clicked at position:', position);
