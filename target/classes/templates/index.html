@@ -2,346 +2,288 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Home - SKG Chess</title>
+    <title>SKG Chess - Play Chess Online</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play chess online with friends on SKG Chess. Join live games, track your progress, and improve your chess skills.">
+    
+    <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Internal stylesheets -->
     <link rel="stylesheet" href="/css/modern-chess.css">
     <link rel="stylesheet" href="/css/game.css">
-    <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="/css/bouncing-logo.css">
-    <link rel="icon" type="image/svg+xml" href="/images/skgchessicon.png">
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js"></script>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/images/skgchessicon.png">
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/images/boardBanner.png" as="image">
+    <link rel="preload" href="/images/skgchess.svg" as="image">
+    
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js" defer></script>
     <script th:inline="javascript" src="/js/index.js" defer></script>
     <script src="/js/chess-features.js" defer></script>
     <script src="/js/bouncing-logo.js" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Optimize scroll performance
-            let scrollTimeout;
-            const body = document.body;
-            
-            // Intersection Observer for progressive loading
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        // Lazy load images in the visible section
-                        const lazyImages = entry.target.querySelectorAll('img[data-src]');
-                        lazyImages.forEach(img => {
-                            img.src = img.dataset.src;
-                            img.removeAttribute('data-src');
-                        });
-                    }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '50px'
-            });
-
-            // Observe all sections
-            document.querySelectorAll('.content-section').forEach(section => {
-                observer.observe(section);
-            });
-
-            // Optimize scroll handling
-            window.addEventListener('scroll', () => {
-                if (!scrollTimeout) {
-                    requestAnimationFrame(() => {
-                        // Add class during scroll
-                        body.classList.add('is-scrolling');
-                        
-                        if (scrollTimeout) {
-                            clearTimeout(scrollTimeout);
-                        }
-                        
-                        // Remove class after scroll ends
-                        scrollTimeout = setTimeout(() => {
-                            body.classList.remove('is-scrolling');
-                            scrollTimeout = null;
-                        }, 100);
-                    });
-                }
-            }, { passive: true });
-
-            // Handle header background change with optimized performance
-            const header = document.querySelector('.header');
-            const scrollThreshold = 50;
-            let lastScrollY = window.scrollY;
-            let ticking = false;
-
-            window.addEventListener('scroll', () => {
-                lastScrollY = window.scrollY;
-
-                if (!ticking) {
-                    requestAnimationFrame(() => {
-                        if (lastScrollY > scrollThreshold) {
-                            header.classList.add('scrolled');
-                        } else {
-                            header.classList.remove('scrolled');
-                        }
-                        ticking = false;
-                    });
-                    ticking = true;
-                }
-            }, { passive: true });
-
-            // Smooth scroll to sections
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-                    
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-        });
-
-        // Optimize image loading
-        function lazyLoadImages() {
-            const imageObserver = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
-                    }
-                });
-            });
-
-            document.querySelectorAll('img[data-src]').forEach(img => {
-                imageObserver.observe(img);
-            });
-        }
-
-        // Initialize lazy loading
-        window.addEventListener('load', lazyLoadImages);
-    </script>
 </head>
 <body>
     <div class="home-container">
+        <!-- Header -->
         <header class="header">
-            <a href="/" class="logo-container">
-                <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo-img">
+            <a href="/" class="logo-container" aria-label="SKG Chess Home">
+                <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo-img" width="150" height="40">
             </a>
             <div class="header-right">
-                <div sec:authorize="isAuthenticated()">
-                    <span style="color: white; margin-right: 16px;">Welcome, <span sec:authentication="name" id="username"></span>!</span>
-                    <form th:action="@{/logout}" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-sign-in">Sign Out</button>
+                <div sec:authorize="isAuthenticated()" class="user-info fade-in">
+                    <div class="username-banner">
+                        <i class="fas fa-user banner-icon"></i>
+                        <h3>Welcome, <span sec:authentication="name" id="username"></span>!</h3>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="logout-form">
+                        <button type="submit" class="btn btn-secondary">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Sign Out
+                        </button>
                     </form>
                 </div>
                 <div sec:authorize="!isAuthenticated()">
-                    <a href="/login" class="btn btn-sign-in">Sign In</a>
+                    <a href="/login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Sign In
+                    </a>
                 </div>
             </div>
         </header>
 
-        <!-- <main class="main-content"> -->
-            <!-- <h1>Welcome to SKG Chess</h1>
-            <h2>Play chess online with friends</h2> -->
-
-            <section class="quick-actions">
-                <div class="quick-actions-grid">
-                    <div class="action-card glass-effect">
-                        <div class="action-content">
-                            <div class="action-icon my-games"></div>
-                            <h2>My Games</h2>
-                            <p>View your game history, analyze past matches, and track your progress.</p>
-                            <a href="/my-games" class="btn btn-primary">
-                                <i class="fas fa-chess-board"></i>
-                                View Games
-                            </a>
-                        </div>
+        <!-- Main Content -->
+        <main class="main-content fade-in">
+            <!-- Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1>Play Chess Online</h1>
+                    <p>Challenge friends, improve your game, and join the SKG Chess community</p>
+                    <div class="cta-buttons">
+                        <button onclick="newGame()" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            New Game
+                        </button>
+                        <a href="/about" class="btn btn-secondary">
+                            <i class="fas fa-info-circle"></i>
+                            Learn More
+                        </a>
                     </div>
-                    
-                    <div class="action-card glass-effect">
+                </div>
+            </section>
+
+            <!-- Quick Actions Section -->
+            <section class="quick-actions">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-chess-knight"></i>
+                        Play Chess
+                    </h2>
+                </div>
+                <div class="quick-actions-grid">
+                    <!-- Live Chess Card -->
+                    <div class="action-card glass-effect live-chess-section">
                         <div class="action-content">
-                            <div class="action-icon live-chess"></div>
+                            <div class="action-icon">
+                                <i class="fas fa-chess-board"></i>
+                            </div>
                             <h2>Live Chess</h2>
-                            <p>Join a live game or create a new one to challenge other players.</p>
+                            <p>Challenge players to a live game or join an existing match.</p>
                             <div class="join-controls">
-                                <input type="text" id="gameId" class="game-id-input" placeholder="Enter Game ID to join...">
-                                <button onclick="joinGame(document.getElementById('gameId').value)" class="btn btn-primary">
-                                    <i class="fas fa-play"></i>
+                                <input type="text" 
+                                       id="gameId" 
+                                       class="game-id-input" 
+                                       placeholder="Enter Game ID to join..."
+                                       aria-label="Game ID input">
+                                <button onclick="joinGame(document.getElementById('gameId').value)" 
+                                        class="btn btn-primary">
+                                    <i class="fas fa-play" aria-hidden="true"></i>
                                     Join Game
                                 </button>
-                                <button onclick="newGame()" class="btn btn-primary">
-                                    <i class="fas fa-plus"></i>
+                                <button onclick="newGame()" 
+                                        class="btn btn-secondary">
+                                    <i class="fas fa-plus" aria-hidden="true"></i>
                                     Create Game
                                 </button>
                             </div>
                         </div>
                     </div>
-
-                    <div class="action-card">
+                    
+                    <!-- My Games Card -->
+                    <div class="action-card glass-effect">
                         <div class="action-content">
-                            <div class="action-icon about-skg"></div>
+                            <div class="action-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h2>My Games</h2>
+                            <p>View your game history and analyze your performance.</p>
+                            <a href="/my-games" class="btn btn-primary">
+                                <i class="fas fa-chess-board" aria-hidden="true"></i>
+                                View Games
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- About Card -->
+                    <div class="action-card glass-effect">
+                        <div class="action-content">
+                            <div class="action-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
                             <h2>About SKG Chess</h2>
-                            <p>Discover the journey behind SKG Chess - from concept to creation.</p>
-                            <div class="join-controls">
-                                <button class="btn btn-primary" onclick="window.location.href='/about'">
-                                    <i class="fas fa-book-open"></i>
-                                    Read the Story
-                                </button>
+                            <p>Learn about our mission and the story behind SKG Chess.</p>
+                            <a href="/about" class="btn btn-primary">
+                                <i class="fas fa-info-circle" aria-hidden="true"></i>
+                                Read More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section (Only for authenticated users) -->
+            <section class="content-section my-games-section fade-in" sec:authorize="isAuthenticated()">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-chart-line"></i>
+                        Your Stats
+                    </h2>
+                </div>
+                <div class="games-dashboard">
+                    <div class="games-stats">
+                        <div class="stat-card">
+                            <h3>Rating</h3>
+                            <span class="rating" th:text="${userRating ?: '1200'}">1200</span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Games Played</h3>
+                            <span class="games-count" th:text="${gamesPlayed ?: '0'}">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Win Rate</h3>
+                            <span class="win-rate" th:text="${winRate ?: '0%'}">0%</span>
+                        </div>
+                    </div>
+                    <div class="recent-games glass-effect">
+                        <h3>Recent Games</h3>
+                        <div class="games-list" id="recentGames">
+                            <!-- Dynamically populated by JavaScript -->
+                            <div class="game-card win">
+                                <div class="game-info">
+                                    <span class="game-result">Win</span>
+                                    <span class="game-opponent">vs. Player123</span>
+                                </div>
+                                <div class="game-date">Today</div>
+                            </div>
+                            <div class="game-card loss">
+                                <div class="game-info">
+                                    <span class="game-result">Loss</span>
+                                    <span class="game-opponent">vs. ChessMaster</span>
+                                </div>
+                                <div class="game-date">Yesterday</div>
+                            </div>
+                            <div class="game-card draw">
+                                <div class="game-info">
+                                    <span class="game-result">Draw</span>
+                                    <span class="game-opponent">vs. GrandMaster</span>
+                                </div>
+                                <div class="game-date">3 days ago</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
-        <!-- </main> -->
+
+            <!-- Features Section -->
+            <section class="content-section features-section fade-in">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-star"></i>
+                        Why Choose SKG Chess
+                    </h2>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Fast & Responsive</h3>
+                        <p>Enjoy smooth gameplay with our optimized chess engine and responsive interface.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>Play with Friends</h3>
+                        <p>Challenge your friends to a game or join random opponents from around the world.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3>Track Progress</h3>
+                        <p>Monitor your performance with detailed statistics and game history.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Mobile Friendly</h3>
+                        <p>Play chess on any device with our responsive design.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SKG Chess</h3>
+                    <p>A modern chess platform for players of all skill levels.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/my-games">My Games</a></li>
+                        <li><a href="/login">Sign In</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><a href="mailto:info@skgchess.com">info@skgchess.com</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Feedback</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 SKG Chess. All rights reserved.</p>
+                <p>Created by <a href="https://github.com/harischatzianastasiou" target="_blank"><i class="fab fa-github"></i> @harischatzianastasiou</a></p>
+            </div>
+        </footer>
     </div>
 
-    <!-- Content sections in new order -->
-    <!-- <section class="content-section news-section">
-        <div class="section-header">
-            <h2><i class="fas fa-newspaper"></i> Live Chess News</h2>
-        </div>
-        <div class="news-container" id="chessNews">
-            <!-- Dynamically populated by JavaScript -->
-        <!-- </div>
-    </section> -->
-
-    <section class="content-section my-games-section" sec:authorize="isAuthenticated()">
-        <div class="section-header">
-            <h2><i class="fas fa-chess-knight"></i> My Games</h2>
-        </div>
-        <div class="games-dashboard">
-            <div class="games-stats">
-                <div class="stat-card">
-                    <h3>Rating</h3>
-                    <span class="rating" th:text="${userRating ?: '1200'}">1200</span>
-                </div>
-                <div class="stat-card">
-                    <h3>Games Played</h3>
-                    <span class="games-count" th:text="${gamesPlayed ?: '0'}">0</span>
-                </div>
-                <div class="stat-card">
-                    <h3>Win Rate</h3>
-                    <span class="win-rate" th:text="${winRate ?: '0%'}">0%</span>
-                </div>
-            </div>
-            <div class="recent-games">
-                <h3>Recent Games</h3>
-                <div class="games-list" id="recentGames">
-                    <!-- Dynamically populated by JavaScript -->
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- <section class="content-section thessaloniki-section" id="explore">
-        <div class="section-header">
-            <h2><i class="fas fa-map-marker-alt"></i> Explore Thessaloniki</h2>
-        </div>
-        <div class="thessaloniki-content">
-            <div class="city-info">
-                <div class="city-gallery">
-                    <img src="/images/thessaloniki.jpg" alt="White Tower of Thessaloniki" class="main-image">
-                    <div class="city-highlights">
-                        <div class="gallery-grid">
-                            <div class="gallery-item">
-                                <img src="/images/aristotelous.jpg" alt="Aristotelous Square" class="highlight-image">
-                                <div class="image-caption">Aristotelous Square</div>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="/images/seafront.jpg" alt="Thessaloniki Seafront" class="highlight-image">
-                                <div class="image-caption">Nea Paralia</div>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="/images/rotunda.jpg" alt="Rotunda Monument" class="highlight-image">
-                                <div class="image-caption">Rotunda</div>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="/images/ladadika.jpg" alt="Ladadika District" class="highlight-image">
-                                <div class="image-caption">Ladadika District</div>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="/images/arch.jpg" alt="Arch of Galerius" class="highlight-image">
-                                <div class="image-caption">Arch of Galerius</div>
-                            </div>
-                            <div class="gallery-item">
-                                <img src="/images/modiano.jpg" alt="Modiano Market" class="highlight-image">
-                                <div class="image-caption">Modiano Market</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="city-text">
-                    <h3>Discover Thessaloniki</h3>
-                    <p class="city-description">Discover the vibrant cultural heart of Northern Greece. A city where history meets modernity, where Byzantine monuments stand alongside contemporary art galleries, and where the warmth of Greek hospitality welcomes every visitor.</p>
-                    
-                    <div class="city-features">
-                        <div class="feature-card">
-                            <i class="fas fa-utensils"></i>
-                            <h4>Culinary Paradise</h4>
-                            <p>Experience the famous Thessaloniki food scene, from traditional tavernas to modern cuisine</p>
-                        </div>
-                        <div class="feature-card">
-                            <i class="fas fa-monument"></i>
-                            <h4>Rich History</h4>
-                            <p>Explore UNESCO World Heritage sites and 2,300 years of multicultural history</p>
-                        </div>
-                        <div class="feature-card">
-                            <i class="fas fa-umbrella-beach"></i>
-                            <h4>Waterfront Living</h4>
-                            <p>Enjoy the iconic 5km promenade with stunning views of Mount Olympus</p>
-                        </div>
-                        <div class="feature-card">
-                            <i class="fas fa-coffee"></i>
-                            <h4>Café Culture</h4>
-                            <p>Immerse yourself in the city's famous café culture and nightlife</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-
-    <footer class="site-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <div class="social-links">
-                    <a href="https://github.com/skgchess" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="https://linkedin.com/company/skgchess" target="_blank"><i class="fab fa-linkedin"></i></a>
-                </div>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="/contact">Contact</a></li>
-                    <li><a href="/privacy">Privacy Policy</a></li>
-                    <li><a href="/terms">Terms of Service</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p><i class="fas fa-envelope"></i> harischatzi@tutanota.com</p>
-                <p><i class="fas fa-map-marker-alt"></i> Thessaloniki, Greece</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 SKG Chess. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js"></script>
-    <script th:inline="javascript" src="/js/index.js" defer></script>
-    <script src="/js/chess-features.js" defer></script>
+    <!-- Accessibility Skip Link (hidden visually) -->
+    <a href="#main-content" class="screen-reader-only">Skip to main content</a>
 </body>
 </html> 
