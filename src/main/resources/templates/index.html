@@ -38,7 +38,7 @@
         <!-- Header -->
         <header class="header">
             <a href="/" class="logo-container" aria-label="SKG Chess Home">
-                <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo-img" width="150" height="40">
+                <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo-img">
             </a>
             <div class="header-right">
                 <div sec:authorize="isAuthenticated()" class="user-info fade-in">
@@ -47,7 +47,7 @@
                         <h3>Welcome, <span sec:authentication="name" id="username"></span>!</h3>
                     </div>
                     <form th:action="@{/logout}" method="post" class="logout-form">
-                        <button type="submit" class="btn btn-secondary">
+                        <button type="submit" class="btn btn-secondary logout-btn">
                             <i class="fas fa-sign-out-alt"></i>
                             Sign Out
                         </button>
