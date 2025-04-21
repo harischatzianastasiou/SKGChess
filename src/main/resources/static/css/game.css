@@ -35,13 +35,13 @@
     --header-height: clamp(3.5rem, 4vh + 1rem, 4rem);
     --panel-width: clamp(15rem, 20vw, 24rem);
 
-    /* Base colors - refined natural palette */
-    --color-light-square: #e8d0aa;
-    --color-dark-square: #b58863;
-    --color-highlight: #7b61ff;
-    --color-hover: #9d85ff;
-    --color-selected: #b39dff;
-    --color-border: #a67c52;
+    /* Base colors - modern blue-gray palette */
+    --color-light-square: #e2e8f0;  /* Light blue-gray for light squares */
+    --color-dark-square: #4a5568;   /* Deep blue-gray for dark squares */
+    --color-highlight: #63b3ed;     /* Bright blue for highlights */
+    --color-hover: #90cdf4;         /* Light blue for hover states */
+    --color-selected: #4299e1;      /* Medium blue for selected tiles */
+    --color-border: #2d3748;        /* Dark blue-gray for borders */
     --color-text-light: #ffffff;
     --color-shadow: rgba(0, 0, 0, 0.03);
     --color-shadow-medium: rgba(0, 0, 0, 0.05);
@@ -59,8 +59,8 @@
     margin: 0;
     padding: 0;
     background: linear-gradient(
-        rgba(26, 22, 37, 0.7),
-        rgba(26, 22, 37, 0.85)
+        rgba(26, 22, 37, 0.92),
+        rgba(26, 22, 37, 0.98)
     ),
     url('/images/boardBanner.png');
     background-size: cover;

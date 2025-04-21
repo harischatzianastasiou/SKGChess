@@ -41,7 +41,7 @@ body {
         rgba(26, 22, 37, 0.7),
         rgba(26, 22, 37, 0.85)
     ),
-    url('/images/boardBanner.png');
+    url('/images/boardBanner3.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -597,7 +597,7 @@ header {
     background-image: url('/images/boardBanner.png');
     background-size: cover;
     background-position: center;
-    opacity: 0.2;
+    opacity: 0.4;
     z-index: 0;
     transition: opacity 0.1s ease-out;
     display: block;
@@ -1659,7 +1659,11 @@ header {
     border: 1px solid rgba(107, 70, 193, 0.15);  /* Match the border style of action cards */
     border-radius: 15px;
     overflow: hidden;
-    background: rgba(26, 22, 37, 0.3);  /* Match the background style of action cards */
+    background-image: url('/images/boardBanner3.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 .my-games-section::before {
