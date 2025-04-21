@@ -53,10 +53,35 @@ body {
     flex-direction: column;
     min-height: 100vh;
     width: 100%;
-    background-color: var(--color-background);
+    background: linear-gradient(
+        rgba(26, 22, 37, 0.7),
+        rgba(26, 22, 37, 0.85)
+    ),
+    url('/images/boardBanner.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    position: relative;
     overflow: hidden;
     margin: 0;
     padding: 0;
+}
+
+/* Add a pseudo-element for additional image quality */
+.game-layout::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: inherit;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(1.1) contrast(1.1);
+    z-index: -1;
+    transform: scale(1.02); /* Slight scale to prevent white edges */
 }
 
 /* Header styling */
@@ -122,35 +147,45 @@ body {
     gap: 20px;
     flex: 1;
     padding: 20px;
-    background: linear-gradient(135deg, #1a1625, #2d1f54);
+    position: relative;
+    z-index: 1;
 }
 
 /* Left panel */
 .left-panel {
-    background: #14121d;
-    border-radius: 16px;
-    padding: 20px;
+    background: rgba(26, 22, 37, 0.3);
+    border: 1px solid rgba(107, 70, 193, 0.15);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    border: 1px solid rgba(107, 70, 193, 0.1);
+}
+
+.left-panel:hover {
+    transform: translateY(-5px);
+    background: rgba(26, 22, 37, 0.4);
+    border-color: rgba(107, 70, 193, 0.3);
 }
 
 /* Player card styling */
 .player-card {
-    background: linear-gradient(135deg, rgba(26, 22, 37, 0.92), rgba(42, 33, 85, 0.85));
-    border-radius: 12px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border: 1px solid rgba(107, 70, 193, 0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(26, 22, 37, 0.3);
+    border: 1px solid rgba(107, 70, 193, 0.15);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
 }
 
 .player-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    background: rgba(26, 22, 37, 0.4);
+    border-color: rgba(107, 70, 193, 0.3);
 }
 
 .player-avatar {
@@ -212,9 +247,18 @@ body {
     flex-direction: column;
     gap: 10px;
     padding: 15px;
-    background: rgba(26, 22, 37, 0.8);
-    border-radius: 12px;
+    background: rgba(26, 22, 37, 0.3);
     border: 1px solid rgba(107, 70, 193, 0.15);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.game-controls:hover {
+    transform: translateY(-5px);
+    background: rgba(26, 22, 37, 0.4);
+    border-color: rgba(107, 70, 193, 0.3);
 }
 
 .game-controls button {
@@ -312,13 +356,19 @@ body {
 
 /* Right panel */
 .right-panel {
-    background: #14121d;
-    border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    border: 1px solid rgba(107, 70, 193, 0.1);
+    background: rgba(26, 22, 37, 0.3);
+    border: 1px solid rgba(107, 70, 193, 0.15);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.right-panel:hover {
+    transform: translateY(-5px);
+    background: rgba(26, 22, 37, 0.4);
+    border-color: rgba(107, 70, 193, 0.3);
 }
 
 /* Game chat */
@@ -326,10 +376,19 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    background: rgba(26, 22, 37, 0.8);
-    border-radius: 12px;
-    padding: 15px;
+    background: rgba(26, 22, 37, 0.3);
     border: 1px solid rgba(107, 70, 193, 0.15);
+    border-radius: 20px;
+    padding: 30px;
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease;
+    overflow: hidden;
+}
+
+.game-chat:hover {
+    transform: translateY(-5px);
+    background: rgba(26, 22, 37, 0.4);
+    border-color: rgba(107, 70, 193, 0.3);
 }
 
 .game-chat h3 {
@@ -420,8 +479,8 @@ body {
     position: relative;
     width: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
     height: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
-    padding: var(--space-sm);
-    border-radius: calc(4 * var(--base-unit));
+    padding: 0;
+    border-radius: 0;
     margin: auto;
     background: linear-gradient(135deg, #2c1810, #8e44ad);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -431,14 +490,14 @@ body {
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
-    border: calc(2 * var(--base-unit)) solid #2c1810;
+    border: none;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     background: #333;
     position: relative;
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
-    padding: 2px;
-    gap: 2px;
+    padding: 0;
+    gap: 0;
 }
 
 /* Add rotation for black's perspective */
@@ -457,16 +516,18 @@ body {
 
 .tile {
     position: relative;
-    width: 100%;  /* Will be 1/8 of board due to grid */
+    width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
     box-sizing: border-box;
-    border-radius: 4px;
-    margin: 2px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    box-shadow: none;
 }
 
 /* Create coordinate elements */
@@ -512,11 +573,12 @@ body {
 
 /* Tile styling */
 .tile.light {
-    background: linear-gradient(135deg, #f5f6fa, #dcdde1);
+    background: linear-gradient(135deg, #f5f6fa, #3b87faaa);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: none;
+    box-shadow: none;
 }
 
 .tile.light::before {
@@ -535,11 +597,12 @@ body {
 }
 
 .tile.dark {
-    background: linear-gradient(135deg, #2c1810, #8e44ad);
+    background: linear-gradient(135deg, #9e5cfb, #d43afa86);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: none;
+    box-shadow: none;
 }
 
 .tile.dark::before {
@@ -551,8 +614,8 @@ body {
     bottom: 0;
     background: linear-gradient(45deg, 
         rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.05) 50%,
-        rgba(255, 255, 255, 0) 100%
+        rgba(109, 18, 123, 0.05) 50%,
+        rgba(15, 12, 145, 0.558) 100%
     );
     pointer-events: none;
 }
