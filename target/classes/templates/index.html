@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="/css/modern-chess.css">
     <link rel="stylesheet" href="/css/game.css">
     <link rel="stylesheet" href="/css/bouncing-logo.css">
+    <link rel="stylesheet" href="/css/scroll-animations.css">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/images/skgchessicon.png">
@@ -32,6 +33,7 @@
     <script th:inline="javascript" src="/js/index.js" defer></script>
     <script src="/js/chess-features.js" defer></script>
     <script src="/js/bouncing-logo.js" defer></script>
+    <script src="/js/scroll-animations.js" defer></script>
 </head>
 <body>
     <div class="home-container">
@@ -80,10 +82,16 @@
                         </a>
                     </div>
                 </div>
+                
+                <!-- Scroll Indicator -->
+                <div class="scroll-indicator">
+                    <div class="arrow"></div>
+                    <span>Scroll Down</span>
+                </div>
             </section>
 
             <!-- Quick Actions Section -->
-            <section class="quick-actions">
+            <section class="quick-actions section-hidden">
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-chess-knight"></i>
@@ -152,7 +160,7 @@
             </section>
 
             <!-- Stats Section (Only for authenticated users) -->
-            <section class="content-section my-games-section fade-in" sec:authorize="isAuthenticated()">
+            <section class="content-section my-games-section section-hidden" sec:authorize="isAuthenticated()">
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-chart-line"></i>
@@ -205,7 +213,7 @@
             </section>
 
             <!-- Features Section -->
-            <section class="content-section features-section fade-in">
+            <section class="content-section features-section section-hidden">
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-star"></i>
