@@ -150,7 +150,7 @@
             </div>
         </header>
 
-        <main class="main-content">
+        <!-- <main class="main-content"> -->
             <!-- <h1>Welcome to SKG Chess</h1>
             <h2>Play chess online with friends</h2> -->
 
@@ -187,43 +187,33 @@
                         </div>
                     </div>
 
-                    <div class="action-card glass-effect">
+                    <div class="action-card">
                         <div class="action-content">
-                            <div class="action-icon news"></div>
-                            <h2>Chess News</h2>
-                            <p>Stay updated with the latest chess news, tournaments, and events.</p>
-                            <a href="/news" class="btn btn-primary">
-                                <i class="fas fa-newspaper"></i>
-                                Read News
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="action-card glass-effect">
-                        <div class="action-content">
-                            <div class="action-icon explore"></div>
-                            <h2>Explore Thessaloniki</h2>
-                            <p>Discover the rich chess culture and history of Thessaloniki.</p>
-                            <a href="/explore" class="btn btn-primary">
-                                <i class="fas fa-compass"></i>
-                                Explore
-                            </a>
+                            <div class="action-icon about-skg"></div>
+                            <h2>About SKG Chess</h2>
+                            <p>Discover the journey behind SKG Chess - from concept to creation.</p>
+                            <div class="join-controls">
+                                <button class="btn btn-primary" onclick="window.location.href='/about'">
+                                    <i class="fas fa-book-open"></i>
+                                    Read the Story
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
-        </main>
+        <!-- </main> -->
     </div>
 
     <!-- Content sections in new order -->
-    <section class="content-section news-section">
+    <!-- <section class="content-section news-section">
         <div class="section-header">
             <h2><i class="fas fa-newspaper"></i> Live Chess News</h2>
         </div>
         <div class="news-container" id="chessNews">
             <!-- Dynamically populated by JavaScript -->
-        </div>
-    </section>
+        <!-- </div>
+    </section> -->
 
     <section class="content-section my-games-section" sec:authorize="isAuthenticated()">
         <div class="section-header">
@@ -253,7 +243,7 @@
         </div>
     </section>
 
-    <section class="content-section thessaloniki-section" id="explore">
+    <!-- <section class="content-section thessaloniki-section" id="explore">
         <div class="section-header">
             <h2><i class="fas fa-map-marker-alt"></i> Explore Thessaloniki</h2>
         </div>
@@ -319,13 +309,11 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 
     <footer class="site-footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>About SKG Chess</h3>
-                <p>Your premier destination for online chess in Thessaloniki</p>
                 <div class="social-links">
                     <a href="https://github.com/skgchess" target="_blank"><i class="fab fa-github"></i></a>
                     <a href="https://linkedin.com/company/skgchess" target="_blank"><i class="fab fa-linkedin"></i></a>
@@ -334,7 +322,6 @@
             <div class="footer-section">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="/about">About Us</a></li>
                     <li><a href="/contact">Contact</a></li>
                     <li><a href="/privacy">Privacy Policy</a></li>
                     <li><a href="/terms">Terms of Service</a></li>
@@ -342,12 +329,12 @@
             </div>
             <div class="footer-section">
                 <h3>Contact Us</h3>
-                <p><i class="fas fa-envelope"></i> contact@skgchess.com</p>
+                <p><i class="fas fa-envelope"></i> harischatzi@tutanota.com</p>
                 <p><i class="fas fa-map-marker-alt"></i> Thessaloniki, Greece</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 SKG Chess. All rights reserved.</p>
+            <p>&copy; 2025 SKG Chess. All rights reserved.</p>
         </div>
     </footer>
 
