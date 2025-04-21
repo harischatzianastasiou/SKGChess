@@ -71,7 +71,14 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle wheel events for element-by-element scrolling
     window.addEventListener('wheel', function(event) {
-        // Prevent default scroll behavior
+        // Check if the event originated from a scrollable container
+        const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
+        if (scrollableParent) {
+            // Allow natural scrolling within scrollable containers
+            return;
+        }
+        
+        // Prevent default scroll behavior for main page sections
         event.preventDefault();
         
         // Determine scroll direction
@@ -89,11 +96,25 @@ document.addEventListener('DOMContentLoaded', function() {
     let touchStartY = 0;
     
     window.addEventListener('touchstart', function(event) {
+        // Check if the event originated from a scrollable container
+        const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
+        if (scrollableParent) {
+            // Allow natural touch handling within scrollable containers
+            return;
+        }
+        
         touchStartY = event.touches[0].clientY;
     }, { passive: true });
     
     window.addEventListener('touchmove', function(event) {
-        // Prevent default scroll behavior
+        // Check if the event originated from a scrollable container
+        const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
+        if (scrollableParent) {
+            // Allow natural touch scrolling within scrollable containers
+            return;
+        }
+        
+        // Prevent default scroll behavior for main page sections
         event.preventDefault();
         
         // Calculate touch direction
@@ -180,4 +201,40 @@ document.addEventListener('DOMContentLoaded', function() {
         originalScrollToElement(element, index);
         updateActiveDot();
     };
+
+    // Intersection Observer for section animations
+    const observerOptions = {
+        root: null,
+        threshold: 0.1,
+        rootMargin: '0px'
+    };
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            // Ignore if the intersection is from scrolling within a scrollable container
+            if (entry.target.closest('.scrollable-content, .scrollable-features')) {
+                return;
+            }
+            
+            if (entry.isIntersecting) {
+                entry.target.classList.remove('section-hidden');
+                // Optional: unobserve after animation
+                // sectionObserver.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe all sections except the content inside scrollable containers
+    document.querySelectorAll('section').forEach(section => {
+        if (!section.closest('.scrollable-content, .scrollable-features')) {
+            sectionObserver.observe(section);
+        }
+    });
+
+    // Prevent scroll events from bubbling up from scrollable containers
+    document.querySelectorAll('.scrollable-content, .scrollable-features').forEach(container => {
+        container.addEventListener('scroll', (e) => {
+            e.stopPropagation();
+        });
+    });
 }); 

@@ -398,6 +398,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle wheel events for smooth scrolling
     window.addEventListener('wheel', (e) => {
+        // Check if the event originated from a scrollable container
+        const scrollableParent = e.target.closest('.scrollable-content, .scrollable-features');
+        if (scrollableParent) {
+            // Allow natural scrolling within scrollable containers
+            return;
+        }
+
         if (isScrolling) return;
         
         // Prevent default scroll behavior
@@ -424,10 +431,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle touch events for mobile
     let touchStartY = 0;
     window.addEventListener('touchstart', (e) => {
+        // Check if the event originated from a scrollable container
+        const scrollableParent = e.target.closest('.scrollable-content, .scrollable-features');
+        if (scrollableParent) {
+            // Allow natural touch handling within scrollable containers
+            return;
+        }
+
         touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     window.addEventListener('touchend', (e) => {
+        // Check if the event originated from a scrollable container
+        const scrollableParent = e.target.closest('.scrollable-content, .scrollable-features');
+        if (scrollableParent) {
+            // Allow natural touch scrolling within scrollable containers
+            return;
+        }
+
         if (isScrolling) return;
         
         const touchEndY = e.changedTouches[0].clientY;
