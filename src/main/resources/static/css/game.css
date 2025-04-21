@@ -464,7 +464,7 @@ body {
     align-items: center;
     cursor: pointer;
     box-sizing: border-box;
-    border-radius: 8px; /* Reduced from 8px to 4px for subtler rounded corners */
+    border-radius: 4px;
     margin: 2px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -535,7 +535,7 @@ body {
 }
 
 .tile.dark {
-    background: linear-gradient(135deg, #2c1810, #8e39b2);
+    background: linear-gradient(135deg, #2c1810, #8e44ad);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
