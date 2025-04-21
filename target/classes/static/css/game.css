@@ -506,6 +506,9 @@ body {
 /* Selected tile styling */
 .tile.selected {
     animation: selectedPulse 1.5s ease-in-out infinite;
+    background: rgba(133, 166, 103, 0.75) !important;
+    transition: background-color 0.15s ease;
+    will-change: background-color;
 }
 
 .tile.light {
@@ -520,47 +523,49 @@ body {
 
 .tile.light.selected {
     animation: selectedBreathingLight 1.5s ease-in-out infinite;
+    background: rgba(133, 166, 103, 0.75) !important;
     background-image: repeating-linear-gradient(
         45deg,
-        rgba(255, 255, 255, 0.3) 0px,
-        rgba(255, 255, 255, 0.3) 4px,
-        rgba(197, 165, 255, 0) 4px,
-        rgba(197, 165, 255, 0) 8px
+        rgba(133, 166, 103, 0.3) 0px,
+        rgba(133, 166, 103, 0.3) 4px,
+        rgba(133, 166, 103, 0) 4px,
+        rgba(133, 166, 103, 0) 8px
     ) !important;
 }
 
 .tile.dark.selected {
     animation: selectedBreathingDark 1.5s ease-in-out infinite;
+    background: rgba(133, 166, 103, 0.75) !important;
     background-image: repeating-linear-gradient(
         45deg,
-        rgba(255, 255, 255, 0.3) 0px,
-        rgba(255, 255, 255, 0.3) 4px,
-        rgba(139, 92, 246, 0) 4px,
-        rgba(139, 92, 246, 0) 8px
+        rgba(133, 166, 103, 0.3) 0px,
+        rgba(133, 166, 103, 0.3) 4px,
+        rgba(133, 166, 103, 0) 4px,
+        rgba(133, 166, 103, 0) 8px
     ) !important;
 }
 
 @keyframes selectedBreathingLight {
     0% { 
-        background-color: #C5A5FF;
+        background-color: rgba(133, 166, 103, 0.75);
     }
     50% { 
-        background-color: #B794F4;
+        background-color: rgba(133, 166, 103, 0.9);
     }
     100% { 
-        background-color: #C5A5FF;
+        background-color: rgba(133, 166, 103, 0.75);
     }
 }
 
 @keyframes selectedBreathingDark {
     0% { 
-        background-color: #8B5CF6;
+        background-color: rgba(133, 166, 103, 0.75);
     }
     50% { 
-        background-color: #7C3AED;
+        background-color: rgba(133, 166, 103, 0.9);
     }
     100% { 
-        background-color: #8B5CF6;
+        background-color: rgba(133, 166, 103, 0.75);
     }
 }
 
@@ -581,8 +586,9 @@ body {
     -webkit-mask: radial-gradient(circle at center, transparent 82%, #000 85%);
     mask: radial-gradient(circle at center, transparent 82%, #000 85%);
     opacity: 0.85;
-    transition: all 0.2s ease;
-    animation: pulseCapture 2s ease-in-out infinite;
+    transition: all 0.15s ease;
+    animation: pulseCapture 1.5s ease-in-out infinite;
+    will-change: transform, opacity;
 }
 
 .tile.legal-move-non-capture::after {
@@ -596,8 +602,9 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     opacity: 0.85;
-    transition: all 0.2s ease;
-    animation: pulseMove 2s ease-in-out infinite;
+    transition: all 0.15s ease;
+    animation: pulseMove 1.5s ease-in-out infinite;
+    will-change: transform, opacity;
 }
 
 .tile.legal-move-non-capture:hover,
@@ -619,8 +626,9 @@ body {
     background-position: center;
     z-index: 2;
     pointer-events: auto;
-    /* Add subtle hover effect */
-    transition: transform 0.15s ease, filter 0.15s ease;
+    /* Optimize hover effect for better performance */
+    transition: transform 0.1s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.1s ease;
+    will-change: transform, filter; /* Hint browser about animation */
 }
 
 .piece:hover {
@@ -634,13 +642,14 @@ body {
     transform: translate(-50%, -50%) scale(0.95);
 }
 
-/* Enhance piece movement animation */
+/* Enhance piece movement animation - faster and smoother */
 .piece.moving {
-    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
     z-index: 3;
+    will-change: transform, opacity; /* Optimize performance */
 }
 
-/* Improve dragging piece visuals */
+/* Improve dragging piece visuals - more responsive */
 .dragging-piece {
     cursor: grabbing;
     position: fixed;
@@ -654,10 +663,11 @@ body {
     opacity: 0.9;
     transform: translate(-50%, -50%);
     filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
-    transition: transform 0.1s ease;
+    transition: transform 0.08s ease; /* Faster transition */
+    will-change: transform, opacity; /* Optimize performance */
 }
 
-/* Enhance captured piece animation */
+/* Enhance captured piece animation - faster */
 @keyframes pieceCaptured {
     0% {
         opacity: 1;
@@ -669,24 +679,7 @@ body {
     }
 }
 
-/* Enhance selected tile animation */
-.tile.selected {
-    animation: selectedPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes selectedPulse {
-    0% { 
-        background: rgba(133, 166, 103, 0.75);
-    }
-    50% { 
-        background: rgba(133, 166, 103, 0.9);
-    }
-    100% { 
-        background: rgba(133, 166, 103, 0.75);
-    }
-}
-
-/* Improve piece drop animation */
+/* Improve piece drop animation - faster and smoother */
 @keyframes pieceDrop {
     0% {
         opacity: 0.8;
@@ -701,7 +694,7 @@ body {
     }
 }
 
-/* Enhance legal move indicators */
+/* Enhance legal move indicators - faster transitions */
 .tile.legal-move-capture::before {
     content: '';
     position: absolute;
@@ -713,10 +706,12 @@ body {
     -webkit-mask: radial-gradient(circle at center, transparent 82%, #000 85%);
     mask: radial-gradient(circle at center, transparent 82%, #000 85%);
     opacity: 0.85;
-    transition: all 0.2s ease;
-    animation: pulseCapture 2s ease-in-out infinite;
+    transition: all 0.15s ease; /* Faster transition */
+    animation: pulseCapture 1.5s ease-in-out infinite; /* Faster animation */
+    will-change: transform, opacity; /* Optimize performance */
 }
 
+/* Optimize pulse animations */
 @keyframes pulseCapture {
     0% { transform: scale(0.95); }
     50% { transform: scale(1.05); }
@@ -734,44 +729,19 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     opacity: 0.85;
-    transition: all 0.2s ease;
-    animation: pulseMove 2s ease-in-out infinite;
+    transition: all 0.15s ease; /* Faster transition */
+    animation: pulseMove 1.5s ease-in-out infinite; /* Faster animation */
+    will-change: transform, opacity; /* Optimize performance */
 }
 
-@keyframes pulseMove {
-    0% { transform: translate(-50%, -50%) scale(0.9); }
-    50% { transform: translate(-50%, -50%) scale(1.1); }
-    100% { transform: translate(-50%, -50%) scale(0.9); }
-}
-
-.grabbing {
-    cursor: grabbing;
-}
-
-@keyframes pulseMove {
-    0% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 255, 255, 0.3); }
-    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); text-shadow: 0 0 6px rgba(0, 0, 0, 0.6), 0 0 12px rgba(255, 255, 255, 0.4); }
-    100% { opacity: 0.85; transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 4px rgba(0, 0, 0, 0.5), 0 0 8px rgba(255, 255, 255, 0.3); }
-}
-
-@keyframes pulseBorder {
-    0% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.6; }
-    50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.9; }
-    100% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.6; }
-}
-
-@keyframes glowPulse {
-    0% { opacity: 0.6; }
-    50% { opacity: 0.9; }
-    100% { opacity: 0.6; }
-}
-
+/* Optimize last move arrow animation */
 .last-move-arrow {
     position: absolute;
     pointer-events: none;
     z-index: 10;
     opacity: 0.8;
-    animation: fadeInArrow 0.3s ease-out forwards;
+    animation: fadeInArrow 0.2s ease-out forwards; /* Faster fade in */
+    will-change: opacity; /* Optimize performance */
 }
 
 .last-move-arrow svg {
@@ -789,12 +759,15 @@ body {
     marker-end: url(#arrowhead);
     stroke-dasharray: 100;
     stroke-dashoffset: 100;
-    animation: drawArrow 0.6s ease-out forwards;
+    animation: drawArrow 0.4s ease-out forwards; /* Faster arrow drawing */
+    will-change: stroke-dashoffset; /* Optimize performance */
 }
 
+/* Optimize highlight animations */
 .last-move-source, .last-move-target {
-    background-color: rgba(181, 136, 99, 0.3) !important; /* Slightly more subtle */
-    animation: fadeHighlight 0.5s ease-out;
+    background-color: rgba(181, 136, 99, 0.3) !important;
+    animation: fadeHighlight 0.3s ease-out; /* Faster highlight */
+    will-change: opacity; /* Optimize performance */
 }
 
 @keyframes fadeInArrow {
@@ -809,12 +782,8 @@ body {
 }
 
 @keyframes fadeHighlight {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* Screen size specific adjustments */

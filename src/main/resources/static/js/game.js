@@ -526,20 +526,23 @@ class ChessGame {
         this.draggedPiece = piece;
         this.selectedSourceTile = position;
 
-        // Create drag image
+        // Create drag image with optimized performance
         this.dragImage = document.createElement('div');
         this.dragImage.className = 'piece dragging-piece';
         this.dragImage.style.backgroundImage = piece.style.backgroundImage;
+        this.dragImage.style.transform = 'translate(-50%, -50%)'; // Pre-set transform for better performance
         document.body.appendChild(this.dragImage);
 
-        // Set initial position (centered on cursor)
-        this.dragImage.style.left = event.clientX + 'px';
-        this.dragImage.style.top = event.clientY + 'px';
+        // Set initial position with requestAnimationFrame for smoother animation
+        requestAnimationFrame(() => {
+            this.dragImage.style.left = event.clientX + 'px';
+            this.dragImage.style.top = event.clientY + 'px';
+        });
 
-        // Hide original piece
+        // Hide original piece with opacity transition
         this.draggedPiece.style.opacity = '0.3';
 
-        // Show legal moves
+        // Show legal moves with optimized performance
         this.clearLegalMoves();
         tile.classList.add('selected');
         this.showLegalMoves(position);
@@ -862,25 +865,24 @@ class ChessGame {
             this.lastMoveArrow.remove();
         }
 
-        // Clear previous highlights
-        document.querySelectorAll('.last-move-highlight').forEach(tile => {
-            tile.classList.remove('last-move-highlight');
-        });
+        // Clear previous highlights efficiently
+        const highlights = document.querySelectorAll('.last-move-highlight');
+        highlights.forEach(tile => tile.classList.remove('last-move-highlight'));
 
-        // Create SVG container
+        // Create SVG container with optimized attributes
         const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         svg.setAttribute("class", "last-move-arrow");
         svg.style.width = this.board.offsetWidth + "px";
         svg.style.height = this.board.offsetHeight + "px";
 
-        // Calculate tile centers
-        const tileSize = 70; // Your tile size
+        // Calculate tile centers with optimized math
+        const tileSize = 70;
         let sourceRow = Math.floor(sourcePos / 8);
         let sourceCol = sourcePos % 8;
         let targetRow = Math.floor(targetPos / 8);
         let targetCol = targetPos % 8;
 
-        // Transform coordinates if player is black
+        // Transform coordinates if player is black - optimized calculation
         if (this.playerColor === 'BLACK') {
             sourceRow = 7 - sourceRow;
             sourceCol = 7 - sourceCol;
@@ -888,15 +890,17 @@ class ChessGame {
             targetCol = 7 - targetCol;
         }
 
+        // Calculate positions with single operation
         const startX = (sourceCol * tileSize) + (tileSize / 2);
         const startY = (sourceRow * tileSize) + (tileSize / 2);
         const endX = (targetCol * tileSize) + (tileSize / 2);
         const endY = (targetRow * tileSize) + (tileSize / 2);
 
-        // Create path
+        // Create path with optimized attributes
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
         path.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
 
+        // Append elements efficiently
         svg.appendChild(path);
         this.board.appendChild(svg);
         this.lastMoveArrow = svg;
