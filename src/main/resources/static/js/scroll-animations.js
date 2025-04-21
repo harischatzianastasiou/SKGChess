@@ -109,8 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('touchmove', function(event) {
         // Check if the event originated from a scrollable container
         const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
-        if (scrollableParent) {
-            // Allow natural touch scrolling within scrollable containers
+        const quickActions = event.target.closest('.quick-actions');
+        
+        // Allow natural scrolling for Quick Actions and scrollable containers
+        if (scrollableParent || quickActions) {
             return;
         }
         
@@ -211,22 +213,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            // Ignore if the intersection is from scrolling within a scrollable container
-            if (entry.target.closest('.scrollable-content, .scrollable-features')) {
+            // Ignore if the intersection is from scrolling within a scrollable container or Quick Actions
+            if (entry.target.closest('.scrollable-content, .scrollable-features, .quick-actions')) {
                 return;
             }
             
             if (entry.isIntersecting) {
                 entry.target.classList.remove('section-hidden');
-                // Optional: unobserve after animation
-                // sectionObserver.unobserve(entry.target);
             }
         });
     }, observerOptions);
 
-    // Observe all sections except the content inside scrollable containers
+    // Observe all sections except the content inside scrollable containers and Quick Actions
     document.querySelectorAll('section').forEach(section => {
-        if (!section.closest('.scrollable-content, .scrollable-features')) {
+        if (!section.closest('.scrollable-content, .scrollable-features, .quick-actions')) {
             sectionObserver.observe(section);
         }
     });
