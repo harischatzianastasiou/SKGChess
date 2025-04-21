@@ -1311,6 +1311,10 @@ body {
     overflow: hidden;
     border: 3px solid var(--primary-light);
     transition: transform var(--transition-normal);
+    background-color: #14121d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .author-photo:hover {
@@ -1318,9 +1322,11 @@ body {
 }
 
 .author-image {
-    width: 100%;
+    width: 85%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
+    transform: scale(0.9);
 }
 
 .story-text-wrapper {

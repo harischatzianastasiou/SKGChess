@@ -28,12 +28,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Track current section index
     let currentSectionIndex = 0;
     let isScrolling = false;
+    let lastScrollTime = 0; // Track the last scroll time
+    const scrollDebounceTime = 100; // Minimum time between scroll events in milliseconds
     
     // Function to scroll to a specific element
     function scrollToElement(element, index) {
-        // Prevent multiple scroll events
-        if (isScrolling) return;
+        // Prevent multiple scroll events and check debounce time
+        const currentTime = Date.now();
+        if (isScrolling || currentTime - lastScrollTime < scrollDebounceTime) return;
+        
         isScrolling = true;
+        lastScrollTime = currentTime;
         
         // Update current section index
         currentSectionIndex = index;
@@ -81,15 +86,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Prevent default scroll behavior for main page sections
         event.preventDefault();
         
-        // Determine scroll direction
-        const scrollDown = event.deltaY > 0;
-        
-        // Scroll to next or previous element based on direction
-        if (scrollDown) {
-            scrollToNextElement();
-        } else {
-            scrollToPreviousElement();
-        }
+        // Add a small delay to prevent rapid scrolling
+        setTimeout(() => {
+            // Determine scroll direction
+            const scrollDown = event.deltaY > 0;
+            
+            // Scroll to next or previous element based on direction
+            if (scrollDown) {
+                scrollToNextElement();
+            } else {
+                scrollToPreviousElement();
+            }
+        }, 50);
     }, { passive: false });
     
     // Handle touch events for mobile devices

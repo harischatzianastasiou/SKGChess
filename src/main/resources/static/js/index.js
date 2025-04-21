@@ -289,6 +289,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let scrollTimeout;
     let isScrolling = false;
     let currentSection = 0;
+    let lastScrollTime = 0; // Track the last scroll time
+    const scrollDebounceTime = 100; // Minimum time between scroll events in milliseconds
     const body = document.body;
     const sections = document.querySelectorAll('section');
     
@@ -344,39 +346,14 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(section);
     });
 
-    // Optimized scroll handling with requestAnimationFrame
-    let ticking = false;
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                body.classList.add('is-scrolling');
-                
-                // Update current section based on scroll position
-                const scrollPosition = window.scrollY;
-                const windowHeight = window.innerHeight;
-                const headerHeight = 80; // Height of fixed header
-                currentSection = Math.round((scrollPosition - headerHeight) / (windowHeight - headerHeight));
-                
-                if (scrollTimeout) {
-                    clearTimeout(scrollTimeout);
-                }
-                
-                scrollTimeout = setTimeout(() => {
-                    body.classList.remove('is-scrolling');
-                    scrollTimeout = null;
-                }, 100);
-                
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-
     // Smooth scroll to section function
     function scrollToSection(index) {
-        if (isScrolling || index < 0 || index >= sections.length) return;
+        // Check if we're already scrolling or if we're within the debounce time
+        const currentTime = Date.now();
+        if (isScrolling || index < 0 || index >= sections.length || currentTime - lastScrollTime < scrollDebounceTime) return;
         
         isScrolling = true;
+        lastScrollTime = currentTime;
         
         // Calculate the target scroll position
         const headerHeight = 80; // Height of fixed header
@@ -391,6 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         currentSection = index;
         
+        // Add a small delay before allowing the next scroll
         setTimeout(() => {
             isScrolling = false;
         }, 800); // Match this with your CSS transition duration
@@ -410,11 +388,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Prevent default scroll behavior
         e.preventDefault();
         
-        if (e.deltaY > 0) {
-            scrollToSection(currentSection + 1);
-        } else if (e.deltaY < 0) {
-            scrollToSection(currentSection - 1);
-        }
+        // Add a small delay to prevent rapid scrolling
+        setTimeout(() => {
+            if (e.deltaY > 0) {
+                scrollToSection(currentSection + 1);
+            } else if (e.deltaY < 0) {
+                scrollToSection(currentSection - 1);
+            }
+        }, 50);
     }, { passive: false });
 
     // Handle keyboard navigation
