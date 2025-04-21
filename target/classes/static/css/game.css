@@ -607,10 +607,43 @@ body {
     will-change: transform, opacity;
 }
 
-.tile.legal-move-non-capture:hover,
-.tile.legal-move-capture:hover {
-    background: rgba(133, 166, 103, 0.5) !important;
-    transition: background-color 0.2s ease;
+/* Update hover effects for legal moves */
+.tile.legal-move-non-capture:hover::after {
+    animation: pulseMoveHover 1s ease-in-out infinite;
+}
+
+.tile.legal-move-capture:hover::before {
+    animation: pulseCaptureHover 1s ease-in-out infinite;
+}
+
+@keyframes pulseMoveHover {
+    0% { 
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.85;
+    }
+    50% { 
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+    100% { 
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.85;
+    }
+}
+
+@keyframes pulseCaptureHover {
+    0% { 
+        transform: scale(1);
+        opacity: 0.85;
+    }
+    50% { 
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 0.85;
+    }
 }
 
 /* Piece styling */
@@ -692,23 +725,6 @@ body {
         opacity: 1;
         transform: translate(-50%, -50%) translateY(0) scale(1);
     }
-}
-
-/* Enhance legal move indicators - faster transitions */
-.tile.legal-move-capture::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(133, 166, 103, 0.85);
-    -webkit-mask: radial-gradient(circle at center, transparent 82%, #000 85%);
-    mask: radial-gradient(circle at center, transparent 82%, #000 85%);
-    opacity: 0.85;
-    transition: all 0.15s ease; /* Faster transition */
-    animation: pulseCapture 1.5s ease-in-out infinite; /* Faster animation */
-    will-change: transform, opacity; /* Optimize performance */
 }
 
 /* Optimize pulse animations */
