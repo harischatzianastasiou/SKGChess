@@ -26,6 +26,7 @@
     <link rel="preload" href="/images/skgchess.svg" as="image">
     
     <!-- Scripts -->
+    <script src="/js/notifications.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js" defer></script>
@@ -43,15 +44,10 @@
             <div class="header-right">
                 <div class="header-auth">
                     <div sec:authorize="isAuthenticated()">
-                        <div class="user-welcome">Welcome, <span sec:authentication="name"></span>!</div>
-                    </div>
-                    <div sec:authorize="isAuthenticated()">
-                        <form th:action="@{/logout}" method="post">
-                            <button type="submit" class="btn-sign-out">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Sign Out
-                            </button>
-                        </form>
+                        <button onclick="handleSignOut()" class="btn-sign-out">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Sign Out
+                        </button>
                     </div>
                     <div sec:authorize="!isAuthenticated()">
                         <a href="/login" class="btn-sign-in">
@@ -68,14 +64,16 @@
             <!-- Hero Section -->
             <section class="hero-section">
                 <div class="hero-content">
-                    <h1>Play Chess Online</h1>
-                    <p>Challenge friends, improve your game, and join the SKG Chess community</p>
+                    <h1 sec:authorize="!isAuthenticated()">Welcome to SKG Chess</h1>
+                    <h1 sec:authorize="isAuthenticated()">Welcome, <span sec:authentication="name"></span>!</h1>
+                    <p sec:authorize="!isAuthenticated()">Join to challenge your friends and improve your chess skills!</p>
+                    <p sec:authorize="isAuthenticated()">It's great to see you!</p>
                     <div class="cta-buttons">
-                        <button onclick="newGame()" class="btn btn-primary">
+                        <a href="/login" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
                             New Game
-                        </button>
-                        <a href="/about" class="btn btn-secondary">
+                        </a>
+                        <a th:href="${#authorization.expression('isAuthenticated()')} ? '/about' : '#features-section'" class="btn btn-secondary">
                             <i class="fas fa-info-circle"></i>
                             Learn More
                         </a>
@@ -85,12 +83,13 @@
                 <!-- Scroll Indicator -->
                 <div class="scroll-indicator">
                     <div class="arrow"></div>
-                    <span>Scroll Down</span>
+                    <span sec:authorize="isAuthenticated()">View Stats</span>
+                    <span sec:authorize="!isAuthenticated()">About SKG Chess</span>
                 </div>
             </section>
 
             <!-- Quick Actions Section -->
-            <section class="quick-actions section-hidden">
+            <section class="quick-actions section-hidden" sec:authorize="!isAuthenticated()">
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-chess-knight"></i>
@@ -112,16 +111,14 @@
                                        class="game-id-input" 
                                        placeholder="Enter Game ID to join..."
                                        aria-label="Game ID input">
-                                <button onclick="joinGame(document.getElementById('gameId').value)" 
-                                        class="btn btn-primary">
+                                <a href="/login" class="btn btn-primary">
                                     <i class="fas fa-play" aria-hidden="true"></i>
                                     Join Game
-                                </button>
-                                <button onclick="newGame()" 
-                                        class="btn btn-secondary">
+                                </a>
+                                <a href="/login" class="btn btn-secondary">
                                     <i class="fas fa-plus" aria-hidden="true"></i>
                                     Create Game
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -134,7 +131,7 @@
                             </div>
                             <h2>My Games</h2>
                             <p>View your game history and analyze your performance.</p>
-                            <a href="/my-games" class="btn btn-primary">
+                            <a href="/login" class="btn btn-primary">
                                 <i class="fas fa-chess-board" aria-hidden="true"></i>
                                 View Games
                             </a>
@@ -149,7 +146,7 @@
                             </div>
                             <h2>About SKG Chess</h2>
                             <p>Learn about our mission and the story behind SKG Chess.</p>
-                            <a href="/about" class="btn btn-primary">
+                            <a th:href="${#authorization.expression('isAuthenticated()')} ? '/about' : '#features-section'" class="btn btn-primary">
                                 <i class="fas fa-info-circle" aria-hidden="true"></i>
                                 Read More
                             </a>
@@ -211,8 +208,8 @@
                 </div>
             </section>
 
-            <!-- Features Section -->
-            <section class="content-section features-section section-hidden">
+            <!-- Why Choose SKG Chess Section -->
+            <section id="features-section" class="content-section features-section section-hidden">
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-star"></i>

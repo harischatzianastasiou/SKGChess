@@ -302,7 +302,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Create a new scroll indicator
         const indicator = document.createElement('div');
         indicator.className = 'scroll-indicator';
-        indicator.innerHTML = '<p>Scroll Down</p><i class="fas fa-chevron-down"></i>';
+        
+        // Check if user is authenticated to set the appropriate text
+        const isAuthenticated = document.querySelector('.user-welcome') !== null;
+        indicator.innerHTML = `<div class="arrow"></div><span>${isAuthenticated ? 'View Stats' : 'Scroll Down'}</span>`;
         
         // Add click event to scroll to the next section
         indicator.addEventListener('click', () => {

@@ -38,7 +38,7 @@ public class SecurityConfig {
         })
         .logout(logout -> {
             logout
-                .logoutSuccessUrl("/login?logout")
+                .logoutSuccessUrl("/") // Redirect to home page with logout parameter
                 .deleteCookies("remember-me-cookie") // Delete remember-me cookie on logout
                 .permitAll();
         })
