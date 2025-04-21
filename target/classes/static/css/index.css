@@ -110,6 +110,53 @@ body {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
+    height: 100%;
+}
+
+/* Username and Auth Section */
+.header-auth {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    height: 100%;
+}
+
+.user-welcome {
+    color: var(--text-color);
+    font-size: 0.95rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.btn-sign-in, .btn-sign-out {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: var(--border-radius-md);
+    transition: all var(--transition-normal);
+    background: var(--primary-light);
+    color: var(--text-color);
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 36px;
+}
+
+.btn-sign-in:hover, .btn-sign-out:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-sign-out {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--primary-light);
+}
+
+.btn-sign-out:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* Username Banner */

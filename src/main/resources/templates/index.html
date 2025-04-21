@@ -35,29 +35,30 @@
 </head>
 <body>
     <div class="home-container">
-        <!-- Header -->
+        <!-- Header with logo and user info -->
         <header class="header">
-            <a href="/" class="logo-container" aria-label="SKG Chess Home">
+            <a href="/" class="logo-container">
                 <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo-img">
             </a>
             <div class="header-right">
-                <div sec:authorize="isAuthenticated()" class="user-info fade-in">
-                    <div class="username-banner">
-                        <i class="fas fa-user banner-icon"></i>
-                        <h3>Welcome, <span sec:authentication="name" id="username"></span>!</h3>
+                <div class="header-auth">
+                    <div sec:authorize="isAuthenticated()">
+                        <div class="user-welcome">Welcome, <span sec:authentication="name"></span>!</div>
                     </div>
-                    <form th:action="@{/logout}" method="post" class="logout-form">
-                        <button type="submit" class="btn btn-secondary logout-btn">
-                            <i class="fas fa-sign-out-alt"></i>
-                            Sign Out
-                        </button>
-                    </form>
-                </div>
-                <div sec:authorize="!isAuthenticated()">
-                    <a href="/login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i>
-                        Sign In
-                    </a>
+                    <div sec:authorize="isAuthenticated()">
+                        <form th:action="@{/logout}" method="post">
+                            <button type="submit" class="btn-sign-out">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Sign Out
+                            </button>
+                        </form>
+                    </div>
+                    <div sec:authorize="!isAuthenticated()">
+                        <a href="/login" class="btn-sign-in">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Sign In
+                        </a>
+                    </div>
                 </div>
             </div>
         </header>
