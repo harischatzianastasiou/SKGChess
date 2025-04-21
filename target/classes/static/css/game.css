@@ -423,18 +423,22 @@ body {
     padding: var(--space-sm);
     border-radius: calc(4 * var(--base-unit));
     margin: auto;
-    background-color: #14121d;  /* Dark purple background */
+    background: linear-gradient(135deg, #2c1810, #8e44ad);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .chess-board {
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
-    border: calc(2 * var(--base-unit)) solid #2d1f54;  /* Dark purple border */
+    border: calc(2 * var(--base-unit)) solid #2c1810;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     background: #333;
     position: relative;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+    padding: 2px;
+    gap: 2px;
 }
 
 /* Add rotation for black's perspective */
@@ -460,6 +464,9 @@ body {
     align-items: center;
     cursor: pointer;
     box-sizing: border-box;
+    border-radius: 8px; /* Reduced from 8px to 4px for subtler rounded corners */
+    margin: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Create coordinate elements */
@@ -503,75 +510,64 @@ body {
     display: none;
 }
 
-/* Selected tile styling */
-.tile.selected {
-    animation: selectedPulse 1.5s ease-in-out infinite;
-    background: rgba(133, 166, 103, 0.75) !important;
-    transition: background-color 0.15s ease;
-    will-change: background-color;
+/* Tile styling */
+.tile.light {
+    background: linear-gradient(135deg, #f5f6fa, #dcdde1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.tile.light {
-    background: #f0d9b5; /* Lichess exact light square */
-    transition: background-color 0.15s;
+.tile.light::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.2) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
 }
 
 .tile.dark {
-    background: #b58863; /* Lichess exact dark square */
-    transition: background-color 0.15s;
+    background: linear-gradient(135deg, #2c1810, #8e39b2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+.tile.dark::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, 
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    pointer-events: none;
+}
+
+/* Selected tile styling */
 .tile.light.selected {
     animation: selectedBreathingLight 1.5s ease-in-out infinite;
-    background: rgba(133, 166, 103, 0.75) !important;
-    background-image: repeating-linear-gradient(
-        45deg,
-        rgba(133, 166, 103, 0.3) 0px,
-        rgba(133, 166, 103, 0.3) 4px,
-        rgba(133, 166, 103, 0) 4px,
-        rgba(133, 166, 103, 0) 8px
-    ) !important;
+    background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+    box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
 }
 
 .tile.dark.selected {
     animation: selectedBreathingDark 1.5s ease-in-out infinite;
-    background: rgba(133, 166, 103, 0.75) !important;
-    background-image: repeating-linear-gradient(
-        45deg,
-        rgba(133, 166, 103, 0.3) 0px,
-        rgba(133, 166, 103, 0.3) 4px,
-        rgba(133, 166, 103, 0) 4px,
-        rgba(133, 166, 103, 0) 8px
-    ) !important;
-}
-
-@keyframes selectedBreathingLight {
-    0% { 
-        background-color: rgba(133, 166, 103, 0.75);
-    }
-    50% { 
-        background-color: rgba(133, 166, 103, 0.9);
-    }
-    100% { 
-        background-color: rgba(133, 166, 103, 0.75);
-    }
-}
-
-@keyframes selectedBreathingDark {
-    0% { 
-        background-color: rgba(133, 166, 103, 0.75);
-    }
-    50% { 
-        background-color: rgba(133, 166, 103, 0.9);
-    }
-    100% { 
-        background-color: rgba(133, 166, 103, 0.75);
-    }
-}
-
-/* Remove the previous selected::before styling */
-.tile.selected::before {
-    display: none;
+    background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+    box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
 }
 
 /* Legal moves styling */
@@ -582,13 +578,14 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(133, 166, 103, 0.85);
+    background: linear-gradient(135deg, rgba(214, 48, 49, 0.85), rgba(225, 112, 85, 0.95));
     -webkit-mask: radial-gradient(circle at center, transparent 82%, #000 85%);
     mask: radial-gradient(circle at center, transparent 82%, #000 85%);
     opacity: 0.85;
     transition: all 0.15s ease;
     animation: pulseCapture 1.5s ease-in-out infinite;
     will-change: transform, opacity;
+    box-shadow: inset 0 0 10px rgba(214, 48, 49, 0.3);
 }
 
 .tile.legal-move-non-capture::after {
@@ -598,13 +595,14 @@ body {
     left: 50%;
     width: 25%;
     height: 25%;
-    background: #85a667;
+    background: linear-gradient(135deg, #8e44ad, #2c1810);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     opacity: 0.85;
     transition: all 0.15s ease;
     animation: pulseMove 1.5s ease-in-out infinite;
     will-change: transform, opacity;
+    box-shadow: 0 0 10px rgba(44, 24, 16, 0.3);
 }
 
 /* Update hover effects for legal moves */
@@ -659,20 +657,21 @@ body {
     background-position: center;
     z-index: 2;
     pointer-events: auto;
-    /* Optimize hover effect for better performance */
-    transition: transform 0.1s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.1s ease;
-    will-change: transform, filter; /* Hint browser about animation */
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform, filter;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .piece:hover {
     cursor: grab;
     transform: translate(-50%, -50%) scale(1.05);
-    filter: brightness(1.1);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) brightness(1.1);
 }
 
 .piece:active {
     cursor: grabbing;
     transform: translate(-50%, -50%) scale(0.95);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 /* Enhance piece movement animation - faster and smoother */
@@ -695,9 +694,9 @@ body {
     z-index: 100;
     opacity: 0.9;
     transform: translate(-50%, -50%);
-    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
-    transition: transform 0.08s ease; /* Faster transition */
-    will-change: transform, opacity; /* Optimize performance */
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+    transition: transform 0.08s ease;
+    will-change: transform, opacity;
 }
 
 /* Enhance captured piece animation - faster */
@@ -732,22 +731,6 @@ body {
     0% { transform: scale(0.95); }
     50% { transform: scale(1.05); }
     100% { transform: scale(0.95); }
-}
-
-.tile.legal-move-non-capture::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 25%;
-    height: 25%;
-    background: #85a667;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0.85;
-    transition: all 0.15s ease; /* Faster transition */
-    animation: pulseMove 1.5s ease-in-out infinite; /* Faster animation */
-    will-change: transform, opacity; /* Optimize performance */
 }
 
 /* Optimize last move arrow animation */
@@ -1012,5 +995,35 @@ body {
     to {
         transform: scale(1);
         opacity: 1;
+    }
+}
+
+@keyframes selectedBreathingLight {
+    0% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
+    }
+    50% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95)) !important;
+        box-shadow: inset 0 0 20px rgba(142, 68, 173, 0.5);
+    }
+    100% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
+    }
+}
+
+@keyframes selectedBreathingDark {
+    0% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
+    }
+    50% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95)) !important;
+        box-shadow: inset 0 0 20px rgba(142, 68, 173, 0.5);
+    }
+    100% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
 }
