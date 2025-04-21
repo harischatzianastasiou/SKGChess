@@ -594,7 +594,7 @@ header {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('/images/boardBanner3.jpg');
+    background-image: url('/images/boardBanner.png');
     background-size: cover;
     background-position: center;
     opacity: 0.2;
@@ -1241,7 +1241,7 @@ header {
                 rgba(26, 22, 37, 0.5),
                 rgba(26, 22, 37, 0.2)
             ),
-            url('/images/boardBanner.png');
+            url('/images/boardBanner3.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
