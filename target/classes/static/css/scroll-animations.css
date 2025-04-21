@@ -6,7 +6,7 @@ html {
 }
 
 /* Section styling for smooth transitions */
-section {
+section, .site-footer {
     scroll-margin-top: 80px; /* Adds space above sections when scrolling to them */
     transition: opacity 0.5s ease-in-out; /* Smooth fade-in effect for sections */
 }

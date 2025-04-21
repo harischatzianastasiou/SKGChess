@@ -8,101 +8,176 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get all sections on the page
     const sections = document.querySelectorAll('section');
     
+    // Get the footer element
+    const footer = document.querySelector('.site-footer');
+    
     // Get the scroll indicator element
     const scrollIndicator = document.querySelector('.scroll-indicator');
     
-    // Initialize the first section as visible
-    if (sections.length > 0) {
-        sections[0].classList.add('section-visible');
+    // Create an array of all navigable elements (sections + footer)
+    const navigableElements = Array.from(sections);
+    if (footer) {
+        navigableElements.push(footer);
     }
     
-    // Function to scroll to a specific section
-    function scrollToSection(section) {
-        // Smooth scroll to the section
-        section.scrollIntoView({ behavior: 'smooth' });
+    // Initialize the first section as visible
+    if (navigableElements.length > 0) {
+        navigableElements[0].classList.add('section-visible');
+    }
+    
+    // Track current section index
+    let currentSectionIndex = 0;
+    let isScrolling = false;
+    
+    // Function to scroll to a specific element
+    function scrollToElement(element, index) {
+        // Prevent multiple scroll events
+        if (isScrolling) return;
+        isScrolling = true;
         
-        // Add visible class to the section after scrolling
+        // Update current section index
+        currentSectionIndex = index;
+        
+        // Smooth scroll to the element
+        element.scrollIntoView({ behavior: 'smooth' });
+        
+        // Add visible class to the element after scrolling
         setTimeout(() => {
-            section.classList.add('section-visible');
-        }, 300);
+            element.classList.add('section-visible');
+            isScrolling = false;
+        }, 500); // Increased timeout to ensure animation completes
+    }
+    
+    // Function to scroll to the next element
+    function scrollToNextElement() {
+        if (currentSectionIndex < navigableElements.length - 1) {
+            scrollToElement(navigableElements[currentSectionIndex + 1], currentSectionIndex + 1);
+        }
+    }
+    
+    // Function to scroll to the previous element
+    function scrollToPreviousElement() {
+        if (currentSectionIndex > 0) {
+            scrollToElement(navigableElements[currentSectionIndex - 1], currentSectionIndex - 1);
+        }
     }
     
     // Add click event to the scroll indicator
     if (scrollIndicator) {
         scrollIndicator.addEventListener('click', function() {
-            // Find the next section after the hero section
-            const heroSection = document.querySelector('.hero-section');
-            if (heroSection && sections.length > 1) {
-                // Get the next section (index 1)
-                const nextSection = sections[1];
-                scrollToSection(nextSection);
-            }
+            scrollToNextElement();
         });
     }
     
-    // Handle scroll events to show/hide sections based on visibility
-    window.addEventListener('scroll', function() {
-        // Get the current scroll position
-        const scrollPosition = window.scrollY;
+    // Handle wheel events for element-by-element scrolling
+    window.addEventListener('wheel', function(event) {
+        // Prevent default scroll behavior
+        event.preventDefault();
         
-        // Check each section to see if it's in the viewport
-        sections.forEach((section, index) => {
-            // Get the section's position and dimensions
-            const sectionTop = section.offsetTop - 100; // Offset for header
-            const sectionHeight = section.offsetHeight;
-            
-            // Check if the section is in the viewport
-            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                // Add visible class to the current section
-                section.classList.add('section-visible');
-                
-                // Hide the scroll indicator when not at the top
-                if (scrollIndicator && index > 0) {
-                    scrollIndicator.style.opacity = '0';
-                } else if (scrollIndicator) {
-                    scrollIndicator.style.opacity = '1';
-                }
+        // Determine scroll direction
+        const scrollDown = event.deltaY > 0;
+        
+        // Scroll to next or previous element based on direction
+        if (scrollDown) {
+            scrollToNextElement();
+        } else {
+            scrollToPreviousElement();
+        }
+    }, { passive: false });
+    
+    // Handle touch events for mobile devices
+    let touchStartY = 0;
+    
+    window.addEventListener('touchstart', function(event) {
+        touchStartY = event.touches[0].clientY;
+    }, { passive: true });
+    
+    window.addEventListener('touchmove', function(event) {
+        // Prevent default scroll behavior
+        event.preventDefault();
+        
+        // Calculate touch direction
+        const touchEndY = event.touches[0].clientY;
+        const touchDiff = touchStartY - touchEndY;
+        
+        // Determine if it's a significant swipe
+        if (Math.abs(touchDiff) > 50) {
+            if (touchDiff > 0) {
+                // Swipe up - go to next element
+                scrollToNextElement();
             } else {
-                // Remove visible class from sections not in the viewport
-                section.classList.remove('section-visible');
+                // Swipe down - go to previous element
+                scrollToPreviousElement();
             }
-        });
-    });
+            
+            // Update touch start position
+            touchStartY = touchEndY;
+        }
+    }, { passive: false });
     
     // Add keyboard navigation for accessibility
     document.addEventListener('keydown', function(event) {
         // Check for arrow down key
         if (event.key === 'ArrowDown') {
-            // Find the current visible section
-            const currentSection = Array.from(sections).find(section => 
-                section.classList.contains('section-visible')
-            );
-            
-            if (currentSection) {
-                // Find the next section
-                const currentIndex = Array.from(sections).indexOf(currentSection);
-                if (currentIndex < sections.length - 1) {
-                    // Scroll to the next section
-                    scrollToSection(sections[currentIndex + 1]);
-                }
-            }
+            scrollToNextElement();
         }
         
         // Check for arrow up key
         if (event.key === 'ArrowUp') {
-            // Find the current visible section
-            const currentSection = Array.from(sections).find(section => 
-                section.classList.contains('section-visible')
-            );
-            
-            if (currentSection) {
-                // Find the previous section
-                const currentIndex = Array.from(sections).indexOf(currentSection);
-                if (currentIndex > 0) {
-                    // Scroll to the previous section
-                    scrollToSection(sections[currentIndex - 1]);
-                }
-            }
+            scrollToPreviousElement();
+        }
+        
+        // Check for space key
+        if (event.key === ' ' && !event.repeat) {
+            scrollToNextElement();
         }
     });
+    
+    // Add navigation dots to the page
+    const navDots = document.createElement('div');
+    navDots.className = 'nav-dots';
+    navDots.style.position = 'fixed';
+    navDots.style.right = '20px';
+    navDots.style.top = '50%';
+    navDots.style.transform = 'translateY(-50%)';
+    navDots.style.zIndex = '100';
+    navDots.style.display = 'flex';
+    navDots.style.flexDirection = 'column';
+    navDots.style.gap = '10px';
+    
+    // Create a dot for each navigable element
+    navigableElements.forEach((element, index) => {
+        const dot = document.createElement('div');
+        dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
+        dot.setAttribute('data-section', index);
+        
+        // Add click event to each dot
+        dot.addEventListener('click', function() {
+            scrollToElement(navigableElements[index], index);
+        });
+        
+        navDots.appendChild(dot);
+    });
+    
+    // Add the navigation dots to the page
+    document.body.appendChild(navDots);
+    
+    // Update active dot when scrolling
+    function updateActiveDot() {
+        const dots = document.querySelectorAll('.nav-dot');
+        dots.forEach((dot, index) => {
+            if (index === currentSectionIndex) {
+                dot.classList.add('active');
+            } else {
+                dot.classList.remove('active');
+            }
+        });
+    }
+    
+    // Update active dot when scrolling to an element
+    const originalScrollToElement = scrollToElement;
+    scrollToElement = function(element, index) {
+        originalScrollToElement(element, index);
+        updateActiveDot();
+    };
 }); 
