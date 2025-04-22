@@ -74,6 +74,104 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Function to check if we're at the bottom of a section
+    function isAtBottomOfSection() {
+        const currentSection = navigableElements[currentSectionIndex];
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const sectionTop = currentSection.offsetTop;
+        const sectionBottom = sectionTop + currentSection.offsetHeight;
+        const windowHeight = window.innerHeight;
+        
+        // Check if we're at the bottom of the section
+        return scrollTop + windowHeight >= sectionBottom - 10; // 10px threshold
+    }
+    
+    // Function to check if we're at the top of a section
+    function isAtTopOfSection() {
+        const currentSection = navigableElements[currentSectionIndex];
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const sectionTop = currentSection.offsetTop;
+        
+        // Check if we're at the top of the section
+        return scrollTop <= sectionTop + 10; // 10px threshold
+    }
+    
+    // Function to check if we're in a special section that needs custom handling
+    function isInSpecialSection() {
+        const currentSection = navigableElements[currentSectionIndex];
+        return currentSection.classList.contains('quick-actions') || 
+               currentSection.classList.contains('features-section');
+    }
+    
+    // Function to check if we're in the footer
+    function isInFooter() {
+        return navigableElements[currentSectionIndex] === footer;
+    }
+    
+    // Function to check if we're in the quick-actions title area
+    function isInQuickActionsTitle(event) {
+        const quickActionsSection = document.querySelector('.quick-actions');
+        if (!quickActionsSection) return false;
+        
+        const titleElement = quickActionsSection.querySelector('.section-header');
+        if (!titleElement) return false;
+        
+        const rect = titleElement.getBoundingClientRect();
+        return rect.top <= 0 && rect.bottom >= 0;
+    }
+    
+    // Function to check if we're in a feature card
+    function isInFeatureCard(event) {
+        return event.target.closest('.feature-card') !== null;
+    }
+    
+    // Function to check if a feature card is at the top or bottom
+    function isFeatureCardAtBoundary(event, isTop) {
+        const featureCard = event.target.closest('.feature-card');
+        if (!featureCard) return false;
+        
+        const cardRect = featureCard.getBoundingClientRect();
+        const cardScrollTop = featureCard.scrollTop;
+        const cardScrollHeight = featureCard.scrollHeight;
+        const cardClientHeight = featureCard.clientHeight;
+        
+        if (isTop) {
+            // Check if we're at the top of the feature card
+            return cardScrollTop <= 10; // 10px threshold
+        } else {
+            // Check if we're at the bottom of the feature card
+            return cardScrollTop + cardClientHeight >= cardScrollHeight - 10; // 10px threshold
+        }
+    }
+    
+    // Function to check if we're in the quick-actions section
+    function isInQuickActions() {
+        const currentSection = navigableElements[currentSectionIndex];
+        return currentSection.classList.contains('quick-actions');
+    }
+
+    // Function to check if we're at the top of quick actions content
+    function isAtQuickActionsTop() {
+        const quickActionsSection = document.querySelector('.quick-actions');
+        if (!quickActionsSection) return false;
+        
+        const contentArea = quickActionsSection.querySelector('.scrollable-content');
+        if (!contentArea) return false;
+        
+        return contentArea.scrollTop <= 10; // 10px threshold
+    }
+
+    // Function to check if we're at the bottom of quick actions content
+    function isAtQuickActionsBottom() {
+        const quickActionsSection = document.querySelector('.quick-actions');
+        if (!quickActionsSection) return false;
+        
+        const contentArea = quickActionsSection.querySelector('.scrollable-content');
+        if (!contentArea) return false;
+        
+        return contentArea.scrollHeight - contentArea.scrollTop - contentArea.clientHeight <= 10; // 10px threshold
+    }
+    
     // Handle wheel events for element-by-element scrolling
     window.addEventListener('wheel', function(event) {
         // Check if the event originated from a scrollable container
@@ -83,19 +181,87 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Prevent default scroll behavior for main page sections
+        // Determine scroll direction
+        const scrollDown = event.deltaY > 0;
+        
+        // Check if we're in a feature card
+        if (isInFeatureCard(event)) {
+            // If we're at the top of the feature card and scrolling up, allow the event to propagate
+            if (!scrollDown && isFeatureCardAtBoundary(event, true)) {
+                // Let the event propagate to handle section navigation
+                return;
+            }
+            
+            // If we're at the bottom of the feature card and scrolling down, allow the event to propagate
+            if (scrollDown && isFeatureCardAtBoundary(event, false)) {
+                // Let the event propagate to handle section navigation
+                return;
+            }
+            
+            // Otherwise, allow natural scrolling within the feature card
+            return;
+        }
+        
+        // Special handling for quick-actions and features sections
+        if (isInSpecialSection()) {
+            // Only trigger next section when at the bottom and scrolling down
+            if (scrollDown && isAtBottomOfSection()) {
+                event.preventDefault();
+                scrollToNextElement();
+            }
+            // Otherwise, allow natural scrolling (including scrolling up)
+            return;
+        }
+        
+        // Special handling for footer
+        if (isInFooter()) {
+            // Only allow scrolling down from footer to next section
+            if (scrollDown && isAtBottomOfSection()) {
+                event.preventDefault();
+                scrollToNextElement();
+            }
+            // Allow natural scrolling up in footer
+            return;
+        }
+        
+        // Special handling for quick actions section
+        if (isInQuickActions()) {
+            // When scrolling up and at the top of content, go to previous section
+            if (!scrollDown && isAtQuickActionsTop()) {
+                event.preventDefault();
+                scrollToPreviousElement();
+                return;
+            }
+            
+            // When scrolling down and at the bottom of content, go to next section
+            if (scrollDown && isAtQuickActionsBottom()) {
+                event.preventDefault();
+                scrollToNextElement();
+                return;
+            }
+            
+            // Allow natural scrolling within the section
+            return;
+        }
+        
+        // For other sections, use the original section-by-section scrolling
         event.preventDefault();
         
         // Add a small delay to prevent rapid scrolling
         setTimeout(() => {
-            // Determine scroll direction
-            const scrollDown = event.deltaY > 0;
-            
             // Scroll to next or previous element based on direction
             if (scrollDown) {
                 scrollToNextElement();
             } else {
-                scrollToPreviousElement();
+                // Only allow scrolling up to previous section in quick-actions when in title area
+                if (currentSectionIndex > 0 && 
+                    navigableElements[currentSectionIndex - 1].classList.contains('quick-actions') && 
+                    isInQuickActionsTitle(event)) {
+                    scrollToPreviousElement();
+                } else if (!navigableElements[currentSectionIndex - 1].classList.contains('quick-actions')) {
+                    // For non-quick-actions sections, allow normal up navigation
+                    scrollToPreviousElement();
+                }
             }
         }, 50);
     }, { passive: false });
@@ -118,9 +284,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Check if the event originated from a scrollable container
         const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
         const quickActions = event.target.closest('.quick-actions');
+        const featuresSection = event.target.closest('.features-section');
+        const footer = event.target.closest('.site-footer');
+        const featureCard = event.target.closest('.feature-card');
         
-        // Allow natural scrolling for Quick Actions and scrollable containers
-        if (scrollableParent || quickActions) {
+        // Allow natural scrolling for Quick Actions, Features section, Footer, and scrollable containers
+        if (scrollableParent || quickActions || featuresSection || footer || featureCard) {
             return;
         }
         
@@ -130,6 +299,22 @@ document.addEventListener('DOMContentLoaded', function() {
         // Calculate touch direction
         const touchEndY = event.touches[0].clientY;
         const touchDiff = touchStartY - touchEndY;
+        
+        // Special handling for quick actions section
+        if (isInQuickActions()) {
+            if (Math.abs(touchDiff) > 50) {
+                if (touchDiff > 0 && isAtQuickActionsBottom()) {
+                    // Swipe up at bottom - go to next section
+                    event.preventDefault();
+                    scrollToNextElement();
+                } else if (touchDiff < 0 && isAtQuickActionsTop()) {
+                    // Swipe down at top - go to previous section
+                    event.preventDefault();
+                    scrollToPreviousElement();
+                }
+            }
+            return;
+        }
         
         // Determine if it's a significant swipe
         if (Math.abs(touchDiff) > 50) {
@@ -148,6 +333,42 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add keyboard navigation for accessibility
     document.addEventListener('keydown', function(event) {
+        // Special handling for quick-actions and features sections
+        if (isInSpecialSection()) {
+            // Only trigger next section when at the bottom and pressing down arrow or space
+            if ((event.key === 'ArrowDown' || event.key === ' ') && isAtBottomOfSection()) {
+                scrollToNextElement();
+            }
+            // Allow natural scrolling with arrow up key
+            return;
+        }
+        
+        // Special handling for footer
+        if (isInFooter()) {
+            // Only trigger next section when at the bottom and pressing down arrow or space
+            if ((event.key === 'ArrowDown' || event.key === ' ') && isAtBottomOfSection()) {
+                scrollToNextElement();
+            }
+            // Allow natural scrolling with arrow up key
+            return;
+        }
+        
+        // Special handling for quick actions section
+        if (isInQuickActions()) {
+            if (event.key === 'ArrowUp' && isAtQuickActionsTop()) {
+                scrollToPreviousElement();
+                return;
+            }
+            
+            if ((event.key === 'ArrowDown' || event.key === ' ') && isAtQuickActionsBottom()) {
+                scrollToNextElement();
+                return;
+            }
+            
+            // Allow natural scrolling within the section
+            return;
+        }
+        
         // Check for arrow down key
         if (event.key === 'ArrowDown') {
             scrollToNextElement();
@@ -155,7 +376,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Check for arrow up key
         if (event.key === 'ArrowUp') {
-            scrollToPreviousElement();
+            // Only allow scrolling up to previous section in quick-actions when in title area
+            if (currentSectionIndex > 0 && 
+                navigableElements[currentSectionIndex - 1].classList.contains('quick-actions') && 
+                isInQuickActionsTitle(event)) {
+                scrollToPreviousElement();
+            } else if (!navigableElements[currentSectionIndex - 1].classList.contains('quick-actions')) {
+                // For non-quick-actions sections, allow normal up navigation
+                scrollToPreviousElement();
+            }
         }
         
         // Check for space key
@@ -240,9 +469,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Prevent scroll events from bubbling up from scrollable containers
-    document.querySelectorAll('.scrollable-content, .scrollable-features').forEach(container => {
+    document.querySelectorAll('.scrollable-content, .scrollable-features, .feature-card').forEach(container => {
         container.addEventListener('scroll', (e) => {
             e.stopPropagation();
         });
     });
+    
+    // Add scroll event listener to detect when we reach the bottom of special sections
+    window.addEventListener('scroll', function() {
+        // Only check if we're in a special section
+        if (isInSpecialSection() && isAtBottomOfSection()) {
+            // Add a class to indicate we're at the bottom
+            navigableElements[currentSectionIndex].classList.add('at-bottom');
+        } else {
+            // Remove the class if we're not at the bottom
+            navigableElements[currentSectionIndex].classList.remove('at-bottom');
+        }
+    }, { passive: true });
 }); 

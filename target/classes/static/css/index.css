@@ -1045,7 +1045,7 @@ body {
 }
 
 /* Scrollbar styling for features grid */
-.features-grid::-webkit-scrollbar {
+/* .features-grid::-webkit-scrollbar {
     width: var(--scrollbar-width);
 }
 
@@ -1061,7 +1061,7 @@ body {
 
 .features-grid::-webkit-scrollbar-thumb:hover {
     background: var(--scrollbar-thumb-hover);
-}
+} */
 
 /* Footer */
 .site-footer {
