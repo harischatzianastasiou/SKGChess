@@ -92,7 +92,9 @@
                 <!-- Scroll Indicator -->
                 <div class="scroll-indicator">
                     <div class="arrow"></div>
-                    <span sec:authorize="isAuthenticated()">View Stats</span>
+                    <a href="#my-games-section" sec:authorize="isAuthenticated()" class="scroll-link">
+                        <span>View Stats</span>
+                    </a>
                     <span sec:authorize="!isAuthenticated()">About SKG Chess</span>
                 </div>
             </section>
@@ -195,7 +197,7 @@
             </section>
 
             <!-- Stats Section (Only for authenticated users) -->
-            <section class="content-section my-games-section section-hidden" sec:authorize="isAuthenticated()">
+            <section id="my-games-section" class="content-section my-games-section section-hidden last-section" sec:authorize="isAuthenticated()">
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-chart-line"></i>
@@ -313,26 +315,29 @@
             <section id="connect-section" class="section" sec:authorize="!isAuthenticated()">
                 <div class="section-header">
                     <h2>
-                        <i class="fas fa-envelope"></i>
-                        Get In Touch
+                        <i class="fas fa-code-branch"></i>
+                        Connect & Explore
                     </h2>
                 </div>
                 <div class="glass-effect">
                     <div class="connect-container">
-                        <p class="connect-intro">Feel free to reach out to me through any of these channels:</p>
+                        <p class="connect-intro">Feel free to explore my codebase on GitHub or connect with me through LinkedIn or email:</p>
                         <div class="connect-links">
-                            <a href="https://github.com/yourusername" target="_blank" class="connect-link">
+                            <a href="https://github.com/harischatzianastasiou" target="_blank" class="connect-link">
                                 <i class="fab fa-github"></i>
-                                <span>GitHub</span>
+                                <span>Explore My GitHub</span>
                             </a>
-                            <a href="https://linkedin.com/in/yourusername" target="_blank" class="connect-link">
+                            <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" target="_blank" class="connect-link">
                                 <i class="fab fa-linkedin"></i>
-                                <span>LinkedIn</span>
+                                <span>Connect on LinkedIn</span>
                             </a>
-                            <a href="mailto:your.email@example.com" class="connect-link">
+                            <a href="mailto:harischatzi@tutanota.com" class="connect-link">
                                 <i class="fas fa-envelope"></i>
-                                <span>Email</span>
+                                <span>Email Me</span>
                             </a>
+                        </div>
+                        <div class="connect-description">
+                            <p>I'm always interested in connecting with fellow developers and chess enthusiasts. Feel free to reach out for collaboration opportunities or just to chat about chess and coding!</p>
                         </div>
                     </div>
                 </div>
@@ -603,8 +608,90 @@
                     font-weight: 500;
                     color: #3498db;
                 }
+                
+                /* Footer spacer and last section styles */
+                .footer-spacer {
+                    height: 100px;
+                    width: 100%;
+                }
+                
+                .last-section {
+                    margin-bottom: 50px;
+                }
+                
+                .last-section .story-cta {
+                    display: none;
+                }
+                
+                /* Connect & Explore section styles */
+                .connect-container {
+                    padding: 2rem;
+                    text-align: center;
+                }
+                
+                .connect-intro {
+                    font-size: 1.2rem;
+                    margin-bottom: 2rem;
+                    color: #e0e0e0;
+                }
+                
+                .connect-links {
+                    display: flex;
+                    justify-content: center;
+                    gap: 2rem;
+                    margin-bottom: 2rem;
+                    flex-wrap: wrap;
+                }
+                
+                .connect-link {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    padding: 1.5rem;
+                    background: rgba(52, 152, 219, 0.1);
+                    border-radius: 10px;
+                    transition: all 0.3s ease;
+                    text-decoration: none;
+                    color: #e0e0e0;
+                    min-width: 180px;
+                }
+                
+                .connect-link:hover {
+                    transform: translateY(-5px);
+                    background: rgba(52, 152, 219, 0.2);
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+                }
+                
+                .connect-link i {
+                    font-size: 2rem;
+                    margin-bottom: 1rem;
+                    color: #3498db;
+                }
+                
+                .connect-link span {
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                }
+                
+                .connect-description {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 1.5rem;
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 10px;
+                    border-left: 3px solid #3498db;
+                }
+                
+                .connect-description p {
+                    margin: 0;
+                    line-height: 1.6;
+                    color: #e0e0e0;
+                }
             </style>
         </main>
+
+        <!-- Spacer for footer gap -->
+        <div class="footer-spacer"></div>
 
         <!-- Footer -->
         <footer class="site-footer">
@@ -710,6 +797,43 @@
                 closeJoinGameDialog();
             }
         }
+        
+        // Disable scroll to next section when in the "Your Stats" section
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all sections
+            const sections = document.querySelectorAll('section');
+            
+            // Find the "Your Stats" section
+            const statsSection = document.getElementById('my-games-section');
+            
+            if (statsSection) {
+                // Add a class to the body when the "Your Stats" section is visible
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            document.body.classList.add('in-stats-section');
+                        } else {
+                            document.body.classList.remove('in-stats-section');
+                        }
+                    });
+                }, { threshold: 0.5 });
+                
+                observer.observe(statsSection);
+                
+                // Override the scrollToSection function when in the "Your Stats" section
+                const originalScrollToSection = window.scrollToSection;
+                window.scrollToSection = function(index) {
+                    if (document.body.classList.contains('in-stats-section')) {
+                        // If we're in the "Your Stats" section, don't scroll to the next section
+                        return;
+                    }
+                    // Otherwise, use the original function
+                    if (originalScrollToSection) {
+                        originalScrollToSection(index);
+                    }
+                };
+            }
+        });
     </script>
 </body>
 </html> 
