@@ -93,11 +93,11 @@
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-chess-knight"></i>
-                        Welcome to SKG Chess
+                        A few words about SKG Chess
                     </h2>
                 </div>
                 <!-- Welcome Story -->
-                <div class="scrollable-features glass-effect">
+                <div class="glass-effect">
                     <div class="story-content">
                         <!-- Personal Introduction -->
                         <div class="author-intro">
@@ -106,38 +106,24 @@
                             </div>
                             <div class="story-text-wrapper">
                                 <p class="story-text greeting">
-                                    Hello! I'm Haris, and I'm excited to welcome you to SKG Chess. This platform is designed to help you play chess online with friends. Hope you enjoy the game!
+                                    Hello! I'm Haris and I'm excited to welcome you to my chess platform. As a software developer with a love for the game of chess, I created SKG Chess as a way to combine my passion for software development with my interest in the game.
                                 </p>
+                                <div class="intro-text">
+                                    <p class="story-text">Below you can find the story of how this project came to life</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Platform Overview -->
-                        <div class="platform-overview">
-                            <h3><i class="fas fa-chess"></i> Features </h3>
-                            <!-- Core Features -->
-                            <div class="story-paragraph">
-                                <p class="story-text">
-                                    SKG Chess offers a range of features to enhance your chess experience:
-                                </p>
-                            </div>
-                            <ul class="feature-list">
-                                <li>Play against friends</li>
-                                <li>Customize your board and pieces while in game</li>
-                                <li>Keep track of your match history</li>
-                            </ul>
-                        </div>
-
+                        <!-- Development Story - Now displayed without scrolling -->
                         <div class="development-story">
-                            <h3><i class="fas fa-code"></i> SKG Chess Development Story</h3>
-                            
                             <div class="story-timeline">
                                 <div class="story-step" data-step="1">
                                     <div class="story-icon">
                                         <i class="fas fa-lightbulb"></i>
                                     </div>
                                     <div class="story-content">
-                                        <h4>The Idea</h4>
-                                        <p>SKG Chess (named after my hometown Thessaloniki) is an ongoing project I developed out of my passion for chess and software development.</p>
+                                        <h4>The Idea</h4> 
+                                        <p>The idea was to create a chess engine that would be able to play against a human opponent. I was mainly interested in how the chess logic and rules are applied in code and this began my journey into the world of chess programming.</p>
                                     </div>
                                 </div>
                                 
@@ -146,8 +132,8 @@
                                         <i class="fas fa-search"></i>
                                     </div>
                                     <div class="story-content">
-                                        <h4>The Inspiration</h4>
-                                        <p>Having spent many hours on renowned chess platforms, I chose to build a chess application to explore how chess logic and rules are applied in code.</p>
+                                        <h4>The first steps</h4>
+                                        <p>I chose Java programming language to develop the project as its object-oriented nature aligns well with chess thinking. After a few months exploring and honing the game logic, I started adding more and more features to make the experience more engaging.</p>
                                     </div>
                                 </div>
                                 
@@ -156,8 +142,8 @@
                                         <i class="fab fa-java"></i>
                                     </div>
                                     <div class="story-content">
-                                        <h4>The Technology Choice</h4>
-                                        <p>I chose Java programming language as its object-oriented nature aligns well with chess thinking.</p>
+                                        <h4>The evolution</h4>
+                                        <p>My passion for chess and growing experience in backend development at that time inspired me to evolve it into what you see today, a full-stack web application using Spring Boot framework! The name SKG Chess was inspired by my hometown, Thessaloniki.</p>
                                     </div>
                                 </div>
                                 
@@ -166,18 +152,8 @@
                                         <i class="fas fa-expand-arrows-alt"></i>
                                     </div>
                                     <div class="story-content">
-                                        <h4>The Evolution</h4>
-                                        <p>My passion for chess and growing expertise in backend development at that time inspired me to evolve it into a full-stack web application using Spring Boot.</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="story-step" data-step="5">
-                                    <div class="story-icon">
-                                        <i class="fas fa-cogs"></i>
-                                    </div>
-                                    <div class="story-content">
                                         <h4>The Features</h4>
-                                        <p>The project encompasses real-time communication, user authentication, database persistence, security, and other enterprise-grade features, allowing me to expand my technical expertise while building something meaningful.</p>
+                                        <p>The project encompasses real-time communication with WebSockets (real-time gameplay and game chat), customizable game themes, match history, and rating system.</p>
                                     </div>
                                 </div>
                                 
@@ -187,7 +163,7 @@
                                     </div>
                                     <div class="story-content">
                                         <h4>The Future</h4>
-                                        <p>Today's version represents the initial implementation, and I aim to continuously improve it to enhance my backend development skills, with plans to make it useful for the local chess community in Thessaloniki.</p>
+                                        <p>Today's version represents the initial implementation. My goal is to continuously improve it to enhance my backend development skills, with plans to make it useful for the local chess community in Thessaloniki.</p>
                                     </div>
                                 </div>
                             </div>
@@ -200,259 +176,12 @@
                             
                             <!-- Call to Action -->
                             <div class="story-cta">
-                                <p class="story-text">
-                                    Ready to start your chess journey? Create an account to play your first game, or explore a <a href="/about">technical documentation</a> to learn more about the implementation.
-                                </p>
+                                <a href="#features-section" class="scroll-link">
+                                    <p class="story-text">Explore tech stack</p>
+                                </a>
                             </div>
                         </div>
-
-                        <style>
-                            .story-container {
-                                display: flex;
-                                flex-direction: column;
-                                gap: 1.5rem;
-                                padding: 1rem 0;
-                            }
-                            
-                            .story-paragraph {
-                                position: relative;
-                                padding-left: 1.5rem;
-                                border-left: 3px solid #3498db;
-                                transition: all 0.3s ease;
-                            }
-                            
-                            .story-paragraph:hover {
-                                background-color: rgba(52, 152, 219, 0.05);
-                                transform: translateX(5px);
-                            }
-                            
-                            .story-text {
-                                margin: 0;
-                                line-height: 1.6;
-                                font-size: 1.05rem;
-                            }
-                            
-                            .development-story {
-                                margin-top: 2rem;
-                                padding-top: 1rem;
-                                border-top: 1px solid rgba(52, 152, 219, 0.2);
-                            }
-                            
-                            .development-story h3 {
-                                margin-bottom: 1.5rem;
-                            }
-                            
-                            .feature-list {
-                                list-style-type: none;
-                                padding-left: 0;
-                                margin-top: 0.5rem;
-                                margin-bottom: 1.5rem;
-                            }
-                            
-                            .feature-list li {
-                                margin-bottom: 0.5rem;
-                                padding-left: 1.5rem;
-                                position: relative;
-                            }
-                            
-                            .feature-list li:before {
-                                content: "•";
-                                position: absolute;
-                                left: 0;
-                                color: #3498db;
-                            }
-                            
-                            /* Story Timeline Styles */
-                            .story-timeline {
-                                position: relative;
-                                width: 100%;
-                                margin: 0 auto;
-                                padding: 20px;
-                            }
-                            
-                            .story-timeline:before {
-                                content: '';
-                                position: absolute;
-                                width: 4px;
-                                background-color: #3498db;
-                                top: 0;
-                                bottom: 0;
-                                left: 30px;
-                                border-radius: 2px;
-                            }
-                            
-                            .story-step {
-                                position: relative;
-                                margin-bottom: 30px;
-                                opacity: 0.3;
-                                transform: translateX(-20px);
-                                transition: all 0.5s ease;
-                                display: none;
-                                width: 100%;
-                            }
-                            
-                            .story-step.active {
-                                opacity: 1;
-                                transform: translateX(0);
-                                display: block;
-                            }
-                            
-                            .story-icon {
-                                position: absolute;
-                                width: 40px;
-                                height: 40px;
-                                border-radius: 50%;
-                                background-color: #3498db;
-                                left: 12px;
-                                top: 0;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                color: white;
-                                z-index: 1;
-                                box-shadow: 0 0 0 6px rgba(52, 152, 219, 0.2);
-                            }
-                            
-                            .story-content {
-                                margin-left: 70px;
-                                margin-right: 20px;
-                                background: rgba(255, 255, 255, 0.1);
-                                padding: 20px;
-                                align-items: center;
-                                border-radius: 8px;
-                                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-                                backdrop-filter: blur(10px);
-                                border: 1px solid rgba(52, 152, 219, 0.2);
-                                transition: all 0.3s ease;
-                                text-align: center;
-                                max-width: 80%;
-                                margin-left: auto;
-                                margin-right: auto;
-                            }
-                            
-                            /* .story-content:hover {
-                                transform: translateY(-5px);
-                                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                            } */
-                            
-                            .story-content h4 {
-                                margin-top: 0;
-                                color: #3498db;
-                                font-size: 1.2rem;
-                                margin-bottom: 10px;
-                            }
-                            
-                            .story-content p {
-                                margin: 0;
-                                line-height: 1.6;
-                                color: #e0e0e0;
-                            }
-                            
-                            .development-story {
-                                background: rgba(0, 0, 0, 0.2);
-                                border-radius: 12px;
-                                padding: 30px;
-                                margin: 20px 0;
-                            }
-                            
-                            .development-story h3 {
-                                color: #3498db;
-                                margin-bottom: 30px;
-                                text-align: center;
-                            }
-                            
-                            .story-navigation {
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                margin-top: 30px;
-                                gap: 20px;
-                            }
-                            
-                            .story-nav-btn {
-                                background: #3498db;
-                                color: white;
-                                border: none;
-                                width: 40px;
-                                height: 40px;
-                                border-radius: 50%;
-                                display: flex;
-                                align-items: center;
-                                justify-content: center;
-                                cursor: pointer;
-                                transition: all 0.3s ease;
-                            }
-                            
-                            .story-nav-btn:hover {
-                                background: #2980b9;
-                                transform: scale(1.1);
-                            }
-                            
-                            .story-nav-btn:disabled {
-                                background: #95a5a6;
-                                cursor: not-allowed;
-                                transform: none;
-                            }
-                            
-                            #story-progress {
-                                font-size: 1.1rem;
-                                font-weight: 500;
-                                color: #3498db;
-                            }
-                        </style>
-                        
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const storySteps = document.querySelectorAll('.story-step');
-                                const prevBtn = document.getElementById('prev-story');
-                                const nextBtn = document.getElementById('next-story');
-                                const progressText = document.getElementById('story-progress');
-                                
-                                let currentStep = 0;
-                                
-                                // Initialize the first step
-                                updateStoryDisplay();
-                                
-                                // Event listeners for navigation buttons
-                                prevBtn.addEventListener('click', function() {
-                                    if (currentStep > 0) {
-                                        currentStep--;
-                                        updateStoryDisplay();
-                                    }
-                                });
-                                
-                                nextBtn.addEventListener('click', function() {
-                                    if (currentStep < storySteps.length - 1) {
-                                        currentStep++;
-                                        updateStoryDisplay();
-                                    }
-                                });
-                                
-                                function updateStoryDisplay() {
-                                    // Hide all steps
-                                    storySteps.forEach(step => {
-                                        step.classList.remove('active');
-                                    });
-                                    
-                                    // Show current step
-                                    storySteps[currentStep].classList.add('active');
-                                    
-                                    // Update progress text
-                                    progressText.textContent = `${currentStep + 1}/${storySteps.length}`;
-                                    
-                                    // Update button states
-                                    prevBtn.disabled = currentStep === 0;
-                                    nextBtn.disabled = currentStep === storySteps.length - 1;
-                                }
-                            });
-                        </script>
                     </div>
-                </div>
-                
-                <!-- Scroll Indicator -->
-                <div class="scroll-indicator">
-                    <div class="arrow"></div>
-                    <span>Tech Stack</span>
                 </div>
             </section>
 
@@ -517,7 +246,7 @@
                         Tech Stack
                     </h2>
                 </div>
-                <div class="scrollable-features glass-effect">
+                <div class="glass-effect">
                     <div class="features-grid">
                         <div class="feature-card">
                             <div class="feature-icon">
@@ -560,6 +289,35 @@
                             </div>
                             <h3>Project Structure</h3>
                             <p>Modular architecture with separate packages for core logic, security, data persistence, controllers, services, DTOs, exception handling, and configuration</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Let's Connect Section - Only visible to non-authenticated users -->
+            <section id="connect-section" class="section" sec:authorize="!isAuthenticated()">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-envelope"></i>
+                        Get In Touch
+                    </h2>
+                </div>
+                <div class="glass-effect">
+                    <div class="connect-container">
+                        <p class="connect-intro">Feel free to reach out to me through any of these channels:</p>
+                        <div class="connect-links">
+                            <a href="https://github.com/yourusername" target="_blank" class="connect-link">
+                                <i class="fab fa-github"></i>
+                                <span>GitHub</span>
+                            </a>
+                            <a href="https://linkedin.com/in/yourusername" target="_blank" class="connect-link">
+                                <i class="fab fa-linkedin"></i>
+                                <span>LinkedIn</span>
+                            </a>
+                            <a href="mailto:your.email@example.com" class="connect-link">
+                                <i class="fas fa-envelope"></i>
+                                <span>Email</span>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -676,6 +434,148 @@
                     left: 0;
                     color: #3498db;
                 }
+
+                /* Story Timeline Styles */
+                .story-timeline {
+                    position: relative;
+                    width: 100%;
+                    margin: 0 auto;
+                    padding: 20px;
+                    min-height: 300px;
+                }
+                
+                .story-timeline:before {
+                    content: '';
+                    position: absolute;
+                    width: 4px;
+                    background-color: #3498db;
+                    top: 0;
+                    bottom: 0;
+                    left: 30px;
+                    border-radius: 2px;
+                }
+                
+                .story-step {
+                    position: absolute;
+                    margin-bottom: 30px;
+                    opacity: 0.3;
+                    transform: translateX(-20px);
+                    transition: all 0.5s ease;
+                    display: none;
+                    width: 100%;
+                    top: 0;
+                    left: 0;
+                }
+                
+                .story-step.active {
+                    opacity: 1;
+                    transform: translateX(0);
+                    display: block;
+                    position: relative;
+                }
+                
+                .story-icon {
+                    position: absolute;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    background-color: #3498db;
+                    left: 12px;
+                    top: 0;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    color: white;
+                    z-index: 1;
+                    box-shadow: 0 0 0 6px rgba(52, 152, 219, 0.2);
+                }
+                
+                .story-content {
+                    margin-left: 70px;
+                    margin-right: 20px;
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 20px;
+                    align-items: center;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(52, 152, 219, 0.2);
+                    transition: all 0.3s ease;
+                    text-align: center;
+                    max-width: 80%;
+                    margin-left: auto;
+                    margin-right: auto;
+                    min-height: 200px;
+                    height: auto;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                }
+                
+                .story-content h4 {
+                    margin-top: 0;
+                    color: #3498db;
+                    font-size: 1.2rem;
+                    margin-bottom: 10px;
+                }
+                
+                .story-content p {
+                    margin: 0;
+                    line-height: 1.6;
+                    color: #e0e0e0;
+                }
+                
+                .development-story {
+                    background: rgba(0, 0, 0, 0.2);
+                    border-radius: 12px;
+                    padding: 30px;
+                    margin: 20px 0;
+                }
+                
+                .development-story h3 {
+                    color: #3498db;
+                    margin-bottom: 30px;
+                    text-align: center;
+                }
+                
+                .story-navigation {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-top: 30px;
+                    gap: 20px;
+                }
+                
+                .story-nav-btn {
+                    background: #3498db;
+                    color: white;
+                    border: none;
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+                
+                .story-nav-btn:hover {
+                    background: #2980b9;
+                    transform: scale(1.1);
+                }
+                
+                .story-nav-btn:disabled {
+                    background: #95a5a6;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+                
+                #story-progress {
+                    font-size: 1.1rem;
+                    font-weight: 500;
+                    color: #3498db;
+                }
             </style>
         </main>
 
@@ -719,5 +619,51 @@
 
     <!-- Accessibility Skip Link (hidden visually) -->
     <a href="#main-content" class="screen-reader-only">Skip to main content</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const storySteps = document.querySelectorAll('.story-step');
+            const prevBtn = document.getElementById('prev-story');
+            const nextBtn = document.getElementById('next-story');
+            const progressText = document.getElementById('story-progress');
+            
+            let currentStep = 0;
+            
+            // Initialize the first step
+            updateStoryDisplay();
+            
+            // Event listeners for navigation buttons
+            prevBtn.addEventListener('click', function() {
+                if (currentStep > 0) {
+                    currentStep--;
+                    updateStoryDisplay();
+                }
+            });
+            
+            nextBtn.addEventListener('click', function() {
+                if (currentStep < storySteps.length - 1) {
+                    currentStep++;
+                    updateStoryDisplay();
+                }
+            });
+            
+            function updateStoryDisplay() {
+                // Hide all steps
+                storySteps.forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                // Show current step
+                storySteps[currentStep].classList.add('active');
+                
+                // Update progress text
+                progressText.textContent = `${currentStep + 1}/${storySteps.length}`;
+                
+                // Update button states
+                prevBtn.disabled = currentStep === 0;
+                nextBtn.disabled = currentStep === storySteps.length - 1;
+            }
+        });
+    </script>
 </body>
 </html> 

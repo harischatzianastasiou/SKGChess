@@ -95,4 +95,20 @@ section, .site-footer {
 .nav-dot.active {
     background-color: #ffffff; /* Fully white when active */
     transform: scale(1.2); /* Slightly larger when active */
+}
+
+/* Remove any internal scrollbars */
+body {
+    overflow-y: auto; /* Only allow vertical scrolling on the body */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+/* Ensure no internal scrollbars appear */
+.home-container {
+    overflow: visible; /* Prevent internal scrollbars */
+}
+
+/* Ensure sections don't have internal scrollbars */
+.content-section {
+    overflow: visible; /* Prevent internal scrollbars */
 } 
