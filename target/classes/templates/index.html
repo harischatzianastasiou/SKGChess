@@ -65,18 +65,27 @@
             <section class="hero-section">
                 <div class="hero-content">
                     <h1 sec:authorize="!isAuthenticated()">Welcome to SKG Chess</h1>
-                    <h1 sec:authorize="isAuthenticated()">Welcome, <span sec:authentication="name"></span>!</h1>
+                    <h1 sec:authorize="isAuthenticated()">Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>
                     <p sec:authorize="!isAuthenticated()">Join to challenge your friends and improve your chess skills!</p>
                     <p sec:authorize="isAuthenticated()">It's great to see you!</p>
                     <div class="cta-buttons">
-                        <a href="/login" class="btn btn-primary">
+                        <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
                             New Game
                         </a>
-                        <a th:href="${#authorization.expression('isAuthenticated()')} ? '/about' : '#features-section'" class="btn btn-secondary">
-                            <i class="fas fa-info-circle"></i>
-                            Learn More
+                        <button sec:authorize="isAuthenticated()" onclick="newGame()" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            New Game
+                        </button>
+                        <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-secondary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Join Game
                         </a>
+                        <button sec:authorize="isAuthenticated()" onclick="showJoinGameDialog()" class="btn btn-secondary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Join Game
+                        </button>
+
                     </div>
                 </div>
                 
@@ -239,7 +248,7 @@
             </section>
 
             <!-- About SKG Chess Development Section -->
-            <section id="features-section" class="content-section features-section section-hidden">
+            <section id="features-section" class="content-section features-section section-hidden" sec:authorize="!isAuthenticated()">
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-code"></i>
@@ -292,6 +301,12 @@
                         </div>
                     </div>
                 </div>
+                <!-- Tech Stack Arrow Indicator -->
+                <div class="story-cta">
+                    <a href="#connect-section" class="scroll-link">
+                        <p class="story-text">Continue exploring</p>
+                    </a>
+                </div>
             </section>
 
             <!-- Let's Connect Section - Only visible to non-authenticated users -->
@@ -322,6 +337,18 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Add Join Game Dialog -->
+            <div id="joinGameDialog" class="modal">
+                <div class="modal-content">
+                    <h2>Join Game</h2>
+                    <div class="input-group">
+                        <input type="text" id="gameIdInput" placeholder="Enter Game ID">
+                        <button onclick="handleJoinGame()" class="btn btn-primary">Join</button>
+                    </div>
+                    <button onclick="closeJoinGameDialog()" class="btn btn-secondary">Cancel</button>
+                </div>
+            </div>
 
             <style>
                 .technical-details {
@@ -664,6 +691,25 @@
                 nextBtn.disabled = currentStep === storySteps.length - 1;
             }
         });
+
+        // Join Game Dialog Functions
+        function showJoinGameDialog() {
+            const dialog = document.getElementById('joinGameDialog');
+            dialog.style.display = 'flex';
+        }
+
+        function closeJoinGameDialog() {
+            const dialog = document.getElementById('joinGameDialog');
+            dialog.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const dialog = document.getElementById('joinGameDialog');
+            if (event.target === dialog) {
+                closeJoinGameDialog();
+            }
+        }
     </script>
 </body>
 </html> 

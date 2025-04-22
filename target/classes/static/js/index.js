@@ -3,7 +3,7 @@
 let stompClient = null; // Initialize stompClient to manage WebSocket connection
 let reconnectAttempts = 0; // Counter for reconnection attempts
 const maxReconnectAttempts = 5; // Maximum number of reconnection attempts
-const username = document.getElementById('username').textContent; // Get the username from the HTML
+const username = document.querySelector('h1 span[sec\\:authentication="name"]').textContent; // Get the username from the HTML
 
 // Connect when page loads
 // connect();
@@ -63,8 +63,14 @@ function connect() {
 }
 
 function newGame() {
-    // Get the username from the page
-    const username = document.getElementById('username').textContent;
+    // Get the username from the welcome message span using data-username attribute
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    if (!usernameElement) {
+        console.error('Username element not found');
+        alert('Error: Could not find username. Please try logging in again.');
+        return;
+    }
+    const username = usernameElement.textContent;
     console.log("Username for matchmaking:", username);
     
     // Create the request body according to CreateGameRequestDTO
@@ -119,6 +125,14 @@ function newGame() {
 }
 
 function joinGame(gameId) {
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    if (!usernameElement) {
+        console.error('Username element not found');
+        alert('Error: Could not find username. Please try logging in again.');
+        return;
+    }
+    const username = usernameElement.textContent;
+    console.log("Username for matchmaking:", username);
      // Create the request body according to CreateGameRequestDTO
      const requestBody = {
         username: username,
@@ -550,4 +564,22 @@ function monitorPerformance() {
 }
 
 // Initialize performance monitoring
-document.addEventListener('DOMContentLoaded', monitorPerformance); 
+document.addEventListener('DOMContentLoaded', monitorPerformance);
+
+// Function to handle join game dialog submission
+function handleJoinGame() {
+    const gameIdInput = document.getElementById('gameIdInput');
+    const gameId = gameIdInput.value.trim();
+    
+    if (!gameId) {
+        alert('Please enter a game ID');
+        return;
+    }
+    
+    // Call the joinGame function with the entered game ID
+    joinGame(gameId);
+    
+    // Clear the input and close the dialog
+    gameIdInput.value = '';
+    closeJoinGameDialog();
+} 
