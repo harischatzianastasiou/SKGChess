@@ -75,16 +75,54 @@ body {
     align-items: center;
     text-decoration: none;
     gap: 8px;
+    position: relative; /* For absolute positioning of pseudo-element */
 }
 
 .logo-img {
     height: 32px;
     width: auto;
-    transition: transform 0.15s ease;
 }
 
-.logo-img:hover {
-    transform: scale(1.05);
+/* Add shake animation for the logo */
+@keyframes logoShake {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(2deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(-1.7deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.logo-container:hover .logo-img {
+    animation: logoShake 0.3s ease;
+}
+
+/* Board swap effect using CSS only */
+.logo-container::after {
+    content: '';
+    position: absolute;
+    top: 12%;
+    left: -22.5%;
+    right: 0;
+    width: 72%;
+    height: 72%;
+    background-image: url('/images/skgchessicon.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 0s ease;
+    pointer-events: none;
+    z-index: 1;
+    /* Add image rendering properties to improve quality */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
+}
+
+.logo-container:hover::after {
+    opacity: 1;
 }
 
 .user-info {

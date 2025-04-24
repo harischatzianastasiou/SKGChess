@@ -1,0 +1,29 @@
+/* Logo swap effect */
+.logo-container {
+    position: relative;
+    width: 150px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+}
+
+.logo-img {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Board swap effect */
+.board-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 1;
+} 

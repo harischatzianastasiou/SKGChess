@@ -35,4 +35,16 @@ public abstract class Player {
 	public Alliance getAlliance() {
 		return this.alliance;
 	}
+
+	public boolean isInCheckmate() {
+		return false; // Default implementation
+	}
+
+	public boolean isInCheck() {
+		return false; // Default implementation
+	}
+
+	public boolean isStalemate() {
+		return false; // Default implementation
+	}
 }
