@@ -43,12 +43,13 @@
             </a>
             <div class="header-right">
                 <div sec:authorize="isAuthenticated()">
-                    <span style="color: white; margin-right: 16px;">Welcome, <span sec:authentication="name" id="username"></span>!</span>
+                    <a href="/" class="btn btn-home">Home</a>
                     <form th:action="@{/logout}" method="post" style="display: inline;">
                         <button type="submit" class="btn btn-sign-in">Sign Out</button>
                     </form>
                 </div>
                 <div sec:authorize="!isAuthenticated()">
+                    <a href="/" class="btn btn-home">Home</a>
                     <a href="/login" class="btn btn-sign-in">Sign In</a>
                 </div>
             </div>
@@ -63,7 +64,7 @@
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-chess-knight"></i>
-                        A few words about SKG Chess
+                        Welcome to SKG Chess
                     </h2>
                 </div>
                 <!-- Welcome Story -->
@@ -76,7 +77,7 @@
                             </div>
                             <div class="story-text-wrapper">
                                 <p class="story-text greeting">
-                                    Hello! I'm Haris and I'm excited to welcome you to my chess platform. As a software developer with a love for the game of chess, I created SKG Chess as a way to combine my passion for software development with my interest in the game.
+                                    Hello there! I'm Haris and I'm excited to welcome you to my chess platform. As a software developer with a love for the game of chess, I created SKG Chess as a way to combine my passion for software development with my interest in the game.
                                 </p>
                                 <div class="intro-text">
                                     <p class="story-text">Below you can find the story of how this project came to life</p>

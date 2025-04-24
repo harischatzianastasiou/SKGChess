@@ -33,7 +33,7 @@
             </a>
             <div class="header-right">
                 <div sec:authorize="isAuthenticated()">
-                    <span style="color: white; margin-right: 16px;">Welcome, <span sec:authentication="name" id="username"></span>!</span>
+                    <span sec:authentication="name" id="username" style="display: none;"></span>
                     <form th:action="@{/logout}" method="post" style="display: inline;">
                         <button type="submit" class="btn btn-sign-in">Sign Out</button>
                     </form>

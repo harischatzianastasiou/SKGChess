@@ -43,11 +43,11 @@
             </a>
             <div class="header-right">
                 <div class="header-auth">
-                    <a href="/about" class="btn-about">
-                        <i class="fas fa-info-circle"></i>
-                        About
-                    </a>
                     <div sec:authorize="isAuthenticated()">
+                        <a href="/about" class="btn-home">
+                            <i class="fas fa-info-circle"></i>
+                            About
+                        </a>
                         <button onclick="handleSignOut()" class="btn-sign-out">
                             <i class="fas fa-sign-out-alt"></i>
                             Sign Out
@@ -89,15 +89,25 @@
                             <i class="fas fa-sign-in-alt"></i>
                             Join Game
                         </button>
-
+                    </div>
+                    
+                    <!-- About Logo with Hover Message -->
+                    <div class="about-logo-container" sec:authorize="!isAuthenticated()">
+                        <div class="about-logo">
+                            <img src="/images/skgchessicon.png" alt="SKG Chess Logo" class="bouncing-logo">
+                            <div class="about-message">
+                                <p> 👀Hi there! Thanks for checking out SKG Chess! In case you want to learn more about the development journey and the story behind SKG Chess, click below.</p>
+                                <a href="/about" class="about-link"> SKG Chess Story </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <!-- Scroll Indicator -->
-                <div class="scroll-indicator" sec:authorize="isAuthenticated()">
-                    <div class="arrow"></div>
-                    <a href="#my-games-section" class="scroll-link">
-                        <span>View Stats</span>
+                <div class="view-stats-button" sec:authorize="isAuthenticated()">
+                    <a href="#my-games-section" class="btn btn-stats">
+                        <i class="fas fa-chart-line"></i>
+                        View Stats
                     </a>
                 </div>
             </section>
