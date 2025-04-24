@@ -54,7 +54,8 @@ public class SecurityConfig {
                 "/images/**", 
                 "/error",
                 "/api/games/**",  // Allow access to games API endpoints
-                "/index"     // Allow access to index page without authentication
+                "/index",
+                "/about"     // Allow access to index page without authentication
             ).permitAll();
             registry.anyRequest().authenticated();
         })

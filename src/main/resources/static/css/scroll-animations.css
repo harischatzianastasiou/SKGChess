@@ -81,7 +81,28 @@ section, .site-footer {
     transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition */
 }
 
-/* Active section indicator in navigation */
+/* Hide scrollbar for non-authenticated users ONLY ON INDEX PAGE */
+body:not(.authenticated) .home-container {
+    overflow: hidden;
+    height: 100vh;
+    position: fixed;
+    width: 100%;
+}
+
+/* Show scrollbar for authenticated users and about page */
+body.authenticated,
+.about-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Hide navigation dots for non-authenticated users */
+body:not(.authenticated) .nav-dot {
+    display: none;
+}
+
+/* Active section indicator in navigation (only for authenticated users) */
 .nav-dot {
     width: 10px; /* Small dot size */
     height: 10px; /* Small dot size */

@@ -73,6 +73,11 @@ public class MainController {
     public String root(){
         return "redirect:/index";
     }
+
+    @GetMapping("/about")
+    public String about(){
+        return "about";
+    }
 }
 
 // Get requests to /req/login and /req/signup return HTML templates AS @Controller is for views
