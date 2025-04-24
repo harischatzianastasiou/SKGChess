@@ -12,7 +12,8 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/css/game.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/board.css">
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/images/skgchessicon.png">
     <!-- WebSocket libraries -->
@@ -22,77 +23,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <!-- Custom JavaScript -->
     <script th:inline="javascript" src="/js/game.js" defer></script>
-    <style>
-        /* Header styles to match index page */
-        .header {
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            transform: translateZ(0);
-            will-change: transform;
-            padding: 10px 20px;
-            box-sizing: border-box;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 80px;
-            overflow: visible;
-        }
-
-        .logo-container {
-            width: 150px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-img {
-            width: 100%;
-            height: auto;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            height: 100%;
-        }
-
-        .btn-sign-in {
-            background: #8321ad;
-            color: white;
-            border: none;
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: 36px;
-            white-space: nowrap;
-        }
-
-        .btn-sign-in:hover {
-            background: #9b27d0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(131, 33, 173, 0.3);
-        }
-
-        /* Adjust game layout to account for fixed header */
-        .game-layout {
-            padding-top: 80px;
-            height: calc(100vh - 80px);
-        }
-    </style>
 </head>
 <body>
     <div class="game-layout">
