@@ -3,10 +3,18 @@
 let stompClient = null; // Initialize stompClient to manage WebSocket connection
 let reconnectAttempts = 0; // Counter for reconnection attempts
 const maxReconnectAttempts = 5; // Maximum number of reconnection attempts
-const username = document.querySelector('h1 span[sec\\:authentication="name"]').textContent; // Get the username from the HTML
+const username = document.querySelector('h1 span[sec\\:authentication="name"]')?.textContent || ''; // Get the username from the HTML
 
 // Connect when page loads
 // connect();
+
+// Check for pending actions after page load
+document.addEventListener('DOMContentLoaded', function() {
+    // If user is authenticated, check for pending actions
+    if (document.body.classList.contains('authenticated')) {
+        handlePendingAction();
+    }
+});
 
 // Function to connect to the WebSocket
 function connect() {
@@ -307,34 +315,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const scrollDebounceTime = 100; // Minimum time between scroll events in milliseconds
     const body = document.body;
     const sections = document.querySelectorAll('section');
-    
-    // Ensure the scroll indicator is visible in the hero section
-    const heroSection = document.querySelector('.hero-section');
-    if (heroSection) {
-        // Remove any existing scroll indicators first
-        const existingIndicators = heroSection.querySelectorAll('.scroll-indicator');
-        existingIndicators.forEach(indicator => indicator.remove());
-        
-        // Create a new scroll indicator
-        const indicator = document.createElement('div');
-        indicator.className = 'scroll-indicator';
-        
-        // Check if user is authenticated to set the appropriate text
-        const isAuthenticated = document.querySelector('.user-welcome') !== null;
-        indicator.innerHTML = `<div class="arrow"></div><span>${isAuthenticated ? 'View Stats' : 'Scroll Down'}</span>`;
-        
-        // Add click event to scroll to the next section
-        indicator.addEventListener('click', () => {
-            scrollToSection(1); // Scroll to the next section (index 1)
-        });
-        
-        // Append the indicator to the hero section
-        heroSection.appendChild(indicator);
-        
-        // Make sure it's visible
-        indicator.style.opacity = '1';
-        indicator.style.display = 'flex';
-    }
     
     // Intersection Observer for progressive loading and animations
     const observer = new IntersectionObserver((entries) => {

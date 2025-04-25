@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/css/scroll-animations.css">
     <link rel="stylesheet" href="/css/smoke-particles.css">
     <link rel="stylesheet" href="/css/landing-animations.css">
+    <link rel="stylesheet" href="/css/modal.css">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/images/skgchessicon.png">
@@ -36,6 +37,7 @@
     <script src="/js/bouncing-logo.js" defer></script>
     <script src="/js/scroll-animations.js" defer></script>
     <script src="/js/smoke-particles.js" defer></script>
+    <script src="/js/modal.js" defer></script>
 </head>
 <body th:classappend="${#authorization.expression('isAuthenticated()')} ? 'authenticated'">
     <!-- Smoke Particles Container - Moved to top to ensure it's behind all content -->
@@ -60,7 +62,7 @@
                         </button>
                     </div>
                     <div sec:authorize="!isAuthenticated()">
-                        <a href="/login" class="btn-sign-in">
+                        <a href="#" onclick="openLoginModal(); return false;" class="btn-sign-in">
                             <i class="fas fa-sign-in-alt"></i>
                             Sign In
                         </a>
@@ -79,7 +81,7 @@
                     <p sec:authorize="!isAuthenticated()">Sign in to play chess online!</p>
                     <p sec:authorize="isAuthenticated()">It's great to see you!</p>
                     <div class="cta-buttons">
-                        <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-primary">
+                        <a sec:authorize="!isAuthenticated()" href="#" onclick="showLoginForAction('newGame'); return false;" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
                             New Game
                         </a>
@@ -87,7 +89,7 @@
                             <i class="fas fa-plus"></i>
                             New Game
                         </button>
-                        <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-secondary">
+                        <a sec:authorize="!isAuthenticated()" href="#" onclick="showLoginForAction('joinGame'); return false;" class="btn btn-secondary">
                             <i class="fas fa-sign-in-alt"></i>
                             Join Game
                         </a>
