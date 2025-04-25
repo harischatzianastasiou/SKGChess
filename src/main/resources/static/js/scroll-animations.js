@@ -441,6 +441,34 @@ document.addEventListener('DOMContentLoaded', function() {
         updateActiveDot();
     };
 
+    // Add scroll event listener to update active dot when manually scrolling
+    window.addEventListener('scroll', function() {
+        // Find which section is currently most visible in the viewport
+        let maxVisibility = 0;
+        let mostVisibleIndex = currentSectionIndex;
+        
+        navigableElements.forEach((element, index) => {
+            const rect = element.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            
+            // Calculate how much of the element is visible in the viewport
+            const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+            const visibility = visibleHeight > 0 ? visibleHeight / element.offsetHeight : 0;
+            
+            // Update the most visible section if this one is more visible
+            if (visibility > maxVisibility) {
+                maxVisibility = visibility;
+                mostVisibleIndex = index;
+            }
+        });
+        
+        // Only update if we've found a different section to be most visible
+        if (mostVisibleIndex !== currentSectionIndex) {
+            currentSectionIndex = mostVisibleIndex;
+            updateActiveDot();
+        }
+    }, { passive: true });
+
     // Intersection Observer for section animations
     const observerOptions = {
         root: null,
