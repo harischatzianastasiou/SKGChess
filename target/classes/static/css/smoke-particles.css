@@ -1,0 +1,103 @@
+/* Smoke Particles CSS
+ * This file contains styles for creating realistic smoke particle effects
+ */
+
+/* Container for all smoke particles */
+.smoke-container {
+    position: fixed; /* Fixed position to cover the entire viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Allows clicking through the smoke */
+    z-index: 1; /* Place behind content but above background */
+    overflow: hidden; /* Prevent particles from causing scrollbars */
+}
+
+/* Individual smoke particle styling */
+.smoke-particle {
+    position: absolute; /* Position absolutely within the container */
+    background: rgba(200, 200, 200, 0.4); /* Light gray with low opacity */
+    border-radius: 70% 30% 30% 70% / 60% 40% 60% 40%; /* Irregular shape for more realistic smoke */
+    filter: blur(12px); /* Increased blur for softer edges */
+    transform-origin: center; /* Transform from the center of the particle */
+    opacity: 0; /* Start invisible, will fade in with animation */
+    mix-blend-mode: screen; /* Screen blend mode for realistic light effect */
+    transform: rotate(var(--rotation)); /* Apply random rotation */
+}
+
+/* Different sizes of smoke particles for variety */
+.smoke-particle.small {
+    width: 40px;
+    height: 60px; /* Taller than wide for more realistic smoke shape */
+}
+
+.smoke-particle.medium {
+    width: 70px;
+    height: 100px; /* Taller than wide for more realistic smoke shape */
+}
+
+.smoke-particle.large {
+    width: 100px;
+    height: 150px; /* Taller than wide for more realistic smoke shape */
+}
+
+/* Different colors of smoke for realism */
+.smoke-particle.light {
+    background: rgba(220, 220, 220, 0.15);
+}
+
+.smoke-particle.dark {
+    background: rgba(100, 100, 100, 0.1);
+}
+
+.smoke-particle.brown {
+    background: rgba(150, 120, 100, 0.1);
+}
+
+/* Animation keyframes for smoke rising and dispersing */
+@keyframes smokeRise {
+    0% {
+        transform: translateY(100vh) scale(0.5) rotate(var(--rotation)) skew(var(--skew));
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.8;
+    }
+    90% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateY(-20vh) scale(2) rotate(calc(var(--rotation) + 360deg)) skew(calc(var(--skew) * -1));
+        opacity: 0;
+    }
+}
+
+/* Animation keyframes for smoke drifting */
+@keyframes smokeDrift {
+    0% {
+        transform: translateX(0) rotate(var(--rotation));
+    }
+    50% {
+        transform: translateX(30px) rotate(calc(var(--rotation) + 10deg));
+    }
+    100% {
+        transform: translateX(0) rotate(var(--rotation));
+    }
+}
+
+/* Animation keyframes for smoke fading */
+@keyframes smokeFade {
+    0% {
+        opacity: 0;
+    }
+    20% {
+        opacity: 0.8;
+    }
+    80% {
+        opacity: 0.3;
+    }
+    100% {
+        opacity: 0;
+    }
+} 

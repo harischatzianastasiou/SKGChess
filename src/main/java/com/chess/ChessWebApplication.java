@@ -10,4 +10,4 @@ public class ChessWebApplication {
     public static void main(String[] args) {
         SpringApplication.run(ChessWebApplication.class, args);
     }
-} 
+}
