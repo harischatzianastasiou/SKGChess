@@ -92,27 +92,27 @@
     gap: var(--spacing-md);
 }
 
-.form-group {
+.modal-body .form-group {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-xs);
 }
 
-.form-group label {
+.modal-body .form-group label {
     color: var(--text-secondary);
     font-size: 0.9rem;
 }
 
-.form-group input {
+#login-modal .form-group input {
     padding: var(--spacing-sm);
     border-radius: var(--border-radius-sm);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgb(162, 46, 46);
+    background-color: rgba(213, 25, 25, 0.814);
     color: var(--text-color);
     transition: var(--transition-fast);
 }
 
-.form-group input:focus {
+#login-modal .form-group input:focus {
     outline: none;
     border-color: var(--primary-light);
     box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
@@ -195,4 +195,4 @@
 
 .modal-container::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
-} 
+}
