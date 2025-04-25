@@ -1,0 +1,93 @@
+/* Landing page animations */
+
+/* Welcome text animation - Fade in and slide up */
+.hero-content h1 {
+    animation: welcomeText 1s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Description text animation - Fade in with slight delay */
+.hero-content p {
+    animation: fadeInText 1s ease-out 0.5s forwards;
+    opacity: 0;
+}
+
+/* Button animations - Scale up on hover */
+.cta-buttons .btn {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-buttons .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Button shine effect */
+.cta-buttons .btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(45deg);
+    transition: 0.5s;
+    opacity: 0;
+}
+
+.cta-buttons .btn:hover::after {
+    opacity: 1;
+    transform: rotate(45deg) translate(50%, -50%);
+}
+
+/* Keyframe animations */
+@keyframes welcomeText {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInText {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Staggered animation for buttons */
+.cta-buttons .btn:nth-child(1) {
+    animation: buttonAppear 0.5s ease-out 0.8s forwards;
+    opacity: 0;
+}
+
+.cta-buttons .btn:nth-child(2) {
+    animation: buttonAppear 0.5s ease-out 1s forwards;
+    opacity: 0;
+}
+
+@keyframes buttonAppear {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+} 

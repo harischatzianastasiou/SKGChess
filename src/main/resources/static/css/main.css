@@ -90,11 +90,13 @@ body {
     will-change: transform;
     padding: 10px 20px;
     box-sizing: border-box;
+    height: 70px;
+    overflow: visible;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 70px;
-    overflow: visible;
+    z-index: 10; /* Ensure header appears above smoke particles and content */
+    transition: background-color var(--transition-normal);
 }
 
 .header.scrolled {
@@ -196,6 +198,7 @@ body {
     gap: 0.5rem;
     height: 36px;
     text-decoration: none;
+    z-index: 10;
 }
 
 .btn-sign-in:hover, .btn-sign-out:hover {
@@ -529,6 +532,7 @@ body {
     overflow-y: auto;
     scroll-behavior: smooth;
     position: relative;
+    z-index: 2; /* Ensure content appears above smoke particles */
 }
 
 /* Quick Actions Section */
@@ -1094,7 +1098,7 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/boardBanner.png');
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/images/boardBanner.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -1110,7 +1114,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
     z-index: 1;
 }
 
@@ -1139,6 +1143,7 @@ body {
     display: flex;
     gap: var(--spacing-md);
     justify-content: center;
+    z-index: 10;
 }
 
 /* Features Section */
@@ -1734,6 +1739,7 @@ body {
     overflow-y: auto;
     scroll-behavior: smooth;
     position: relative;
+    z-index: 2; /* Ensure content appears above smoke particles */
 }
 
 /* Inner Scrollable Containers */
@@ -2029,6 +2035,7 @@ body {
     justify-content: center;
     margin: 2rem auto;
     max-width: 300px;
+    z-index: 10;
 }
 
 .about-card {
@@ -2454,6 +2461,7 @@ body {
     gap: 0.5rem;
     height: 36px;
     text-decoration: none;
+    z-index: 10;
 }
 
 .btn-home:hover {

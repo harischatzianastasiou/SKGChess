@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="/css/bouncing-logo.css">
     <link rel="stylesheet" href="/css/scroll-animations.css">
     <link rel="stylesheet" href="/css/smoke-particles.css">
+    <link rel="stylesheet" href="/css/landing-animations.css">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="/images/skgchessicon.png">
@@ -37,6 +38,9 @@
     <script src="/js/smoke-particles.js" defer></script>
 </head>
 <body th:classappend="${#authorization.expression('isAuthenticated()')} ? 'authenticated'">
+    <!-- Smoke Particles Container - Moved to top to ensure it's behind all content -->
+    <div class="smoke-container" id="smokeContainer"></div>
+    
     <div class="home-container">
         <!-- Header with logo and user info -->
         <header class="header">
@@ -72,7 +76,7 @@
                 <div class="hero-content">
                     <h1 sec:authorize="!isAuthenticated()">Welcome to SKG Chess</h1>
                     <h1 sec:authorize="isAuthenticated()">Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>
-                    <p sec:authorize="!isAuthenticated()">Join to challenge your friends and improve your chess skills!</p>
+                    <p sec:authorize="!isAuthenticated()">Sign in to play chess online!</p>
                     <p sec:authorize="isAuthenticated()">It's great to see you!</p>
                     <div class="cta-buttons">
                         <a sec:authorize="!isAuthenticated()" href="/login" class="btn btn-primary">

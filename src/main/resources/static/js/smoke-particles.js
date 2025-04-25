@@ -1,12 +1,19 @@
 /**
  * Smoke Particles Animation
  * Creates realistic smoke particle effects that rise and disperse
+ * Only appears for non-authenticated users
  */
 
 // Wait for the DOM to be fully loaded before initializing
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the smoke effect
-    initSmokeEffect();
+    // Check if the user is authenticated
+    const isAuthenticated = document.body.classList.contains('authenticated');
+    
+    // Only initialize the smoke effect if the user is NOT authenticated
+    if (!isAuthenticated) {
+        // Initialize the smoke effect
+        initSmokeEffect();
+    }
 });
 
 /**
@@ -54,7 +61,8 @@ function createSmokeParticle(container) {
     
     // Set random position across the entire screen
     const startPositionX = Math.random() * window.innerWidth;
-    const startPositionY = Math.random() * window.innerHeight;
+    // Start from bottom of screen for rising effect
+    const startPositionY = window.innerHeight;
     particle.style.left = `${startPositionX}px`;
     particle.style.top = `${startPositionY}px`;
     
