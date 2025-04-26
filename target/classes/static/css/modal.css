@@ -37,15 +37,15 @@
 .modal-container::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: 6%;
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('/images/Thessaloniki.png');
+    background-image: url('/images/rocket.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    filter: blur(8px);
+    filter: blur(0px);
     margin: -30px;  /* Extend beyond borders to prevent blur edges */
     z-index: -1;
 }
@@ -133,17 +133,17 @@
     padding: var(--spacing-sm);
     border-radius: var(--border-radius-sm);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    background: transparent;
-    color: white;
+    background: white;
+    color: #333;
     transition: all 0.3s ease;
 }
 
 #login-modal .form-group input:focus {
     outline: none;
     border-color: var(--primary-light);
-    background: transparent;
+    background: white;
     box-shadow: 0 0 15px rgba(74, 144, 226, 0.3);
-    color: white;
+    color: #333;
 }
 
 #login-modal .form-group input::placeholder {
@@ -154,21 +154,21 @@
 /* This uses a more linter-friendly approach that works across browsers */
 #login-modal .form-group input {
     /* Base styling for all input states */
-    background-color: transparent;
-    color: white;
+    background-color: white;
+    color: #333;
 }
 
 /* Use a single, simple rule for autofilled inputs */
 #login-modal .form-group input:autofill {
     /* This will work in modern browsers that support the standard :autofill pseudo-class */
-    background-color: transparent;
-    color: white;
+    background-color: white;
+    color: #333;
 }
 
 /* For older browsers, we'll use a more subtle approach */
 #login-modal .form-group input:-webkit-autofill {
     /* Only override the background color, not the text color */
-    background-color: transparent !important;
+    background-color: white !important;
 }
 
 .remember-me {
