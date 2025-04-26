@@ -53,11 +53,32 @@ h2 {
     padding: 10px 15px;
     border: none;
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: transparent;
     color: white;
     font-size: 1em;
     outline: none;
     transition: 0.3s;
+}
+
+/* Simplified approach for autofill styling */
+/* This uses a more linter-friendly approach that works across browsers */
+.input-group input {
+    /* Base styling for all input states */
+    background-color: transparent;
+    color: white;
+}
+
+/* Use a single, simple rule for autofilled inputs */
+.input-group input:autofill {
+    /* This will work in modern browsers that support the standard :autofill pseudo-class */
+    background-color: transparent;
+    color: white;
+}
+
+/* For older browsers, we'll use a more subtle approach */
+.input-group input:-webkit-autofill {
+    /* Only override the background color, not the text color */
+    background-color: transparent !important;
 }
 
 /* Label animation */
@@ -248,14 +269,36 @@ h2 {
     display: block;
 }
 
+/* Form group input styling */
 .form-group input {
     width: 100%;
     padding: 12px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: transparent;
     color: white;
     font-size: 1em;
+}
+
+/* Simplified approach for form-group autofill styling */
+/* This uses a more linter-friendly approach that works across browsers */
+.form-group input {
+    /* Base styling for all input states */
+    background-color: transparent;
+    color: white;
+}
+
+/* Use a single, simple rule for autofilled inputs */
+.form-group input:autofill {
+    /* This will work in modern browsers that support the standard :autofill pseudo-class */
+    background-color: transparent;
+    color: white;
+}
+
+/* For older browsers, we'll use a more subtle approach */
+.form-group input:-webkit-autofill {
+    /* Only override the background color, not the text color */
+    background-color: transparent !important;
 }
 
 .form-group input::placeholder {

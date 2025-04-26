@@ -71,7 +71,8 @@ public class MainController {
     
     @GetMapping("/")
     public String root(){
-        return "redirect:/index";
+        // Return the index template directly instead of redirecting
+        return "index";
     }
 
     @GetMapping("/about")

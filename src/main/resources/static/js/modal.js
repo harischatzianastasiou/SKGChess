@@ -32,11 +32,11 @@ function createLoginModal() {
                     <form id="login-form" class="login-form" action="/login" method="POST">
                         <div class="form-group">
                             <label for="modal-username">Username</label>
-                            <input type="text" id="modal-username" name="username" class="modal-username" required>
+                            <input type="text" id="modal-username" name="username" class="modal-username" required autocomplete="username">
                         </div>
                         <div class="form-group">
                             <label for="modal-password">Password</label>
-                            <input type="password" id="modal-password" name="password" class="modal-password" required>
+                            <input type="password" id="modal-password" name="password" class="modal-password" required autocomplete="current-password">
                         </div>
                         <div class="remember-me">
                             <input type="checkbox" id="modal-remember" name="remember">

@@ -30,16 +30,36 @@
     <link rel="preload" href="/images/skgchess.svg" as="image">
     
     <!-- Scripts -->
-    <script src="/js/notifications.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js" defer></script>
-    <script th:inline="javascript" src="/js/index.js" defer></script>
-    <script src="/js/bouncing-logo.js" defer></script>
-    <script src="/js/scroll-animations.js" defer></script>
-    <script src="/js/smoke-particles.js" defer></script>
-    <script src="/js/modal.js" defer></script>
-    <script src="/js/login-modal-bouncing-logo.js" defer></script>
+    <script src="/js/notifications.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js"></script>
+    <script th:inline="javascript" src="/js/index.js"></script>
+    <script src="/js/bouncing-logo.js"></script>
+    <script src="/js/scroll-animations.js"></script>
+    <script src="/js/smoke-particles.js"></script>
+    <script src="/js/modal.js"></script>
+    <script src="/js/login-modal-bouncing-logo.js"></script>
+    
+    <!-- Inline script to ensure animations are triggered on direct page load -->
+    <script>
+        // Add a class to the body to indicate direct page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if we're on the index page
+            if (window.location.pathname === '/' || window.location.pathname === '/index') {
+                // Add a class to the body to indicate direct page load
+                document.body.classList.add('direct-page-load');
+                
+                // Force a reflow to ensure animations restart
+                void document.body.offsetWidth;
+                
+                // Remove the class after a short delay to allow animations to complete
+                setTimeout(() => {
+                    document.body.classList.remove('direct-page-load');
+                }, 100);
+            }
+        });
+    </script>
 </head>
 <body th:classappend="${#authorization.expression('isAuthenticated()')} ? 'authenticated'">
     <!-- Smoke Particles Container - Moved to top to ensure it's behind all content -->
@@ -233,50 +253,6 @@
     <a href="#main-content" class="screen-reader-only">Skip to main content</a>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const storySteps = document.querySelectorAll('.story-step');
-            const prevBtn = document.getElementById('prev-story');
-            const nextBtn = document.getElementById('next-story');
-            const progressText = document.getElementById('story-progress');
-            
-            let currentStep = 0;
-            
-            // Initialize the first step
-            updateStoryDisplay();
-            
-            // Event listeners for navigation buttons
-            prevBtn.addEventListener('click', function() {
-                if (currentStep > 0) {
-                    currentStep--;
-                    updateStoryDisplay();
-                }
-            });
-            
-            nextBtn.addEventListener('click', function() {
-                if (currentStep < storySteps.length - 1) {
-                    currentStep++;
-                    updateStoryDisplay();
-                }
-            });
-            
-            function updateStoryDisplay() {
-                // Hide all steps
-                storySteps.forEach(step => {
-                    step.classList.remove('active');
-                });
-                
-                // Show current step
-                storySteps[currentStep].classList.add('active');
-                
-                // Update progress text
-                progressText.textContent = `${currentStep + 1}/${storySteps.length}`;
-                
-                // Update button states
-                prevBtn.disabled = currentStep === 0;
-                nextBtn.disabled = currentStep === storySteps.length - 1;
-            }
-        });
-
         // Join Game Dialog Functions
         function showJoinGameDialog() {
             const dialog = document.getElementById('joinGameDialog');
@@ -307,12 +283,15 @@
             if (statsSection) {
                 // Add a class to the body when the "Your Stats" section is visible
                 const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            document.body.classList.add('in-stats-section');
-                        } else {
-                            document.body.classList.remove('in-stats-section');
-                        }
+                    // Use requestAnimationFrame to batch DOM updates
+                    requestAnimationFrame(() => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                document.body.classList.add('in-stats-section');
+                            } else {
+                                document.body.classList.remove('in-stats-section');
+                            }
+                        });
                     });
                 }, { threshold: 0.5 });
                 
