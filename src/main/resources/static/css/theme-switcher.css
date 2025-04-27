@@ -1,0 +1,49 @@
+/* Theme Switcher Styles */
+.theme-switcher-container {
+    /* Position the container at the top of the left panel */
+    position: relative;
+    display: flex;
+    flex-direction: row; /* Change to row for horizontal layout */
+    justify-content: center; /* Center the theme switchers */
+    gap: 10px;
+    margin-bottom: 15px; /* Add margin to separate from player card */
+    padding: 10px;
+    z-index: 100;
+}
+
+.theme-switcher {
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.theme-switcher:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.theme-switcher.active {
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+/* Default purple theme (original) */
+.theme-switcher.purple-theme {
+    background-color: #6b46c1; /* Purple */
+    border: 2px solid #9f7aea; /* Lighter purple border */
+}
+
+/* Brown theme */
+.theme-switcher.brown-theme {
+    background-color: #8B4513; /* Saddle brown */
+    border: 2px solid #DEB887; /* Burlywood border */
+}
+
+/* Green theme */
+.theme-switcher.green-theme {
+    background-color: #2E8B57; /* Sea green */
+    border: 2px solid #A9D9A9; /* Light green border */
+} 
