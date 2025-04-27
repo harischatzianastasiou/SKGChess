@@ -15,6 +15,7 @@
     
     <!-- Internal stylesheets -->
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/index.css">
     <link rel="stylesheet" href="/css/bouncing-logo.css">
     <link rel="stylesheet" href="/css/scroll-animations.css">
     <link rel="stylesheet" href="/css/smoke-particles.css">
@@ -45,15 +46,9 @@
     <script>
         // Add a class to the body to indicate direct page load
         document.addEventListener('DOMContentLoaded', function() {
-            // Check if we're on the index page
             if (window.location.pathname === '/' || window.location.pathname === '/index') {
-                // Add a class to the body to indicate direct page load
                 document.body.classList.add('direct-page-load');
-                
-                // Force a reflow to ensure animations restart
                 void document.body.offsetWidth;
-                
-                // Remove the class after a short delay to allow animations to complete
                 setTimeout(() => {
                     document.body.classList.remove('direct-page-load');
                 }, 100);
@@ -93,52 +88,131 @@
             </div>
         </header>
 
-        <!-- Main Content -->
+        <!-- Main Content - Single Page View -->
         <main class="main-content fade-in">
-            <!-- Hero Section -->
-            <section class="hero-section">
-                <div class="hero-content">
-                    <h1 sec:authorize="!isAuthenticated()">Welcome to SKG Chess</h1>
-                    <h1 sec:authorize="isAuthenticated()">Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>
-                    <p sec:authorize="!isAuthenticated()">Sign in to play chess online!</p>
-                    <p sec:authorize="isAuthenticated()">It's great to see you!</p>
-                    <div class="cta-buttons">
-                        <a sec:authorize="!isAuthenticated()" href="#" onclick="showLoginForAction('newGame'); return false;" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            New Game
-                        </a>
-                        <button sec:authorize="isAuthenticated()" onclick="newGame()" class="btn btn-primary">
-                            <i class="fas fa-plus"></i>
-                            New Game
-                        </button>
-                        <a sec:authorize="!isAuthenticated()" href="#" onclick="showLoginForAction('joinGame'); return false;" class="btn btn-secondary">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Join Game
-                        </a>
-                        <button sec:authorize="isAuthenticated()" onclick="showJoinGameDialog()" class="btn btn-secondary">
-                            <i class="fas fa-sign-in-alt"></i>
-                            Join Game
-                        </button>
+            <!-- Integrated Hero Section with Cards -->
+            <section class="hero-section integrated-hero" sec:authorize="!isAuthenticated()">
+                <!-- Background sections with diagonal dividers -->
+                <div class="hero-background">
+                    <div class="bg-section bg-section-1" data-card="new-game">
+                        <div class="bg-image-container">
+                            <img src="/images/knight.png" alt="New Game Background" class="bg-image">
+                        </div>
                     </div>
-                    
-                    <!-- About Logo with Hover Message -->
-                    <div class="about-logo-container" sec:authorize="!isAuthenticated()">
-                        <div class="about-logo">
-                            <img src="/images/skgchessicon.png" alt="SKG Chess Logo" class="bouncing-logo">
-                            <div class="about-message">
-                                <p> 👀Hi there! Thanks for checking out SKG Chess! In case you want to learn more about the development journey and the story behind SKG Chess, click below.</p>
-                                <a href="/about" class="about-link"> SKG Chess Story </a>
-                            </div>
+                    <div class="bg-section bg-section-2" data-card="join-game">
+                        <div class="bg-image-container">
+                            <img src="/images/pawn.png" alt="Join Game Background" class="bg-image">
+                        </div>
+                    </div>
+                    <div class="bg-section bg-section-3" data-card="about">
+                        <div class="bg-image-container">
+                            <img src="/images/rook.png" alt="About Background" class="bg-image">
                         </div>
                     </div>
                 </div>
                 
-                <!-- Scroll Indicator -->
-                <div class="view-stats-button" sec:authorize="isAuthenticated()">
-                    <a href="#my-games-section" class="btn btn-stats">
-                        <i class="fas fa-chart-line"></i>
-                        View Stats
-                    </a>
+                <div class="hero-content">
+                    <h1>Welcome to SKG Chess</h1>
+                    <p>Experience the thrill of chess in a modern, interactive environment</p>
+                </div>
+                
+                <!-- Action Cards directly in hero section -->
+                <div class="quick-actions-grid">
+                    <!-- New Game Card -->
+                    <div class="action-card" data-card="new-game">
+                        <div class="action-content">
+                            <i class="fas fa-plus-circle action-icon"></i>
+                            <h3>Start a New Game</h3>
+                            <p>Create a new chess game and invite your friends to play</p>
+                            <a href="#" onclick="showLoginForAction('newGame'); return false;" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                New Game
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Join Game Card -->
+                    <div class="action-card" data-card="join-game">
+                        <div class="action-content">
+                            <i class="fas fa-sign-in-alt action-icon"></i>
+                            <h3>Join a Game</h3>
+                            <p>Enter a game code to join an existing chess match</p>
+                            <a href="#" onclick="showLoginForAction('joinGame'); return false;" class="btn btn-secondary">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Join Game
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Learn More Card -->
+                    <div class="action-card" data-card="about">
+                        <div class="action-content">
+                            <i class="fas fa-info-circle action-icon"></i>
+                            <h3>About SKG Chess</h3>
+                            <p>Discover the story behind our chess platform - from concept to creation</p>
+                            <a href="/about" class="btn btn-about">
+                                <i class="fas fa-arrow-right"></i>
+                                Learn More
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Hero Section for authenticated users -->
+            <section class="hero-section authenticated-hero" sec:authorize="isAuthenticated()">
+                <!-- Background image for authenticated users -->
+                <div class="auth-hero-background">
+                    <div class="bg-image-container">
+                        <img src="/images/boardBanner.png" alt="Chess Board Background" class="bg-image">
+                    </div>
+                </div>
+                
+                <div class="hero-content">
+                    <h1>Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>
+                    <p>It's great to see you!</p>
+                </div>
+                
+                <!-- Action Cards for authenticated users -->
+                <div class="quick-actions-grid">
+                    <!-- New Game Card -->
+                    <div class="action-card">
+                        <div class="action-content">
+                            <i class="fas fa-plus-circle action-icon"></i>
+                            <h3>Start a New Game</h3>
+                            <p>Create a new chess game and invite your friends to play</p>
+                            <a href="/game/new" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                New Game
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Join Game Card -->
+                    <div class="action-card">
+                        <div class="action-content">
+                            <i class="fas fa-sign-in-alt action-icon"></i>
+                            <h3>Join a Game</h3>
+                            <p>Enter a game code to join an existing chess match</p>
+                            <a href="#" onclick="showJoinGameDialog(); return false;" class="btn btn-secondary">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Join Game
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- View Stats Card -->
+                    <div class="action-card">
+                        <div class="action-content">
+                            <i class="fas fa-chart-line action-icon"></i>
+                            <h3>View Your Stats</h3>
+                            <p>Check your chess performance and statistics</p>
+                            <a href="#my-games-section" class="btn btn-about">
+                                <i class="fas fa-arrow-right"></i>
+                                View Stats
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -194,59 +268,24 @@
                     </div>
                 </div>
             </section>
-
-            <!-- Add Join Game Dialog -->
-            <div id="joinGameDialog" class="modal">
-                <div class="modal-content">
-                    <h2>Join Game</h2>
-                    <div class="input-group">
-                        <input type="text" id="gameIdInput" placeholder="Enter Game ID">
-                        <button onclick="handleJoinGame()" class="btn btn-primary">Join</button>
-                    </div>
-                    <button onclick="closeJoinGameDialog()" class="btn btn-secondary">Cancel</button>
-                </div>
-            </div>
-
-            <!-- Spacer for footer gap -->
-            <div class="footer-spacer" sec:authorize="isAuthenticated()"></div>
-
-            <!-- Footer -->
-            <footer class="site-footer" sec:authorize="isAuthenticated()">
-                <div class="footer-content">
-                    <div class="footer-section">
-                        <h3>SKG Chess</h3>
-                        <p>A modern chess platform for players of all skill levels.</p>
-                        <div class="social-links">
-                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-                        </div>
-                    </div>
-                    <div class="footer-section">
-                        <h3>Quick Links</h3>
-                        <ul>
-                            <li><a href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
-                            <li><a href="/my-games">My Games</a></li>
-                            <li><a href="/login">Sign In</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h3>Contact</h3>
-                        <ul>
-                            <li><a href="mailto:info@skgchess.com">info@skgchess.com</a></li>
-                            <li><a href="#">Support</a></li>
-                            <li><a href="#">Feedback</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="footer-bottom">
-                    <p>&copy; 2023 SKG Chess. All rights reserved.</p>
-                    <p>Created by <a href="https://github.com/harischatzianastasiou" target="_blank"><i class="fab fa-github"></i> @harischatzianastasiou</a></p>
-                </div>
-            </footer>
         </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <!-- ... existing modal content ... -->
+    </div>
+
+    <!-- Join Game Dialog -->
+    <div id="joinGameDialog" class="modal">
+        <div class="modal-content">
+            <h2>Join Game</h2>
+            <div class="input-group">
+                <input type="text" id="gameIdInput" placeholder="Enter Game ID">
+                <button onclick="handleJoinGame()" class="btn btn-primary">Join</button>
+            </div>
+            <button onclick="closeJoinGameDialog()" class="btn btn-secondary">Cancel</button>
+        </div>
     </div>
 
     <!-- Accessibility Skip Link (hidden visually) -->
@@ -309,6 +348,56 @@
                         originalScrollToSection(index);
                     }
                 };
+            }
+            
+            // Background section interaction with cards
+            const actionCards = document.querySelectorAll('.action-card');
+            const bgSections = document.querySelectorAll('.bg-section');
+            
+            // Function to handle card hover/focus
+            function handleCardInteraction(card, isActive) {
+                const cardType = card.getAttribute('data-card');
+                const correspondingBg = document.querySelector(`.bg-section[data-card="${cardType}"]`);
+                
+                if (correspondingBg) {
+                    if (isActive) {
+                        // Remove active class from all sections
+                        bgSections.forEach(section => section.classList.remove('active'));
+                        // Add active class to corresponding section
+                        correspondingBg.classList.add('active');
+                    } else {
+                        // Remove active class when card is no longer focused
+                        correspondingBg.classList.remove('active');
+                    }
+                }
+            }
+            
+            // Add event listeners to cards
+            actionCards.forEach(card => {
+                // Mouse enter event
+                card.addEventListener('mouseenter', () => {
+                    handleCardInteraction(card, true);
+                });
+                
+                // Mouse leave event
+                card.addEventListener('mouseleave', () => {
+                    handleCardInteraction(card, false);
+                });
+                
+                // Focus event for keyboard navigation
+                card.addEventListener('focus', () => {
+                    handleCardInteraction(card, true);
+                }, true);
+                
+                // Blur event for keyboard navigation
+                card.addEventListener('blur', () => {
+                    handleCardInteraction(card, false);
+                }, true);
+            });
+            
+            // Initialize with first card active
+            if (actionCards.length > 0) {
+                handleCardInteraction(actionCards[0], true);
             }
         });
     </script>
