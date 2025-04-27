@@ -40,9 +40,10 @@
     top: 0;
     height: 100%;
     transition: all 0.5s ease;
-    opacity: 0; /* Changed from 0.3 to 0 to hide by default */
+    opacity: 0; /* Hide by default */
     transform: scale(1);
-    filter: blur(1px) brightness(0.7); /* Reduced blur from 3px to 1px */
+    filter: blur(1px) brightness(0.7);
+    visibility: hidden; /* Added to completely hide the sections */
 }
 
 /* Diagonal sections with clip-path */
@@ -119,6 +120,7 @@
     filter: blur(0) brightness(1); /* No blur when active */
     z-index: 1; /* Ensure active section appears above others */
     box-shadow: 0 0 30px rgba(130, 90, 220, 0.4); /* Lighter purple glow */
+    visibility: visible; /* Make visible when active */
 }
 
 .integrated-hero .hero-content {
@@ -394,7 +396,7 @@ body.authenticated::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('/images/boardBanner.png');
+    background-image: url('/images/boardBanner3.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
