@@ -45,7 +45,7 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    filter: blur(2px);
+    filter: blur(0px);
     margin: -30px;  /* Extend beyond borders to prevent blur edges */
     z-index: -1;
 }
