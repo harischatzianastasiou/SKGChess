@@ -4,7 +4,9 @@
 .hero-section {
     text-align: center;
     padding: 2rem 2rem;
-    background: linear-gradient(135deg, rgba(26, 22, 37, 0.95), rgba(42, 33, 85, 0.95));
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/boardBanner3.jpg');
+    background-size: cover;
+    background-position: center;
     border-radius: var(--border-radius-lg);
     margin-bottom: 2rem;
     position: relative;
@@ -38,7 +40,7 @@
     top: 0;
     height: 100%;
     transition: all 0.5s ease;
-    opacity: 0.3; /* Default opacity for background sections */
+    opacity: 0; /* Changed from 0.3 to 0 to hide by default */
     transform: scale(1);
     filter: blur(1px) brightness(0.7); /* Reduced blur from 3px to 1px */
 }
