@@ -296,7 +296,7 @@ class ChessGame {
                             // Handle different message types
                             if (moveData.type === 'GAME_STARTED') {
                                 // Update opponent's username in the UI
-                                const opponentPlayerName = document.getElementById('opponent-name');
+                                const opponentPlayerName = document.getElementById('opponent-player-name');
                                 if (opponentPlayerName) {
                                     if (this.userId === moveData.whitePlayerId) {
                                         // If I'm white, opponent is black
