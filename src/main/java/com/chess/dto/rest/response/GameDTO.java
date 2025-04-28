@@ -2,6 +2,7 @@ package com.chess.dto.rest.response;
 
 import java.time.LocalDateTime;
 
+import com.chess.core.Alliance;
 import com.chess.core.board.IBoard;
 import com.chess.model.entity.Game.GameStatus;
 
@@ -48,6 +49,9 @@ public class GameDTO {
     private boolean isBlackPlayerCastled;
     private boolean isWhitePlayerCastled;
     
+    // Current player turn
+    private Alliance isPlayerTurn;
+    
     /**
      * Convert a Game entity to a GameDTO
      * @param game The Game entity to convert
@@ -88,6 +92,7 @@ public class GameDTO {
                 .moveCount(game.getMoveCount())
                 .isBlackPlayerCastled(game.isBlackPlayerCastled())
                 .isWhitePlayerCastled(game.isWhitePlayerCastled())
+                .isPlayerTurn(game.getIsPlayerTurn())
                 .build();
     }
 } 

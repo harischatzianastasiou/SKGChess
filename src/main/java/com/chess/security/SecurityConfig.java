@@ -2,6 +2,8 @@ package com.chess.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,12 +23,21 @@ public class SecurityConfig {
     }
 
     @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
        return http
         .formLogin(httpForm -> {
             httpForm
                 .loginPage("/login")//Tells Spring where to redirect for login
+                .loginProcessingUrl("/login")
+                .usernameParameter("username")
+                .passwordParameter("password")
                 .defaultSuccessUrl("/index", true)//Tells Spring where to redirect after successful login
+                .failureUrl("/login?error=true")
                 .permitAll();//Allows all users to access the login page
         })
         .rememberMe(remember -> {

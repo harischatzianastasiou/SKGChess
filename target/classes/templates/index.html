@@ -39,6 +39,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script th:inline="javascript" src="/js/index.js"></script>
     <script src="/js/bouncing-logo.js"></script>
     <script src="/js/scroll-animations.js"></script>
@@ -259,6 +260,63 @@
                                 <div class="game-date">3 days ago</div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Active Games Section (Only for authenticated users) -->
+            <section id="active-games-section" class="content-section active-games-section section-hidden" sec:authorize="isAuthenticated()">
+                <div class="section-header">
+                    <h2>
+                        <i class="fas fa-chess"></i>
+                        Active Games
+                    </h2>
+                </div>
+                <div class="active-games-container">
+                    <!-- Display active games if any exist -->
+                    <div th:if="${activeGames != null && !activeGames.empty}" class="active-games-grid">
+                        <div th:each="game : ${activeGames}" class="active-game-card glass-effect">
+                            <div class="active-game-header">
+                                <h3 th:text="${game.whitePlayerUsername + ' vs ' + game.blackPlayerUsername}">Player1 vs Player2</h3>
+                                <span class="game-status">In Progress</span>
+                            </div>
+                            <div class="active-game-board">
+                                <!-- Chess board preview will be rendered here -->
+                                <div class="chess-board-preview" th:id="'board-preview-' + ${game.id}">
+                                    <!-- Board will be rendered by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="active-game-info">
+                                <div class="game-player-info">
+                                    <span class="player-label">Your Color:</span>
+                                    <span class="player-color" th:text="${game.whitePlayerId == userId ? 'White' : 'Black'}">White</span>
+                                </div>
+                                <div class="game-player-info">
+                                    <span class="player-label">Opponent:</span>
+                                    <span class="opponent-name" th:text="${game.whitePlayerId == userId ? game.blackPlayerUsername : game.whitePlayerUsername}">Opponent</span>
+                                </div>
+                                <div class="game-player-info">
+                                    <span class="player-label">Turn:</span>
+                                    <span class="current-turn" th:text="${game.isPlayerTurn != null ? (game.isPlayerTurn.name() == 'WHITE' ? 'White' : 'Black') : 'Unknown'}">White</span>
+                                </div>
+                            </div>
+                            <div class="active-game-actions">
+                                <a th:href="@{'/games/' + ${game.id}}" class="btn btn-primary">
+                                    <i class="fas fa-play"></i>
+                                    Continue Game
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Display message if no active games -->
+                    <div th:if="${activeGames == null || activeGames.empty}" class="no-active-games glass-effect">
+                        <i class="fas fa-chess-board"></i>
+                        <h3>No Active Games</h3>
+                        <p>You don't have any games in progress. Start a new game to play!</p>
+                        <a href="#" onclick="newGame(); return false;" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            New Game
+                        </a>
                     </div>
                 </div>
             </section>

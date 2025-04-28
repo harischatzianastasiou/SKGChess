@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function() {
         handlePendingAction();
         // Load existing messages from the database
         loadExistingMessages();
+        // Render active game boards
+        renderActiveGameBoards();
     }
     
     // Check if we need to show a game popup
@@ -884,4 +886,95 @@ async function loadExistingMessages() {
     } catch (error) {
         console.error('Error loading messages:', error);
     }
+}
+
+/**
+ * Render chess board previews for active games
+ */
+function renderActiveGameBoards() {
+    // Get all board preview containers
+    const boardPreviews = document.querySelectorAll('.chess-board-preview');
+    
+    if (boardPreviews.length === 0) {
+        return; // No active games to render
+    }
+    
+    // For each board preview, create a chess board
+    boardPreviews.forEach(boardPreview => {
+        // Extract game ID from the element ID
+        const gameId = boardPreview.id.replace('board-preview-', '');
+        
+        // Create a new chess board
+        const board = document.createElement('div');
+        board.className = 'board-preview';
+        boardPreview.appendChild(board);
+        
+        // Create a chess instance
+        const chess = new Chess();
+        
+        // Fetch the game data to get the current position
+        fetch(`/api/games/${gameId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch game data');
+                }
+                return response.json();
+            })
+            .then(gameData => {
+                // Set the position based on the FEN string if available
+                if (gameData.fenPosition) {
+                    chess.load(gameData.fenPosition);
+                }
+                
+                // Render the board
+                renderChessBoard(board, chess);
+            })
+            .catch(error => {
+                console.error('Error fetching game data:', error);
+                // Render a default board if data fetch fails
+                renderChessBoard(board, chess);
+            });
+    });
+}
+
+/**
+ * Render a chess board with the current position
+ * @param {HTMLElement} container - The container element
+ * @param {Chess} chess - The chess instance with the current position
+ */
+function renderChessBoard(container, chess) {
+    // Clear the container
+    container.innerHTML = '';
+    
+    // Create the board grid
+    const board = document.createElement('div');
+    board.className = 'board-grid';
+    
+    // Create squares
+    for (let rank = 8; rank >= 1; rank--) {
+        for (let file = 1; file <= 8; file++) {
+            const square = document.createElement('div');
+            const isLight = (rank + file) % 2 === 0;
+            square.className = `square ${isLight ? 'light' : 'dark'}`;
+            
+            // Get the piece at this square
+            const squareName = `${String.fromCharCode(96 + file)}${rank}`;
+            const piece = chess.get(squareName);
+            
+            if (piece) {
+                // Create piece element
+                const pieceElement = document.createElement('div');
+                pieceElement.className = `piece ${piece.color} ${piece.type}`;
+                
+                // Add piece to square
+                square.appendChild(pieceElement);
+            }
+            
+            // Add square to board
+            board.appendChild(square);
+        }
+    }
+    
+    // Add board to container
+    container.appendChild(board);
 } 

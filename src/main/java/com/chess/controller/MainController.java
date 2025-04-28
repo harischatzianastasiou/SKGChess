@@ -9,10 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.chess.dto.rest.response.GameDTO;
 import com.chess.model.entity.Game;
+import com.chess.model.entity.Game.GameStatus;
 import com.chess.model.entity.User;
 import com.chess.service.GameService;
 import com.chess.service.UserService;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 @Controller // GET requests to /req/login and /req/signup return HTML templates AS @Controller is for views
 public class MainController {
@@ -65,12 +69,68 @@ public class MainController {
     }
 
     @GetMapping("/index")
-    public String home(){
+    public String home(Model model){
+        // Check if user is authenticated
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
+            try {
+                // Get current user
+                String username = auth.getName();
+                User currentUser = userService.getUserByUsername(username);
+                
+                // Get active games for the current user
+                List<Game> activeGames = gameService.getActiveGamesForUser(currentUser.getId());
+                
+                // Convert to DTOs for the view
+                List<GameDTO> activeGameDTOs = activeGames.stream()
+                    .map(GameDTO::fromGame)
+                    .collect(Collectors.toList());
+                
+                // Add to model
+                model.addAttribute("activeGames", activeGameDTOs);
+                model.addAttribute("userId", currentUser.getId());
+            } catch (Exception e) {
+                // Log the error but don't let it crash the page
+                System.err.println("Error loading active games: " + e.getMessage());
+                e.printStackTrace();
+                // Add empty list to avoid null pointer in template
+                model.addAttribute("activeGames", new ArrayList<>());
+            }
+        }
+        
         return "index";
     }
     
     @GetMapping("/")
-    public String root(){
+    public String root(Model model){
+        // Check if user is authenticated
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.isAuthenticated() && !"anonymousUser".equals(auth.getName())) {
+            try {
+                // Get current user
+                String username = auth.getName();
+                User currentUser = userService.getUserByUsername(username);
+                
+                // Get active games for the current user
+                List<Game> activeGames = gameService.getActiveGamesForUser(currentUser.getId());
+                
+                // Convert to DTOs for the view
+                List<GameDTO> activeGameDTOs = activeGames.stream()
+                    .map(GameDTO::fromGame)
+                    .collect(Collectors.toList());
+                
+                // Add to model
+                model.addAttribute("activeGames", activeGameDTOs);
+                model.addAttribute("userId", currentUser.getId());
+            } catch (Exception e) {
+                // Log the error but don't let it crash the page
+                System.err.println("Error loading active games: " + e.getMessage());
+                e.printStackTrace();
+                // Add empty list to avoid null pointer in template
+                model.addAttribute("activeGames", new ArrayList<>());
+            }
+        }
+        
         // Return the index template directly instead of redirecting
         return "index";
     }

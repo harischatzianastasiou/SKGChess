@@ -3,6 +3,7 @@ package com.chess.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,6 +128,21 @@ public class GameService {
 
     public List<Game> getAllGames() {
         return gameRepository.findAll();
+    }
+
+    /**
+     * Get all active games (IN_PROGRESS) for a specific user
+     * @param userId The ID of the user
+     * @return List of active games where the user is either the white or black player
+     */
+    public List<Game> getActiveGamesForUser(String userId) {
+        // Get all games where the user is either the white or black player
+        List<Game> userGames = gameRepository.findByWhitePlayerIdOrBlackPlayerId(userId, userId);
+        
+        // Filter to only include games with IN_PROGRESS status
+        return userGames.stream()
+            .filter(game -> game.getStatus() == GameStatus.IN_PROGRESS)
+            .collect(Collectors.toList());
     }
 
     @Transactional
