@@ -94,13 +94,26 @@
 .bg-section-1 .bg-image {
     max-width: 60%; /* Make knight.png smaller */
     max-height: 60%;
+    margin-top: -30%; /* Reduced from 10% to 5% to move image up */
+    margin-left: 32%;
 }
 
 .bg-section-3 .bg-image {
     max-width: 65%; /* Reduced from 70% to 65% */
     max-height: 65%; /* Reduced from 70% to 65% */
-    transform: translateY(-10%); /* Move rook image up */
-    margin-top: 10%; /* Additional adjustment to move image up */
+    transform: translateY(-20%); /* Move rook image up more (increased from -10%) */
+    margin-top: -30%; /* Reduced from 10% to 5% to move image up */
+    margin-left: -32%;
+    opacity: 1; /* Set default opacity to fully opaque */
+    transition: all 0.3s ease; /* Add smooth transition for all properties */
+    filter: none; /* Remove any filters */
+}
+
+/* Add hover effect for bg-section-3 image */
+.bg-section-3:hover .bg-image {
+    transform: translateY(-20%) scale(1.1); /* Scale up slightly on hover while maintaining position */
+    filter: brightness(1.2); /* Increase brightness on hover */
+    opacity: 1;
 }
 
 /* Animation for background images */
@@ -115,7 +128,7 @@
 
 /* Active state for background sections */
 .bg-section.active {
-    opacity: 0.8; /* Increase opacity when corresponding card is focused */
+    opacity: 1; /* Increase opacity when corresponding card is focused */
     transform: scale(1.1);
     filter: blur(0) brightness(1); /* No blur when active */
     z-index: 1; /* Ensure active section appears above others */
@@ -124,21 +137,11 @@
 }
 
 .integrated-hero .hero-content {
+    margin-top: -2rem; /* Add negative margin to move content up */
     margin-bottom: 2rem;
     position: relative;
     z-index: 2; /* Ensure content appears above background */
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at center, rgba(130, 90, 220, 0.2) 0%, transparent 70%); /* Lighter purple */
-    animation: pulse 4s infinite ease-in-out;
-    z-index: 1; /* Place above background but below content */
+    padding-top: 0; /* Remove top padding */
 }
 
 .hero-content h1 {
