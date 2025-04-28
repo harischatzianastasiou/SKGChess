@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // If user is authenticated, check for pending actions
     if (document.body.classList.contains('authenticated')) {
         handlePendingAction();
+        // Load existing messages from the database
+        loadExistingMessages();
     }
     
     // Check if we need to show a game popup
@@ -152,7 +154,7 @@ function closeSharePopup(gameId) {
 }
 
 // Function to add a game message
-function addGameMessage(gameId, opponentUsername) {
+async function addGameMessage(gameId, opponentUsername) {
     // Check if a message for this game already exists
     const existingMessage = gameMessages.find(msg => msg.gameId === gameId);
     if (existingMessage) {
@@ -172,6 +174,28 @@ function addGameMessage(gameId, opponentUsername) {
             read: false
         };
         gameMessages.unshift(message);
+    }
+    
+    // Store message in database
+    try {
+        const response = await fetch('/api/messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                gameId: gameId,
+                opponentUsername: opponentUsername,
+                content: `Game ${gameId} vs ${opponentUsername} has started!`,
+                type: 'GAME_STARTED'
+            })
+        });
+        
+        if (!response.ok) {
+            console.error('Failed to store message in database:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error storing message in database:', error);
     }
     
     updateMessagesBadge();
@@ -194,13 +218,28 @@ function updateMessagesDropdown() {
     const dropdown = document.querySelector('.messages-dropdown');
     if (!dropdown) return;
     
-    dropdown.innerHTML = gameMessages.map(message => `
-        <div class="message-item ${message.read ? 'read' : 'unread'}" data-message-id="${message.id}">
-            <div class="message-content">${message.content}</div>
-            <div class="message-time">${formatTimestamp(message.timestamp)}</div>
-            <a href="/games/${message.gameId}" class="message-link">Join Game</a>
+    // Create dropdown content with clear button inside
+    dropdown.innerHTML = `
+        <div class="messages-header">
+            <h3>Game Messages</h3>
         </div>
-    `).join('');
+        <div class="messages-list">
+            ${gameMessages.length > 0 ? 
+                gameMessages.map(message => `
+                    <div class="message-item ${message.read ? 'read' : 'unread'}" data-message-id="${message.id}">
+                        <div class="message-content">${message.content}</div>
+                        <div class="message-time">${formatTimestamp(message.timestamp)}</div>
+                        <a href="/games/${message.gameId}" class="message-link">Join Game</a>
+                    </div>
+                `).join('') : 
+                '<div class="no-messages">No messages</div>'
+            }
+        </div>
+        ${gameMessages.length > 0 ? 
+            '<div class="messages-footer"><button class="clear-messages-btn" onclick="clearAllMessages()"><i class="fas fa-trash"></i> Clear All Messages</button></div>' : 
+            ''
+        }
+    `;
 }
 
 // Function to format timestamp
@@ -785,4 +824,64 @@ function handleJoinGame() {
     // Clear the input and close the dialog
     gameIdInput.value = '';
     closeJoinGameDialog();
+}
+
+// Function to clear all messages
+async function clearAllMessages() {
+    // Clear local messages
+    gameMessages = [];
+    updateMessagesBadge();
+    updateMessagesDropdown();
+    
+    // Mark messages as read in the database
+    try {
+        const response = await fetch('/api/messages/mark-read', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        if (!response.ok) {
+            console.error('Failed to mark messages as read:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error marking messages as read:', error);
+    }
+}
+
+// Function to load existing messages from the database
+async function loadExistingMessages() {
+    try {
+        const response = await fetch('/api/messages/unread');
+        if (!response.ok) {
+            throw new Error('Failed to fetch messages');
+        }
+        
+        const messages = await response.json();
+        
+        // Add messages to the local array
+        messages.forEach(message => {
+            // Check if a message for this game already exists
+            const existingMessage = gameMessages.find(msg => msg.gameId === message.gameId);
+            if (!existingMessage) {
+                // Create new message if none exists
+                const newMessage = {
+                    id: message.id,
+                    gameId: message.gameId,
+                    opponentUsername: message.opponentUsername,
+                    timestamp: new Date(message.timestamp),
+                    content: message.content,
+                    read: message.read
+                };
+                gameMessages.unshift(newMessage);
+            }
+        });
+        
+        // Update UI
+        updateMessagesBadge();
+        updateMessagesDropdown();
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
 } 
