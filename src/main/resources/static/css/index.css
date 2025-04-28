@@ -53,6 +53,10 @@
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
     opacity: 1; /* Make visible by default */
     visibility: visible; /* Make visible by default */
+    z-index: 1; /* Ensure it's always on top */
+    filter: blur(0) brightness(1); /* No blur, full brightness */
+    transform: scale(1.1); /* Slightly larger scale */
+    box-shadow: 0 0 30px rgba(130, 90, 220, 0.4); /* Lighter purple glow */
 }
 
 .bg-section-2 {
@@ -87,7 +91,6 @@
     max-width: 80%;
     max-height: 80%;
     object-fit: contain;
-    animation: slowPan 30s infinite alternate ease-in-out;
     transform-origin: center;
     transition: all 0.5s ease;
 }
@@ -97,8 +100,8 @@
     max-width: 50%; /* Increased from 60% to 70% to make the knight larger */
     max-height: 50%; /* Increased from 60% to 70% to make the knight larger */
     margin-top: -15%; /* Changed from -30% to -15% to move image down slightly */
-    margin-left: -1%; /* Changed from 32% to 15% to center the image more */
     transform: translateY(10%); /* Added to move the image down slightly */
+    animation: none; /* Remove animation to keep it fixed */
 }
 
 .bg-section-3 .bg-image {
@@ -110,6 +113,7 @@
     opacity: 1; /* Set default opacity to fully opaque */
     transition: all 0.3s ease; /* Add smooth transition for all properties */
     filter: none; /* Remove any filters */
+    animation: slowPan 30s infinite alternate ease-in-out; /* Keep animation for other sections */
 }
 
 /* Add hover effect for bg-section-3 image */
@@ -422,6 +426,9 @@ body.authenticated::before {
     padding: 1.5rem;
     border-radius: var(--border-radius-lg);
     margin-bottom: 2rem;
+    display: flex; /* Add flex display */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items horizontally */
 }
 
 /* Make welcome message bigger for authenticated users */
@@ -436,6 +443,8 @@ body.authenticated::before {
     background-color: rgba(28, 20, 20, 0.93); /* Fully opaque black background */
     border-radius: 0; /* Remove rounded corners */
     display: inline-block;
+    width: auto; /* Allow width to be determined by content */
+    text-align: center; /* Center the text */
 }
 
 .authenticated-hero .hero-content p {
@@ -446,14 +455,19 @@ body.authenticated::before {
     padding: 0.5rem 1rem;
     background-color: rgb(20, 19, 19); /* Fully opaque black background */
     border-radius: 0; /* Remove rounded corners */
-    display: inline-block;
+    display: block; /* Change from inline-block to block */
+    width: auto; /* Allow width to be determined by content */
+    text-align: center; /* Center the text */
 }
 
 /* Quote styling */
 .welcome-quote {
     display: flex;
     align-items: center;
+    justify-content: center; /* Center the quote horizontally */
     gap: 0.2rem;
+    width: 100%; /* Take full width */
+    flex-wrap: wrap; /* Allow wrapping if needed */
 }
 
 .quote-mark {
@@ -465,6 +479,7 @@ body.authenticated::before {
 
 .quote-text {
     font-style: italic;
+    text-align: center; /* Center the text */
 }
 
 /* Ensure action cards are visible */

@@ -263,11 +263,41 @@
                 </div>
             </section>
 
-            <div class="board-wrapper">
-                <div class="chess-board">
-                    <!-- Chess board content will be dynamically generated -->
+            <footer class="site-footer" sec:authorize="isAuthenticated()">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>SKG Chess</h3>
+                        <p>A modern chess platform for players of all skill levels.</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        </div>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Quick Links</h3>
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/about">About</a></li>
+                            <li><a href="/my-games">My Games</a></li>
+                            <li><a href="/login">Sign In</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Contact</h3>
+                        <ul>
+                            <li><a href="mailto:info@skgchess.com">info@skgchess.com</a></li>
+                            <li><a href="#">Support</a></li>
+                            <li><a href="#">Feedback</a></li>
+                        </ul>
+                    </div>
                 </div>
-            </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 SKG Chess. All rights reserved.</p>
+                    <p>Created by <a href="https://github.com/harischatzianastasiou" target="_blank"><i class="fab fa-github"></i> @harischatzianastasiou</a></p>
+                </div>
+            </footer>
         </main>
     </div>
 
