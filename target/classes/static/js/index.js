@@ -70,6 +70,222 @@ function connect() {
     // };
 }
 
+// Track if share popup is open and game messages
+let isSharePopupOpen = false;
+let gameMessages = [];
+
+// Function to show the share game popup
+function showShareGamePopup(gameId) {
+    // Create popup container
+    const popup = document.createElement('div');
+    popup.className = 'share-game-popup';
+    
+    // Create popup content
+    popup.innerHTML = `
+        <h3>Share Game Room</h3>
+        <p>Share this room ID with your friend:</p>
+        <input type="text" value="${gameId}" readonly>
+        <button onclick="copyGameId('${gameId}')">
+            <i class="fas fa-copy"></i> Copy ID
+        </button>
+        <p class="info-text">
+            The game will start automatically when your friend joins.
+        </p>
+        <button onclick="closeSharePopup('${gameId}')" style="margin-top: var(--spacing-md); background: var(--accent-color);">
+            <i class="fas fa-times"></i> Close
+        </button>
+    `;
+
+    // Add overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'share-game-overlay';
+
+    // Add to document
+    document.body.appendChild(overlay);
+    document.body.appendChild(popup);
+
+    // Show popup with animation
+    setTimeout(() => {
+        popup.classList.add('show');
+        overlay.classList.add('show');
+        isSharePopupOpen = true;
+    }, 10);
+
+    // Subscribe to WebSocket for game start
+    subscribeToGameStart(gameId);
+}
+
+// Function to close the share game popup
+function closeSharePopup(gameId) {
+    const popup = document.querySelector('.share-game-popup');
+    const overlay = document.querySelector('.share-game-overlay');
+    
+    if (popup) {
+        popup.classList.remove('show');
+        overlay.classList.remove('show');
+        isSharePopupOpen = false;
+        
+        // Remove elements after animation
+        setTimeout(() => {
+            popup.remove();
+            overlay.remove();
+        }, 300);
+    }
+}
+
+// Function to add a game message
+function addGameMessage(gameId, opponentUsername) {
+    // Check if a message for this game already exists
+    const existingMessage = gameMessages.find(msg => msg.gameId === gameId);
+    if (existingMessage) {
+        // Update existing message instead of creating a new one
+        existingMessage.opponentUsername = opponentUsername;
+        existingMessage.timestamp = new Date();
+        existingMessage.content = `Game ${gameId} vs ${opponentUsername} has started!`;
+        existingMessage.read = false;
+    } else {
+        // Create new message if none exists
+        const message = {
+            id: Date.now(),
+            gameId: gameId,
+            opponentUsername: opponentUsername,
+            timestamp: new Date(),
+            content: `Game ${gameId} vs ${opponentUsername} has started!`,
+            read: false
+        };
+        gameMessages.unshift(message);
+    }
+    
+    updateMessagesBadge();
+    updateMessagesDropdown();
+}
+
+// Function to update messages badge
+function updateMessagesBadge() {
+    const badge = document.querySelector('.messages-badge');
+    const unreadCount = gameMessages.filter(msg => !msg.read).length;
+    
+    if (badge) {
+        badge.textContent = unreadCount;
+        badge.classList.toggle('show', unreadCount > 0);
+    }
+}
+
+// Function to update messages dropdown
+function updateMessagesDropdown() {
+    const dropdown = document.querySelector('.messages-dropdown');
+    if (!dropdown) return;
+    
+    dropdown.innerHTML = gameMessages.map(message => `
+        <div class="message-item ${message.read ? 'read' : 'unread'}" data-message-id="${message.id}">
+            <div class="message-content">${message.content}</div>
+            <div class="message-time">${formatTimestamp(message.timestamp)}</div>
+            <a href="/games/${message.gameId}" class="message-link">Join Game</a>
+        </div>
+    `).join('');
+}
+
+// Function to format timestamp
+function formatTimestamp(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+}
+
+// Function to toggle messages dropdown
+function toggleMessagesDropdown() {
+    const dropdown = document.querySelector('.messages-dropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+        
+        // Mark messages as read when dropdown is shown
+        if (dropdown.classList.contains('show')) {
+            gameMessages.forEach(msg => msg.read = true);
+            updateMessagesBadge();
+        }
+    }
+}
+
+// Function to subscribe to game start
+function subscribeToGameStart(gameId) {
+    const socket = new SockJS('/chess-websocket');
+    const stompClient = Stomp.over(socket);
+    
+    // Enable debug logging for STOMP
+    stompClient.debug = function(str) {
+        console.log('STOMP: ' + str);
+    };
+    
+    stompClient.connect({}, 
+        (frame) => {
+            console.log('Connected to WebSocket for game start:', frame);
+            
+            stompClient.subscribe('/topic/game/' + gameId, (message) => {
+                try {
+                    const data = JSON.parse(message.body);
+                    
+                    if (data.type === 'GAME_STARTED') {
+                        console.log('Game started, checking popup state');
+                        const opponentUsername = data.opponentUsername || 'Opponent';
+                        
+                        if (isSharePopupOpen) {
+                            // If popup is still open, redirect to game page
+                            console.log('Popup is open, redirecting to game page');
+                            window.location.href = `/games/${gameId}`;
+                        } else {
+                            // If popup was closed, show notification
+                            console.log('Popup was closed, showing notification');
+                            addGameMessage(gameId, opponentUsername);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error parsing WebSocket message:', error);
+                }
+            });
+        },
+        (error) => {
+            console.error('WebSocket connection error:', error);
+        }
+    );
+}
+
+// Add messages icon to header when document is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    const headerRight = document.querySelector('.header-right');
+    if (headerRight) {
+        const messagesContainer = document.createElement('div');
+        messagesContainer.className = 'header-messages';
+        messagesContainer.innerHTML = `
+            <i class="fas fa-bell messages-icon" onclick="toggleMessagesDropdown()"></i>
+            <span class="messages-badge">0</span>
+            <div class="messages-dropdown"></div>
+        `;
+        headerRight.insertBefore(messagesContainer, headerRight.firstChild);
+    }
+});
+
+/**
+ * Copies the game ID to clipboard
+ * @param {string} gameId - The ID to copy
+ */
+function copyGameId(gameId) {
+    navigator.clipboard.writeText(gameId).then(() => {
+        // Show success message
+        const button = document.querySelector('.share-game-popup button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.style.background = 'var(--success-color)';
+        
+        // Reset button after 2 seconds
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.style.background = '';
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy game ID:', err);
+        alert('Failed to copy game ID. Please try again.');
+    });
+}
+
 function newGame() {
     // Get the username from the welcome message span using data-username attribute
     const usernameElement = document.querySelector('span[data-username="true"]');
@@ -112,23 +328,12 @@ function newGame() {
         if (!data || !data.id) {
             throw new Error('Game ID not found in response');
         }
-        // Redirect to the game page
-        window.location.href = `/games/${data.id}`;
+        // Show the share popup instead of redirecting immediately
+        showShareGamePopup(data.id);
     })
     .catch(error => {
-        console.error("Error in matchmaking:", error);
-        // Display a more user-friendly error message
-        const errorMessage = error.message.includes("Failed to create game") 
-            ? `Error starting matchmaking: ${error.message}` 
-            : `An unexpected error occurred: ${error.message}`;
-        
-        // Show error in a more visible way
-        const errorDiv = document.getElementById('error-message') || createErrorElement();
-        errorDiv.textContent = errorMessage;
-        errorDiv.style.display = 'block';
-        
-        // Also show in alert for immediate attention
-        alert(errorMessage);
+        console.error("Error creating game:", error);
+        alert(`Error creating game: ${error.message}`);
     });
 }
 
