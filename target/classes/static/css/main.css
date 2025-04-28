@@ -2643,17 +2643,39 @@ body {
     color: white;
     border: none;
     padding: 8px 15px;
-    border-radius: 6px;
+    border-radius: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
-    transition: all 0.2s ease;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
 }
 
 .copy-btn:hover {
     background: var(--primary-dark);
-    transform: translateY(-2px);
+}
+
+.copy-btn:active {
+    background: var(--primary-dark);
+}
+
+.copy-btn.success {
+    background: var(--success-color);
+}
+
+@keyframes copySuccess {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .info-box {
@@ -2677,76 +2699,12 @@ body {
     font-size: 0.9rem;
 }
 
-.qr-container {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-.qr-placeholder {
-    width: 150px;
-    height: 150px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.qr-placeholder i {
-    font-size: 3rem;
-    color: var(--primary-light);
-    opacity: 0.5;
-}
-
-.qr-placeholder p {
-    margin: 0;
-    color: var(--text-color);
-    font-size: 0.9rem;
-    opacity: 0.7;
-}
-
 /* Popup Footer */
 .popup-footer {
     padding: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: center;
-}
-
-.share-btn {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 12px 25px;
-    border-radius: 8px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-}
-
-.share-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-/* Success animation for copy button */
-.copy-btn.success {
-    background: var(--success-color);
-    animation: pulse 0.5s ease;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
 }
 
 /* Messages Icon Styles */

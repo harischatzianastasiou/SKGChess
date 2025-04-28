@@ -111,6 +111,7 @@ function showShareGamePopup(gameId) {
                 <i class="fas fa-info-circle"></i>
                 <p>The game will start automatically when your friend joins.</p>
             </div>
+        </div>
     `;
 
     // Add overlay with blur effect
@@ -287,15 +288,15 @@ document.addEventListener('DOMContentLoaded', function() {
 function copyGameId(gameId) {
     navigator.clipboard.writeText(gameId).then(() => {
         // Show success message
-        const button = document.querySelector('.share-game-popup button');
+        const button = document.querySelector('.copy-btn');
         const originalText = button.innerHTML;
         button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-        button.style.background = 'var(--success-color)';
+        button.classList.add('success');
         
         // Reset button after 2 seconds
         setTimeout(() => {
             button.innerHTML = originalText;
-            button.style.background = '';
+            button.classList.remove('success');
         }, 2000);
     }).catch(err => {
         console.error('Failed to copy game ID:', err);

@@ -111,17 +111,6 @@ function showShareGamePopup(gameId) {
                 <i class="fas fa-info-circle"></i>
                 <p>The game will start automatically when your friend joins.</p>
             </div>
-            <div class="qr-container">
-                <div class="qr-placeholder">
-                    <i class="fas fa-qrcode"></i>
-                    <p>Scan to join</p>
-                </div>
-            </div>
-        </div>
-        <div class="popup-footer">
-            <button class="share-btn" onclick="shareGame('${gameId}')">
-                <i class="fas fa-share-alt"></i> Share
-            </button>
         </div>
     `;
 
@@ -142,23 +131,6 @@ function showShareGamePopup(gameId) {
 
     // Subscribe to WebSocket for game start
     subscribeToGameStart(gameId);
-}
-
-// Function to share game via Web Share API if available
-function shareGame(gameId) {
-    const shareData = {
-        title: 'Join my Chess Game',
-        text: `Join my chess game with ID: ${gameId}`,
-        url: window.location.origin + '/games/' + gameId
-    };
-    
-    if (navigator.share) {
-        navigator.share(shareData)
-            .catch(err => console.error('Error sharing:', err));
-    } else {
-        // Fallback to copying to clipboard
-        copyGameId(gameId);
-    }
 }
 
 // Function to close the share game popup
@@ -316,15 +288,15 @@ document.addEventListener('DOMContentLoaded', function() {
 function copyGameId(gameId) {
     navigator.clipboard.writeText(gameId).then(() => {
         // Show success message
-        const button = document.querySelector('.share-game-popup button');
+        const button = document.querySelector('.copy-btn');
         const originalText = button.innerHTML;
         button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-        button.style.background = 'var(--success-color)';
+        button.classList.add('success');
         
         // Reset button after 2 seconds
         setTimeout(() => {
             button.innerHTML = originalText;
-            button.style.background = '';
+            button.classList.remove('success');
         }, 2000);
     }).catch(err => {
         console.error('Failed to copy game ID:', err);

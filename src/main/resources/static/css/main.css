@@ -2643,17 +2643,39 @@ body {
     color: white;
     border: none;
     padding: 8px 15px;
-    border-radius: 6px;
+    border-radius: 0;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
-    transition: all 0.2s ease;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
 }
 
 .copy-btn:hover {
     background: var(--primary-dark);
-    transform: translateY(-2px);
+}
+
+.copy-btn:active {
+    background: var(--primary-dark);
+}
+
+.copy-btn.success {
+    background: var(--success-color);
+}
+
+@keyframes copySuccess {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 .info-box {
@@ -2683,18 +2705,6 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: center;
-}
-
-/* Success animation for copy button */
-.copy-btn.success {
-    background: var(--success-color);
-    animation: pulse 0.5s ease;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
 }
 
 /* Messages Icon Styles */
