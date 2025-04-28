@@ -491,6 +491,39 @@ body.authenticated::before {
 .active-games-section {
     padding: 2rem 0;
     margin-top: 2rem;
+    margin-bottom: 2rem; /* Add margin at the bottom to separate from footer */
+    /* Remove max-height to allow natural flow */
+    /* max-height: 80vh; */
+    /* Remove overflow-y to allow natural flow */
+    /* overflow-y: auto; */
+    /* Add smooth scrolling */
+    scroll-behavior: smooth;
+    /* Add custom scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    /* Prevent section from triggering scroll events */
+    position: relative;
+    z-index: 10;
+    /* Add a class to identify this section */
+    scroll-section: true;
+}
+
+/* Custom scrollbar for Webkit browsers */
+.active-games-section::-webkit-scrollbar {
+    width: 8px;
+}
+
+.active-games-section::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.active-games-section::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.active-games-section::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .active-games-container {
@@ -498,6 +531,49 @@ body.authenticated::before {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1rem;
+    /* Add padding to prevent content from touching scrollbar */
+    padding-right: 1.5rem;
+    /* Ensure container doesn't trigger scroll events */
+    position: relative;
+    z-index: 1;
+}
+
+/* Add a class to prevent scroll propagation */
+.scroll-container {
+    /* Remove overflow-y to allow natural flow */
+    /* overflow-y: auto; */
+    position: relative;
+    z-index: 10;
+}
+
+/* Add a class for scrollable content within sections */
+.scrollable-content {
+    max-height: 80vh; /* Limit height to 80% of viewport height */
+    overflow-y: auto; /* Enable vertical scrolling */
+    /* Add custom scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    /* Add smooth scrolling */
+    scroll-behavior: smooth;
+    margin-bottom: 1rem; /* Add margin at the bottom */
+}
+
+/* Custom scrollbar for Webkit browsers */
+.scrollable-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .active-games-grid {
