@@ -53,25 +53,24 @@ body {
     position: relative;
     width: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
     height: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
-    padding: var(--space-sm);
-    border-radius: calc(4 * var(--base-unit));
+    padding: 0;
     margin: auto;
-    background: linear-gradient(135deg, #2c1810, #8e44ad);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    background: #2C1B47;
+    box-shadow: none;
 }
 
 .chess-board {
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
-    border: calc(2 * var(--base-unit)) solid #2c1810;
+    border: 1px solid #4A2B7A;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    background: #333;
+    background: #2C1B47;
     position: relative;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
-    padding: 2px;
-    gap: 2px;
+    box-shadow: none;
+    padding: 0;
+    gap: 0;
 }
 
 /* Add rotation for black's perspective */
@@ -84,10 +83,6 @@ body {
     transform: rotate(180deg);
 }
 
-.rank-labels, .file-labels {
-    display: none;
-}
-
 .tile {
     position: relative;
     width: 100%;  /* Will be 1/8 of board due to grid */
@@ -97,9 +92,7 @@ body {
     align-items: center;
     cursor: pointer;
     box-sizing: border-box;
-    border-radius: 4px;
-    margin: 2px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
 }
 
 /* Create coordinate elements */
@@ -149,7 +142,7 @@ body {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: none;
 }
 
 .tile.light::before {
@@ -172,7 +165,7 @@ body {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(0, 0, 0, 0.2);
+    border: none;
 }
 
 .tile.dark::before {
@@ -279,57 +272,45 @@ body {
 
 /* Piece styling */
 .piece {
-    position: absolute;
-    width: 80%;
-    height: 80%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    width: 90%;
+    height: 90%;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    z-index: 2;
-    pointer-events: auto;
-    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-    will-change: transform, filter;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    position: relative;
+    z-index: 3;
+    filter: none; /* Removed shadow */
+    transition: none; /* Removed transition */
 }
 
 .piece:hover {
-    cursor: grab;
-    transform: translate(-50%, -50%) scale(1.05);
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3)) brightness(1.1);
+    transform: none; /* Removed hover effect */
+    filter: none; /* Removed shadow */
 }
 
 .piece:active {
-    cursor: grabbing;
-    transform: translate(-50%, -50%) scale(0.95);
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    transform: none; /* Removed active effect */
+    filter: none; /* Removed shadow */
 }
 
-/* Enhance piece movement animation - faster and smoother */
 .piece.moving {
-    transition: all 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
-    z-index: 3;
-    will-change: transform, opacity; /* Optimize performance */
+    z-index: 10;
+    filter: none; /* Removed shadow */
 }
 
 /* Improve dragging piece visuals - more responsive */
 .dragging-piece {
-    cursor: grabbing;
     position: fixed;
-    width: 60px !important;
-    height: 60px !important;
+    width: 10%;
+    height: 10%;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
     pointer-events: none;
-    z-index: 100;
-    opacity: 0.9;
+    z-index: 1000;
+    filter: none; /* Removed shadow */
     transform: translate(-50%, -50%);
-    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
-    transition: transform 0.08s ease;
-    will-change: transform, opacity;
+    transition: none; /* Removed transition */
 }
 
 /* Enhance captured piece animation - faster */
