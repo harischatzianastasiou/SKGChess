@@ -2074,8 +2074,9 @@ body {
     background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
     color: var(--text-color);
     transform: rotateY(180deg);
-    overf    background: rgba(255, 255, 255, 0.05);
-5, 255, 255, 0.2);
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     height: auto;
     min-height: 100%;
     padding: 1.5rem;
@@ -2523,11 +2524,11 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
-    background: linear-gradient(135deg, var(--background-color), var(--primary-dark));
+    background: var(--surface-color);
     width: 90%;
     max-width: 500px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-lg);
     z-index: 1001;
     opacity: 0;
     visibility: hidden;
@@ -2548,9 +2549,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background: rgba(10, 13, 18, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
@@ -2567,7 +2568,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: var(--spacing-md);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -2587,7 +2588,7 @@ body {
 .close-btn {
     background: none;
     border: none;
-    color: var(--text-color);
+    color: var(--text-secondary);
     font-size: 1.2rem;
     cursor: pointer;
     padding: 5px;
@@ -2599,31 +2600,31 @@ body {
 }
 
 .close-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
     transform: rotate(90deg);
 }
 
 /* Popup Body */
 .popup-body {
-    padding: 20px;
+    padding: var(--spacing-md);
 }
 
 .game-id-container {
-    margin-bottom: 20px;
+    margin-bottom: var(--spacing-md);
 }
 
 .game-id-container p {
-    margin: 0 0 10px 0;
+    margin: 0 0 var(--spacing-sm) 0;
     color: var(--text-color);
     font-size: 0.9rem;
 }
 
 .game-id-box {
     display: flex;
-    gap: 10px;
+    gap: var(--spacing-sm);
     background: rgba(0, 0, 0, 0.2);
-    padding: 10px;
-    border-radius: 8px;
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -2639,53 +2640,71 @@ body {
 }
 
 .copy-btn {
+    /* Base styles */
     background: var(--primary-color);
-    color: white;
+    color: var(--text-color);
     border: none;
-    padding: 8px 15px;
-    border-radius: 0;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-sm);
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 5px;
     font-weight: 500;
+    
+    /* Enhanced transitions */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Modern shadow */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative;
-    z-index: 1;
+    
+    /* Better contrast for accessibility */
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 
 .copy-btn:hover {
-    background: var(--primary-dark);
+    /* Enhanced hover state */
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .copy-btn:active {
-    background: var(--primary-dark);
+    /* Improved active state */
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .copy-btn.success {
+    /* Smooth success state transition */
     background: var(--success-color);
+    animation: successPulse 0.5s ease-in-out;
 }
 
-@keyframes copySuccess {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-    100% {
-        transform: scale(1);
-    }
+/* Success animation */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Icon animation */
+.copy-btn i {
+    transition: transform 0.3s ease;
+}
+
+.copy-btn:hover i {
+    transform: scale(1.1);
 }
 
 .info-box {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: var(--spacing-sm);
     background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--spacing-md);
 }
 
 .info-box i {
@@ -2701,7 +2720,7 @@ body {
 
 /* Popup Footer */
 .popup-footer {
-    padding: 20px;
+    padding: var(--spacing-md);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: center;
