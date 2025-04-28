@@ -909,9 +909,6 @@ function renderActiveGameBoards() {
         board.className = 'board-preview';
         boardPreview.appendChild(board);
         
-        // Create a chess instance
-        const chess = new Chess();
-        
         // Fetch the game data to get the current position
         fetch(`/api/games/${gameId}`)
             .then(response => {
@@ -921,18 +918,16 @@ function renderActiveGameBoards() {
                 return response.json();
             })
             .then(gameData => {
-                // Set the position based on the FEN string if available
-                if (gameData.fenPosition) {
-                    chess.load(gameData.fenPosition);
-                }
+                // Get the board data
+                const boardDTO = JSON.parse(gameData.board);
                 
                 // Render the board
-                renderChessBoard(board, chess);
+                renderChessBoard(board, boardDTO);
             })
             .catch(error => {
                 console.error('Error fetching game data:', error);
-                // Render a default board if data fetch fails
-                renderChessBoard(board, chess);
+                // Render an empty board if data fetch fails
+                renderChessBoard(board, { tiles: [] });
             });
     });
 }
@@ -940,39 +935,53 @@ function renderActiveGameBoards() {
 /**
  * Render a chess board with the current position
  * @param {HTMLElement} container - The container element
- * @param {Chess} chess - The chess instance with the current position
+ * @param {Object} boardDTO - The board data transfer object containing tile information
  */
-function renderChessBoard(container, chess) {
+function renderChessBoard(container, boardDTO) {
     // Clear the container
     container.innerHTML = '';
+    
+    // Define piece images
+    const pieceImages = {
+        'WHITE_PAWN': '/images/white_p.png',
+        'WHITE_KNIGHT': '/images/white_n.png',
+        'WHITE_BISHOP': '/images/white_b.png',
+        'WHITE_ROOK': '/images/white_r.png',
+        'WHITE_QUEEN': '/images/white_q.png',
+        'WHITE_KING': '/images/white_k.png',
+        'BLACK_PAWN': '/images/black_p.png',
+        'BLACK_KNIGHT': '/images/black_n.png',
+        'BLACK_BISHOP': '/images/black_b.png',
+        'BLACK_ROOK': '/images/black_r.png',
+        'BLACK_QUEEN': '/images/black_q.png',
+        'BLACK_KING': '/images/black_k.png'
+    };
     
     // Create the board grid
     const board = document.createElement('div');
     board.className = 'board-grid';
     
     // Create squares
-    for (let rank = 8; rank >= 1; rank--) {
-        for (let file = 1; file <= 8; file++) {
-            const square = document.createElement('div');
-            const isLight = (rank + file) % 2 === 0;
-            square.className = `square ${isLight ? 'light' : 'dark'}`;
+    for (let i = 0; i < 64; i++) {
+        const square = document.createElement('div');
+        const isLight = ((Math.floor(i / 8) + i % 8) % 2) === 0;
+        square.className = `square ${isLight ? 'light' : 'dark'}`;
+        
+        // Get the piece at this square from boardDTO
+        const tileData = boardDTO.tiles.find(t => t.tileCoordinate === i);
+        if (tileData && tileData.tileOccupied && tileData.piece) {
+            // Create piece element
+            const pieceElement = document.createElement('div');
+            pieceElement.className = 'piece';
+            const pieceKey = `${tileData.piece.pieceAlliance}_${tileData.piece.pieceSymbol}`;
+            pieceElement.style.backgroundImage = `url('${pieceImages[pieceKey]}')`;
             
-            // Get the piece at this square
-            const squareName = `${String.fromCharCode(96 + file)}${rank}`;
-            const piece = chess.get(squareName);
-            
-            if (piece) {
-                // Create piece element
-                const pieceElement = document.createElement('div');
-                pieceElement.className = `piece ${piece.color} ${piece.type}`;
-                
-                // Add piece to square
-                square.appendChild(pieceElement);
-            }
-            
-            // Add square to board
-            board.appendChild(square);
+            // Add piece to square
+            square.appendChild(pieceElement);
         }
+        
+        // Add square to board
+        board.appendChild(square);
     }
     
     // Add board to container
