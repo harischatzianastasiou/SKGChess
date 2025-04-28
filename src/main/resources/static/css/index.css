@@ -485,7 +485,7 @@ body.authenticated::before {
 /* Ensure action cards are visible */
 .authenticated-hero .action-card {
     /* Remove the duplicate style */
-}
+} 
 
 /* Active Games Section Styles */
 .active-games-section {

@@ -24,6 +24,7 @@ com\chess\core\player\ai\OpeningBookCache$1.class
 com\chess\dto\rest\request\CreateUserRequestDTO.class
 com\chess\core\moves\noncapturing\PawnPromotionMove.class
 com\chess\exception\GameNotFoundException.class
+com\chess\model\entity\Message.class
 com\chess\dto\websocket\ChatDTO.class
 com\chess\core\player\ai\engine\evaluation\BoardEvaluator.class
 com\chess\core\tiles\OccupiedTile.class
@@ -54,6 +55,7 @@ com\chess\core\pieces\moveValidation\CoordinateInBoundsValidation.class
 com\chess\repository\UserRepository.class
 com\chess\service\GameService.class
 com\chess\core\utils\FenTest.class
+com\chess\repository\MessageRepository.class
 com\chess\core\player\Player.class
 com\chess\core\player\CurrentPlayer.class
 com\chess\ChessWebApplication.class
@@ -71,7 +73,9 @@ com\chess\model\entity\Game$GameStatus.class
 com\chess\core\player\ai\OpeningBookCache.class
 com\chess\core\tiles\EmptyTile.class
 com\chess\core\Alliance$1.class
+com\chess\service\MessageService.class
 com\chess\core\Alliance.class
+com\chess\dto\rest\response\MessageDTO.class
 com\chess\core\pieces\moveValidation\MoveValidation.class
 com\chess\core\pieces\moveValidation\MoveValidationStrategy$1.class
 com\chess\core\moves\capturing\PawnEnPassantAttack.class
@@ -96,6 +100,7 @@ com\chess\core\moves\noncapturing\PawnJumpMove.class
 com\chess\core\board\Board.class
 com\chess\dto\rest\response\GameDTO$GameDTOBuilder.class
 com\chess\core\pieces\CalculateMoveUtils.class
+com\chess\controller\MessageController.class
 com\chess\core\pieces\Knight.class
 com\chess\core\pieces\King.class
 com\chess\core\pieces\moveValidation\opponentDepending\CurrentPlayerQueensideCastleValidation.class
@@ -103,5 +108,6 @@ com\chess\core\player\ai\engine\utils\MoveConverter.class
 com\chess\core\moves\noncapturing\NonCapturingMove.class
 com\chess\dto\rest\response\GameDTO.class
 com\chess\core\moves\noncapturing\QueenSideCastleMove.class
+com\chess\controller\MessageRequest.class
 com\chess\core\tiles\Tile.class
 com\chess\core\pieces\Bishop.class

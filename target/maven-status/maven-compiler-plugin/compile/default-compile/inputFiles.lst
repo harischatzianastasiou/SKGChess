@@ -4,6 +4,7 @@ c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclip
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\dto\rest\request\CreateUserRequestDTO.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\noncapturing\QueenSideCastleMove.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\dto\rest\request\MakeMoveRequestDTO.java
+c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\controller\MessageController.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\tiles\EmptyTile.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\tiles\Tile.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\exception\GameAlreadyJoinedException.java
@@ -13,9 +14,11 @@ c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclip
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\noncapturing\KingSideCastleMove.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\utils\FenUtils.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\search\MiniMax.java
+c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\repository\MessageRepository.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\strategy\MoveStrategy.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\ChessWebApplication.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\ai\engine\evaluation\StandardBoardEvaluator.java
+c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\service\MessageService.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\noncapturing\PawnPromotionMove.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\dto\rest\response\UserDTO.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\player\Player.java
@@ -24,6 +27,7 @@ c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclip
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\capturing\PawnPromotionCapturingMove.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\moves\capturing\CapturingMove.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\GameManager.java
+c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\dto\rest\response\MessageDTO.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\moveValidation\opponentDepending\CurrentPlayerInCheckValidation.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\repository\UserRepository.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\moveValidation\opponentDepending\CurrentPlayerQueensideCastleValidation.java
@@ -52,6 +56,7 @@ c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclip
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\Queen.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\core\pieces\Knight.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\util\PGNParser.java
+c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\model\entity\Message.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\config\WebSocketConfig.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\controller\MainController.java
 c:\Users\tchatzia\OneDrive - Netcompany\Files\Notes\Languages\backend\Java\eclipse-workspace\SKGChess\src\main\java\com\chess\service\GameService.java
