@@ -30,6 +30,27 @@
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
 }
 
+/* Theme colors */
+.theme-color.purple {
+    background: linear-gradient(135deg, #9c27b0, #673ab7);
+}
+
+.theme-color.green {
+    background: linear-gradient(135deg, #4caf50, #2e7d32);
+}
+
+.theme-color.brown {
+    background: linear-gradient(135deg, #795548, #5d4037);
+}
+
+.theme-color.gold {
+    background: linear-gradient(135deg, #d4af37, #b8860b);
+}
+
+.theme-color.ocean {
+    background: linear-gradient(135deg, #1e88e5, #0a1929);
+}
+
 /* Default purple theme (original) */
 .theme-switcher.purple-theme {
     background-color: #6b46c1; /* Purple */
@@ -46,4 +67,59 @@
 .theme-switcher.green-theme {
     background-color: #2E8B57; /* Sea green */
     border: 2px solid #A9D9A9; /* Light green border */
+}
+
+/* Gold theme */
+.theme-switcher.gold-theme {
+    background-color: #d4af37; /* Gold */
+    border: 2px solid #ffd700; /* Bright gold border */
+}
+
+/* Ocean theme */
+.theme-switcher.ocean-theme {
+    background-color: #1e88e5; /* Ocean blue */
+    border: 2px solid #4fc3f7; /* Light blue border */
+}
+
+/* Theme switcher animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.theme-options.show {
+    animation: slideIn 0.3s ease forwards;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .theme-switcher {
+        bottom: 10px;
+        right: 10px;
+    }
+    
+    .theme-switcher-button {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .theme-options {
+        padding: 8px;
+    }
+    
+    .theme-option {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
+    
+    .theme-color {
+        width: 18px;
+        height: 18px;
+    }
 } 
