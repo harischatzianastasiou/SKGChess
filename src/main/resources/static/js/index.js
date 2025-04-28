@@ -14,6 +14,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.body.classList.contains('authenticated')) {
         handlePendingAction();
     }
+    
+    // Check if we need to show a game popup
+    const gameId = sessionStorage.getItem('showGamePopup');
+    if (gameId) {
+        // Clear the stored game ID
+        sessionStorage.removeItem('showGamePopup');
+        // Show the share popup
+        showShareGamePopup(gameId);
+    }
 });
 
 // Function to connect to the WebSocket
@@ -80,23 +89,31 @@ function showShareGamePopup(gameId) {
     const popup = document.createElement('div');
     popup.className = 'share-game-popup';
     
-    // Create popup content
+    // Create popup content with modern design
     popup.innerHTML = `
-        <h3>Share Game Room</h3>
-        <p>Share this room ID with your friend:</p>
-        <input type="text" value="${gameId}" readonly>
-        <button onclick="copyGameId('${gameId}')">
-            <i class="fas fa-copy"></i> Copy ID
-        </button>
-        <p class="info-text">
-            The game will start automatically when your friend joins.
-        </p>
-        <button onclick="closeSharePopup('${gameId}')" style="margin-top: var(--spacing-md); background: var(--accent-color);">
-            <i class="fas fa-times"></i> Close
-        </button>
+        <div class="popup-header">
+            <h3><i class="fas fa-gamepad"></i> Game Room Created</h3>
+            <button class="close-btn" onclick="closeSharePopup('${gameId}')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="popup-body">
+            <div class="game-id-container">
+                <p>Share this room ID with your friend:</p>
+                <div class="game-id-box">
+                    <input type="text" value="${gameId}" readonly>
+                    <button class="copy-btn" onclick="copyGameId('${gameId}')">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+            </div>
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <p>The game will start automatically when your friend joins.</p>
+            </div>
     `;
 
-    // Add overlay
+    // Add overlay with blur effect
     const overlay = document.createElement('div');
     overlay.className = 'share-game-overlay';
 

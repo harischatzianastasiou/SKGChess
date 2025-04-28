@@ -198,8 +198,11 @@ function createGameDirectly(username) {
         // Clear the pending action
         sessionStorage.removeItem('pendingAction');
         
-        // Redirect to the game page
-        window.location.href = `/games/${data.id}`;
+        // Store the game ID in sessionStorage to show popup after redirect
+        sessionStorage.setItem('showGamePopup', data.id);
+        
+        // Redirect to index page instead of game page
+        window.location.href = '/index';
     })
     .catch(error => {
         console.error("Error creating game:", error);
