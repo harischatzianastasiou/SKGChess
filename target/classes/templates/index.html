@@ -45,6 +45,7 @@
     <script src="/js/smoke-particles.js"></script>
     <script src="/js/modal.js"></script>
     <script src="/js/login-modal-bouncing-logo.js"></script>
+    <script src="/js/chess-quotes.js"></script>
     
     <!-- Inline script to ensure animations are triggered on direct page load -->
     <script>
@@ -103,21 +104,10 @@
                             <img src="/images/knight.png" alt="New Game Background" class="bg-image">
                         </div>
                     </div>
-                    <div class="bg-section bg-section-2" data-card="join-game">
-                        <div class="bg-image-container">
-                            <img src="/images/pawn.png" alt="Join Game Background" class="bg-image">
-                        </div>
-                    </div>
-                    <div class="bg-section bg-section-3" data-card="about">
-                        <div class="bg-image-container">
-                            <img src="/images/rook.png" alt="About Background" class="bg-image">
-                        </div>
-                    </div>
                 </div>
                 
                 <div class="hero-content">
-                    <h1>Welcome to SKG Chess</h1>
-                    <p>Experience the thrill of chess in a modern, interactive environment</p>
+                    <!-- Removed welcome text and description -->
                 </div>
                 
                 <!-- Action Cards directly in hero section -->
@@ -172,9 +162,9 @@
                     </div>
                 </div>
                 
-                <div class="hero-content">
+                <div class="hero-content" sec:authorize="isAuthenticated()">
                     <h1>Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>
-                    <p>It's great to see you!</p>
+                    <p class="welcome-quote"><span class="quote-mark">"</span><span class="quote-text">Loading chess wisdom...</span><span class="quote-mark">"</span></p>
                 </div>
                 
                 <!-- Action Cards for authenticated users -->
