@@ -217,34 +217,31 @@ function updateMessagesBadge() {
 
 // Function to update messages dropdown
 function updateMessagesDropdown() {
-    const messagesList = document.querySelector('.messages-list');
-    if (!messagesList) return;
+    const dropdown = document.querySelector('.messages-dropdown');
+    if (!dropdown) return;
     
-    if (gameMessages.length > 0) {
-        messagesList.innerHTML = gameMessages.map(message => `
-            <div class="message-item ${message.read ? '' : 'unread'}" data-message-id="${message.id}">
-                <div class="message-content">${message.content}</div>
-                <div class="message-time">${formatTimestamp(message.timestamp)}</div>
-                <a href="/games/${message.gameId}" class="message-link">Join Game</a>
-            </div>
-        `).join('');
-        
-        // Add clear all button if there are messages
-        const footer = document.createElement('div');
-        footer.className = 'messages-footer';
-        footer.innerHTML = `
-            <button class="clear-messages-btn" onclick="clearAllMessages()">
-                <i class="fas fa-trash"></i>
-                Clear All
-            </button>
-        `;
-        messagesList.after(footer);
-    } else {
-        messagesList.innerHTML = '<div class="no-messages">No messages</div>';
-        // Remove footer if it exists
-        const footer = document.querySelector('.messages-footer');
-        if (footer) footer.remove();
-    }
+    // Create dropdown content with clear button inside
+    dropdown.innerHTML = `
+        <div class="messages-header">
+            <h3>Game Messages</h3>
+        </div>
+        <div class="messages-list">
+            ${gameMessages.length > 0 ? 
+                gameMessages.map(message => `
+                    <div class="message-item ${message.read ? 'read' : 'unread'}" data-message-id="${message.id}">
+                        <div class="message-content">${message.content}</div>
+                        <div class="message-time">${formatTimestamp(message.timestamp)}</div>
+                        <a href="/games/${message.gameId}" class="message-link">Join Game</a>
+                    </div>
+                `).join('') : 
+                '<div class="no-messages">No messages</div>'
+            }
+        </div>
+        ${gameMessages.length > 0 ? 
+            '<div class="messages-footer"><button class="clear-messages-btn" onclick="clearAllMessages()"><i class="fas fa-trash"></i> Clear All Messages</button></div>' : 
+            ''
+        }
+    `;
 }
 
 // Function to format timestamp
@@ -254,18 +251,35 @@ function formatTimestamp(timestamp) {
 }
 
 // Function to toggle messages dropdown
-function toggleMessagesDropdown(event) {
-    event.stopPropagation(); // Prevent event from bubbling up
+function toggleMessagesDropdown() {
     const dropdown = document.querySelector('.messages-dropdown');
     if (dropdown) {
+        // Toggle the show class
         dropdown.classList.toggle('show');
         
-        // If opening the dropdown, mark messages as read
+        // Mark messages as read when dropdown is shown
         if (dropdown.classList.contains('show')) {
             gameMessages.forEach(msg => msg.read = true);
             updateMessagesBadge();
-            updateMessagesDropdown();
+            
+            // Add event listener to close dropdown when clicking outside
+            document.addEventListener('click', closeMessagesDropdownOnClickOutside);
+        } else {
+            // Remove event listener when dropdown is closed
+            document.removeEventListener('click', closeMessagesDropdownOnClickOutside);
         }
+    }
+}
+
+// Function to close messages dropdown when clicking outside
+function closeMessagesDropdownOnClickOutside(event) {
+    const dropdown = document.querySelector('.messages-dropdown');
+    const messagesIcon = document.querySelector('.messages-icon');
+    
+    // Check if click is outside the dropdown and not on the messages icon
+    if (dropdown && !dropdown.contains(event.target) && !messagesIcon.contains(event.target)) {
+        dropdown.classList.remove('show');
+        document.removeEventListener('click', closeMessagesDropdownOnClickOutside);
     }
 }
 
@@ -316,37 +330,14 @@ function subscribeToGameStart(gameId) {
 document.addEventListener('DOMContentLoaded', function() {
     const headerRight = document.querySelector('.header-right');
     if (headerRight) {
-        // Create messages container
         const messagesContainer = document.createElement('div');
         messagesContainer.className = 'header-messages';
-        
-        // Create messages icon and badge
         messagesContainer.innerHTML = `
-            <div class="messages-icon" onclick="toggleMessagesDropdown(event)">
-                <i class="fas fa-bell"></i>
-                <span class="messages-badge">0</span>
-            </div>
-            <div class="messages-dropdown">
-                <div class="messages-header">
-                    <h3>Game Messages</h3>
-                </div>
-                <div class="messages-list">
-                    <div class="no-messages">No messages</div>
-                </div>
-            </div>
+            <i class="fas fa-bell messages-icon" onclick="toggleMessagesDropdown()"></i>
+            <span class="messages-badge">0</span>
+            <div class="messages-dropdown"></div>
         `;
-        
-        // Insert before the first child of header-right
         headerRight.insertBefore(messagesContainer, headerRight.firstChild);
-        
-        // Add click outside listener to close dropdown
-        document.addEventListener('click', function(event) {
-            const dropdown = document.querySelector('.messages-dropdown');
-            const icon = document.querySelector('.messages-icon');
-            if (dropdown && icon && !icon.contains(event.target) && !dropdown.contains(event.target)) {
-                dropdown.classList.remove('show');
-            }
-        });
     }
 });
 
@@ -1014,4 +1005,60 @@ function renderChessBoard(container, boardDTO) {
     
     // Add board to container
     container.appendChild(board);
+}
+
+// Function to show the join game dialog
+function showJoinGameDialog() {
+    // Check if user is logged in
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    if (!usernameElement) {
+        // User is not logged in, show login modal
+        showLoginForAction('joinGame');
+        return;
+    }
+    
+    // Show the join game dialog and overlay
+    const dialog = document.getElementById('joinGameDialog');
+    const overlay = document.getElementById('joinGameOverlay');
+    
+    if (dialog && overlay) {
+        dialog.classList.add('active');
+        overlay.classList.add('active');
+        
+        // Focus on the input field
+        setTimeout(() => {
+            const input = document.getElementById('gameIdInput');
+            if (input) {
+                input.focus();
+            }
+        }, 100);
+        
+        // Prevent body scrolling
+        document.body.style.overflow = 'hidden';
+    } else {
+        console.error('Join game dialog elements not found');
+    }
+}
+
+// Function to close the join game dialog
+function closeJoinGameDialog() {
+    // Hide the join game dialog and overlay
+    const dialog = document.getElementById('joinGameDialog');
+    const overlay = document.getElementById('joinGameOverlay');
+    
+    if (dialog && overlay) {
+        dialog.classList.remove('active');
+        overlay.classList.remove('active');
+        
+        // Restore body scrolling
+        document.body.style.overflow = '';
+    }
+}
+
+// Function to handle Enter key press in the game ID input
+function handleEnterKey(event) {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        handleJoinGame();
+    }
 } 

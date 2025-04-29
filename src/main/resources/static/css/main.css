@@ -2620,7 +2620,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.join-game-popup.show {
+.join-game-popup.active {
     opacity: 1;
     visibility: visible;
     transform: translate(-50%, -50%) scale(1);
@@ -2641,7 +2641,7 @@ body {
     transition: all 0.3s ease;
 }
 
-.share-game-overlay.show, .join-game-overlay.show {
+.share-game-overlay.show, .join-game-overlay.active {
     opacity: 1;
     visibility: visible;
 }

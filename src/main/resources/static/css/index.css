@@ -866,10 +866,15 @@ body.authenticated::before {
     display: none;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out;
 }
 
 .messages-dropdown.show {
     display: block;
+    opacity: 1;
+    visibility: visible;
     animation: fadeIn 0.2s ease-out;
 }
 
