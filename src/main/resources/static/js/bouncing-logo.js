@@ -1,13 +1,17 @@
 // Bouncing Logo Animation Handler
 document.addEventListener('DOMContentLoaded', function() {
-    // Find the view my games card container
-    const gamesCard = document.querySelector('.action-card:first-child');
-    if (!gamesCard) return; // Exit if card not found
+    // Determine which card to use based on authentication status
+    const isAuthenticated = document.querySelector('.username-banner') !== null;
+    const targetCard = isAuthenticated ? 
+        document.querySelector('.stat-card') : 
+        document.querySelector('.about-card');
     
-    // Create container within the games card
+    if (!targetCard) return; // Exit if card not found
+    
+    // Create container within the target card
     const container = document.createElement('div');
     container.className = 'bouncing-container';
-    gamesCard.appendChild(container);
+    targetCard.appendChild(container);
 
     // Create logo
     const logo = document.createElement('img');
@@ -18,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Animation variables with adjusted speed and random direction
     let x = 0;  // Start at the actual left edge
-    let y = Math.random() * (gamesCard.offsetHeight - 60);
+    let y = Math.random() * (targetCard.offsetHeight - 60);
     let speed = 0.5;
     let dx = speed * (Math.random() < 0.5 ? -1 : 1);  // Random direction
     let dy = speed * (Math.random() < 0.5 ? -1 : 1);  // Random direction
@@ -42,9 +46,9 @@ document.addEventListener('DOMContentLoaded', function() {
         x += dx;
         y += dy;
 
-        // Check boundaries of the games card - only bounce at edges
-        const maxX = gamesCard.offsetWidth - logo.offsetWidth;
-        const maxY = gamesCard.offsetHeight - logo.offsetHeight;
+        // Check boundaries of the target card - only bounce at edges
+        const maxX = targetCard.offsetWidth - logo.offsetWidth;
+        const maxY = targetCard.offsetHeight - logo.offsetHeight;
         let collision = false;
 
         // Only check for collisions at the edges
@@ -82,11 +86,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle card hover
-    gamesCard.addEventListener('mouseenter', () => {
+    targetCard.addEventListener('mouseenter', () => {
         isAnimating = false;
     });
 
-    gamesCard.addEventListener('mouseleave', () => {
+    targetCard.addEventListener('mouseleave', () => {
         isAnimating = true;
         lastTime = 0;
         requestAnimationFrame(animate);
@@ -94,8 +98,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle card resize
     const resizeObserver = new ResizeObserver(() => {
-        const maxX = gamesCard.offsetWidth - logo.offsetWidth;
-        const maxY = gamesCard.offsetHeight - logo.offsetHeight;
+        const maxX = targetCard.offsetWidth - logo.offsetWidth;
+        const maxY = targetCard.offsetHeight - logo.offsetHeight;
         
         // Keep logo in bounds after resize
         x = Math.min(Math.max(x, 0), maxX);
@@ -106,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function() {
         logo.style.top = y + 'px';
     });
     
-    resizeObserver.observe(gamesCard);
+    resizeObserver.observe(targetCard);
 
     // Start animation when image loads
     logo.onload = () => requestAnimationFrame(animate);

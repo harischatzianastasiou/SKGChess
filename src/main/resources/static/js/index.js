@@ -217,31 +217,34 @@ function updateMessagesBadge() {
 
 // Function to update messages dropdown
 function updateMessagesDropdown() {
-    const dropdown = document.querySelector('.messages-dropdown');
-    if (!dropdown) return;
+    const messagesList = document.querySelector('.messages-list');
+    if (!messagesList) return;
     
-    // Create dropdown content with clear button inside
-    dropdown.innerHTML = `
-        <div class="messages-header">
-            <h3>Game Messages</h3>
-        </div>
-        <div class="messages-list">
-            ${gameMessages.length > 0 ? 
-                gameMessages.map(message => `
-                    <div class="message-item ${message.read ? 'read' : 'unread'}" data-message-id="${message.id}">
-                        <div class="message-content">${message.content}</div>
-                        <div class="message-time">${formatTimestamp(message.timestamp)}</div>
-                        <a href="/games/${message.gameId}" class="message-link">Join Game</a>
-                    </div>
-                `).join('') : 
-                '<div class="no-messages">No messages</div>'
-            }
-        </div>
-        ${gameMessages.length > 0 ? 
-            '<div class="messages-footer"><button class="clear-messages-btn" onclick="clearAllMessages()"><i class="fas fa-trash"></i> Clear All Messages</button></div>' : 
-            ''
-        }
-    `;
+    if (gameMessages.length > 0) {
+        messagesList.innerHTML = gameMessages.map(message => `
+            <div class="message-item ${message.read ? '' : 'unread'}" data-message-id="${message.id}">
+                <div class="message-content">${message.content}</div>
+                <div class="message-time">${formatTimestamp(message.timestamp)}</div>
+                <a href="/games/${message.gameId}" class="message-link">Join Game</a>
+            </div>
+        `).join('');
+        
+        // Add clear all button if there are messages
+        const footer = document.createElement('div');
+        footer.className = 'messages-footer';
+        footer.innerHTML = `
+            <button class="clear-messages-btn" onclick="clearAllMessages()">
+                <i class="fas fa-trash"></i>
+                Clear All
+            </button>
+        `;
+        messagesList.after(footer);
+    } else {
+        messagesList.innerHTML = '<div class="no-messages">No messages</div>';
+        // Remove footer if it exists
+        const footer = document.querySelector('.messages-footer');
+        if (footer) footer.remove();
+    }
 }
 
 // Function to format timestamp
@@ -251,15 +254,17 @@ function formatTimestamp(timestamp) {
 }
 
 // Function to toggle messages dropdown
-function toggleMessagesDropdown() {
+function toggleMessagesDropdown(event) {
+    event.stopPropagation(); // Prevent event from bubbling up
     const dropdown = document.querySelector('.messages-dropdown');
     if (dropdown) {
         dropdown.classList.toggle('show');
         
-        // Mark messages as read when dropdown is shown
+        // If opening the dropdown, mark messages as read
         if (dropdown.classList.contains('show')) {
             gameMessages.forEach(msg => msg.read = true);
             updateMessagesBadge();
+            updateMessagesDropdown();
         }
     }
 }
@@ -311,14 +316,37 @@ function subscribeToGameStart(gameId) {
 document.addEventListener('DOMContentLoaded', function() {
     const headerRight = document.querySelector('.header-right');
     if (headerRight) {
+        // Create messages container
         const messagesContainer = document.createElement('div');
         messagesContainer.className = 'header-messages';
+        
+        // Create messages icon and badge
         messagesContainer.innerHTML = `
-            <i class="fas fa-bell messages-icon" onclick="toggleMessagesDropdown()"></i>
-            <span class="messages-badge">0</span>
-            <div class="messages-dropdown"></div>
+            <div class="messages-icon" onclick="toggleMessagesDropdown(event)">
+                <i class="fas fa-bell"></i>
+                <span class="messages-badge">0</span>
+            </div>
+            <div class="messages-dropdown">
+                <div class="messages-header">
+                    <h3>Game Messages</h3>
+                </div>
+                <div class="messages-list">
+                    <div class="no-messages">No messages</div>
+                </div>
+            </div>
         `;
+        
+        // Insert before the first child of header-right
         headerRight.insertBefore(messagesContainer, headerRight.firstChild);
+        
+        // Add click outside listener to close dropdown
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.messages-dropdown');
+            const icon = document.querySelector('.messages-icon');
+            if (dropdown && icon && !icon.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
     }
 });
 

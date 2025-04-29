@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="/css/smoke-particles.css">
     <link rel="stylesheet" href="/css/landing-animations.css">
     <link rel="stylesheet" href="/css/modal.css">
-    <link rel="stylesheet" href="/css/login-modal-bouncing-logo.css">
+    <!-- <link rel="stylesheet" href="/css/login-modal-bouncing-logo.css"> -->
     <link rel="stylesheet" href="/css/board-green.css">
     <link rel="stylesheet" href="/css/board-gold.css">
     <link rel="stylesheet" href="/css/board-ocean.css">
@@ -41,7 +41,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chess-web-api@1.1.0/dist/chess-web-api.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
     <script th:inline="javascript" src="/js/index.js"></script>
-    <script src="/js/bouncing-logo.js"></script>
+    <!-- <script src="/js/bouncing-logo.js"></script> -->
     <script src="/js/scroll-animations.js"></script>
     <script src="/js/smoke-particles.js"></script>
     <script src="/js/modal.js"></script>
@@ -118,7 +118,7 @@
                         <div class="action-content">
                             <i class="fas fa-plus-circle action-icon"></i>
                             <h3>Start a New Game</h3>
-                            <p>Create a new chess game and invite your friends to play</p>
+                            <p>Create a new game & invite a friend to play</p>
                             <a href="#" onclick="showLoginForAction('newGame'); return false;" class="btn btn-primary">
                                 <i class="fas fa-plus"></i>
                                 New Game
@@ -144,7 +144,7 @@
                         <div class="action-content">
                             <i class="fas fa-info-circle action-icon"></i>
                             <h3>About SKG Chess</h3>
-                            <p>Discover the story behind our chess platform - from concept to creation</p>
+                            <p>Discover the story behind our chess platform</p>
                             <a href="/about" class="btn btn-about">
                                 <i class="fas fa-arrow-right"></i>
                                 Learn More
@@ -175,7 +175,7 @@
                         <div class="action-content">
                             <i class="fas fa-plus-circle action-icon"></i>
                             <h3>Start a New Game</h3>
-                            <p>Create a new chess game and invite your friends to play</p>
+                            <p>Create a new game & invite a friend to play</p>
                             <a href="#" onclick="newGame(); return false;" class="btn btn-primary">
                                 <i class="fas fa-plus"></i>
                                 New Game
@@ -200,65 +200,12 @@
                     <div class="action-card">
                         <div class="action-content">
                             <i class="fas fa-chart-line action-icon"></i>
-                            <h3>View Your Stats</h3>
-                            <p>Check your chess performance and statistics</p>
-                            <a href="#my-games-section" class="btn btn-about">
+                            <h3>My Games</h3>
+                            <p>Check your match history & stats</p>
+                            <a href="#active-games-section" class="btn btn-about">
                                 <i class="fas fa-arrow-right"></i>
                                 View Stats
                             </a>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Stats Section (Only for authenticated users) -->
-            <section id="my-games-section" class="content-section my-games-section section-hidden last-section" sec:authorize="isAuthenticated()">
-                <div class="section-header">
-                    <h2>
-                        <i class="fas fa-chart-line"></i>
-                        Your Stats
-                    </h2>
-                </div>
-                <div class="games-dashboard">
-                    <div class="games-stats">
-                        <div class="stat-card">
-                            <h3>Rating</h3>
-                            <span class="rating" th:text="${userRating ?: '1200'}">1200</span>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Games Played</h3>
-                            <span class="games-count" th:text="${gamesPlayed ?: '0'}">0</span>
-                        </div>
-                        <div class="stat-card">
-                            <h3>Win Rate</h3>
-                            <span class="win-rate" th:text="${winRate ?: '0%'}">0%</span>
-                        </div>
-                    </div>
-                    <div class="recent-games glass-effect">
-                        <h3>Recent Games</h3>
-                        <div class="games-list" id="recentGames">
-                            <!-- Dynamically populated by JavaScript -->
-                            <div class="game-card win">
-                                <div class="game-info">
-                                    <span class="game-result">Win</span>
-                                    <span class="game-opponent">vs. Player123</span>
-                                </div>
-                                <div class="game-date">Today</div>
-                            </div>
-                            <div class="game-card loss">
-                                <div class="game-info">
-                                    <span class="game-result">Loss</span>
-                                    <span class="game-opponent">vs. ChessMaster</span>
-                                </div>
-                                <div class="game-date">Yesterday</div>
-                            </div>
-                            <div class="game-card draw">
-                                <div class="game-info">
-                                    <span class="game-result">Draw</span>
-                                    <span class="game-opponent">vs. GrandMaster</span>
-                                </div>
-                                <div class="game-date">3 days ago</div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -273,8 +220,24 @@
                     </h2>
                 </div>
                 <div class="active-games-container">
+                    <!-- Games Stats Section -->
+                    <div class="games-stats">
+                        <div class="stat-item">
+                            <h3>Rating</h3>
+                            <span class="rating" th:text="${userRating ?: '1200'}">1200</span>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Games Played</h3>
+                            <span class="games-count" th:text="${gamesPlayed ?: '0'}">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <h3>Win Rate</h3>
+                            <span class="win-rate" th:text="${winRate ?: '0%'}">0%</span>
+                        </div>
+                    </div>
+                    
                     <!-- Display active games if any exist -->
-                    <div th:if="${activeGames != null && !activeGames.empty}" class="active-games-grid scrollable-content">
+                    <div th:if="${activeGames != null && !activeGames.empty}" class="active-games-grid">
                         <div th:each="game : ${activeGames}" class="active-game-card glass-effect">
                             <div class="active-game-header">
                                 <h3 th:text="${game.whitePlayerUsername + ' vs ' + game.blackPlayerUsername}">Player1 vs Player2</h3>
@@ -365,39 +328,53 @@
     </div>
 
     <!-- Join Game Dialog -->
-    <div id="joinGameDialog" class="modal">
-        <div class="modal-content">
-            <h2>Join Game</h2>
-            <div class="input-group">
-                <input type="text" id="gameIdInput" placeholder="Enter Game ID">
-                <button onclick="handleJoinGame()" class="btn btn-primary">Join</button>
+    <div id="joinGameDialog" class="join-game-popup">
+        <div class="popup-header">
+            <h3><i class="fas fa-sign-in-alt"></i> Join Game</h3>
+            <button class="close-btn" onclick="closeJoinGameDialog()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="popup-body">
+            <div class="game-id-container">
+                <p>Enter the game room ID to join:</p>
+                <div class="game-id-box">
+                    <input type="text" id="gameIdInput" placeholder="Enter game ID" onkeypress="handleEnterKey(event)">
+                    <button class="join-btn" onclick="handleJoinGame()">
+                        <i class="fas fa-sign-in-alt"></i> Join
+                    </button>
+                </div>
             </div>
-            <button onclick="closeJoinGameDialog()" class="btn btn-secondary">Cancel</button>
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i>
+                <p>Ask your friend for the game room ID to join their game.</p>
+            </div>
         </div>
     </div>
+
+    <!-- Join Game Overlay -->
+    <div id="joinGameOverlay" class="join-game-overlay" onclick="closeJoinGameDialog()"></div>
 
     <!-- Accessibility Skip Link (hidden visually) -->
     <a href="#main-content" class="screen-reader-only">Skip to main content</a>
 
     <script>
-        // Join Game Dialog Functions
-        function showJoinGameDialog() {
-            const dialog = document.getElementById('joinGameDialog');
-            dialog.style.display = 'flex';
-        }
-
-        function closeJoinGameDialog() {
-            const dialog = document.getElementById('joinGameDialog');
-            dialog.style.display = 'none';
-        }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            const dialog = document.getElementById('joinGameDialog');
-            if (event.target === dialog) {
-                closeJoinGameDialog();
+        // Handle Enter key press in the game ID input
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                handleJoinGame();
             }
         }
+        
+        // Close modal when clicking outside
+        document.addEventListener('DOMContentLoaded', function() {
+            const overlay = document.getElementById('joinGameOverlay');
+            overlay.addEventListener('click', function(event) {
+                if (event.target === overlay) {
+                    closeJoinGameDialog();
+                }
+            });
+        });
         
         // Disable scroll to next section when in scrollable sections
         document.addEventListener('DOMContentLoaded', function() {
@@ -429,88 +406,6 @@
             scrollableSections.forEach(section => {
                 observer.observe(section);
             });
-            
-            // Override the scrollToSection function when in scrollable sections
-            const originalScrollToSection = window.scrollToSection;
-            window.scrollToSection = function(index) {
-                if (document.body.classList.contains('in-scrollable-section')) {
-                    // If we're in a scrollable section, don't scroll to the next section
-                    return;
-                }
-                // Otherwise, use the original function
-                if (originalScrollToSection) {
-                    originalScrollToSection(index);
-                }
-            };
-            
-            // Prevent scroll events from propagating when in scrollable content
-            const scrollableContents = document.querySelectorAll('.scrollable-content');
-            scrollableContents.forEach(content => {
-                content.addEventListener('wheel', function(e) {
-                    // Check if we're at the top or bottom of the scrollable area
-                    const isAtTop = content.scrollTop === 0;
-                    const isAtBottom = content.scrollHeight - content.scrollTop === content.clientHeight;
-                    
-                    // If we're at the top and scrolling up, or at the bottom and scrolling down,
-                    // allow the event to propagate (for page scrolling)
-                    if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
-                        return;
-                    }
-                    
-                    // Otherwise, prevent the event from propagating
-                    e.stopPropagation();
-                }, { passive: false });
-            });
-            
-            // Background section interaction with cards
-            const actionCards = document.querySelectorAll('.action-card');
-            const bgSections = document.querySelectorAll('.bg-section');
-            
-            // Function to handle card hover/focus
-            function handleCardInteraction(card, isActive) {
-                const cardType = card.getAttribute('data-card');
-                const correspondingBg = document.querySelector(`.bg-section[data-card="${cardType}"]`);
-                
-                if (correspondingBg) {
-                    if (isActive) {
-                        // Remove active class from all sections
-                        bgSections.forEach(section => section.classList.remove('active'));
-                        // Add active class to corresponding section
-                        correspondingBg.classList.add('active');
-                    } else {
-                        // Remove active class when card is no longer focused
-                        correspondingBg.classList.remove('active');
-                    }
-                }
-            }
-            
-            // Add event listeners to cards
-            actionCards.forEach(card => {
-                // Mouse enter event
-                card.addEventListener('mouseenter', () => {
-                    handleCardInteraction(card, true);
-                });
-                
-                // Mouse leave event
-                card.addEventListener('mouseleave', () => {
-                    handleCardInteraction(card, false);
-                });
-                
-                // Focus event for keyboard navigation
-                card.addEventListener('focus', () => {
-                    handleCardInteraction(card, true);
-                }, true);
-                
-                // Blur event for keyboard navigation
-                card.addEventListener('blur', () => {
-                    handleCardInteraction(card, false);
-                }, true);
-            });
-            
-            // Initialize with first card active
-            if (actionCards.length > 0) {
-                handleCardInteraction(actionCards[0], true);
-            }
         });
     </script>
 </body>
