@@ -653,19 +653,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle wheel events for smooth scrolling
     window.addEventListener('wheel', (e) => {
-        // Check if the event originated from a scrollable container
-        const scrollableParent = e.target.closest('.scrollable-content, .scrollable-features');
-        if (scrollableParent) {
-            // Allow natural scrolling within scrollable containers
+        // Find the closest scrollable container
+        const scrollableContainer = e.target.closest('.active-games-section');
+        
+        if (scrollableContainer) {
+            // Get the total scrollable height
+            const totalHeight = scrollableContainer.scrollHeight;
+            // Get the visible height
+            const visibleHeight = scrollableContainer.clientHeight;
+            // Get the current scroll position
+            const currentScroll = scrollableContainer.scrollTop;
+            
+            // Check if we're at the top or bottom of the scrollable content
+            const isAtTop = currentScroll === 0;
+            const isAtBottom = currentScroll + visibleHeight >= totalHeight;
+            
+            // If scrolling up at the top or down at the bottom, allow section navigation
+            if ((e.deltaY < 0 && isAtTop) || (e.deltaY > 0 && isAtBottom)) {
+                // Allow section navigation
+                if (isScrolling) return;
+                
+                e.preventDefault();
+                setTimeout(() => {
+                    if (e.deltaY > 0) {
+                        scrollToSection(currentSection + 1);
+                    } else {
+                        scrollToSection(currentSection - 1);
+                    }
+                }, 50);
+            } else {
+                // Otherwise, allow natural scrolling within the container
+                e.stopPropagation();
+            }
             return;
         }
-
+        
+        // Default section navigation behavior for non-scrollable areas
         if (isScrolling) return;
         
-        // Prevent default scroll behavior
         e.preventDefault();
-        
-        // Add a small delay to prevent rapid scrolling
         setTimeout(() => {
             if (e.deltaY > 0) {
                 scrollToSection(currentSection + 1);

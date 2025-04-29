@@ -500,15 +500,17 @@ body.authenticated::before {
 
 /* Active Games Section Styles */
 .active-games-section {
-    padding: 2rem 0;
-    margin-top: 0; /* Remove margin to eliminate gap */
-    margin-bottom: 2rem;
+    background: var(--primary-dark);
+    padding: 2rem;
+    margin: 0;
+    min-height: 100vh;
+    position: relative;
+    z-index: 10;
+    border-radius: 0;
+    overflow-y: auto;
     scroll-behavior: smooth;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-    position: relative;
-    z-index: 10;
-    border-radius: var(--border-radius-lg);
 }
 
 /* Custom scrollbar for Webkit browsers */
@@ -533,50 +535,8 @@ body.authenticated::before {
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 1rem;
-    /* Add padding to prevent content from touching scrollbar */
-    padding-right: 1.5rem;
-    /* Ensure container doesn't trigger scroll events */
     position: relative;
     z-index: 1;
-}
-
-/* Add a class to prevent scroll propagation */
-.scroll-container {
-    /* Remove overflow-y to allow natural flow */
-    /* overflow-y: auto; */
-    position: relative;
-    z-index: 10;
-}
-
-/* Add a class for scrollable content within sections */
-.scrollable-content {
-    max-height: 80vh; /* Limit height to 80% of viewport height */
-    overflow-y: auto; /* Enable vertical scrolling */
-    /* Add custom scrollbar styling */
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-    /* Add smooth scrolling */
-    scroll-behavior: smooth;
-    margin-bottom: 1rem; /* Add margin at the bottom */
-}
-
-/* Custom scrollbar for Webkit browsers */
-.scrollable-content::-webkit-scrollbar {
-    width: 8px;
-}
-
-.scrollable-content::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.scrollable-content::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-}
-
-.scrollable-content::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.3);
 }
 
 .active-games-grid {
@@ -584,9 +544,22 @@ body.authenticated::before {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
     margin-top: 1.5rem;
+    padding-bottom: 2rem; /* Add padding at the bottom for better scrolling */
 }
 
+/* Add a title for the section */
+.active-games-title {
+    color: var(--text-color);
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+}
+
+/* Update the game cards to stand out better against the dark background */
 .active-game-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 12px;
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -598,6 +571,7 @@ body.authenticated::before {
 .active-game-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: var(--primary-light);
 }
 
 .active-game-header {
