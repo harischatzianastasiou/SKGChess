@@ -120,7 +120,7 @@ h2 {
 button {
     width: 100%;
     padding: 12px;
-    background: rgba(0, 0, 0, 0.7);
+    background: #6b46c1;
     border: 1px solid rgba(155, 107, 158, 0.2);
     border-radius: 8px;
     color: #ffffff;
@@ -130,7 +130,7 @@ button {
 }
 
 button:hover {
-    background: rgba(0, 0, 0, 0.85);
+    background: #553c9a;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
@@ -313,7 +313,7 @@ h2 {
 .login-btn {
     width: 100%;
     padding: 12px;
-    background: #1a121b;
+    background: #6b46c1;
     color: #ffffff;
     border: 1px solid rgba(155, 107, 158, 0.2);
     border-radius: 4px;
@@ -323,7 +323,7 @@ h2 {
 }
 
 .login-btn:hover {
-    background: #000000;
+    background: #553c9a;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }

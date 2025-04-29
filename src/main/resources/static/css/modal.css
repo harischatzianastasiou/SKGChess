@@ -229,7 +229,7 @@
 }
 
 .login-btn {
-    background: var(--primary-color);
+    background: #6b46c1; /* Changed to purple primary color */
     color: var(--text-color);
     border: none;
     padding: var(--spacing-sm) var(--spacing-md);
@@ -243,7 +243,7 @@
 }
 
 .login-btn:hover {
-    background: var(--primary-light);
+    background: #553c9a; /* Changed to purple dark color */
     transform: translateY(-1px);
 }
 
