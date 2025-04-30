@@ -34,35 +34,6 @@
     <link rel="preload" href="/images/boardBanner.png" as="image">
     <link rel="preload" href="/images/skgchess.svg" as="image">
     
-    <!-- Animation optimization script - Add this before other scripts -->
-    <script>
-        // Check if the user prefers reduced motion
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        
-        // Function to optimize animations based on device performance
-        function optimizeAnimations() {
-            // Check if the device is low-end (based on memory and CPU cores)
-            const isLowEndDevice = navigator.hardwareConcurrency <= 4 || 
-                                  (navigator.deviceMemory && navigator.deviceMemory <= 4);
-            
-            // If user prefers reduced motion or device is low-end, disable animations
-            if (prefersReducedMotion || isLowEndDevice) {
-                document.documentElement.classList.add('animations-disabled');
-            }
-            
-            // Add a class to enable animations after page load for smoother experience
-            window.addEventListener('load', function() {
-                // Small delay to ensure content is visible before animations start
-                setTimeout(function() {
-                    document.documentElement.classList.add('animations-enabled');
-                }, 100);
-            });
-        }
-        
-        // Run optimization immediately
-        optimizeAnimations();
-    </script>
-    
     <!-- Scripts -->
     <script src="/js/notifications.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>

@@ -251,7 +251,8 @@ function formatTimestamp(timestamp) {
 }
 
 // Function to toggle messages dropdown
-function toggleMessagesDropdown() {
+function toggleMessagesDropdown(event) {
+    event.stopPropagation(); // Prevent event from bubbling up
     const dropdown = document.querySelector('.messages-dropdown');
     if (dropdown) {
         // Toggle the show class
@@ -333,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const messagesContainer = document.createElement('div');
         messagesContainer.className = 'header-messages';
         messagesContainer.innerHTML = `
-            <i class="fas fa-bell messages-icon" onclick="toggleMessagesDropdown()"></i>
+            <i class="fas fa-bell messages-icon" onclick="toggleMessagesDropdown(event)"></i>
             <span class="messages-badge">0</span>
             <div class="messages-dropdown"></div>
         `;
