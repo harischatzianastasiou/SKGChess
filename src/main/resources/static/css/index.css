@@ -12,7 +12,8 @@
     position: relative;
     overflow: hidden;
     min-height: 100vh; /* Changed from default to 100vh to cover full viewport height */
-    animation: backgroundTravel 30s infinite alternate ease-in-out; /* Added animation */
+    animation: backgroundTravel 15s infinite alternate ease-in-out; /* Reduced from 30s to 15s for faster animation */
+    will-change: background-position; /* Optimize for animation performance */
 }
 
 /* Special styling for integrated hero section */
@@ -119,7 +120,8 @@
     opacity: 1; /* Set default opacity to fully opaque */
     transition: all 0.3s ease; /* Add smooth transition for all properties */
     filter: none; /* Remove any filters */
-    animation: slowPan 30s infinite alternate ease-in-out; /* Keep animation for other sections */
+    animation: slowPan 15s infinite alternate ease-in-out; /* Reduced from 30s to 15s for faster animation */
+    will-change: transform; /* Optimize for animation performance */
 }
 
 /* Add hover effect for bg-section-3 image */
@@ -163,7 +165,8 @@
     background: linear-gradient(45deg, var(--primary-light), var(--accent-light));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    animation: fadeInUp 0.8s ease-out;
+    animation: fadeInUp 0.5s ease-out; /* Reduced from 0.8s to 0.5s for faster animation */
+    will-change: opacity, transform; /* Optimize for animation performance */
 }
 
 .hero-content p {
@@ -171,7 +174,8 @@
     color: var(--text-secondary);
     max-width: 700px; /* Increased from 600px to 700px to accommodate larger text */
     margin: 0 auto;
-    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+    animation: fadeInUp 0.5s ease-out 0.1s backwards; /* Reduced from 0.8s to 0.5s and delay from 0.2s to 0.1s */
+    will-change: opacity, transform; /* Optimize for animation performance */
 }
 
 /* Action Cards Grid - Now inside hero section */
@@ -199,13 +203,14 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    animation: fadeInUp 0.8s ease-out backwards;
+    animation: fadeInUp 0.5s ease-out backwards; /* Reduced from 0.8s to 0.5s for faster animation */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    will-change: transform, opacity; /* Optimize for animation performance */
 }
 
-.action-card:nth-child(1) { animation-delay: 0.2s; }
-.action-card:nth-child(2) { animation-delay: 0.4s; }
-.action-card:nth-child(3) { animation-delay: 0.6s; }
+.action-card:nth-child(1) { animation-delay: 0.1s; } /* Reduced from 0.2s to 0.1s */
+.action-card:nth-child(2) { animation-delay: 0.2s; } /* Reduced from 0.4s to 0.2s */
+.action-card:nth-child(3) { animation-delay: 0.3s; } /* Reduced from 0.6s to 0.3s */
 
 .action-card::before {
     content: '';
@@ -399,7 +404,8 @@ body.authenticated::before {
     background-repeat: no-repeat;
     opacity: 0.5;
     z-index: -1;
-    animation: slowPan 60s infinite alternate ease-in-out;
+    animation: slowPan 30s infinite alternate ease-in-out; /* Reduced from 60s to 30s for faster animation */
+    will-change: background-position; /* Optimize for animation performance */
 }
 
 /* Authenticated Hero Section */
@@ -481,7 +487,6 @@ body.authenticated::before {
     gap: 0.2rem;
     width: 100%; /* Take full width */
     flex-wrap: wrap; /* Allow wrapping if needed */
-    welcome-quote
 }
 
 .quote-mark {
@@ -858,7 +863,8 @@ body.authenticated::before {
     display: block;
     opacity: 1;
     visibility: visible;
-    animation: fadeIn 0.2s ease-out;
+    animation: fadeIn 0.15s ease-out; /* Reduced from 0.2s to 0.15s for faster animation */
+    will-change: opacity; /* Optimize for animation performance */
 }
 
 .messages-header {
@@ -1048,4 +1054,77 @@ body.authenticated::before {
         width: 100%;
         max-width: 300px;
     }
+}
+
+/* Add a utility class to disable animations for better performance */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Add a class that can be toggled via JavaScript to disable animations */
+.animations-disabled * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}
+
+/* Animation optimization classes */
+.animations-enabled .hero-section {
+    animation: backgroundTravel 15s infinite alternate ease-in-out;
+}
+
+.animations-enabled .bg-section-3 .bg-image {
+    animation: slowPan 15s infinite alternate ease-in-out;
+}
+
+.animations-enabled body.authenticated::before {
+    animation: slowPan 30s infinite alternate ease-in-out;
+}
+
+.animations-enabled .hero-content h1 {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.animations-enabled .hero-content p {
+    animation: fadeInUp 0.5s ease-out 0.1s backwards;
+}
+
+.animations-enabled .action-card {
+    animation: fadeInUp 0.5s ease-out backwards;
+}
+
+.animations-enabled .messages-dropdown.show {
+    animation: fadeIn 0.15s ease-out;
+}
+
+/* When animations are disabled, set initial states directly */
+.animations-disabled .hero-section,
+.animations-disabled .bg-section-3 .bg-image,
+.animations-disabled body.authenticated::before,
+.animations-disabled .hero-content h1,
+.animations-disabled .hero-content p,
+.animations-disabled .action-card,
+.animations-disabled .messages-dropdown.show {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
+.animations-disabled .hero-section {
+    background-position: center center;
+}
+
+.animations-disabled .bg-section-3 .bg-image {
+    transform: translateY(-20%);
+}
+
+.animations-disabled .action-card {
+    transform: translateY(0);
 } 

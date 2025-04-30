@@ -497,6 +497,92 @@ body {
     }
 }
 
+/* Add a class that can be toggled via JavaScript to disable animations */
+.animations-disabled * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}
+
+/* Animation optimization classes */
+.animations-enabled .logo-container:hover .logo-img {
+    animation: logoShake 0.5s ease;
+}
+
+.animations-enabled .fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+.animations-enabled .loading::after {
+    animation: spin 1s linear infinite;
+}
+
+.animations-enabled .game-start-overlay.show {
+    animation: fadeInOut 1s ease-in-out forwards;
+}
+
+.animations-enabled .game-start-text {
+    animation: popIn 0.5s ease-out forwards;
+    animation-delay: 0.3s;
+}
+
+.animations-enabled .game-start-sparkles::before,
+.animations-enabled .game-start-sparkles::after {
+    animation: sparkleExpand 1s ease-out forwards;
+}
+
+.animations-enabled .notification {
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+.animations-enabled .notification.hide {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+.animations-enabled .story-cta .scroll-link {
+    animation: bounce 2s infinite;
+}
+
+.animations-enabled .about-card-logo .bouncing-logo {
+    animation: enhancedBounceLogo 6s infinite ease-in-out;
+}
+
+.animations-enabled .about-card {
+    animation: cardPulse 2s infinite;
+}
+
+.animations-enabled .about-link {
+    animation: buttonPulse 6s infinite;
+}
+
+.animations-enabled .share-game-popup.show,
+.animations-enabled .join-game-popup.active {
+    animation: fadeIn 1.5s ease-in-out forwards;
+}
+
+/* When animations are disabled, set initial states directly */
+.animations-disabled .logo-container:hover .logo-img,
+.animations-disabled .fade-in,
+.animations-disabled .loading::after,
+.animations-disabled .game-start-overlay.show,
+.animations-disabled .game-start-text,
+.animations-disabled .game-start-sparkles::before,
+.animations-disabled .game-start-sparkles::after,
+.animations-disabled .notification,
+.animations-disabled .notification.hide,
+.animations-disabled .story-cta .scroll-link,
+.animations-disabled .about-card-logo .bouncing-logo,
+.animations-disabled .about-card,
+.animations-disabled .about-link,
+.animations-disabled .share-game-popup.show,
+.animations-disabled .join-game-popup.active {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+    transition: none;
+}
+
 .screen-reader-only {
     position: absolute;
     width: 1px;
