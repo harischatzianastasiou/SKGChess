@@ -6,10 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Available themes
     const themes = {
         'purple': 'board-purple.css',
-        'green': 'board-green.css',
-        'brown': 'board-brown.css',
-        'gold': 'board-gold.css',
-        'ocean': 'board-ocean.css'
+        'gold': 'board-gold.css'
     };
     
     // Function to apply theme

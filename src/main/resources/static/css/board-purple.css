@@ -1,8 +1,8 @@
 /* Main layout */
 :root {
     /* Typography */
-    --font-primary: 'Lato', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-secondary: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-secondary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     
     /* Colors matching index.css */
     --color-primary: #6b46c1;
@@ -55,11 +55,22 @@ body {
     height: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
     padding: 0;
     margin: auto;
-    background: #2C1B47;
+    background-image: url('/images/boardBanner2.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     box-shadow: none;
 }
 
+.center-panel{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/images/boardBanner2.png') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
 .chess-board {
+    margin-top: 5%;
     width: 100%;
     height: 100%;
     aspect-ratio: 1;

@@ -102,6 +102,7 @@
                 <div class="hero-background">
                     <div class="bg-section bg-section-1" data-card="new-game">
                         <div class="bg-image-container">
+                            <div class="think-chess-text">skg<span class="dot"> Chess.</span></div>
                             <img src="/images/knight.png" alt="New Game Background" class="bg-image">
                         </div>
                     </div>
@@ -220,22 +221,6 @@
                     </h2>
                 </div>
                 <div class="active-games-container">
-                    <!-- Games Stats Section -->
-                    <div class="games-stats">
-                        <div class="stat-item">
-                            <h3>Rating</h3>
-                            <span class="rating" th:text="${userRating ?: '1200'}">1200</span>
-                        </div>
-                        <div class="stat-item">
-                            <h3>Games Played</h3>
-                            <span class="games-count" th:text="${gamesPlayed ?: '0'}">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <h3>Win Rate</h3>
-                            <span class="win-rate" th:text="${winRate ?: '0%'}">0%</span>
-                        </div>
-                    </div>
-                    
                     <!-- Display active games if any exist -->
                     <div th:if="${activeGames != null && !activeGames.empty}" class="active-games-grid">
                         <div th:each="game : ${activeGames}" class="active-game-card glass-effect">

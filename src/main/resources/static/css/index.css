@@ -4,7 +4,7 @@
 .hero-section {
     text-align: center;
     padding: 2rem 2rem;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/boardBanner3.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/boardBanner2.png');
     background-size: cover;
     background-position: center;
     border-radius: var(--border-radius-lg);
@@ -61,6 +61,8 @@
     filter: blur(0) brightness(1); /* No blur, full brightness */
     transform: scale(1.1); /* Slightly larger scale */
     box-shadow: 0 0 30px rgba(130, 90, 220, 0.4); /* Lighter purple glow */
+    position: relative;
+    height: 100%;
 }
 
 .bg-section-2 {
@@ -101,11 +103,11 @@
 
 /* Specific styling for chess piece images */
 .bg-section-1 .bg-image {
-    max-width: 50%; /* Increased from 60% to 70% to make the knight larger */
-    max-height: 50%; /* Increased from 60% to 70% to make the knight larger */
-    margin-top: -25%; /* Changed from -30% to -15% to move image down slightly */
-    transform: translateY(10%); /* Added to move the image down slightly */
-    animation: none; /* Remove animation to keep it fixed */
+    max-width: 35%;    /* Reduced from 50% to 35% */
+    max-height: 35%;   /* Reduced from 50% to 35% */
+    margin-top: -25%;
+    margin-left: -30.5%;
+    animation: none;
 }
 
 .bg-section-3 .bg-image {
@@ -391,7 +393,7 @@ body.authenticated::before {
     left: 0;
     width: 100%;
     height: 100vh; /* Use viewport height instead of percentage */
-    background-image: url('/images/boardBanner3.jpg');
+    background-image: url('/images/boardBanner2.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -500,7 +502,8 @@ body.authenticated::before {
 
 /* Active Games Section Styles */
 .active-games-section {
-    background: var(--primary-dark);
+    /* Remove background */
+    background: transparent;
     padding: 2rem;
     margin: 0;
     min-height: 100vh;
@@ -508,9 +511,11 @@ body.authenticated::before {
     z-index: 10;
     border-radius: 0;
     overflow-y: auto;
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    scroll-snap-align: none;
+    scroll-snap-stop: always;
 }
 
 /* Custom scrollbar for Webkit browsers */
@@ -547,16 +552,17 @@ body.authenticated::before {
     padding-bottom: 2rem; /* Add padding at the bottom for better scrolling */
 }
 
-/* Add a title for the section */
+/* Add a title for the section with better contrast */
 .active-games-title {
     color: var(--text-color);
     font-size: 2rem;
     text-align: center;
     margin-bottom: 2rem;
     padding-top: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Update the game cards to stand out better against the dark background */
+/* Update the game cards to stand out better without a background */
 .active-game-card {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -566,6 +572,8 @@ body.authenticated::before {
     display: flex;
     flex-direction: column;
     height: 100%;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .active-game-card:hover {
@@ -944,4 +952,27 @@ body.authenticated::before {
 
 .clear-messages-btn i {
     font-size: 0.9rem;
+}
+
+.think-chess-text {
+    position: absolute;
+    left: 43%;
+    top: 1cap;
+    transform: translateY(55%);
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: rgb(255, 255, 255);
+    z-index: 2;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    display: flex;           /* Added to enable flex layout */
+    flex-direction: column;  /* Stack children vertically */
+    align-items: flex-start; /* Align items to the start (left) */
+}
+
+.think-chess-text .dot {
+    color: #553c9a;
+    font-size: 4rem;
+    margin-left: 2rem;      /* Added indentation for the second line */
 } 

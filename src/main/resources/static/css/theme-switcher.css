@@ -35,20 +35,8 @@
     background: linear-gradient(135deg, #9c27b0, #673ab7);
 }
 
-.theme-color.green {
-    background: linear-gradient(135deg, #4caf50, #2e7d32);
-}
-
-.theme-color.brown {
-    background: linear-gradient(135deg, #795548, #5d4037);
-}
-
 .theme-color.gold {
-    background: linear-gradient(135deg, #d4af37, #b8860b);
-}
-
-.theme-color.ocean {
-    background: linear-gradient(135deg, #1e88e5, #0a1929);
+    background: linear-gradient(135deg, #ededed, #757575);
 }
 
 /* Default purple theme (original) */
@@ -57,28 +45,10 @@
     border: 2px solid #9f7aea; /* Lighter purple border */
 }
 
-/* Brown theme */
-.theme-switcher.brown-theme {
-    background-color: #8B4513; /* Saddle brown */
-    border: 2px solid #DEB887; /* Burlywood border */
-}
-
-/* Green theme */
-.theme-switcher.green-theme {
-    background-color: #2E8B57; /* Sea green */
-    border: 2px solid #A9D9A9; /* Light green border */
-}
-
 /* Gold theme */
 .theme-switcher.gold-theme {
-    background-color: #d4af37; /* Gold */
-    border: 2px solid #ffd700; /* Bright gold border */
-}
-
-/* Ocean theme */
-.theme-switcher.ocean-theme {
-    background-color: #1e88e5; /* Ocean blue */
-    border: 2px solid #4fc3f7; /* Light blue border */
+    background-color: #919191; /* Gold */
+    border: 2px solid #c5c5c5; /* Bright gold border */
 }
 
 /* Theme switcher animation */
