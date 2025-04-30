@@ -129,47 +129,12 @@
                 <div class="hero-content" sec:authorize="isAuthenticated()">
                     <h1>Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>
                     <p class="welcome-quote"><span class="quote-mark">"</span><span class="quote-text">Loading chess wisdom...</span><span class="quote-mark">"</span></p>
-                </div>
                 
-                <!-- Action Cards for authenticated users -->
-                <div class="quick-actions-grid">
-                    <!-- New Game Card -->
-                    <div class="action-card">
-                        <div class="action-content">
-                            <i class="fas fa-plus-circle action-icon"></i>
-                            <h3>Start a New Game</h3>
-                            <p>Create a new game & invite a friend to play</p>
-                            <a href="#" onclick="newGame(); return false;" class="btn btn-primary">
-                                <i class="fas fa-plus"></i>
-                                New Game
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Join Game Card -->
-                    <div class="action-card">
-                        <div class="action-content">
-                            <i class="fas fa-sign-in-alt action-icon"></i>
-                            <h3>Join a Game</h3>
-                            <p>Enter a game code to join an existing chess match</p>
-                            <a href="#" onclick="showJoinGameDialog(); return false;" class="btn btn-secondary">
-                                <i class="fas fa-sign-in-alt"></i>
-                                Join Game
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- View Stats Card -->
-                    <div class="action-card">
-                        <div class="action-content">
-                            <i class="fas fa-chart-line action-icon"></i>
-                            <h3>My Games</h3>
-                            <p>Check your match history & stats</p>
-                            <a href="#active-games-section" class="btn btn-about">
-                                <i class="fas fa-arrow-right"></i>
-                                View Stats
-                            </a>
-                        </div>
+                    <!-- Main buttons container replacing cards -->
+                    <div class="main-buttons-container auth-buttons">
+                        <a href="#" onclick="newGame(); return false;" class="main-button get-started">New Game</a>
+                        <a href="#" onclick="showJoinGameDialog(); return false;" class="main-button about">Join Game</a>
+                        <a href="#active-games-section" class="main-button about">View Stats</a>
                     </div>
                 </div>
             </section>

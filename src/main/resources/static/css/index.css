@@ -481,6 +481,7 @@ body.authenticated::before {
     gap: 0.2rem;
     width: 100%; /* Take full width */
     flex-wrap: wrap; /* Allow wrapping if needed */
+    welcome-quote
 }
 
 .quote-mark {
@@ -1026,14 +1027,24 @@ body.authenticated::before {
     transform: translateY(-2px);
 }
 
-/* Responsive adjustments */
+/* Authenticated buttons specific styles */
+.main-buttons-container.auth-buttons {
+    margin-right: 10rem;
+    margin-top: 5rem; /* Reduced from 20rem to 10rem to move buttons up */
+    gap: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
 @media (max-width: 768px) {
-    .main-buttons-container {
+    .main-buttons-container.auth-buttons {
         flex-direction: column;
+        align-items: center;
         gap: 15px;
     }
     
-    .main-button {
+    .main-buttons-container.auth-buttons .main-button {
         width: 100%;
         max-width: 300px;
     }
