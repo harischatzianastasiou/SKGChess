@@ -102,55 +102,17 @@
                 <div class="hero-background">
                     <div class="bg-section bg-section-1" data-card="new-game">
                         <div class="bg-image-container">
-                            <div class="think-chess-text">skg<span class="dot"> Chess.</span></div>
+                            <div class="think-chess-text">Skg<span class="dot"> Chess.</span></div>
                             <img src="/images/knight.png" alt="New Game Background" class="bg-image">
                         </div>
                     </div>
                 </div>
                 
                 <div class="hero-content">
-                    <!-- Removed welcome text and description -->
-                </div>
-                
-                <!-- Action Cards directly in hero section -->
-                <div class="quick-actions-grid">
-                    <!-- New Game Card -->
-                    <div class="action-card" data-card="new-game">
-                        <div class="action-content">
-                            <i class="fas fa-plus-circle action-icon"></i>
-                            <h3>Start a New Game</h3>
-                            <p>Create a new game & invite a friend to play</p>
-                            <a href="#" onclick="showLoginForAction('newGame'); return false;" class="btn btn-primary">
-                                <i class="fas fa-plus"></i>
-                                New Game
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Join Game Card -->
-                    <div class="action-card" data-card="join-game">
-                        <div class="action-content">
-                            <i class="fas fa-sign-in-alt action-icon"></i>
-                            <h3>Join a Game</h3>
-                            <p>Enter a game code to join an existing chess match</p>
-                            <a href="#" onclick="showLoginForAction('joinGame'); return false;" class="btn btn-secondary">
-                                <i class="fas fa-sign-in-alt"></i>
-                                Join Game
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Learn More Card -->
-                    <div class="action-card" data-card="about">
-                        <div class="action-content">
-                            <i class="fas fa-info-circle action-icon"></i>
-                            <h3>About SKG Chess</h3>
-                            <p>Discover the story behind our chess platform</p>
-                            <a href="/about" class="btn btn-about">
-                                <i class="fas fa-arrow-right"></i>
-                                Learn More
-                            </a>
-                        </div>
+                    <!-- Main buttons container -->
+                    <div class="main-buttons-container">
+                        <a href="#" onclick="showLoginForAction('newGame'); return false;" class="main-button get-started">Get Started</a>
+                        <a href="/about" class="main-button about">About SKG Chess</a>
                     </div>
                 </div>
             </section>

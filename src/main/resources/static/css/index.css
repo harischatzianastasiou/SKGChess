@@ -975,4 +975,66 @@ body.authenticated::before {
     color: #553c9a;
     font-size: 4rem;
     margin-left: 2rem;      /* Added indentation for the second line */
+}
+
+/* Main buttons container styles */
+.main-buttons-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20rem; /* Increased from 2rem to move buttons down */
+    padding: 0 20px;
+    transform: translateX(-50px); /* Move buttons slightly to the left */
+}
+
+.main-button {
+    padding: 15px 30px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-width: 180px;
+    text-align: center;
+}
+
+.main-button.get-started {
+    background-color:  #425007; /* Your orange/coral color from the example */
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(226, 125, 96, 0.3);
+}
+
+.main-button.get-started:hover {
+    background-color: #849d14;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(226, 125, 96, 0.4);
+}
+
+.main-button.about {
+    background-color: #553c9a;
+    color: #333;
+    border: 2px solid #333;
+}
+
+.main-button.about:hover {
+    color: #ffffff;
+    background-color: #2d1f2e;
+    transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-buttons-container {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .main-button {
+        width: 100%;
+        max-width: 300px;
+    }
 } 
