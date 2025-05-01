@@ -25,26 +25,45 @@ function createLoginModal() {
         <div id="login-modal" class="modal-overlay">
             <div class="modal-container">
                 <div class="modal-header">
-                    <h3 class="modal-title">Login to Play</h3>
+                    <h3 class="modal-title">Log in to Chess</h3>
                     <button class="modal-close">&times;</button>
                 </div>
                 <div class="modal-body">
+                    <!-- Google Sign In Button -->
+                    <button class="social-login-btn google-btn" onclick="handleGoogleSignIn()">
+                        <img src="https://www.google.com/favicon.ico" alt="Google Icon">
+                        Continue with Google
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="divider">
+                        <span class="divider-line"></span>
+                        <span class="divider-text">or</span>
+                        <span class="divider-line"></span>
+                    </div>
+
                     <form id="login-form" class="login-form" action="/login" method="POST">
                         <div class="form-group">
-                            <label for="modal-username">Username</label>
-                            <input type="text" id="modal-username" name="username" class="modal-username" required autocomplete="username">
+                            <label for="modal-username">Email or username</label>
+                            <input type="text" id="modal-username" name="username" placeholder="Email or username" required autocomplete="username">
                         </div>
                         <div class="form-group">
                             <label for="modal-password">Password</label>
-                            <input type="password" id="modal-password" name="password" class="modal-password" required autocomplete="current-password">
+                            <div class="password-input">
+                                <input type="password" id="modal-password" name="password" placeholder="Password" required autocomplete="current-password">
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                                    <img src="/images/eye.svg" alt="Toggle password visibility">
+                                </button>
+                            </div>
                         </div>
                         <div class="remember-me">
                             <input type="checkbox" id="modal-remember" name="remember">
                             <label for="modal-remember">Remember Me</label>
                         </div>
                         <button type="submit" class="login-btn">Log In</button>
-                        <p class="signup-prompt">Don't have an account? <a href="/signup">Sign up here</a></p>
                     </form>
+                    <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
+                    <p class="signup-prompt">Don't have an account? <a href="/signup">Sign up here</a></p>
                 </div>
             </div>
         </div>
@@ -247,6 +266,19 @@ function handlePendingAction() {
                 console.log('Unknown pending action:', pendingAction);
         }
     }
+}
+
+// Add password visibility toggle function
+function togglePasswordVisibility() {
+    const passwordInput = document.getElementById('modal-password');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+}
+
+// Add Google Sign In handler
+function handleGoogleSignIn() {
+    // TODO: Implement Google Sign In logic
+    console.log('Google Sign In clicked');
 }
 
 // Export functions for use in other scripts
