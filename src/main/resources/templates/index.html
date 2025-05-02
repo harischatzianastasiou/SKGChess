@@ -89,66 +89,8 @@
     </style>
 </head>
 <body th:classappend="${#authorization.expression('isAuthenticated()')} ? 'authenticated'">
-    <script>
-        // Get references to the audio element and icon
-        const audio = document.getElementById('backgroundMusic');
-        const musicIcon = document.getElementById('musicIcon');
-        let isInitialized = false;
-
-        // Add event listeners for audio loading and errors
-        audio.addEventListener('loadeddata', () => {
-            console.log('Audio file loaded successfully');
-            console.log('Audio duration:', audio.duration, 'seconds');
-        });
-
-        audio.addEventListener('error', (e) => {
-            console.error('Error loading audio:', e);
-            console.error('Audio error details:', audio.error);
-        });
-
-        // Function to initialize and toggle music
-        function initializeAndToggleMusic() {
-            console.log('Button clicked');
-            
-            if (!isInitialized) {
-                console.log('Initializing audio for the first time');
-                // First click - initialize the audio
-                audio.volume = 0.5;  // Set to half volume
-                isInitialized = true;
-            }
-            
-            // Toggle play/pause
-            if (audio.paused) {
-                console.log('Unmuting audio');
-                audio.play().catch(error => {
-                    console.error("Playback failed:", error);
-                });
-                musicIcon.classList.remove('fa-volume-mute');
-                musicIcon.classList.add('fa-volume-up');
-            } else {
-                console.log('Muting audio');
-                audio.pause();
-                musicIcon.classList.remove('fa-volume-up');
-                musicIcon.classList.add('fa-volume-mute');
-            }
-        }
-
-        // Log initial audio state
-        console.log('Initial audio state:', {
-            hasAudio: !!audio,
-            readyState: audio.readyState
-        });
-    </script>
-
-    <!-- Audio element -->
-    <audio id="backgroundMusic" loop preload="auto">
-        <source src="audio/background.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- Music player button -->
-    <button class="music-player" onclick="initializeAndToggleMusic()">
-        <i id="musicIcon" class="fas fa-volume-mute"></i>
-    </button>
+    <!-- Audio player fragment - placed at the very beginning of body -->
+    <div th:replace="~{fragments/audio-player}"></div>
 
     <!-- Smoke Particles Container -->
     <div class="smoke-container" id="smokeContainer"></div>

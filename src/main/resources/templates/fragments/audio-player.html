@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Audio Player Fragment</title>
+    <style>
+        /* Style for the music player button */
+        .music-player {
+            position: fixed;      /* Fixed position */
+            bottom: 20px;        /* 20px from bottom */
+            right: 20px;         /* 20px from right */
+            z-index: 1000;       /* Ensure it's above other elements */
+            background: rgba(255, 255, 255, 0.1);  /* Semi-transparent background */
+            border: none;        /* No border */
+            border-radius: 50%;  /* Circular button */
+            cursor: pointer;     /* Show pointer cursor */
+            padding: 15px;       /* Add padding */
+            transition: all 0.3s ease;  /* Smooth transitions */
+            width: 50px;         /* Fixed width */
+            height: 50px;        /* Fixed height */
+            display: flex;       /* Flex container */
+            align-items: center; /* Center vertically */
+            justify-content: center; /* Center horizontally */
+        }
+        
+        .music-player:hover {
+            background: rgba(255, 255, 255, 0.2);  /* Slightly more opaque on hover */
+            transform: scale(1.1);  /* Slightly larger on hover */
+        }
+        
+        .music-player i {
+            font-size: 24px;     /* Icon size */
+            color: white;        /* Icon color */
+        }
+    </style>
+</head>
+<body>
+    <!-- Define the fragment with a name -->
+    <div th:fragment="audio-player">
+        <!-- Audio element for background music -->
+        <audio id="backgroundMusic" loop preload="auto">
+            <source src="audio/background.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Music player button -->
+        <button class="music-player" onclick="initializeAndToggleMusic()">
+            <i id="musicIcon" class="fas fa-volume-mute"></i>
+        </button>
+
+        <!-- JavaScript for audio control -->
+        <script>
+            // Make the function globally available
+            window.initializeAndToggleMusic = function() {
+                const audio = document.getElementById('backgroundMusic');
+                const musicIcon = document.getElementById('musicIcon');
+                
+                // Toggle play/pause
+                if (audio.paused) {
+                    console.log('Unmuting audio');
+                    audio.play().catch(error => {
+                        console.error("Playback failed:", error);
+                    });
+                    musicIcon.classList.remove('fa-volume-mute');
+                    musicIcon.classList.add('fa-volume-up');
+                } else {
+                    console.log('Muting audio');
+                    audio.pause();
+                    musicIcon.classList.remove('fa-volume-up');
+                    musicIcon.classList.add('fa-volume-mute');
+                }
+            };
+
+            // Initialize audio on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                const audio = document.getElementById('backgroundMusic');
+                const musicIcon = document.getElementById('musicIcon');
+
+                // Set initial state
+                audio.volume = 0.5;  // Set to half volume
+                audio.pause();       // Start muted
+                musicIcon.classList.add('fa-volume-mute');
+
+                // Add event listeners for audio loading and errors
+                audio.addEventListener('loadeddata', () => {
+                    console.log('Audio file loaded successfully');
+                    console.log('Audio duration:', audio.duration, 'seconds');
+                });
+
+                audio.addEventListener('error', (e) => {
+                    console.error('Error loading audio:', e);
+                    console.error('Audio error details:', audio.error);
+                });
+
+                // Log initial audio state
+                console.log('Initial audio state:', {
+                    hasAudio: !!audio,
+                    readyState: audio.readyState
+                });
+            });
+        </script>
+    </div>
+</body>
+</html> 
