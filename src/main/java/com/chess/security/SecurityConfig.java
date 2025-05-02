@@ -63,6 +63,7 @@ public class SecurityConfig {
                 "/css/**",   // Allow access to CSS files
                 "/js/**",    // Allow access to JS files
                 "/images/**", 
+                "/audio/**",  // Allow access to audio files
                 "/error",
                 "/api/games/**",  // Allow access to games API endpoints
                 "/index",
