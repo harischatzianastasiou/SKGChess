@@ -46,7 +46,7 @@
     --color-white-piece: #ffffff;
     --color-black-piece: #000000;
     --color-selected: rgba(159, 122, 234, 0.4); /* Updated to purple */
-    --color-legal-move: rgba(0, 255, 0, 0.3);
+    --color-legal-move: rgb(2, 186, 2);
     --color-check: rgba(255, 0, 0, 0.5);
     
     /* Scroll-specific variables */

@@ -4,9 +4,9 @@
     --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-secondary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     
-    /* Colors for Gold theme */
-    --color-primary: #d4af37;
-    --color-primary-dark: #b8860b;
+    /* Colors for gold theme */
+    --color-primary: #b8860b;  /* Dark gold */
+    --color-primary-dark: #8b6914;  /* Darker gold */
     --color-secondary: #ffffff;
     --color-text: #f9f5e9;
     --color-text-dark: #a0a0a0;
@@ -55,12 +55,14 @@ body {
     height: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
     padding: 0;
     margin: auto;
-    background: #1a1a1a;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     box-shadow: none;
 }
 
-.center-panel{
-    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/images/boardBanner.png') !important;
+.center-panel {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/images/boardBanner.png') !important;
     background-size: cover !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -71,12 +73,13 @@ body {
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
-    border: none;
+    border: 10px solid var(--color-accent);
+    border-radius: 20px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    background: #1a1a1a;
+    background: #2C1B47;
     position: relative;
-    box-shadow: none;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
     padding: 0;
     gap: 0;
 }
@@ -93,7 +96,7 @@ body {
 
 .tile {
     position: relative;
-    width: 100%;  /* Will be 1/8 of board due to grid */
+    width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -126,12 +129,12 @@ body {
 /* Color coordinates based on tile color */
 .tile.light .coordinate-file,
 .tile.light .coordinate-rank {
-    color: #b8860b; /* Darker gold for better contrast on light tiles */
+    color: var(--color-black-square);
 }
 
 .tile.dark .coordinate-file,
 .tile.dark .coordinate-rank {
-    color: #f9f5e9; /* Light gold for dark tiles */
+    color: var(--color-white-square);
 }
 
 /* Only show rank numbers on the rightmost column */
@@ -144,124 +147,127 @@ body {
     display: none;
 }
 
-/* Gold theme tile colors */
+/* Tile styling */
 .tile.light {
-    background: linear-gradient(135deg, #f9f5e9, #f0e6d2);
+    background: var(--color-white-square);
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     border: none;
-}
-
-.tile.light::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, 
-        rgba(255, 255, 255, 0.2) 0%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .tile.dark {
-    background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+    background: var(--color-black-square);
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.tile.dark::before {
+/* Clean, crisp highlighting effects */
+.tile.legal-move-non-capture::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 33%;
+    height: 33%;
+    background: var(--color-legal-move);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid var(--color-accent);
+    animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.tile.legal-move-capture::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: var(--color-capture);
+    border: 2px solid rgba(184, 134, 11, 0.8);
+    animation: pulseCapture 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    z-index: 1;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+/* Enhanced hover effects for legal moves */
+.tile.legal-move-non-capture:hover::after {
+    animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: var(--color-accent);
+    border: 2px solid var(--color-accent);
+    width: 40%;
+    height: 40%;
+}
+
+.tile.legal-move-capture:hover::before {
+    animation: pulseCaptureHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: rgba(184, 134, 11, 0.4);
+    border: 2px solid rgba(184, 134, 11, 1);
+}
+
+/* Clean selected tile effect */
+.tile.selected {
+    position: relative;
+    box-sizing: border-box;
+}
+
+.tile.selected::after {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, 
-        rgba(212, 175, 55, 0.1) 0%,
-        rgba(212, 175, 55, 0.05) 50%,
-        rgba(212, 175, 55, 0) 100%
-    );
-    pointer-events: none;
+    border: 2px solid var(--color-accent);
+    animation: selectedPulse 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    box-sizing: border-box;
+    z-index: 1;
 }
 
-/* Selected tile styling */
-.tile.light.selected {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.75), rgba(184, 134, 11, 0.85)) !important;
-    box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.3);
+/* Animation keyframes */
+@keyframes pulseMove {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
 }
 
-.tile.dark.selected {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.75), rgba(184, 134, 11, 0.85)) !important;
-    box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.3);
+@keyframes pulseCapture {
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.5; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
 }
 
-/* Legal moves styling */
-.tile.legal-move-capture::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle at center, rgba(244, 67, 54, 0.3) 0%, rgba(244, 67, 54, 0) 70%);
-    z-index: 2;
-    animation: none;
-}
-
-.tile.legal-move-non-capture::after {
-    content: '';
-    position: absolute;
-    width: 30%;
-    height: 30%;
-    background-color: rgba(0, 0, 0, 0.3);
-    border-radius: 50%;
-    z-index: 2;
-}
-
-/* Hover effects for legal moves */
-.tile.legal-move-non-capture:hover::after {
-    background-color: rgba(0, 0, 0, 0.5);
-}
-
-.tile.legal-move-capture:hover::before {
-    background: radial-gradient(circle at center, rgba(244, 67, 54, 0.5) 0%, rgba(244, 67, 54, 0) 70%);
-}
-
-/* Gold theme animations */
 @keyframes pulseMoveHover {
-    0% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
-    50% {
-        transform: scale(1.1);
-        opacity: 0.7;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
 }
 
 @keyframes pulseCaptureHover {
-    0% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
-    50% {
-        transform: scale(1.2);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 0.5;
-    }
+    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.6; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
 }
 
-/* Gold theme piece styling */
+@keyframes selectedPulse {
+    0% { border-color: rgba(255, 215, 0, 0.8); }
+    50% { border-color: rgba(255, 215, 0, 1); }
+    100% { border-color: rgba(255, 215, 0, 0.8); }
+}
+
+/* Piece styling */
 .piece {
     width: 90%;
     height: 90%;
@@ -269,27 +275,28 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     position: relative;
-    z-index: 3;
-    filter: none;
-    transition: none;
+    z-index: 2;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .piece:hover {
-    transform: none;
-    filter: none;
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
 
 .piece:active {
-    transform: none;
-    filter: none;
+    transform: scale(0.95) rotate(-5deg);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .piece.moving {
     z-index: 10;
-    filter: none;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    animation: floatPiece 1s ease-in-out infinite;
 }
 
-/* Gold theme dragging piece */
+/* Improve dragging piece visuals */
 .dragging-piece {
     position: fixed;
     width: 10%;
@@ -299,125 +306,23 @@ body {
     background-position: center;
     pointer-events: none;
     z-index: 1000;
-    filter: none;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
     transform: translate(-50%, -50%);
-    transition: none;
+    transition: transform 0.1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation: floatDrag 0.5s ease-in-out infinite;
 }
 
-/* Gold theme piece capture animation */
-@keyframes pieceCaptured {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    50% {
-        transform: scale(1.2) rotate(10deg);
-        opacity: 0.7;
-    }
-    100% {
-        transform: scale(0) rotate(20deg);
-        opacity: 0;
-    }
+/* Animation keyframes */
+@keyframes floatPiece {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(2deg); }
+    100% { transform: translateY(0) rotate(0deg); }
 }
 
-/* Gold theme piece drop animation */
-@keyframes pieceDrop {
-    0% {
-        transform: scale(1.2);
-        opacity: 0.7;
-    }
-    50% {
-        transform: scale(0.9);
-        opacity: 0.9;
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Gold theme capture pulse animation */
-@keyframes pulseCapture {
-    0% {
-        opacity: 0.3;
-    }
-    50% {
-        opacity: 0.6;
-    }
-    100% {
-        opacity: 0.3;
-    }
-}
-
-/* Gold theme last move arrow */
-.last-move-arrow {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0;
-    animation: none;
-}
-
-.last-move-arrow svg {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-}
-
-.last-move-arrow path {
-    fill: none;
-    stroke: rgba(255, 255, 0, 0.4);
-    stroke-width: 8;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    animation: none;
-}
-
-/* Gold theme last move highlighting */
-.last-move-source, .last-move-target {
-    background-color: rgba(255, 255, 0, 0.3);
-    animation: none;
-}
-
-/* Gold theme arrow animations */
-@keyframes fadeInArrow {
-    to {
-        opacity: 1;
-    }
-}
-
-@keyframes drawArrow {
-    from {
-        stroke-dashoffset: 100;
-    }
-    to {
-        stroke-dashoffset: 0;
-    }
-}
-
-@keyframes fadeHighlight {
-    to {
-        opacity: 0.3;
-    }
-}
-
-/* Gold theme responsive adjustments */
-@media screen and (max-width: 1600px) {
-    .piece {
-        width: 85%;
-        height: 85%;
-    }
-}
-
-@media screen and (min-resolution: 192dpi) {
-    .piece {
-        filter: none;
-    }
+@keyframes floatDrag {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    50% { transform: translate(-50%, -50%) rotate(5deg); }
+    100% { transform: translate(-50%, -50%) rotate(0deg); }
 }
 
 /* Gold theme username banner */

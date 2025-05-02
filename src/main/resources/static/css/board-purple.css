@@ -16,6 +16,15 @@
     --transition-speed: 0.3s;
     --color-accent: #9f7aea;
     
+    /* Chess-specific colors */
+    --color-white-square: #e9d8fd;  /* Light purple instead of white */
+    --color-black-square: #553c9a;  /* Dark purple */
+    --color-white-piece: #ffffff;
+    --color-black-piece: #000000;
+    --color-selected: rgba(159, 122, 234, 0.4);
+    --color-legal-move: rgba(159, 122, 234, 0.6);
+    --color-capture: rgba(214, 48, 49, 0.3);
+    
     /* Dynamic base unit that adapts to screen size */
     --base-unit: clamp(0.0325rem, 0.0325rem + 0.01vw, 0.04rem);
     
@@ -55,18 +64,17 @@ body {
     height: min(calc(85vh - var(--header-height)), calc(85vw - var(--panel-width) * 2));
     padding: 0;
     margin: auto;
-    background-image: url('/images/boardBanner2.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     box-shadow: none;
 }
 
-.center-panel{
-    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/images/boardBanner2.png') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+.center-panel {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/images/boardBanner.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .chess-board {
@@ -74,12 +82,13 @@ body {
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
-    border: 1px solid #4A2B7A;
+    border: 10px solid var(--color-accent);
+    border-radius: 20px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     background: #2C1B47;
     position: relative;
-    box-shadow: none;
+    box-shadow: 0 0 10px rgba(159, 122, 234, 0.3);
     padding: 0;
     gap: 0;
 }
@@ -96,7 +105,7 @@ body {
 
 .tile {
     position: relative;
-    width: 100%;  /* Will be 1/8 of board due to grid */
+    width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -129,12 +138,12 @@ body {
 /* Color coordinates based on tile color */
 .tile.light .coordinate-file,
 .tile.light .coordinate-rank {
-    color: #553C9A; /* Slightly lighter dark purple for better contrast */
+    color: var(--color-black-square);
 }
 
 .tile.dark .coordinate-file,
 .tile.dark .coordinate-rank {
-    color: #E6E1F0; /* Light GitHub purple for dark tiles */
+    color: var(--color-white-square);
 }
 
 /* Only show rank numbers on the rightmost column */
@@ -149,65 +158,36 @@ body {
 
 /* Tile styling */
 .tile.light {
-    background: linear-gradient(135deg, #f5f6fa, #dcdde1);
+    background: var(--color-white-square);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     border: none;
-}
-
-.tile.light::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, 
-        rgba(255, 255, 255, 0.2) 0%,
-        rgba(255, 255, 255, 0.1) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    pointer-events: none;
 }
 
 .tile.dark {
-    background: linear-gradient(135deg, #2c1810, #8e44ad);
+    background: var(--color-black-square);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     border: none;
 }
 
-.tile.dark::before {
+/* Clean, crisp highlighting effects */
+.tile.legal-move-non-capture::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, 
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.05) 50%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    pointer-events: none;
+    top: 50%;
+    left: 50%;
+    width: 33%;
+    height: 33%;
+    background: var(--color-legal-move);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid var(--color-accent);
+    animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
 }
 
-/* Selected tile styling */
-.tile.light.selected {
-    animation: selectedBreathingLight 1.5s ease-in-out infinite;
-    background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
-    box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
-}
-
-.tile.dark.selected {
-    animation: selectedBreathingDark 1.5s ease-in-out infinite;
-    background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
-    box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
-}
-
-/* Legal moves styling */
 .tile.legal-move-capture::before {
     content: '';
     position: absolute;
@@ -215,69 +195,57 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(214, 48, 49, 0.85), rgba(225, 112, 85, 0.95));
-    -webkit-mask: radial-gradient(circle at center, transparent 82%, #000 85%);
-    mask: radial-gradient(circle at center, transparent 82%, #000 85%);
-    opacity: 0.85;
-    transition: all 0.15s ease;
-    animation: pulseCapture 1.5s ease-in-out infinite;
-    will-change: transform, opacity;
-    box-shadow: inset 0 0 10px rgba(214, 48, 49, 0.3);
+    background: var(--color-capture);
+    border: 2px solid rgba(214, 48, 49, 0.8);
+    animation: pulseCapture 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
 }
 
-.tile.legal-move-non-capture::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 25%;
-    height: 25%;
-    background: linear-gradient(135deg, #8e44ad, #2c1810);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0.85;
-    transition: all 0.15s ease;
-    animation: pulseMove 1.5s ease-in-out infinite;
-    will-change: transform, opacity;
-    box-shadow: 0 0 10px rgba(44, 24, 16, 0.3);
-}
-
-/* Update hover effects for legal moves */
+/* Enhanced hover effects for legal moves */
 .tile.legal-move-non-capture:hover::after {
-    animation: pulseMoveHover 1s ease-in-out infinite;
+    animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: var(--color-accent);
+    border: 2px solid var(--color-accent);
 }
 
 .tile.legal-move-capture:hover::before {
-    animation: pulseCaptureHover 1s ease-in-out infinite;
+    animation: pulseCaptureHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: rgba(214, 48, 49, 0.4);
+    border: 2px solid rgba(214, 48, 49, 1);
 }
 
-@keyframes pulseMoveHover {
-    0% { 
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.85;
-    }
-    50% { 
-        transform: translate(-50%, -50%) scale(1.2);
-        opacity: 1;
-    }
-    100% { 
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 0.85;
-    }
+/* Clean selected tile effect */
+.tile.selected {
+    position: relative;
+    box-sizing: border-box;
 }
 
-@keyframes pulseCaptureHover {
+.tile.selected::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 2px solid var(--color-accent);
+    animation: selectedPulse 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    box-sizing: border-box;
+}
+
+/* Selected tile styling */
+.tile.selected {
+    position: relative;
+    box-sizing: border-box;
+}
+
+@keyframes selectedPulse {
     0% { 
-        transform: scale(1);
-        opacity: 0.85;
+        border-color: rgba(159, 122, 234, 0.8);
     }
     50% { 
-        transform: scale(1.1);
-        opacity: 1;
+        border-color: rgba(159, 122, 234, 1);
     }
     100% { 
-        transform: scale(1);
-        opacity: 0.85;
+        border-color: rgba(159, 122, 234, 0.8);
     }
 }
 
@@ -290,26 +258,27 @@ body {
     background-position: center;
     position: relative;
     z-index: 3;
-    filter: none; /* Removed shadow */
-    transition: none; /* Removed transition */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    transition: transform 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 .piece:hover {
-    transform: none; /* Removed hover effect */
-    filter: none; /* Removed shadow */
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
 
 .piece:active {
-    transform: none; /* Removed active effect */
-    filter: none; /* Removed shadow */
+    transform: scale(0.95) rotate(-5deg);
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .piece.moving {
     z-index: 10;
-    filter: none; /* Removed shadow */
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    animation: floatPiece 1s ease-in-out infinite;
 }
 
-/* Improve dragging piece visuals - more responsive */
+/* Improve dragging piece visuals */
 .dragging-piece {
     position: fixed;
     width: 10%;
@@ -319,30 +288,40 @@ body {
     background-position: center;
     pointer-events: none;
     z-index: 1000;
-    filter: none; /* Removed shadow */
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
     transform: translate(-50%, -50%);
-    transition: none; /* Removed transition */
+    transition: transform 0.1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    animation: floatDrag 0.5s ease-in-out infinite;
 }
 
-/* Enhance captured piece animation - faster */
+/* Enhance captured piece animation */
 @keyframes pieceCaptured {
     0% {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1) rotate(0deg);
     }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    }
     100% {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.5) rotate(-15deg);
+        transform: translate(-50%, -50%) scale(0.3) rotate(360deg);
     }
 }
 
-/* Improve piece drop animation - faster and smoother */
+/* Improve piece drop animation */
 @keyframes pieceDrop {
     0% {
         opacity: 0.8;
-        transform: translate(-50%, -50%) translateY(-10px) scale(1.1);
+        transform: translate(-50%, -50%) translateY(-20px) scale(1.2);
+    }
+    25% {
+        transform: translate(-50%, -50%) translateY(10px) scale(0.9);
     }
     50% {
+        transform: translate(-50%, -50%) translateY(-5px) scale(1.1);
+    }
+    75% {
         transform: translate(-50%, -50%) translateY(2px) scale(0.95);
     }
     100% {
@@ -353,9 +332,26 @@ body {
 
 /* Optimize pulse animations */
 @keyframes pulseCapture {
-    0% { transform: scale(0.95); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(0.95); }
+    0% { 
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    25% { 
+        transform: scale(1.3);
+        opacity: 0.9;
+    }
+    50% { 
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+    75% { 
+        transform: scale(1.2);
+        opacity: 0.9;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 0.7;
+    }
 }
 
 /* Optimize last move arrow animation */
@@ -364,8 +360,8 @@ body {
     pointer-events: none;
     z-index: 10;
     opacity: 0.8;
-    animation: fadeInArrow 0.2s ease-out forwards; /* Faster fade in */
-    will-change: opacity; /* Optimize performance */
+    animation: fadeInArrow 0.2s ease-out forwards;
+    will-change: opacity;
 }
 
 .last-move-arrow svg {
@@ -383,15 +379,15 @@ body {
     marker-end: url(#arrowhead);
     stroke-dasharray: 100;
     stroke-dashoffset: 100;
-    animation: drawArrow 0.4s ease-out forwards; /* Faster arrow drawing */
-    will-change: stroke-dashoffset; /* Optimize performance */
+    animation: drawArrow 0.4s ease-out forwards;
+    will-change: stroke-dashoffset;
 }
 
 /* Optimize highlight animations */
 .last-move-source, .last-move-target {
     background-color: rgba(181, 136, 99, 0.3) !important;
-    animation: fadeHighlight 0.3s ease-out; /* Faster highlight */
-    will-change: opacity; /* Optimize performance */
+    animation: fadeHighlight 0.3s ease-out;
+    will-change: opacity;
 }
 
 @keyframes fadeInArrow {
@@ -558,11 +554,12 @@ body {
         transform: translate(-50%, -50%) scale(0);
         opacity: 0;
     }
-    40% {
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
         opacity: 1;
     }
     100% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1.5);
         opacity: 0;
     }
 }
@@ -592,12 +589,12 @@ body {
 /* Laptop screens (between 1200px and 1920px) */
 @media screen and (min-width: 1200px) and (max-width: 1919px) {
     .piece {
-        width: 85%;  /* Slightly bigger for laptop screens */
+        width: 85%;
         height: 85%;
     }
     
     .dragging-piece {
-        width: 75px !important;  /* Slightly bigger dragging piece */
+        width: 75px !important;
         height: 75px !important;
     }
 }
@@ -627,30 +624,42 @@ body {
 
 @keyframes selectedBreathingLight {
     0% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
         box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
     50% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95)) !important;
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95));
         box-shadow: inset 0 0 20px rgba(142, 68, 173, 0.5);
     }
     100% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
         box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
 }
 
 @keyframes selectedBreathingDark {
     0% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
         box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
     50% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95)) !important;
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95));
         box-shadow: inset 0 0 20px rgba(142, 68, 173, 0.5);
     }
     100% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85)) !important;
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
         box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
+}
+
+@keyframes floatPiece {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(2deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+}
+
+@keyframes floatDrag {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    50% { transform: translate(-50%, -50%) rotate(5deg); }
+    100% { transform: translate(-50%, -50%) rotate(0deg); }
 }
