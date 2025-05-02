@@ -86,6 +86,182 @@
             font-size: 24px;     /* Icon size */
             color: white;        /* Icon color */
         }
+
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 18px;
+            margin-top: 10px;
+        }
+        .tech-stack-box {
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 18px 10px 14px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 0;
+        }
+        .tech-stack-icon {
+            font-size: 2.2em;
+            color: #9370DB;
+            margin-bottom: 8px;
+        }
+        .tech-stack-name {
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #9370DB;
+            font-size: 1.08em;
+        }
+        .tech-stack-desc {
+            color: #e0e0e0;
+            font-size: 0.97em;
+        }
+
+        .tech-stack-section {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .tech-stack-feature-box {
+            background: rgba(255,255,255,0.09);
+            border-radius: 14px;
+            padding: 22px 18px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
+        }
+        .tech-stack-feature-icon {
+            font-size: 2.3em;
+            color: #9370DB;
+            margin-bottom: 10px;
+        }
+        .tech-stack-feature-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #9370DB;
+            font-size: 1.18em;
+        }
+        .tech-stack-feature-desc {
+            color: #e0e0e0;
+            font-size: 1em;
+            line-height: 1.7;
+        }
+
+        /* Features Container Styles */
+        .features-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 12px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateX(5px);
+            background: rgba(76, 175, 80, 0.15);
+        }
+
+        .feature-icon {
+            color: #9370DB;
+            font-size: 1.4em;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .feature-content {
+            flex: 1;
+        }
+
+        .feature-content h3 {
+            margin: 0 0 5px 0;
+            color: #4CAF50;
+            font-size: 1.1em;
+        }
+
+        .feature-content p {
+            margin: 0;
+            color: #e0e0e0;
+            font-size: 0.95em;
+        }
+
+        /* Music Credits Display */
+        .music-credits {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            max-width: 300px;
+            display: none;
+            z-index: 1000;
+            border-left: 4px solid #4CAF50;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .music-credits.show {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .music-credits p {
+            margin: 6px 0;
+            line-height: 1.4;
+        }
+
+        .music-credits .title {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 1.1em;
+        }
+
+        .music-credits .license {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 8px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Add a close button */
+        .music-credits .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 0;
+        }
+
+        .music-credits .close-btn:hover {
+            color: white;
+        }
     </style>
 </head>
 <body th:classappend="${#authorization.expression('isAuthenticated()')} ? 'authenticated'">
@@ -141,7 +317,7 @@
                     <!-- Main buttons container -->
                     <div class="main-buttons-container">
                         <a href="#" onclick="showLoginForAction('newGame'); return false;" class="main-button get-started">Get Started</a>
-                        <a href="/about" class="main-button about">About SKG Chess</a>
+                        <a href="#" onclick="openAboutModal(); return false;" class="main-button about">About SKG Chess</a>
                     </div>
                 </div>
             </section>
@@ -299,55 +475,989 @@
     <!-- Accessibility Skip Link (hidden visually) -->
     <a href="#main-content" class="screen-reader-only">Skip to main content</a>
 
-    <script>
-        // Handle Enter key press in the game ID input
-        function handleEnterKey(event) {
-            if (event.key === 'Enter') {
-                handleJoinGame();
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-mute-btn" onclick="toggleModalMusic()">
+                <i class="fas fa-volume-up"></i>
+            </button>
+            <span class="close-modal">&times;</span>
+            <div class="about-modal-content">
+                <div class="cards-container">
+                    <!-- Author Introduction Card -->
+                    <div class="card" data-card="1">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-user" style="color: #9370DB;"></i>
+                            </div>
+                            <h3>Meet the Creator</h3>
+                            <button class="read-more-btn" onclick="showPopup('creator')">
+                                <i class="fas fa-book-open"></i> Learn More
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Features Card (replaces Journey) -->
+                    <div class="card" data-card="2">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-magic" style="color: #9370DB;"></i>
+                            </div>
+                            <h3>Features</h3>
+                            <button class="read-more-btn" onclick="showPopup('features')">
+                                <i class="fas fa-book-open"></i> Learn More
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tech Stack Card -->
+                    <div class="card" data-card="3">
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <i class="fas fa-code" style="color: #9370DB;"></i>
+                            </div>
+                            <h3>Tech Stack</h3>
+                            <button class="read-more-btn" onclick="showTechStackBigPopup()">
+                                <i class="fas fa-book-open"></i> Learn More
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popup Content -->
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-content">
+            <span class="close-popup">&times;</span>
+            <div id="popupBody"></div>
+        </div>
+    </div>
+
+    <!-- Tech Stack Big Popup -->
+    <div id="techStackBigPopup" class="techstack-big-popup-overlay">
+        <div class="techstack-big-popup-content">
+            <span class="close-techstack-popup">&times;</span>
+            <div class="techstack-cards-container">
+                <div class="techstack-big-card" data-card="1">
+                    <div class="techstack-big-icon"><i class="fas fa-paint-brush"></i></div>
+                    <div class="techstack-big-title">Frontend</div>
+                    <div class="techstack-big-desc">
+                        <span class='feature-icon'><i class='fas fa-leaf' style="color: #4CAF50;"></i></span> <b>Thymeleaf:</b> Server-side rendering and dynamic templates.<br>
+                        <span class='feature-icon'><i class='fab fa-html5' style="color: #4CAF50;"></i></span> <b>HTML/CSS/JavaScript:</b> Responsive UI, interactive chessboard, real-time updates.
+                    </div>
+                </div>
+                <div class="techstack-big-card" data-card="2">
+                    <div class="techstack-big-icon"><i class="fas fa-server"></i></div>
+                    <div class="techstack-big-title">Backend</div>
+                    <div class="techstack-big-desc">
+                        <span class='feature-icon'><i class='fab fa-java' style="color: #4CAF50;"></i></span> <b>Java (JDK 17):</b> Core chess logic, move validation, game state management.<br>
+                        <span class='feature-icon'><i class='fas fa-leaf' style="color: #4CAF50;"></i></span> <b>Spring Boot 3.2.3:</b> REST API, WebSocket, Security, JPA.
+                    </div>
+                </div>
+                <div class="techstack-big-card" data-card="3">
+                    <div class="techstack-big-icon"><i class="fas fa-database"></i></div>
+                    <div class="techstack-big-title">Database</div>
+                    <div class="techstack-big-desc">
+                        <span class='feature-icon'><i class='fas fa-database' style="color: #4CAF50;"></i></span> <b>PostgreSQL:</b> For game data, user management and messages.<br>
+                        <span class='feature-icon'><i class='fas fa-leaf' style="color: #4CAF50;"></i></span> <b>Spring Data JPA:</b> Object-relational mapping and data access layer.
+                    </div>
+                </div>
+                <div class="techstack-big-card" data-card="4">
+                    <div class="techstack-big-icon"><i class="fas fa-sitemap"></i></div>
+                    <div class="techstack-big-title">Project Structure</div>
+                    <div class="techstack-big-desc">
+                        Monolithic architecture with separate packages for core logic, security, data persistence, controllers, services, DTOs, exception handling, and configuration.
+                    </div>
+                </div>
+                <div class="techstack-big-card" data-card="5">
+                    <div class="techstack-big-icon"><i class="fas fa-tools"></i></div>
+                    <div class="techstack-big-title">Additional Technologies</div>
+                    <div class="techstack-big-desc">
+                        <span class='feature-icon'><i class='fas fa-code' style="color: #4CAF50;"></i></span> <b>Lombok:</b> Reduces Java boilerplate code.<br>
+                        <span class='feature-icon'><i class='fas fa-vial' style="color: #4CAF50;"></i></span> <b>JUnit 5:</b> Comprehensive testing framework.
+                    </div>
+                </div>
+            </div>
+            <div class="techstack-nav">
+                <button class="techstack-nav-btn" id="techstackPrevBtn"><i class="fas fa-chevron-left"></i></button>
+                <div class="techstack-indicators">
+                    <span class="techstack-indicator active" data-card="1"></span>
+                    <span class="techstack-indicator" data-card="2"></span>
+                    <span class="techstack-indicator" data-card="3"></span>
+                    <span class="techstack-indicator" data-card="4"></span>
+                    <span class="techstack-indicator" data-card="5"></span>
+                </div>
+                <button class="techstack-nav-btn" id="techstackNextBtn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update the music credits div -->
+    <div class="music-credits" id="musicCredits">
+        <button class="close-btn" onclick="this.parentElement.classList.remove('show')">&times;</button>
+        <p><span class="title">Background Music:</span></p>
+        <p>Source: Free Music Archive</p>
+        <p>License: CC BY-NC-ND</p>
+    </div>
+
+    <style>
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 1200px;
+            color: #fff;
+            position: relative;  /* Add position relative for absolute positioning of mute button */
+        }
+
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            position: relative;
+        }
+
+        .close-modal:hover {
+            color: #fff;
+        }
+
+        .modal-mute-btn {
+            position: absolute;  /* Position absolutely within modal */
+            top: 15px;          /* Changed from 20px to 10px to move it up */
+            right: 60px;        /* 60px from right (to the left of close button) */
+            background: none;    /* No background */
+            border: none;        /* No border */
+            color: #aaa;        /* Light gray color */
+            cursor: pointer;     /* Show pointer cursor */
+            font-size: 24px;    /* Match close button size */
+            padding: 5px;       /* Add padding for better click area */
+            transition: color 0.3s ease;  /* Smooth color transition */
+            z-index: 1001;      /* Ensure it's above modal content */
+        }
+
+        .modal-mute-btn:hover {
+            color: #fff;        /* White on hover */
+        }
+
+        .modal-mute-btn.muted {
+            color: #4CAF50;     /* Green when muted */
+        }
+
+        /* Cards Container */
+        .cards-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 32px;
+            padding: 32px;
+            height: 500px;
+        }
+
+        .card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 18px;
+            padding: 32px 20px 28px 20px;
+            box-shadow: 0 6px 32px 0 rgba(0,0,0,0.13);
+            min-width: 250px;
+            transition: box-shadow 0.3s, transform 0.4s cubic-bezier(.22,1,.36,1), opacity 0.4s;
+            opacity: 0;
+            transform: translateY(40px) scale(0.97);
+            animation: cardPopIn 0.7s cubic-bezier(.22,1,.36,1) forwards;
+            animation-delay: var(--card-delay, 0s);
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .card:hover {
+            box-shadow: 0 12px 40px 0 rgba(76,175,80,0.18), 0 2px 8px 0 rgba(0,0,0,0.10);
+            transform: translateY(-6px) scale(1.03);
+        }
+
+        @keyframes cardPopIn {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
             }
         }
-        
-        // Close modal when clicking outside
+
+        .card-content {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 48px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            color: #9370DB;
+            margin-bottom: 20px;
+        }
+
+        /* Author Intro Styles */
+        .author-intro {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .author-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #4CAF50;
+        }
+
+        .author-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Story Timeline Styles */
+        .story-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .story-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .story-icon {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+
+        .story-content h4 {
+            margin: 0 0 5px 0;
+            color: #4CAF50;
+        }
+
+        /* Tech Stack Styles */
+        .tech-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tech-section h3 {
+            margin-top: 12px;
+            margin-bottom: 4px;
+            color: #4CAF50;
+            font-size: 1.07em;
+        }
+
+        .tech-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            padding: 7px 10px;
+            font-size: 0.98em;
+            color: #e0e0e0;
+        }
+
+        /* Connect Section Styles */
+        .connect-links {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .connect-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .connect-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .connect-link i {
+            font-size: 24px;
+            color: #4CAF50;
+        }
+
+        /* Popup Styles */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+        }
+
+        .popup-content {
+            position: relative;
+            background: #23272f;
+            margin: 1% auto;
+            padding: 38px 32px 38px 32px;
+            width: 90%;
+            max-width: 600px;
+            min-height: 420px;
+            max-height: 92vh;
+            overflow: visible;
+            border-radius: 15px;
+            color: white;
+            animation: popupFadeIn 0.3s ease-out;
+        }
+
+        .close-popup {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .close-popup:hover {
+            color: white;
+        }
+
+        .read-more-btn {
+            background: rgba(147, 112, 219, 0.2);
+            border: 1px solid #9370DB;
+            color: #9370DB;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .read-more-btn:hover {
+            background: rgba(147, 112, 219, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .clickable:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes popupFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .popup-creator {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .popup-author-photo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .popup-author-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .popup-creator p {
+            margin: 15px 0;
+            color: #e0e0e0;
+            line-height: 1.7;
+        }
+
+        .popup-social-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .popup-social-links .connect-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #4CAF50;
+            background: rgba(255,255,255,0.07);
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .popup-social-links .connect-link:hover {
+            background: #4CAF50;
+            color: #fff;
+        }
+
+        /* Features List Styles */
+        .features-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0 0 0;
+        }
+        .features-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            padding: 14px 16px;
+            font-size: 1.08em;
+            color: #e0e0e0;
+        }
+        .feature-icon {
+            color: #4CAF50;
+            font-size: 1.4em;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Tech Stack Big Popup Styles */
+        .techstack-big-popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 5000;
+        }
+        .techstack-big-popup-content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            margin: 0;
+            background: #23272f;
+            border-radius: 22px;
+            width: 90vw;
+            max-width: 900px;
+            min-height: 60vh;
+            max-height: 90vh;
+            box-shadow: 0 8px 48px 0 rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 38px 32px 32px 32px;
+            z-index: 5001;
+        }
+        .close-techstack-popup {
+            color: #aaa;
+            position: absolute;
+            right: 32px;
+            top: 22px;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10;
+        }
+        .close-techstack-popup:hover {
+            color: #fff;
+        }
+        .techstack-cards-container {
+            width: 100%;
+            height: 340px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .techstack-big-card {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            margin: auto;
+            width: 90%;
+            max-width: 600px;
+            min-height: 320px;
+            background: rgba(147, 112, 219, 0.1);
+            border-radius: 18px;
+            box-shadow: 0 4px 32px 0 rgba(147, 112, 219, 0.15);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 38px 24px 28px 24px;
+            animation: techstackCardPop 0.5s cubic-bezier(.22,1,.36,1);
+        }
+        .techstack-big-card.active {
+            display: flex;
+        }
+        @keyframes techstackCardPop {
+            from { opacity: 0; transform: scale(0.95) translateY(40px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .techstack-big-icon {
+            font-size: 3.2em;
+            color: #9370DB;
+            margin-bottom: 18px;
+        }
+        .techstack-big-title {
+            font-weight: bold;
+            font-size: 1.45em;
+            margin-bottom: 16px;
+            color: #9370DB;
+        }
+        .techstack-big-desc {
+            color: #e0e0e0;
+            font-size: 1.08em;
+            line-height: 1.7;
+        }
+        .techstack-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 32px;
+            gap: 24px;
+        }
+        .techstack-nav-btn {
+            background: rgba(147, 112, 219, 0.2);
+            border: none;
+            color: #9370DB;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+        .techstack-nav-btn:hover {
+            background: #9370DB;
+            color: #fff;
+            transform: scale(1.08);
+        }
+        .techstack-indicators {
+            display: flex;
+            gap: 10px;
+        }
+        .techstack-indicator {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: rgba(147, 112, 219, 0.2);
+            transition: background 0.2s, transform 0.2s;
+        }
+        .techstack-indicator.active {
+            background: #9370DB;
+            transform: scale(1.2);
+        }
+        @media (max-width: 700px) {
+            .techstack-big-popup-content {
+                padding: 12px 2vw 12px 2vw;
+            }
+            .techstack-cards-container {
+                height: 260px;
+            }
+            .techstack-big-card {
+                padding: 18px 6px 18px 6px;
+                min-height: 180px;
+            }
+        }
+    </style>
+
+    <script>
+        // Popup content data
+        const popupContent = {
+            creator: {
+                title: "About the Creator",
+                content: `
+                    <div class='popup-creator'>
+                        <div class='popup-author-photo'>
+                            <img src='/images/author.png' alt='Haris Chatzianastasiou' class='popup-author-image'>
+                        </div>
+                        <h2>Haris Chatzianastasiou</h2>
+                        <p>Hello! I'm Haris, a software developer with a love for chess. I created SKG Chess to combine my passion for software development with my interest in the game. The name SKG Chess was inspired by my hometown, Thessaloniki.</p>
+                        <p>My journey in chess programming began with a simple idea: to create a chess engine that could play against human opponents. This project has evolved into a full-stack web application that I'm proud to share with the chess community.</p>
+                        <div class='popup-social-links'>
+                            <a href='https://github.com/harischatzianastasiou' target='_blank' class='connect-link'><i class='fab fa-github'></i> GitHub</a>
+                            <a href='https://www.linkedin.com/in/haris-chatzianastasiou-084783212/' target='_blank' class='connect-link'><i class='fab fa-linkedin'></i> LinkedIn</a>
+                            <a href='mailto:harischatzi@tutanota.com' class='connect-link'><i class='fas fa-envelope'></i> Email</a>
+                        </div>
+                    </div>
+                `
+            },
+            features: {
+                title: "Features",
+                content: `
+                    <div class='features-container'>
+                        <div class='feature-item'>
+                            <i class='fas fa-palette feature-icon'></i>
+                            <div class='feature-content'>
+                                <h3>Custom Themes</h3>
+                                <p>Switch between beautiful chessboard themes instantly</p>
+                            </div>
+                        </div>
+                        <div class='feature-item'>
+                            <i class='fas fa-music feature-icon'></i>
+                            <div class='feature-content'>
+                                <h3>Modern UI/UX</h3>
+                                <p>Enjoy a lively, animated, and responsive interface</p>
+                            </div>
+                        </div>
+                        <div class='feature-item'>
+                            <i class='fas fa-comments feature-icon'></i>
+                            <div class='feature-content'>
+                                <h3>Game Chat</h3>
+                                <p>Chat with your opponent during live games</p>
+                            </div>
+                        </div>
+                        <div class='feature-item'>
+                            <i class='fas fa-users feature-icon'></i>
+                            <div class='feature-content'>
+                                <h3>Live Multiplayer</h3>
+                                <p>Play chess with friends in real time</p>
+                            </div>
+                        </div>
+                        <div class='feature-item'>
+                            <i class='fas fa-history feature-icon'></i>
+                            <div class='feature-content'>
+                                <h3>Match History</h3>
+                                <p>Track your games and progress with ratings</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            techstack: {
+                title: "Tech Stack",
+                content: `
+                    <div class='tech-stack-section'>
+                        <div class='tech-stack-feature-box'>
+                            <div class='tech-stack-feature-icon'><i class='fas fa-server'></i></div>
+                            <div class='tech-stack-feature-title'>Backend</div>
+                            <div class='tech-stack-feature-desc'>
+                                <span class='feature-icon'><i class='fab fa-java' style="color: #4CAF50;"></i></span> <b>Java (JDK 17):</b> Core chess logic, move validation, game state management.<br>
+                                <span class='feature-icon'><i class='fas fa-leaf' style="color: #4CAF50;"></i></span> <b>Spring Boot 3.2.3:</b> REST API, WebSocket, Security, JPA.
+                            </div>
+                        </div>
+                        <div class='tech-stack-feature-box'>
+                            <div class='tech-stack-feature-icon'><i class='fas fa-paint-brush'></i></div>
+                            <div class='tech-stack-feature-title'>Frontend</div>
+                            <div class='tech-stack-feature-desc'>
+                                <span class='feature-icon'><i class='fas fa-leaf' style="color: #4CAF50;"></i></span> <b>Thymeleaf:</b> Server-side rendering and dynamic templates.<br>
+                                <span class='feature-icon'><i class='fab fa-html5' style="color: #4CAF50;"></i></span> <b>HTML/CSS/JavaScript:</b> Responsive UI, interactive chessboard, real-time updates.
+                            </div>
+                        </div>
+                        <div class='tech-stack-feature-box'>
+                            <div class='tech-stack-feature-icon'><i class='fas fa-sitemap'></i></div>
+                            <div class='tech-stack-feature-title'>Project Structure</div>
+                            <div class='tech-stack-feature-desc'>
+                                Modular architecture with separate packages for core logic, security, data persistence, controllers, services, DTOs, exception handling, and configuration.
+                            </div>
+                        </div>
+                        <div class='tech-stack-feature-box'>
+                            <div class='tech-stack-feature-icon'><i class='fas fa-tools'></i></div>
+                            <div class='tech-stack-feature-title'>Additional Technologies</div>
+                            <div class='tech-stack-feature-desc'>
+                                <span class='feature-icon'><i class='fas fa-database' style="color: #4CAF50;"></i></span> <b>PostgreSQL:</b> For game data, user management and messages.<br>
+                                <span class='feature-icon'><i class='fas fa-leaf' style="color: #4CAF50;"></i></span> <b>Spring Data JPA:</b> Object-relational mapping and data access layer.
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        function showPopup(contentKey) {
+            const overlay = document.getElementById('popupOverlay');
+            const popupBody = document.getElementById('popupBody');
+            const content = popupContent[contentKey];
+
+            if (content) {
+                popupBody.innerHTML = `
+                    <h1>${content.title}</h1>
+                    ${content.content}
+                `;
+                overlay.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closePopup() {
+            const overlay = document.getElementById('popupOverlay');
+            overlay.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // Initialize popup functionality
         document.addEventListener('DOMContentLoaded', function() {
-            const overlay = document.getElementById('joinGameOverlay');
-            overlay.addEventListener('click', function(event) {
-                if (event.target === overlay) {
-                    closeJoinGameDialog();
+            const closePopupBtn = document.querySelector('.close-popup');
+            const popupOverlay = document.getElementById('popupOverlay');
+
+            if (closePopupBtn) {
+                closePopupBtn.addEventListener('click', closePopup);
+            }
+
+            if (popupOverlay) {
+                popupOverlay.addEventListener('click', function(event) {
+                    if (event.target === popupOverlay) {
+                        closePopup();
+                    }
+                });
+            }
+
+            // Add keyboard support for popup
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && popupOverlay.style.display === 'block') {
+                    closePopup();
                 }
             });
         });
         
-        // Disable scroll to next section when in scrollable sections
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get all sections
-            const sections = document.querySelectorAll('section');
-            
-            // Find scrollable sections
-            const scrollableSections = document.querySelectorAll('.scroll-container');
-            
-            // Function to handle section visibility
-            function handleSectionVisibility(entries) {
-                requestAnimationFrame(() => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            // Add class to body when scrollable section is visible
-                            document.body.classList.add('in-scrollable-section');
-                        } else {
-                            // Remove class when section is not visible
-                            document.body.classList.remove('in-scrollable-section');
-                        }
-                    });
+        // Add a flag to track if music has been started
+        let musicStarted = false;
+
+        // Modal functionality
+        function openAboutModal() {
+            const aboutModal = document.getElementById('aboutModal');
+            if (aboutModal) {
+                aboutModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                // Animate cards sequentially with pop-in
+                const cards = document.querySelectorAll('.card');
+                cards.forEach((card, index) => {
+                    card.classList.remove('active');
+                    card.style.setProperty('--card-delay', (index * 0.15) + 's');
+                    setTimeout(() => {
+                        card.classList.add('active');
+                    }, index * 150);
                 });
+                
+                // Start the background music only on first click
+                if (!musicStarted) {
+                    const audio = document.getElementById('backgroundMusic');
+                    if (audio) {
+                        audio.muted = false;  // Unmute the audio
+                        audio.play().catch(error => {
+                            console.error("Playback failed:", error);
+                        });
+                        // Update the music icon
+                        const musicIcon = document.getElementById('musicIcon');
+                        if (musicIcon) {
+                            musicIcon.classList.remove('fa-volume-mute');
+                            musicIcon.classList.add('fa-volume-up');
+                        }
+                        // Show the music credits
+                        const credits = document.getElementById('musicCredits');
+                        if (credits) {
+                            credits.classList.add('show');
+                        }
+                        musicStarted = true;  // Mark music as started
+                    }
+                }
+            }
+        }
+
+        function closeAboutModal() {
+            const aboutModal = document.getElementById('aboutModal');
+            if (aboutModal) {
+                aboutModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Initialize modal functionality when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const aboutModal = document.getElementById('aboutModal');
+            const closeModal = document.querySelector('.close-modal');
+            
+            if (closeModal) {
+                closeModal.addEventListener('click', closeAboutModal);
             }
             
-            // Create observer for scrollable sections
-            const observer = new IntersectionObserver(handleSectionVisibility, { threshold: 0.5 });
+            if (aboutModal) {
+                window.addEventListener('click', (event) => {
+                    if (event.target === aboutModal) {
+                        closeAboutModal();
+                    }
+                });
+
+                // Add keyboard support for Escape key
+                document.addEventListener('keydown', (event) => {
+                    if (event.key === 'Escape' && aboutModal.style.display === 'block') {
+                        closeAboutModal();
+                    }
+                });
+            }
+        });
+
+        // Tech Stack Big Popup Logic
+        let techstackCurrentCard = 1;
+        function showTechStackBigPopup() {
+            const overlay = document.getElementById('techStackBigPopup');
+            overlay.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            techstackCurrentCard = 1;
+            updateTechStackBigCards();
+        }
+        function closeTechStackBigPopup() {
+            document.getElementById('techStackBigPopup').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        function updateTechStackBigCards() {
+            const cards = document.querySelectorAll('.techstack-big-card');
+            const indicators = document.querySelectorAll('.techstack-indicator');
+            cards.forEach((card, idx) => {
+                card.classList.toggle('active', idx === techstackCurrentCard - 1);
+            });
+            indicators.forEach((ind, idx) => {
+                ind.classList.toggle('active', idx === techstackCurrentCard - 1);
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            const techStackPopup = document.getElementById('techStackBigPopup');
+            const techStackContent = document.querySelector('.techstack-big-popup-content');
             
-            // Observe all scrollable sections
-            scrollableSections.forEach(section => {
-                observer.observe(section);
+            document.querySelector('.close-techstack-popup').addEventListener('click', closeTechStackBigPopup);
+            document.getElementById('techstackPrevBtn').addEventListener('click', function() {
+                techstackCurrentCard = techstackCurrentCard === 1 ? 5 : techstackCurrentCard - 1;
+                updateTechStackBigCards();
+            });
+            document.getElementById('techstackNextBtn').addEventListener('click', function() {
+                techstackCurrentCard = techstackCurrentCard === 5 ? 1 : techstackCurrentCard + 1;
+                updateTechStackBigCards();
+            });
+            
+            // Update click handler to prevent modal closure
+            techStackPopup.addEventListener('click', function(e) {
+                if (e.target === techStackPopup && !techStackContent.contains(e.target)) {
+                    closeTechStackBigPopup();
+                }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (techStackPopup.style.display === 'block') {
+                    if (e.key === 'ArrowLeft') {
+                        techstackCurrentCard = techstackCurrentCard === 1 ? 5 : techstackCurrentCard - 1;
+                        updateTechStackBigCards();
+                    } else if (e.key === 'ArrowRight') {
+                        techstackCurrentCard = techstackCurrentCard === 5 ? 1 : techstackCurrentCard + 1;
+                        updateTechStackBigCards();
+                    } else if (e.key === 'Escape') {
+                        closeTechStackBigPopup();
+                    }
+                }
             });
         });
+
+        // Update the audio player functionality to show/hide credits
+        const audioPlayer = document.getElementById('audioPlayer');
+        const musicCredits = document.getElementById('musicCredits');
+
+        if (audioPlayer) {
+            audioPlayer.addEventListener('play', function() {
+                musicCredits.classList.add('show');
+            });
+
+            audioPlayer.addEventListener('pause', function() {
+                musicCredits.classList.remove('show');
+            });
+
+            // Also show credits when the page loads if music is already playing
+            if (audioPlayer.currentTime > 0 && !audioPlayer.paused) {
+                musicCredits.classList.add('show');
+            }
+        }
+
+        // Add mute button functionality
+        function toggleModalMusic() {
+            const audio = document.getElementById('backgroundMusic');
+            const modalMuteBtn = document.querySelector('.modal-mute-btn');
+            const musicIcon = document.getElementById('musicIcon');
+            
+            if (audio) {
+                audio.muted = !audio.muted;  // Toggle mute state
+                
+                // Update modal mute button
+                if (modalMuteBtn) {
+                    modalMuteBtn.classList.toggle('muted', audio.muted);
+                    modalMuteBtn.innerHTML = audio.muted ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+                }
+                
+                // Update main music player icon
+                if (musicIcon) {
+                    musicIcon.classList.toggle('fa-volume-mute', audio.muted);
+                    musicIcon.classList.toggle('fa-volume-up', !audio.muted);
+                }
+                
+                // Update music credits visibility
+                const credits = document.getElementById('musicCredits');
+                if (credits) {
+                    credits.classList.toggle('show', !audio.muted);
+                }
+            }
+        }
     </script>
 </body>
 </html> 
