@@ -989,18 +989,18 @@ function renderChessBoard(container, boardDTO) {
     
     // Define piece images
     const pieceImages = {
-        'WHITE_PAWN': '/images/white_p.png',
-        'WHITE_KNIGHT': '/images/white_n.png',
-        'WHITE_BISHOP': '/images/white_b.png',
-        'WHITE_ROOK': '/images/white_r.png',
-        'WHITE_QUEEN': '/images/white_q.png',
-        'WHITE_KING': '/images/white_k.png',
-        'BLACK_PAWN': '/images/black_p.png',
-        'BLACK_KNIGHT': '/images/black_n.png',
-        'BLACK_BISHOP': '/images/black_b.png',
-        'BLACK_ROOK': '/images/black_r.png',
-        'BLACK_QUEEN': '/images/black_q.png',
-        'BLACK_KING': '/images/black_k.png'
+        'WHITE_PAWN': '/images/pawnN.png',
+        'WHITE_KNIGHT': '/images/knightN.png',
+        'WHITE_BISHOP': '/images/bishopN.png',
+        'WHITE_ROOK': '/images/rookN.png',
+        'WHITE_QUEEN': '/images/queenN.png',
+        'WHITE_KING': '/images/kingN.png',
+        'BLACK_PAWN': '/images/pawnN1.png',
+        'BLACK_KNIGHT': '/images/knightN1.png',
+        'BLACK_BISHOP': '/images/bishopN1.png',
+        'BLACK_ROOK': '/images/rookN1.png',
+        'BLACK_QUEEN': '/images/queenN1.png',
+        'BLACK_KING': '/images/kingN1.png'
     };
     
     // Create the board grid

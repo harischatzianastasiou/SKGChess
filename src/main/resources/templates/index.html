@@ -169,12 +169,25 @@
             padding: 15px;
             background: rgba(76, 175, 80, 0.1);
             border-radius: 12px;
-            transition: transform 0.3s ease, background 0.3s ease;
+            transition: background 0.3s ease;
+            transform: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        /* Add specific style for background music feature */
+        .feature-item:has(.fa-music) {
+            min-height: auto;
+            height: 70px;
         }
 
         .feature-item:hover {
-            transform: translateX(5px);
             background: rgba(76, 175, 80, 0.15);
+            transform: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
         }
 
         .feature-icon {
@@ -261,6 +274,68 @@
 
         .music-credits .close-btn:hover {
             color: white;
+        }
+
+        /* Update theme preview styles */
+        .theme-preview {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .theme-preview-img {
+            width: 120px;  /* Increased width */
+            height: auto;  /* Let height adjust automatically */
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            object-fit: contain;  /* Changed from cover to contain */
+        }
+
+        .theme-preview-img:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Image viewer modal styles */
+        #imageViewerModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 9999;
+        }
+
+        #imageViewerModal .modal-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #imageViewerModal img {
+            max-width: 90vw;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+        }
+
+        #imageViewerModal .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+            z-index: 10000;
         }
     </style>
 </head>
@@ -478,9 +553,6 @@
     <!-- About Modal -->
     <div id="aboutModal" class="modal">
         <div class="modal-content">
-            <button class="modal-mute-btn" onclick="toggleModalMusic()">
-                <i class="fas fa-volume-up"></i>
-            </button>
             <span class="close-modal">&times;</span>
             <div class="about-modal-content">
                 <div class="cards-container">
@@ -490,9 +562,9 @@
                             <div class="card-icon">
                                 <i class="fas fa-user" style="color: #9370DB;"></i>
                             </div>
-                            <h3>Meet the Creator</h3>
+                            <h3>Message from the Creator</h3>
                             <button class="read-more-btn" onclick="showPopup('creator')">
-                                <i class="fas fa-book-open"></i> Learn More
+                                <i class="fas fa-book-open"></i> Open Message
                             </button>
                         </div>
                     </div>
@@ -505,7 +577,7 @@
                             </div>
                             <h3>Features</h3>
                             <button class="read-more-btn" onclick="showPopup('features')">
-                                <i class="fas fa-book-open"></i> Learn More
+                                <i class="fas fa-book-open"></i> Explore Features
                             </button>
                         </div>
                     </div>
@@ -518,7 +590,7 @@
                             </div>
                             <h3>Tech Stack</h3>
                             <button class="read-more-btn" onclick="showTechStackBigPopup()">
-                                <i class="fas fa-book-open"></i> Learn More
+                                <i class="fas fa-book-open"></i> Explore Tech Stack
                             </button>
                         </div>
                     </div>
@@ -602,6 +674,14 @@
         <p>License: CC BY-NC-ND</p>
     </div>
 
+    <!-- Image viewer modal -->
+    <div id="imageViewerModal">
+        <span class="close-modal">&times;</span>
+        <div class="modal-content">
+            <img id="fullSizeImage" src="" alt="Full size image">
+        </div>
+    </div>
+
     <style>
         /* Modal Styles */
         .modal {
@@ -623,7 +703,7 @@
             width: 90%;
             max-width: 1200px;
             color: #fff;
-            position: relative;  /* Add position relative for absolute positioning of mute button */
+            position: relative;
         }
 
         .close-modal {
@@ -717,12 +797,12 @@
 
         .card-icon {
             font-size: 48px;
-            color: #4CAF50;
+            color: #d4d2d8;
             margin-bottom: 20px;
         }
 
         .card h3 {
-            color: #9370DB;
+            color: #d4d2d8;
             margin-bottom: 20px;
         }
 
@@ -739,7 +819,7 @@
             height: 120px;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid #4CAF50;
+            border: 3px solid #d4d2d8;
         }
 
         .author-image {
@@ -766,12 +846,12 @@
 
         .story-icon {
             font-size: 24px;
-            color: #4CAF50;
+            color: #d4d2d8;
         }
 
         .story-content h4 {
             margin: 0 0 5px 0;
-            color: #4CAF50;
+            color: #d4d2d8;
         }
 
         /* Tech Stack Styles */
@@ -784,7 +864,7 @@
         .tech-section h3 {
             margin-top: 12px;
             margin-bottom: 4px;
-            color: #4CAF50;
+            color: #d4d2d8;
             font-size: 1.07em;
         }
 
@@ -827,7 +907,7 @@
 
         .connect-link i {
             font-size: 24px;
-            color: #4CAF50;
+            color: #d4d2d8;
         }
 
         /* Popup Styles */
@@ -857,6 +937,11 @@
             animation: popupFadeIn 0.3s ease-out;
         }
 
+        /* Specific style for creator popup */
+        .popup-content:has(.popup-creator) {
+            margin: 5% auto;
+        }
+
         .close-popup {
             position: absolute;
             right: 20px;
@@ -872,8 +957,8 @@
 
         .read-more-btn {
             background: rgba(147, 112, 219, 0.2);
-            border: 1px solid #9370DB;
-            color: #9370DB;
+            border: 1px solid #d4d2d8;
+            color: #d4d2d8;
             padding: 10px 20px;
             border-radius: 25px;
             cursor: pointer;
@@ -918,7 +1003,7 @@
             height: 120px;
             border-radius: 50%;
             overflow: hidden;
-            border: 3px solid #4CAF50;
+            border: 3px solid #d4d2d8;
             margin-bottom: 15px;
         }
 
@@ -944,7 +1029,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #4CAF50;
+            color: #d4d2d8;
             background: rgba(255,255,255,0.07);
             padding: 8px 16px;
             border-radius: 20px;
@@ -954,8 +1039,8 @@
         }
 
         .popup-social-links .connect-link:hover {
-            background: #4CAF50;
-            color: #fff;
+            background: #9370DB;
+            color: #d4d2d8;
         }
 
         /* Features List Styles */
@@ -976,7 +1061,7 @@
             color: #e0e0e0;
         }
         .feature-icon {
-            color: #4CAF50;
+            color: #d4d2d8;
             font-size: 1.4em;
             margin-top: 2px;
             flex-shrink: 0;
@@ -1060,14 +1145,14 @@
         }
         .techstack-big-icon {
             font-size: 3.2em;
-            color: #9370DB;
+            color: #d4d2d8;
             margin-bottom: 18px;
         }
         .techstack-big-title {
             font-weight: bold;
             font-size: 1.45em;
             margin-bottom: 16px;
-            color: #9370DB;
+            color: #d4d2d8;
         }
         .techstack-big-desc {
             color: #e0e0e0;
@@ -1084,7 +1169,7 @@
         .techstack-nav-btn {
             background: rgba(147, 112, 219, 0.2);
             border: none;
-            color: #9370DB;
+            color: #d4d2d8;
             width: 48px;
             height: 48px;
             border-radius: 50%;
@@ -1093,7 +1178,7 @@
             transition: background 0.2s, transform 0.2s;
         }
         .techstack-nav-btn:hover {
-            background: #9370DB;
+            background: #d4d2d8;
             color: #fff;
             transform: scale(1.08);
         }
@@ -1109,7 +1194,7 @@
             transition: background 0.2s, transform 0.2s;
         }
         .techstack-indicator.active {
-            background: #9370DB;
+            background: #d4d2d8;
             transform: scale(1.2);
         }
         @media (max-width: 700px) {
@@ -1124,21 +1209,24 @@
                 min-height: 180px;
             }
         }
+
+        /* Specific style for features popup */
+        .popup-content:has(.features-container) {
+            min-height: 600px;
+            max-height: 95vh;
+        }
     </style>
 
     <script>
         // Popup content data
         const popupContent = {
             creator: {
-                title: "About the Creator",
+                title: "Welcome to SKG Chess!",
                 content: `
                     <div class='popup-creator'>
-                        <div class='popup-author-photo'>
-                            <img src='/images/author.png' alt='Haris Chatzianastasiou' class='popup-author-image'>
-                        </div>
-                        <h2>Haris Chatzianastasiou</h2>
-                        <p>Hello! I'm Haris, a software developer with a love for chess. I created SKG Chess to combine my passion for software development with my interest in the game. The name SKG Chess was inspired by my hometown, Thessaloniki.</p>
-                        <p>My journey in chess programming began with a simple idea: to create a chess engine that could play against human opponents. This project has evolved into a full-stack web application that I'm proud to share with the chess community.</p>
+                        <p>Hello! Thank you for visiting SKG Chess. I'm Haris, a software developer who's also a chess enthusiast. I created this platform as a way to combine my passion for software development with my interest in the game.</p>
+                        <p>The journey of SKG Chess started with a basic chess engine, and evolved into a full-stack web application where you can challenge other players and evolve your skills.</p>
+                        <p>Below you can find the source code of the project and my social media profiles if you want to get in touch with me.</p>
                         <div class='popup-social-links'>
                             <a href='https://github.com/harischatzianastasiou' target='_blank' class='connect-link'><i class='fab fa-github'></i> GitHub</a>
                             <a href='https://www.linkedin.com/in/haris-chatzianastasiou-084783212/' target='_blank' class='connect-link'><i class='fab fa-linkedin'></i> LinkedIn</a>
@@ -1151,39 +1239,36 @@
                 title: "Features",
                 content: `
                     <div class='features-container'>
+                    <div class='feature-item'>
+                            <i class='fas fa-users feature-icon'></i>
+                            <div class='feature-content'>
+                                <h3>Live Multiplayer & Game Chat</h3>
+                                <p>Play chess and chat with opponents in real time</p>
+                            </div>
+                        </div>
                         <div class='feature-item'>
                             <i class='fas fa-palette feature-icon'></i>
                             <div class='feature-content'>
-                                <h3>Custom Themes</h3>
-                                <p>Switch between beautiful chessboard themes instantly</p>
+                                <h3>Themes</h3>
+                                <p>Switch between beautiful chessboard themes while you play</p>
+                                <div class='theme-preview'>
+                                    <img src='/images/board1.png' alt='Board Theme 1' class='theme-preview-img'>
+                                    <img src='/images/board2.png' alt='Board Theme 2' class='theme-preview-img'>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='feature-item'>
+                            <i class='fas fa-quote-right feature-icon'></i>
+                            <div class='feature-content'>
+                                <h3>Match History & Quotes</h3>
+                                <p>Find your match history and enjoy some chess and philosophy quotes in your profile.</p>
                             </div>
                         </div>
                         <div class='feature-item'>
                             <i class='fas fa-music feature-icon'></i>
                             <div class='feature-content'>
-                                <h3>Modern UI/UX</h3>
-                                <p>Enjoy a lively, animated, and responsive interface</p>
-                            </div>
-                        </div>
-                        <div class='feature-item'>
-                            <i class='fas fa-comments feature-icon'></i>
-                            <div class='feature-content'>
-                                <h3>Game Chat</h3>
-                                <p>Chat with your opponent during live games</p>
-                            </div>
-                        </div>
-                        <div class='feature-item'>
-                            <i class='fas fa-users feature-icon'></i>
-                            <div class='feature-content'>
-                                <h3>Live Multiplayer</h3>
-                                <p>Play chess with friends in real time</p>
-                            </div>
-                        </div>
-                        <div class='feature-item'>
-                            <i class='fas fa-history feature-icon'></i>
-                            <div class='feature-content'>
-                                <h3>Match History</h3>
-                                <p>Track your games and progress with ratings</p>
+                                <h3>Background Music</h3>
+                                <p>Click the music icon in the bottom to enjoy some jazz music.</p>
                             </div>
                         </div>
                     </div>
@@ -1293,29 +1378,6 @@
                         card.classList.add('active');
                     }, index * 150);
                 });
-                
-                // Start the background music only on first click
-                if (!musicStarted) {
-                    const audio = document.getElementById('backgroundMusic');
-                    if (audio) {
-                        audio.muted = false;  // Unmute the audio
-                        audio.play().catch(error => {
-                            console.error("Playback failed:", error);
-                        });
-                        // Update the music icon
-                        const musicIcon = document.getElementById('musicIcon');
-                        if (musicIcon) {
-                            musicIcon.classList.remove('fa-volume-mute');
-                            musicIcon.classList.add('fa-volume-up');
-                        }
-                        // Show the music credits
-                        const credits = document.getElementById('musicCredits');
-                        if (credits) {
-                            credits.classList.add('show');
-                        }
-                        musicStarted = true;  // Mark music as started
-                    }
-                }
             }
         }
 
@@ -1458,6 +1520,48 @@
                 }
             }
         }
+
+        // Image viewer functionality
+        function openImageViewer(imageSrc) {
+            const modal = document.getElementById('imageViewerModal');
+            const fullSizeImage = document.getElementById('fullSizeImage');
+            fullSizeImage.src = imageSrc;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageViewer() {
+            const modal = document.getElementById('imageViewerModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // Initialize image viewer functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add click handlers for all preview images
+            document.querySelectorAll('.theme-preview-img').forEach(img => {
+                img.addEventListener('click', function() {
+                    openImageViewer(this.src);
+                });
+            });
+
+            // Close modal when clicking the close button
+            document.querySelector('#imageViewerModal .close-modal').addEventListener('click', closeImageViewer);
+
+            // Close modal when clicking outside the image
+            document.getElementById('imageViewerModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeImageViewer();
+                }
+            });
+
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && document.getElementById('imageViewerModal').style.display === 'block') {
+                    closeImageViewer();
+                }
+            });
+        });
     </script>
 </body>
 </html> 

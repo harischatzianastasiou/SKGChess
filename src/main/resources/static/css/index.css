@@ -507,7 +507,7 @@ body.authenticated::before {
 /* Active Games Section Styles */
 .active-games-section {
     /* Remove background */
-    background: transparent;
+    background: rgb(35, 35, 35);
     padding: 2rem;
     margin: 0;
     min-height: 100vh;
@@ -716,11 +716,11 @@ body.authenticated::before {
 }
 
 .square.light {
-    background-color: #f0d9b5;
+    background-color: #e9d8fd;;
 }
 
 .square.dark {
-    background-color: #b58863;
+    background-color: #553c9a;
 }
 
 .piece {
@@ -733,52 +733,52 @@ body.authenticated::before {
 
 /* White pieces */
 .piece.w.p {
-    background-image: url('/images/pieces/white-pawn.png');
+    background-image: url('/images/pawnN.png');
 }
 
 .piece.w.r {
-    background-image: url('/images/pieces/white-rook.png');
+    background-image: url('/images/rookN.png');
 }
 
 .piece.w.n {
-    background-image: url('/images/pieces/white-knight.png');
+    background-image: url('/images/knightN.png');
 }
 
 .piece.w.b {
-    background-image: url('/images/pieces/white-bishop.png');
+    background-image: url('/images/bishopN.png');
 }
 
 .piece.w.q {
-    background-image: url('/images/pieces/white-queen.png');
+    background-image: url('/images/queenN.png');
 }
 
 .piece.w.k {
-    background-image: url('/images/pieces/white-king.png');
+    background-image: url('/images/kingN.png');
 }
 
 /* Black pieces */
 .piece.b.p {
-    background-image: url('/images/pieces/black-pawn.png');
+    background-image: url('/images/pawnN1.png');
 }
 
 .piece.b.r {
-    background-image: url('/images/pieces/black-rook.png');
+    background-image: url('/images/rookN1.png');
 }
 
 .piece.b.n {
-    background-image: url('/images/pieces/black-knight.png');
+    background-image: url('/images/knightN1.png');
 }
 
 .piece.b.b {
-    background-image: url('/images/pieces/black-bishop.png');
+    background-image: url('/images/bishopN1.png');
 }
 
 .piece.b.q {
-    background-image: url('/images/pieces/black-queen.png');
+    background-image: url('/images/queenN1.png');
 }
 
 .piece.b.k {
-    background-image: url('/images/pieces/black-king.png');
+    background-image: url('/images/kingN1.png');
 }
 
 /* Add keyframes for background travel animation */
