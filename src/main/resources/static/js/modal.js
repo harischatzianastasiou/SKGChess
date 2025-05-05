@@ -160,16 +160,10 @@ function submitLoginForm(username, password, remember) {
     })
     .then(response => {
         if (response.ok) {
-            // Get the pending action
-            const pendingAction = sessionStorage.getItem('pendingAction');
-            
-            if (pendingAction === 'newGame') {
-                // For new game, create the game directly without reloading the page
-                createGameDirectly(username);
-            } else {
-                // For other actions, reload the page
-                window.location.reload();
-            }
+            // Clear any pending actions
+            sessionStorage.removeItem('pendingAction');
+            // Reload the page
+            window.location.reload();
         } else {
             // Login failed, show error
             return response.text().then(text => {
@@ -277,8 +271,8 @@ function togglePasswordVisibility() {
 
 // Add Google Sign In handler
 function handleGoogleSignIn() {
-    // TODO: Implement Google Sign In logic
-    console.log('Google Sign In clicked');
+    // Redirect to the OAuth2 login endpoint
+    window.location.href = '/oauth2/authorization/google';
 }
 
 // Export functions for use in other scripts

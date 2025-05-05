@@ -21,6 +21,19 @@
                 <h2>Login</h2>
                 <p class="signup-prompt">Don't have an account? <a href="/signup">Sign up here</a></p>
 
+                <!-- Google Sign In Button -->
+                <button class="social-login-btn google-btn" onclick="handleGoogleSignIn()">
+                    <img src="https://www.google.com/favicon.ico" alt="Google Icon">
+                    Continue with Google
+                </button>
+
+                <!-- Divider -->
+                <div class="divider">
+                    <span class="divider-line"></span>
+                    <span class="divider-text">or</span>
+                    <span class="divider-line"></span>
+                </div>
+
                 <form action="/login" method="POST">
                     <div class="form-group">
                         <label for="username">Username</label>
@@ -63,6 +76,11 @@
             <div class="mountains"></div>
         </div>
     </div>
+    <script>
+        function handleGoogleSignIn() {
+            window.location.href = '/oauth2/authorization/google';
+        }
+    </script>
 </body>
 </html>
   
