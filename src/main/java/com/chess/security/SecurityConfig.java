@@ -1,5 +1,6 @@
 package com.chess.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -8,10 +9,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+
 import com.chess.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration//Marks the class as a source of bean definitions for the application context.
 @EnableWebSecurity//Enables web security configuration.
@@ -42,51 +44,51 @@ public class SecurityConfig {
         return http
             .formLogin(httpForm -> {
                 httpForm
-                    .loginPage("/login")//Tells Spring where to redirect for login
-                    .loginProcessingUrl("/login")
+                    .loginPage("/index")
+                    .loginProcessingUrl("/api/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/index", true)//Tells Spring where to redirect after successful login
-                    .failureUrl("/login?error=true")
-                    .permitAll();//Allows all users to access the login page
+                    .defaultSuccessUrl("/index", true)
+                    .failureUrl("/index?error=true")
+                    .permitAll();
             })
             .oauth2Login(oauth2 -> oauth2
-                .loginPage("/login")
                 .defaultSuccessUrl("/index", true)
-                .failureUrl("/login?error=true")
+                .failureUrl("/index?error=true")
                 .userInfoEndpoint(userInfo -> userInfo
                     .userService(oauth2UserService())
                 )
             )
             .rememberMe(remember -> {
                 remember
-                    .key("uniqueAndSecretKey") // Change this to a secure random key in production
-                    .tokenValiditySeconds(86400) // 24 hours
-                    .rememberMeParameter("remember") // matches the checkbox name in your form
+                    .key("uniqueAndSecretKey")
+                    .tokenValiditySeconds(86400)
+                    .rememberMeParameter("remember")
                     .rememberMeCookieName("remember-me-cookie");
             })
             .logout(logout -> {
                 logout
-                    .logoutSuccessUrl("/") // Redirect to home page with logout parameter
-                    .deleteCookies("remember-me-cookie") // Delete remember-me cookie on logout
+                    .logoutSuccessUrl("/")
+                    .deleteCookies("remember-me-cookie")
                     .permitAll();
+            })
+            .exceptionHandling(exception -> {
+                exception.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/index"));
             })
             .authorizeHttpRequests(registry -> {
                 registry.requestMatchers(
-                    "/",           // Allow access to root path
-                    "/signup",
-                    "/api/users/signup",  // Add this line to allow access to signup API
-                    "/login", 
-                    "/game/**",  // Allow access to game URLs
-                    "/css/**",   // Allow access to CSS files
-                    "/js/**",    // Allow access to JS files
-                    "/images/**", 
-                    "/audio/**",  // Allow access to audio files
+                    "/",
+                    "/api/users/signup",
+                    "/game/**",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**",
+                    "/audio/**",
                     "/error",
-                    "/api/games/**",  // Allow access to games API endpoints
+                    "/api/games/**",
                     "/index",
-                    "/about",     // Allow access to index page without authentication
-                    "/oauth2/**"  // Add OAuth2 endpoints
+                    "/about",
+                    "/oauth2/**"
                 ).permitAll();
                 registry.anyRequest().authenticated();
             })

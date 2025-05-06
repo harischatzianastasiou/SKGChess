@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 
-@Controller // GET requests to /req/login and /req/signup return HTML templates AS @Controller is for views
+@Controller
 public class MainController {
 
     private final GameService gameService;
@@ -27,16 +27,6 @@ public class MainController {
     public MainController(GameService gameService, UserService userService) {
         this.gameService = gameService;
         this.userService = userService;
-    }
-
-    @GetMapping("/login")
-    public String login(){
-        return "login";
-    }
-    
-    @GetMapping("/signup")
-    public String signup(){
-        return "signup";
     }
 
     @GetMapping("/game")
