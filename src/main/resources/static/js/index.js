@@ -92,6 +92,7 @@ function showShareGamePopup(gameId) {
     // Create popup container
     const popup = document.createElement('div');
     popup.className = 'share-game-popup';
+    popup.setAttribute('data-game-id', gameId);  // Add game ID as data attribute
     
     // Create popup content with modern design
     popup.innerHTML = `
@@ -143,15 +144,33 @@ function closeSharePopup(gameId) {
     const overlay = document.querySelector('.share-game-overlay');
     
     if (popup) {
-        popup.classList.remove('show');
-        overlay.classList.remove('show');
-        isSharePopupOpen = false;
-        
-        // Remove elements after animation
-        setTimeout(() => {
-            popup.remove();
-            overlay.remove();
-        }, 300);
+        // Call the delete endpoint
+        fetch(`/api/games/${gameId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                console.error('Failed to delete game:', response.statusText);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting game:', error);
+        })
+        .finally(() => {
+            // Remove popup and overlay regardless of delete success
+            popup.classList.remove('show');
+            overlay.classList.remove('show');
+            isSharePopupOpen = false;
+            
+            // Remove elements after animation
+            setTimeout(() => {
+                popup.remove();
+                overlay.remove();
+            }, 300);
+        });
     }
 }
 
@@ -1088,4 +1107,25 @@ function handleEnterKey(event) {
         event.preventDefault();
         handleJoinGame();
     }
-} 
+}
+
+// Add event listener for escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape' && isSharePopupOpen) {
+        const gameId = document.querySelector('.share-game-popup')?.getAttribute('data-game-id');
+        if (gameId) {
+            closeSharePopup(gameId);
+        }
+    }
+});
+
+// Add event listener for page unload
+window.addEventListener('beforeunload', function(event) {
+    if (isSharePopupOpen) {
+        const gameId = document.querySelector('.share-game-popup')?.getAttribute('data-game-id');
+        if (gameId) {
+            // Use sendBeacon for more reliable delivery during page unload
+            navigator.sendBeacon(`/api/games/${gameId}`);
+        }
+    }
+}); 

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +23,7 @@ import com.chess.exception.GameNotFoundException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
 import com.chess.model.entity.Game;
+import com.chess.model.entity.Game.GameStatus;
 import com.chess.service.GameService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -190,6 +192,24 @@ public class GameController {
         } catch (Exception e) {
             log.error("Error making move in game {}: from {} to {}", 
                 request.getGameId(), request.getSourceCoordinate(), request.getTargetCoordinate(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping(value = "/{gameId}", produces = "application/json")
+    public ResponseEntity<Void> deleteGame(@PathVariable String gameId) {
+        try {
+            // Delete the game - service will handle all validation
+            gameService.deleteGame(gameId);
+            return ResponseEntity.ok().build();
+        } catch (GameNotFoundException e) {
+            log.error("Game not found: {}", gameId, e);
+            return ResponseEntity.notFound().build();
+        } catch (IllegalStateException e) {
+            log.error("Cannot delete game: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            log.error("Error deleting game: {}", gameId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }

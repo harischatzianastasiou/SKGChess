@@ -45,7 +45,7 @@ public class SecurityConfig {
             .formLogin(httpForm -> {
                 httpForm
                     .loginPage("/index")
-                    .loginProcessingUrl("/api/login")
+                    .loginProcessingUrl("/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
                     .defaultSuccessUrl("/index", true)

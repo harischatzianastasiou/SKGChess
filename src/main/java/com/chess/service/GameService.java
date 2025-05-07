@@ -21,10 +21,8 @@ import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.Game.GameStatus;
-import com.chess.model.entity.Position;
 import com.chess.model.entity.User;
 import com.chess.repository.GameRepository;
-import com.chess.repository.PositionRepository;
 import com.chess.repository.UserRepository;
 import com.chess.util.Sounduser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,17 +33,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class GameService {
     
     private final GameRepository gameRepository;
-    private final PositionRepository positionRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-    public GameService(GameRepository gameRepository, 
-                      PositionRepository positionRepository,
+    public GameService(GameRepository gameRepository,
                       UserRepository userRepository, 
                       SimpMessagingTemplate messagingTemplate) {
         this.gameRepository = gameRepository;
-        this.positionRepository = positionRepository;
         this.userRepository = userRepository;
         this.messagingTemplate = messagingTemplate;
     }
@@ -237,22 +232,27 @@ public class GameService {
         // Store the serialized new board        
         game.setBoard(newBoard.serialize());
 
-        // Create a new position record
-        Position newPosition = new Position();
-        newPosition.setFen(newBoard.getFEN());
-        // newPosition.setMoveNumber(moveCount + 1);
-        newPosition.setNextPlayerTurn(newBoard.getCurrentPlayer().getAlliance());
-        newPosition.setGame(game);
-        
         // Update game state
         game.setFenPosition(newBoard.getFEN());
         // game.setMoveCount(moveCount + 1);
         game.setIsPlayerTurn(newBoard.getCurrentPlayer().getAlliance());
         
-        // Add the new position to the game
-        game.getPositions().add(newPosition);
-        
         // Save the game (which will cascade to save the position)
         return gameRepository.save(game);
     } 
+
+    @Transactional
+    public void deleteGame(String gameId) {
+        // Find the game
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Check if game is still waiting for opponent
+        if (game.getStatus() != Game.GameStatus.WAITING_FOR_OPPONENT) {
+            throw new IllegalStateException("Cannot delete a game that has already started");
+        }
+        
+        // Delete the game
+        gameRepository.delete(game);
+    }
 }
