@@ -19,6 +19,7 @@ import com.chess.core.player.Player;
 import com.chess.exception.GameNotFoundException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
+import com.chess.exception.UserAlreadyHasActiveGameException;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.Game.GameStatus;
 import com.chess.model.entity.User;
@@ -58,6 +59,12 @@ public class GameService {
             User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
             
+            // Check if the user has active game
+            List<Game> activeGames = getActiveGamesByUsername(username);
+            if (!activeGames.isEmpty()) {
+                throw new UserAlreadyHasActiveGameException("User already has an active game");
+            }
+            
             // Create game object
             Game game = new Game();
             game.setWhitePlayer(user);
@@ -87,33 +94,44 @@ public class GameService {
             return gameRepository.save(game);
         } catch (Exception e) {
             logger.error("Error creating game", e);
-            throw new RuntimeException("Failed to create game", e);
+            throw e; // Re-throw the exception to be handled by the controller
         }
     }
 
     @Transactional
     public Game joinGame(String gameId, String username) {
-        // Find the game
-        Game game = gameRepository.findById(gameId)
-            .orElseThrow(() -> new GameNotFoundException(gameId));
+        try {
+            // Find the joining user
+            User joiningUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(username));
+            
+            // Check if the user has active game
+            List<Game> activeGames = getActiveGamesByUsername(username);
+            if (!activeGames.isEmpty()) {
+                throw new UserAlreadyHasActiveGameException("User already has an active game");
+            }
 
-        // Check if game is already full
-        if (game.getBlackPlayer() != null) {
-            throw new IllegalStateException("Game is already full");
+            // Find the game
+            Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new GameNotFoundException(gameId));
+
+            // Check if game is already full
+            if (game.getBlackPlayer() != null) {
+                throw new IllegalStateException("Game is already full");
+            }
+
+            // Set the black player
+            game.setBlackPlayer(joiningUser);
+            
+            // Update game status to IN_PROGRESS
+            game.setStatus(GameStatus.IN_PROGRESS);
+            
+            // Save and return the updated game
+            return gameRepository.save(game);
+        } catch (Exception e) {
+            logger.error("Error joining game", e);
+            throw e; // Re-throw the exception to be handled by the controller
         }
-
-        // Find the joining user
-        User joiningUser = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UserNotFoundException(username));
-
-        // Set the black player
-        game.setBlackPlayer(joiningUser);
-        
-        // Update game status to IN_PROGRESS
-        game.setStatus(GameStatus.IN_PROGRESS);
-        
-        // Save and return the updated game
-        return gameRepository.save(game);
     }
 
     public Game getGameById(String gameId) {
@@ -123,6 +141,20 @@ public class GameService {
 
     public List<Game> getAllGames() {
         return gameRepository.findAll();
+    }
+
+    /**
+     * Get all active games (IN_PROGRESS) for a specific user by their username
+     * @param username The username of the user
+     * @return List of active games where the user is either the white or black player
+     */
+    public List<Game> getActiveGamesByUsername(String username) {
+        // Find the user first
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
+        
+        // Use the existing method with the user's ID
+        return getActiveGamesForUser(user.getId());
     }
 
     /**
@@ -139,6 +171,15 @@ public class GameService {
             .filter(game -> game.getStatus() == GameStatus.IN_PROGRESS)
             .collect(Collectors.toList());
     }
+
+    public List<Game> getAllGamesForUser(String userId) {
+        // Get all games where the user is either the white or black player
+        List<Game> userGames = gameRepository.findByWhitePlayerIdOrBlackPlayerId(userId, userId);
+        
+        // Filter to only include games with IN_PROGRESS status
+        return userGames;
+    }
+    
 
     @Transactional
     public Game makeMove(String gameId, int sourceCoordinate, int targetCoordinate) {

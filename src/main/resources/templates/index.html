@@ -355,7 +355,7 @@
             <div class="header-right">
                 <div class="header-auth">
                     <div sec:authorize="isAuthenticated()">
-                        <a href="/about" class="btn-home">
+                        <a href="#" onclick="openAboutModal(); return false;" class="btn-home">
                             <i class="fas fa-info-circle"></i>
                             About
                         </a>
@@ -414,57 +414,68 @@
                     <div class="main-buttons-container auth-buttons">
                         <a href="#" onclick="newGame(); return false;" class="main-button get-started">New Game</a>
                         <a href="#" onclick="showJoinGameDialog(); return false;" class="main-button about">Join Game</a>
-                        <a href="#active-games-section" class="main-button about">View Stats</a>
+                        <a href="#all-games-section" class="main-button about">My Games</a>
                     </div>
                 </div>
             </section>
 
             <!-- Active Games Section (Only for authenticated users) -->
-            <section id="active-games-section" class="content-section active-games-section section-hidden scroll-container" sec:authorize="isAuthenticated()">
+            <section id="all-games-section" class="content-section all-games-section section-hidden scroll-container" sec:authorize="isAuthenticated()">
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-chess"></i>
                         My Games
                     </h2>
                 </div>
-                <div class="active-games-container">
-                    <!-- Display active games if any exist -->
-                    <div th:if="${activeGames != null && !activeGames.empty}" class="active-games-grid">
-                        <div th:each="game : ${activeGames}" class="active-game-card glass-effect">
-                            <div class="active-game-header">
-                                <h3 th:text="${game.whitePlayerUsername + ' vs ' + game.blackPlayerUsername}">Player1 vs Player2</h3>
-                                <span class="game-status">In Progress</span>
-                            </div>
-                            <div class="active-game-board">
-                                <!-- Chess board preview will be rendered here -->
-                                <div class="chess-board-preview" th:id="'board-preview-' + ${game.id}">
-                                    <!-- Board will be rendered by JavaScript -->
+                <div class="all-games-container">
+                    <!-- Two-column layout for games -->
+                    <div class="games-two-column">
+                        <!-- Left: Last game preview card -->
+                        <div class="games-left">
+                            <div th:each="game, iterStat : ${allGames}" th:if="${iterStat.last}" class="all-game-card glass-effect">
+                                <div class="all-game-header">
+                                    <h3 th:text="${game.whitePlayerUsername + ' vs ' + game.blackPlayerUsername}">Player1 vs Player2</h3>
+                                    <span class="game-status">In Progress</span>
+                                </div>
+                                <div class="all-game-board">
+                                    <div class="chess-board-preview" th:id="'board-preview-' + ${game.id}"></div>
+                                </div>
+                                <!-- Only show the button, no color/opponent/turn info -->
+                                <div class="all-game-actions">
+                                    <a th:if="${game.status.name() == 'IN_PROGRESS'}" th:href="@{'/games/' + ${game.id}}" class="btn btn-primary">
+                                        <i class="fas fa-play"></i>
+                                        Continue Game
+                                    </a>
+                                    <a th:if="${game.status.name() != 'IN_PROGRESS'}" th:href="@{'/games/' + ${game.id}}" class="btn btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                        View Game
+                                    </a>
                                 </div>
                             </div>
-                            <div class="active-game-info">
-                                <div class="game-player-info">
-                                    <span class="player-label">Your Color:</span>
-                                    <span class="player-color" th:text="${game.whitePlayerId == userId ? 'White' : 'Black'}">White</span>
-                                </div>
-                                <div class="game-player-info">
-                                    <span class="player-label">Opponent:</span>
-                                    <span class="opponent-name" th:text="${game.whitePlayerId == userId ? game.blackPlayerUsername : game.whitePlayerUsername}">Opponent</span>
-                                </div>
-                                <div class="game-player-info">
-                                    <span class="player-label">Turn:</span>
-                                    <span class="current-turn" th:text="${game.isPlayerTurn != null ? (game.isPlayerTurn.name() == 'WHITE' ? 'White' : 'Black') : 'Unknown'}">White</span>
-                                </div>
+                        </div>
+                        <!-- Right: Previous games as rows -->
+                        <div class="games-right game-rows-list">
+                            <!-- Header row for columns -->
+                            <div class="game-row game-row-header">
+                                <span>Players</span>
+                                <span class="game-moves">Moves</span>
+                                <span></span>
                             </div>
-                            <div class="active-game-actions">
-                                <a th:href="@{'/games/' + ${game.id}}" class="btn btn-primary">
-                                    <i class="fas fa-play"></i>
-                                    Continue Game
-                                </a>
+                            <div th:each="game, iterStat : ${allGames}" th:if="${!iterStat.last}" class="game-row">
+                                <span>
+                                    <span th:text="${game.whitePlayerUsername}"></span>
+                                    <span> vs </span>
+                                    <span th:text="${game.blackPlayerUsername}"></span>
+                                </span>
+                                <span class="game-moves" th:text="${game.moveCount}"></span>
+                                <span>
+                                    <a th:href="@{'/games/' + ${game.id}}" class="view-game-link">View Game</a>
+                                </span>
                             </div>
                         </div>
                     </div>
                     <!-- Display message if no active games -->
-                    <div th:if="${activeGames == null || activeGames.empty}" class="no-active-games glass-effect">
+                    <div th:if="${allGames == null || allGames.empty}" class="no-all-games glass-effect">
                         <i class="fas fa-chess-board"></i>
                         <h3>No Active Games</h3>
                         <p>You don't have any games in progress. Start a new game to play!</p>
@@ -482,19 +493,14 @@
                         <h3>SKG Chess</h3>
                         <p>A modern chess platform for players of all skill levels.</p>
                         <div class="social-links">
-                            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-                            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                            <a href="https://github.com/harischatzianastasiou" class="social-link" target="_blank"><i class="fab fa-github"></i></a>
+                            <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" class="social-link" target="_blank"><i class="fab fa-linkedin"></i></a>
                         </div>
                     </div>
                     <div class="footer-section">
                         <h3>Quick Links</h3>
                         <ul>
-                            <li><a href="/">Home</a></li>
-                            <li><a href="/about">About</a></li>
-                            <li><a href="/my-games">My Games</a></li>
-                            <li><a href="/login">Sign In</a></li>
+                            <li><a href="#" onclick="openAboutModal(); return false;">About</a></li>
                         </ul>
                     </div>
                     <div class="footer-section">

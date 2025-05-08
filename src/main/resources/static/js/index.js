@@ -15,17 +15,32 @@ document.addEventListener('DOMContentLoaded', function() {
         handlePendingAction();
         // Load existing messages from the database
         loadExistingMessages();
-        // Render active game boards
-        renderActiveGameBoards();
+        // Render game boards
+        renderGameBoards();
     }
     
     // Check if we need to show a game popup
-    const gameId = sessionStorage.getItem('showGamePopup');
+    const gameId = localStorage.getItem('showGamePopup');
     if (gameId) {
         // Clear the stored game ID
-        sessionStorage.removeItem('showGamePopup');
+        localStorage.removeItem('showGamePopup');
         // Show the share popup
         showShareGamePopup(gameId);
+    } else {
+        // If no popup is being shown but there's a gameId in localStorage, delete it
+        const pendingGameId = localStorage.getItem('pendingGameId');
+        if (pendingGameId) {
+            // Delete the pending game
+            fetch(`/api/games/${pendingGameId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).finally(() => {
+                // Clear the pending game ID regardless of success
+                localStorage.removeItem('pendingGameId');
+            });
+        }
     }
 });
 
@@ -87,8 +102,22 @@ function connect() {
 let isSharePopupOpen = false;
 let gameMessages = [];
 
+// Add visibility change handler
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'hidden' && isSharePopupOpen) {
+        const gameId = document.querySelector('.share-game-popup')?.getAttribute('data-game-id');
+        if (gameId) {
+            // Store the game ID to be deleted on next page load
+            localStorage.setItem('pendingGameId', gameId);
+        }
+    }
+});
+
 // Function to show the share game popup
 function showShareGamePopup(gameId) {
+    // Store the game ID in localStorage
+    localStorage.setItem('pendingGameId', gameId);
+    
     // Create popup container
     const popup = document.createElement('div');
     popup.className = 'share-game-popup';
@@ -98,7 +127,7 @@ function showShareGamePopup(gameId) {
     popup.innerHTML = `
         <div class="popup-header">
             <h3><i class="fas fa-gamepad"></i> Game Room Created</h3>
-            <button class="close-btn" onclick="closeSharePopup('${gameId}')">
+            <button class="close-btn" onclick="confirmClosePopup('${gameId}')">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -115,6 +144,7 @@ function showShareGamePopup(gameId) {
             <div class="info-box">
                 <i class="fas fa-info-circle"></i>
                 <p>The game will start automatically when your friend joins.</p>
+                <div class="loading-spinner"></div>
             </div>
         </div>
     `;
@@ -122,6 +152,7 @@ function showShareGamePopup(gameId) {
     // Add overlay with blur effect
     const overlay = document.createElement('div');
     overlay.className = 'share-game-overlay';
+    overlay.onclick = () => confirmClosePopup(gameId); // Add click handler for overlay
 
     // Add to document
     document.body.appendChild(overlay);
@@ -136,6 +167,22 @@ function showShareGamePopup(gameId) {
 
     // Subscribe to WebSocket for game start
     subscribeToGameStart(gameId);
+}
+
+// Function to show confirmation dialog
+function confirmClosePopup(gameId) {
+    const confirmDialog = document.createElement('div');
+    confirmDialog.className = 'confirm-dialog';
+    confirmDialog.innerHTML = `
+        <div class="confirm-content">
+            <h4>Do you want to cancel game creation?</h4>
+            <div class="confirm-buttons">
+                <button class="btn-yes" onclick="closeSharePopup('${gameId}'); this.closest('.confirm-dialog').remove()">Yes</button>
+                <button class="btn-no" onclick="this.closest('.confirm-dialog').remove()">No</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(confirmDialog);
 }
 
 // Function to close the share game popup
@@ -414,14 +461,15 @@ function newGame() {
     .then(response => {
         console.log("Game creation response status:", response.status);
         if (!response.ok) {
-            return response.text().then(text => {
-                console.error("Server error details:", text);
-                throw new Error(`Failed to create game: ${response.status} ${response.statusText}. ${text}`);
+            return response.json().then(errorData => {
+                showErrorPopup(errorData.message);
+                throw new Error(errorData.message);
             });
         }
         return response.json();
     })
     .then(data => {
+        if (!data) return; // Return if we showed an error popup
         console.log("Game created:", data);
         if (!data || !data.id) {
             throw new Error('Game ID not found in response');
@@ -431,7 +479,7 @@ function newGame() {
     })
     .catch(error => {
         console.error("Error creating game:", error);
-        alert(`Error creating game: ${error.message}`);
+        // Don't show another error popup here since we already showed one in the response handling
     });
 }
 
@@ -462,16 +510,15 @@ function joinGame(gameId) {
     .then(response => {
         console.log("Join game response status:", response.status);
         if (!response.ok) {
-            return response.text().then(text => {
-                throw new Error(`Failed to join game: ${response.status} ${response.statusText}. ${text}`);
+            return response.json().then(errorData => {
+                showErrorPopup(errorData.message);
+                throw new Error(errorData.message);
             });
         }
         return response.json();
     })
     .then(data => {
-        if (!data) {
-            throw new Error('No available games to join');
-        }
+        if (!data) return; // Return if we showed an error popup
         if (!data.id) {
             throw new Error('Game ID not found in response');
         }
@@ -482,7 +529,7 @@ function joinGame(gameId) {
     })
     .catch(error => {
         console.error("Error joining game:", error);
-        alert(`Error joining game: ${error.message}`);
+        // Don't show another error popup here since we already showed one in the response handling
     });
 }
 
@@ -674,7 +721,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Handle wheel events for smooth scrolling
     window.addEventListener('wheel', (e) => {
         // Find the closest scrollable container
-        const scrollableContainer = e.target.closest('.active-games-section');
+        const scrollableContainer = e.target.closest('.all-games-section');
         
         if (scrollableContainer) {
             // Get the total scrollable height
@@ -954,14 +1001,14 @@ async function loadExistingMessages() {
 }
 
 /**
- * Render chess board previews for active games
+ * Render chess board previews for games
  */
-function renderActiveGameBoards() {
+function renderGameBoards() {
     // Get all board preview containers
     const boardPreviews = document.querySelectorAll('.chess-board-preview');
     
     if (boardPreviews.length === 0) {
-        return; // No active games to render
+        return; // No games to render
     }
     
     // For each board preview, create a chess board
@@ -1114,18 +1161,26 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape' && isSharePopupOpen) {
         const gameId = document.querySelector('.share-game-popup')?.getAttribute('data-game-id');
         if (gameId) {
-            closeSharePopup(gameId);
+            confirmClosePopup(gameId);
         }
     }
 });
 
-// Add event listener for page unload
-window.addEventListener('beforeunload', function(event) {
-    if (isSharePopupOpen) {
-        const gameId = document.querySelector('.share-game-popup')?.getAttribute('data-game-id');
-        if (gameId) {
-            // Use sendBeacon for more reliable delivery during page unload
-            navigator.sendBeacon(`/api/games/${gameId}`);
-        }
-    }
-}); 
+// Function to show error popup
+function showErrorPopup(message) {
+    const errorPopup = document.createElement('div');
+    errorPopup.className = 'error-popup';
+    errorPopup.innerHTML = `
+        <div class="error-content">
+            <i class="fas fa-exclamation-circle"></i>
+            <p>${message}</p>
+            <button onclick="this.closest('.error-popup').remove()">OK</button>
+        </div>
+    `;
+    document.body.appendChild(errorPopup);
+    
+    // Add show class after a small delay for animation
+    setTimeout(() => {
+        errorPopup.classList.add('show');
+    }, 10);
+}

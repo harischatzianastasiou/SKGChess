@@ -68,23 +68,23 @@ public class MainController {
                 String username = auth.getName();
                 User currentUser = userService.getUserByUsername(username);
                 
-                // Get active games for the current user
-                List<Game> activeGames = gameService.getActiveGamesForUser(currentUser.getId());
+                // Get all games for the current user
+                List<Game> allGames = gameService.getAllGamesForUser(currentUser.getId());
                 
                 // Convert to DTOs for the view
-                List<GameDTO> activeGameDTOs = activeGames.stream()
+                List<GameDTO> allGameDTOs = allGames.stream()
                     .map(GameDTO::fromGame)
                     .collect(Collectors.toList());
                 
                 // Add to model
-                model.addAttribute("activeGames", activeGameDTOs);
+                model.addAttribute("allGames", allGameDTOs);
                 model.addAttribute("userId", currentUser.getId());
             } catch (Exception e) {
                 // Log the error but don't let it crash the page
-                System.err.println("Error loading active games: " + e.getMessage());
+                System.err.println("Error loading all games: " + e.getMessage());
                 e.printStackTrace();
                 // Add empty list to avoid null pointer in template
-                model.addAttribute("activeGames", new ArrayList<>());
+                model.addAttribute("allGames", new ArrayList<>());
             }
         }
         
@@ -101,23 +101,23 @@ public class MainController {
                 String username = auth.getName();
                 User currentUser = userService.getUserByUsername(username);
                 
-                // Get active games for the current user
-                List<Game> activeGames = gameService.getActiveGamesForUser(currentUser.getId());
+                // Get all games for the current user
+                List<Game> allGames = gameService.getAllGamesForUser(currentUser.getId());
                 
                 // Convert to DTOs for the view
-                List<GameDTO> activeGameDTOs = activeGames.stream()
+                List<GameDTO> allGameDTOs = allGames.stream()
                     .map(GameDTO::fromGame)
                     .collect(Collectors.toList());
                 
                 // Add to model
-                model.addAttribute("activeGames", activeGameDTOs);
+                model.addAttribute("allGames", allGameDTOs);
                 model.addAttribute("userId", currentUser.getId());
             } catch (Exception e) {
                 // Log the error but don't let it crash the page
-                System.err.println("Error loading active games: " + e.getMessage());
+                System.err.println("Error loading all games: " + e.getMessage());
                 e.printStackTrace();
                 // Add empty list to avoid null pointer in template
-                model.addAttribute("activeGames", new ArrayList<>());
+                model.addAttribute("allGames", new ArrayList<>());
             }
         }
         

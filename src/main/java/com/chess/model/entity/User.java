@@ -101,22 +101,4 @@ public class User implements Serializable {
         this.username = username;
         this.email = email;
     }
-
-    public List<Game> getAllGames() {
-        List<Game> allGames = new ArrayList<>();
-        allGames.addAll(gamesAsWhite);
-        allGames.addAll(gamesAsBlack);
-        return allGames;
-    }
-
-    public List<Game> getActiveGames() {
-        List<Game> activeGames = new ArrayList<>();
-        activeGames.addAll(gamesAsWhite.stream()
-            .filter(game -> game.getStatus() == GameStatus.ACTIVE)
-            .collect(Collectors.toList()));
-        activeGames.addAll(gamesAsBlack.stream()
-            .filter(game -> game.getStatus() == GameStatus.ACTIVE)
-            .collect(Collectors.toList()));
-        return activeGames;
-    }
 } 

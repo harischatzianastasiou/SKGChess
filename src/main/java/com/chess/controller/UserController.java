@@ -56,30 +56,6 @@ public class UserController {
         }
     }
 
-    @GetMapping(value = "/{userId}/games", produces = "application/json")
-    public ResponseEntity<List<GameDTO>> getUserAllGames(@PathVariable String userId) {
-        // Get all games from the service
-        List<Game> games = userService.getAllGames(userId);
-
-        // Return the games with proper headers
-        return ResponseEntity.ok()
-            .body(games.stream()
-                .map(GameDTO::fromGame)
-                .collect(Collectors.toList()));
-    }
-
-    @GetMapping(value = "/{userId}/active-games", produces = "application/json")
-    public ResponseEntity<List<GameDTO>> getUserActiveGames(@PathVariable String userId) {
-        // Get all active games from the service
-        List<Game> games = userService.getActiveGames(userId);
-
-        // Return the games with proper headers
-        return ResponseEntity.ok()
-            .body(games.stream()
-                .map(GameDTO::fromGame)
-                .collect(Collectors.toList()));
-    }
-
     @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserRequestDTO requestDTO){
         // Create a new User entity from the DTO

@@ -17,6 +17,43 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
+ * Creates the signup form HTML structure
+ */
+function createSignupForm() {
+    return `
+        <form id="signup-form" class="login-form" action="/signup" method="POST">
+            <div class="form-group">
+                <label for="modal-signup-username">Username</label>
+                <input type="text" id="modal-signup-username" name="username" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label for="modal-signup-email">Email</label>
+                <input type="email" id="modal-signup-email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="modal-signup-password">Password</label>
+                <div class="password-input">
+                    <input type="password" id="modal-signup-password" name="password" placeholder="Create a password" required>
+                    <button type="button" class="toggle-password" onclick="toggleSignupPasswordVisibility()">
+                        <img src="/images/eye.svg" alt="Toggle password visibility">
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="modal-signup-confirm-password">Confirm Password</label>
+                <div class="password-input">
+                    <input type="password" id="modal-signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
+                    <button type="button" class="toggle-password" onclick="toggleSignupConfirmPasswordVisibility()">
+                        <img src="/images/eye.svg" alt="Toggle password visibility">
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="login-btn">Sign Up</button>
+        </form>
+    `;
+}
+
+/**
  * Creates the login modal HTML structure
  */
 function createLoginModal() {
@@ -42,28 +79,33 @@ function createLoginModal() {
                         <span class="divider-line"></span>
                     </div>
 
-                    <form id="login-form" class="login-form" action="/login" method="POST">
-                        <div class="form-group">
-                            <label for="modal-username">Email or username</label>
-                            <input type="text" id="modal-username" name="username" placeholder="Email or username" required autocomplete="username">
-                        </div>
-                        <div class="form-group">
-                            <label for="modal-password">Password</label>
-                            <div class="password-input">
-                                <input type="password" id="modal-password" name="password" placeholder="Password" required autocomplete="current-password">
-                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
-                                    <img src="/images/eye.svg" alt="Toggle password visibility">
-                                </button>
+                    <div id="login-form-container">
+                        <form id="login-form" class="login-form" action="/login" method="POST">
+                            <div class="form-group">
+                                <label for="modal-username">Email or username</label>
+                                <input type="text" id="modal-username" name="username" placeholder="Email or username" required autocomplete="username">
                             </div>
+                            <div class="form-group">
+                                <label for="modal-password">Password</label>
+                                <div class="password-input">
+                                    <input type="password" id="modal-password" name="password" placeholder="Password" required autocomplete="current-password">
+                                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                                        <img src="/images/eye.svg" alt="Toggle password visibility">
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="remember-me">
+                                <input type="checkbox" id="modal-remember" name="remember">
+                                <label for="modal-remember">Remember Me</label>
+                            </div>
+                            <button type="submit" class="login-btn">Log In</button>
+                        </form>
+                        <div class="modal-switch-msg">
+                            <span>Don't have an account?</span>
+                            <a href="#" class="modal-switch-link" onclick="switchToSignupForm()">Sign up</a>
                         </div>
-                        <div class="remember-me">
-                            <input type="checkbox" id="modal-remember" name="remember">
-                            <label for="modal-remember">Remember Me</label>
-                        </div>
-                        <button type="submit" class="login-btn">Log In</button>
-                    </form>
-                    <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
-                    <p class="signup-prompt">Don't have an account? <a href="/signup">Sign up here</a></p>
+                        <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -71,6 +113,136 @@ function createLoginModal() {
     
     // Append modal to body
     document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+/**
+ * Switches the modal content to show the signup form
+ */
+function switchToSignupForm() {
+    const modalTitle = document.querySelector('.modal-title');
+    const loginFormContainer = document.getElementById('login-form-container');
+    // Update modal title
+    modalTitle.textContent = 'Sign up for Chess';
+    // Replace login form with signup form and switch message
+    loginFormContainer.innerHTML = `
+        <form id="signup-form" class="login-form" action="/signup" method="POST">
+            <div class="form-group">
+                <label for="modal-signup-username">Username</label>
+                <input type="text" id="modal-signup-username" name="username" placeholder="Choose a username" required>
+            </div>
+            <div class="form-group">
+                <label for="modal-signup-email">Email</label>
+                <input type="email" id="modal-signup-email" name="email" placeholder="Enter your email" required>
+            </div>
+            <div class="form-group">
+                <label for="modal-signup-password">Password</label>
+                <div class="password-input">
+                    <input type="password" id="modal-signup-password" name="password" placeholder="Create a password" required>
+                    <button type="button" class="toggle-password" onclick="toggleSignupPasswordVisibility()">
+                        <img src="/images/eye.svg" alt="Toggle password visibility">
+                    </button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="modal-signup-confirm-password">Confirm Password</label>
+                <div class="password-input">
+                    <input type="password" id="modal-signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
+                    <button type="button" class="toggle-password" onclick="toggleSignupConfirmPasswordVisibility()">
+                        <img src="/images/eye.svg" alt="Toggle password visibility">
+                    </button>
+                </div>
+            </div>
+            <button type="submit" class="login-btn">Sign Up</button>
+        </form>
+        <div class="modal-switch-msg">
+            <span>Already have an account?</span>
+            <a href="#" class="modal-switch-link" onclick="switchToLoginForm()">Log in</a>
+        </div>
+    `;
+    // Setup signup form event listeners
+    setupSignupFormEventListeners();
+}
+
+/**
+ * Switches the modal content back to the login form
+ */
+function switchToLoginForm() {
+    const modalTitle = document.querySelector('.modal-title');
+    const loginFormContainer = document.getElementById('login-form-container');
+    // Update modal title
+    modalTitle.textContent = 'Log in to Chess';
+    // Replace signup form with login form and switch message
+    loginFormContainer.innerHTML = `
+        <form id="login-form" class="login-form" action="/login" method="POST">
+            <div class="form-group">
+                <label for="modal-username">Email or username</label>
+                <input type="text" id="modal-username" name="username" placeholder="Email or username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="modal-password">Password</label>
+                <div class="password-input">
+                    <input type="password" id="modal-password" name="password" placeholder="Password" required autocomplete="current-password">
+                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                        <img src="/images/eye.svg" alt="Toggle password visibility">
+                    </button>
+                </div>
+            </div>
+            <div class="remember-me">
+                <input type="checkbox" id="modal-remember" name="remember">
+                <label for="modal-remember">Remember Me</label>
+            </div>
+            <button type="submit" class="login-btn">Log In</button>
+        </form>
+        <div class="modal-switch-msg">
+            <span>Don't have an account?</span>
+            <a href="#" class="modal-switch-link" onclick="switchToSignupForm()">Sign up</a>
+        </div>
+        <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
+    `;
+    // Setup login form event listeners
+    setupModalEventListeners();
+}
+
+/**
+ * Sets up event listeners for the signup form
+ */
+function setupSignupFormEventListeners() {
+    const signupForm = document.getElementById('signup-form');
+    
+    signupForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        // Get form data
+        const username = document.getElementById('modal-signup-username').value;
+        const email = document.getElementById('modal-signup-email').value;
+        const password = document.getElementById('modal-signup-password').value;
+        const confirmPassword = document.getElementById('modal-signup-confirm-password').value;
+        
+        // Basic validation
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        // Submit form data to server
+        submitSignupForm(username, email, password);
+    });
+}
+
+/**
+ * Toggles visibility of the signup password field
+ */
+function toggleSignupPasswordVisibility() {
+    const passwordInput = document.getElementById('modal-signup-password');
+    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+}
+
+/**
+ * Toggles visibility of the signup confirm password field
+ */
+function toggleSignupConfirmPasswordVisibility() {
+    const passwordInput = document.getElementById('modal-signup-confirm-password');
+    passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
 }
 
 /**

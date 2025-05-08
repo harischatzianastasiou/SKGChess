@@ -18,10 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chess.dto.rest.request.CreateGameRequestDTO;
 import com.chess.dto.rest.request.JoinGameRequestDTO;
 import com.chess.dto.rest.request.MakeMoveRequestDTO;
+import com.chess.dto.rest.response.ErrorResponseDTO;
 import com.chess.dto.rest.response.GameDTO;
 import com.chess.exception.GameNotFoundException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
+import com.chess.exception.UserAlreadyHasActiveGameException;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.Game.GameStatus;
 import com.chess.service.GameService;
@@ -29,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/games")
@@ -46,7 +49,7 @@ public class GameController {
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<GameDTO> createGame(@RequestBody @Valid CreateGameRequestDTO request) {
+    public ResponseEntity<?> createGame(@RequestBody @Valid CreateGameRequestDTO request) {
         try {
             // Create game with parameters from the request
             Game game = gameService.createGame(
@@ -62,17 +65,21 @@ public class GameController {
         } catch (UserNotFoundException e) {
             // Log the exception
             log.error("User not found when creating game: {}", e.getMessage());
-        
             // Return a more specific error response
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(null);
+                .body(new ErrorResponseDTO("User not found"));
+        } catch (UserAlreadyHasActiveGameException e) {
+            // Log the exception
+            log.error("User already has an active game: {}", e.getMessage());
+            // Return a more specific error response
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO("Please finish or forfeit your current game before creating a new one"));
         } catch (Exception e) {
             // Log the exception with stack trace
             log.error("Error creating game: {}", e.getMessage(), e);
-        
             // Return an error response with more details
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(null);
+                .body(new ErrorResponseDTO("Internal server error"));
         }
     }
 
@@ -106,7 +113,7 @@ public class GameController {
     }
 
     @PostMapping(value = "/join", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<GameDTO> joinGame(@RequestBody @Valid JoinGameRequestDTO request) {
+    public ResponseEntity<?> joinGame(@RequestBody @Valid JoinGameRequestDTO request) {
         try {
             // Join the game
             Game game = gameService.joinGame(
@@ -137,12 +144,18 @@ public class GameController {
 
             return ResponseEntity.ok()
                     .body(GameDTO.fromGame(game));
+        } catch (UserAlreadyHasActiveGameException e) {
+            // Log the exception
+            log.error("User already has an active game: {}", e.getMessage());
+            // Return a more specific error response
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO("Please finish or forfeit your current game before creating a new one"));
         } catch (Exception e) {
             // Log the exception
             log.error("Error joining game", e);
-        
             // Return an error response
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponseDTO("Failed to join game"));
         }
     }
 
