@@ -45,9 +45,8 @@ public class Game implements Serializable {
     private User blackPlayer;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
     @Column(name = "game_status", nullable = false)
-    private GameStatus status = GameStatus.WAITING_FOR_OPPONENT;
+    private String status = GameStatus.WAITING_FOR_OPPONENT.name();
 
     @Column(name = "game_createdAt", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -120,14 +119,14 @@ public class Game implements Serializable {
     }
 
     public boolean isGameStarted() {
-        return status != GameStatus.WAITING_FOR_OPPONENT;
+        return status != GameStatus.WAITING_FOR_OPPONENT.name();
     }
 
     public void setGameStarted(boolean gameStarted) {
         if (gameStarted) {
-            status = GameStatus.IN_PROGRESS;
+            status = GameStatus.IN_PROGRESS.name();
         } else {
-            status = GameStatus.WAITING_FOR_OPPONENT;
+            status = GameStatus.WAITING_FOR_OPPONENT.name();
         }
     }
 } 

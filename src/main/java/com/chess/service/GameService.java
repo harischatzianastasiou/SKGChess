@@ -72,7 +72,7 @@ public class GameService {
             game.setTimeControlMinutes(Optional.ofNullable(timeControlMinutes).orElse(10));
             game.setIsRated(Optional.ofNullable(isRated).orElse(true));
             game.setCustomRules(Optional.ofNullable(customRules).orElse(""));
-            game.setStatus(GameStatus.WAITING_FOR_OPPONENT);
+            game.setStatus(GameStatus.WAITING_FOR_OPPONENT.name());
             game.setCreatedAt(LocalDateTime.now());
             game.setIsPlayerTurn(com.chess.core.Alliance.WHITE);
 
@@ -124,7 +124,7 @@ public class GameService {
             game.setBlackPlayer(joiningUser);
             
             // Update game status to IN_PROGRESS
-            game.setStatus(GameStatus.IN_PROGRESS);
+            game.setStatus(GameStatus.IN_PROGRESS.name());
             
             // Save and return the updated game
             return gameRepository.save(game);
@@ -168,7 +168,7 @@ public class GameService {
         
         // Filter to only include games with IN_PROGRESS status
         return userGames.stream()
-            .filter(game -> game.getStatus() == GameStatus.IN_PROGRESS)
+            .filter(game -> game.getStatus().equals(GameStatus.IN_PROGRESS.name()))
             .collect(Collectors.toList());
     }
 
@@ -188,7 +188,7 @@ public class GameService {
             .orElseThrow(() -> new GameNotFoundException(gameId));
         
         // Check if game has started by checking status
-        if (game.getStatus() == GameStatus.WAITING_FOR_OPPONENT) {
+        if (game.getStatus().equals(GameStatus.WAITING_FOR_OPPONENT.name())) {
             throw new IllegalStateException("Cannot make moves until opponent joins");
         }
         
@@ -275,7 +275,8 @@ public class GameService {
 
         // Update game state
         game.setFenPosition(newBoard.getFEN());
-        // game.setMoveCount(moveCount + 1);
+        // Increment move count each time a move is made
+        game.setMoveCount(game.getMoveCount() + 1);
         game.setIsPlayerTurn(newBoard.getCurrentPlayer().getAlliance());
         
         // Save the game (which will cascade to save the position)
@@ -289,7 +290,7 @@ public class GameService {
             .orElseThrow(() -> new GameNotFoundException(gameId));
         
         // Check if game is still waiting for opponent
-        if (game.getStatus() != Game.GameStatus.WAITING_FOR_OPPONENT) {
+        if (!game.getStatus().equals(GameStatus.WAITING_FOR_OPPONENT.name())) {
             throw new IllegalStateException("Cannot delete a game that has already started");
         }
         

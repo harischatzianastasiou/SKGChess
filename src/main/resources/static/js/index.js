@@ -42,6 +42,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+
+    document.querySelectorAll('.clickable-row').forEach(function(row) {
+        row.addEventListener('click', function() {
+            var gameId = this.getAttribute('data-game-id');
+            if (gameId) {
+                window.location.href = '/games/' + gameId;
+            }
+        });
+    });
 });
 
 // Function to connect to the WebSocket
@@ -1033,13 +1042,13 @@ function renderGameBoards() {
                 // Get the board data
                 const boardDTO = JSON.parse(gameData.board);
                 
-                // Render the board
-                renderChessBoard(board, boardDTO);
+                // Render the board with game data
+                renderChessBoard(board, boardDTO, gameData);
             })
             .catch(error => {
                 console.error('Error fetching game data:', error);
                 // Render an empty board if data fetch fails
-                renderChessBoard(board, { tiles: [] });
+                renderChessBoard(board, { tiles: [] }, null);
             });
     });
 }
@@ -1049,7 +1058,7 @@ function renderGameBoards() {
  * @param {HTMLElement} container - The container element
  * @param {Object} boardDTO - The board data transfer object containing tile information
  */
-function renderChessBoard(container, boardDTO) {
+function renderChessBoard(container, boardDTO, gameData) {
     // Clear the container
     container.innerHTML = '';
     
@@ -1072,6 +1081,15 @@ function renderChessBoard(container, boardDTO) {
     // Create the board grid
     const board = document.createElement('div');
     board.className = 'board-grid';
+    
+    // Get the current user's username
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    const currentUsername = usernameElement ? usernameElement.textContent : '';
+    
+    // Add black-perspective class if current user is the black player
+    if (gameData && gameData.blackPlayerUsername === currentUsername) {
+        board.classList.add('black-perspective');
+    }
     
     // Create squares
     for (let i = 0; i < 64; i++) {

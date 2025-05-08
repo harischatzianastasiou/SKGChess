@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import com.chess.core.Alliance;
 import com.chess.core.board.IBoard;
-import com.chess.model.entity.Game.GameStatus;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,7 +35,7 @@ public class GameDTO {
     private String pgnMoves;
     private String board;
     private String lastMoveData;
-    private GameStatus status;
+    private String status;
     private LocalDateTime createdAt;
     
     // Game result
@@ -57,24 +56,6 @@ public class GameDTO {
      * @param game The Game entity to convert
      * @return A new GameDTO with data from the Game entity
      */
-            //else use GameMapper
-            /*@Component
-            public class GameMapper {
-                public GameDTO toDTO(Game game) {
-                    return GameDTO.builder()
-                            .id(game.getId())
-                            .whitePlayerId(game.getWhitePlayer() != null ? game.getWhitePlayer().getId() : null)
-                            // ... other mappings
-                            .build();
-                }
-                
-                // Could also include methods for converting collections, or DTO to entity
-                public List<GameDTO> toDTOList(List<Game> games) {
-                    return games.stream()
-                            .map(this::toDTO)
-                            .collect(Collectors.toList());
-                }
-            } */
     public static GameDTO fromGame(com.chess.model.entity.Game game) {
         return GameDTO.builder()
                 .id(game.getId())

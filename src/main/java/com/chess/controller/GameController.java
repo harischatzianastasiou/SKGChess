@@ -149,7 +149,7 @@ public class GameController {
             log.error("User already has an active game: {}", e.getMessage());
             // Return a more specific error response
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponseDTO("Please finish or forfeit your current game before creating a new one"));
+                .body(new ErrorResponseDTO("Please finish or forfeit your current game before joining a new one"));
         } catch (Exception e) {
             // Log the exception
             log.error("Error joining game", e);

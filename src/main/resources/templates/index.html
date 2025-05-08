@@ -87,6 +87,24 @@
             color: white;        /* Icon color */
         }
 
+        /* Game status styles */
+        .game-status {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-in-progress {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+
+        .status-completed {
+            background-color: rgba(147, 112, 219, 0.2);
+            color: #9370DB;
+        }
+
         .tech-stack-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -435,50 +453,52 @@
                             <div th:each="game, iterStat : ${allGames}" th:if="${iterStat.last}" class="all-game-card glass-effect">
                                 <div class="all-game-header">
                                     <h3 th:text="${game.whitePlayerUsername + ' vs ' + game.blackPlayerUsername}">Player1 vs Player2</h3>
-                                    <span class="game-status">In Progress</span>
+                                    <span class="game-status" th:classappend="${game.status == 'COMPLETED' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
                                 </div>
                                 <div class="all-game-board">
                                     <div class="chess-board-preview" th:id="'board-preview-' + ${game.id}"></div>
                                 </div>
                                 <!-- Only show the button, no color/opponent/turn info -->
                                 <div class="all-game-actions">
-                                    <a th:if="${game.status.name() == 'IN_PROGRESS'}" th:href="@{'/games/' + ${game.id}}" class="btn btn-primary">
+                                    <a th:if="${game.status == 'IN_PROGRESS'}" th:href="@{'/games/' + ${game.id}}" class="btn btn-primary">
                                         <i class="fas fa-play"></i>
                                         Continue Game
                                     </a>
-                                    <a th:if="${game.status.name() != 'IN_PROGRESS'}" th:href="@{'/games/' + ${game.id}}" class="btn btn-primary">
+                                    <a th:if="${game.status != 'IN_PROGRESS'}" th:href="@{'/games/' + ${game.id}}" class="btn btn-primary">
                                         <i class="fas fa-eye"></i>
                                         View Game
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <!-- Right: Previous games as rows -->
-                        <div class="games-right game-rows-list">
-                            <!-- Header row for columns -->
+                        <div th:if="${allGames != null && #lists.size(allGames) > 1}" class="games-right game-rows-list">
                             <div class="game-row game-row-header">
                                 <span>Players</span>
+                                <span>Status</span>
                                 <span class="game-moves">Moves</span>
-                                <span></span>
+                                <span>Date</span>
                             </div>
-                            <div th:each="game, iterStat : ${allGames}" th:if="${!iterStat.last}" class="game-row">
+                            <div th:each="game, iterStat : ${allGames}" th:if="${!iterStat.last}" class="game-row clickable-row" th:attr="data-game-id=${game.id}">
                                 <span>
                                     <span th:text="${game.whitePlayerUsername}"></span>
                                     <span> vs </span>
                                     <span th:text="${game.blackPlayerUsername}"></span>
                                 </span>
+                                <span class="game-status" th:classappend="${game.status == 'COMPLETED' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
                                 <span class="game-moves" th:text="${game.moveCount}"></span>
-                                <span>
-                                    <a th:href="@{'/games/' + ${game.id}}" class="view-game-link">View Game</a>
-                                </span>
+                                <span th:text="${#temporals.format(game.createdAt, 'yyyy-MM-dd')}"></span>
                             </div>
                         </div>
+                        <!-- Show message if only 1 or 0 completed games -->
+                        <div th:if="${allGames != null && #lists.size(allGames) > 0 && #lists.size(allGames) <= 1}" class="no-all-games glass-effect">
+                            <i class="fas fa-chess-board"></i>
+                            <p>Continue playing SKG Chess to unlock this section ! </p>
+                        </div>
                     </div>
-                    <!-- Display message if no active games -->
                     <div th:if="${allGames == null || allGames.empty}" class="no-all-games glass-effect">
                         <i class="fas fa-chess-board"></i>
-                        <h3>No Active Games</h3>
-                        <p>You don't have any games in progress. Start a new game to play!</p>
+                        <h3>No Games Found</h3>
+                        <p>You don't have any games yet. Start a new game to play!</p>
                         <a href="#" onclick="newGame(); return false;" class="btn btn-primary">
                             <i class="fas fa-plus"></i>
                             New Game

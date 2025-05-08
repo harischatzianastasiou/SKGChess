@@ -657,7 +657,14 @@ body.authenticated::before {
     text-align: center;
     padding: 3rem 2rem;
     border-radius: 12px;
-    margin-top: 1.5rem;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    min-height: 425px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .no-all-games i {
@@ -705,6 +712,16 @@ body.authenticated::before {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Add rotation for black's perspective */
+.board-grid.black-perspective {
+    transform: rotate(180deg);
+}
+
+/* Rotate pieces back when board is rotated */
+.board-grid.black-perspective .piece {
+    transform: rotate(180deg);
 }
 
 .square {
@@ -1075,7 +1092,8 @@ body.authenticated::before {
 .game-row,
 .game-row-header {
     display: grid;
-    grid-template-columns: 1fr 80px 120px; /* Players | Moves | Button */
+    grid-template-columns: 1fr 110px 100px 220px; /* Players | Status | Moves | Date */
+    column-gap: 32px; /* Add space between columns */
     align-items: center;
     padding: 0.7rem 1.5rem;
     border-bottom: 1px solid rgba(255,255,255,0.08);
@@ -1112,6 +1130,24 @@ body.authenticated::before {
 .games-right {
     flex: 1 1 0;
     min-width: 0;
+    background-image: url('/images/Thessaloniki.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    border-radius: 10px;
+}
+.games-right::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 20, 20, 0.8); /* less opaque overlay for readability */
+    z-index: 0;
+    border-radius: 10px;
+}
+.games-right > * {
+    position: relative;
+    z-index: 1;
 }
 
 @media (max-width: 900px) {
@@ -1131,7 +1167,7 @@ body.authenticated::before {
     color: #fff;
     font-weight: 500;
     text-decoration: none;
-    padding: 0.2em 0.8em;
+    padding: 0.2em 0.6em; /* slightly less horizontal padding */
     border-radius: 6px;
     transition: background 0.2s, color 0.2s;
     font-size: 0.98em;
@@ -1168,4 +1204,12 @@ body.authenticated::before {
 .site-footer a:hover {
     color: #553c9a;
     text-decoration: none;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.clickable-row:hover {
+    background: rgba(147, 112, 219, 0.10); /* subtle purple highlight on hover */
 }
