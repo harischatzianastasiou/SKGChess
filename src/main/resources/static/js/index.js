@@ -153,7 +153,12 @@ function showShareGamePopup(gameId) {
             <div class="info-box">
                 <i class="fas fa-info-circle"></i>
                 <p>The game will start automatically when your friend joins.</p>
-                <div class="loading-spinner"></div>
+                <div class="dice-loader">
+                  <div class="dice">2</div>
+                  <div class="dice">3</div>
+                  <div class="dice">1</div>
+                  <div class="dice">0</div>
+                </div>
             </div>
         </div>
     `;
