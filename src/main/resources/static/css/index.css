@@ -1176,7 +1176,7 @@ body.authenticated::before {
 .games-right {
     flex: 1 1 0;
     min-width: 0;
-    background-image: url('/images/Thessaloniki.png');
+    background-image: url('/images/retrochess.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
