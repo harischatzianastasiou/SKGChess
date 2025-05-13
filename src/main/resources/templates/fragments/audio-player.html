@@ -9,7 +9,7 @@
             bottom: 20px;        /* 20px from bottom */
             right: 20px;         /* 20px from right */
             z-index: 1000;       /* Ensure it's above other elements */
-            background: rgba(255, 255, 255, 0.1);  /* Semi-transparent background */
+            background: rgba(85, 60, 154, 0.8);  /* Semi-transparent purple background */
             border: none;        /* No border */
             border-radius: 50%;  /* Circular button */
             cursor: pointer;     /* Show pointer cursor */
@@ -20,11 +20,13 @@
             display: flex;       /* Flex container */
             align-items: center; /* Center vertically */
             justify-content: center; /* Center horizontally */
+            box-shadow: 0 2px 10px rgba(85, 60, 154, 0.3); /* Purple shadow */
         }
         
         .music-player:hover {
-            background: rgba(255, 255, 255, 0.2);  /* Slightly more opaque on hover */
+            background: rgba(85, 60, 154, 1);  /* Solid purple on hover */
             transform: scale(1.1);  /* Slightly larger on hover */
+            box-shadow: 0 4px 15px rgba(85, 60, 154, 0.4); /* Enhanced shadow on hover */
         }
         
         .music-player i {
@@ -36,7 +38,7 @@
             position: fixed;
             bottom: 80px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(26, 26, 46, 0.95); /* Dark background matching our theme */
             color: white;
             padding: 12px 18px;
             border-radius: 8px;
@@ -44,8 +46,8 @@
             max-width: 300px;
             display: none;
             z-index: 1000;
-            border-left: 4px solid #4CAF50;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border-left: 4px solid #553c9a; /* Purple border */
+            box-shadow: 0 2px 10px rgba(85, 60, 154, 0.3); /* Purple shadow */
         }
 
         .music-credits.show {
@@ -62,15 +64,16 @@
             cursor: pointer;
             font-size: 1.2em;
             padding: 0;
+            transition: color 0.3s ease;
         }
 
         .music-credits .close-btn:hover {
-            color: white;
+            color: #553c9a; /* Purple on hover */
         }
 
         .music-credits .title {
             font-weight: bold;
-            color: #4CAF50;
+            color: #553c9a; /* Purple title */
             font-size: 1.1em;
         }
 
@@ -78,7 +81,7 @@
             font-size: 0.9em;
             color: #aaa;
             margin-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(85, 60, 154, 0.2); /* Purple border */
             padding-top: 8px;
         }
     </style>
@@ -99,10 +102,10 @@
         <!-- Music Credits -->
         <div class="music-credits" id="musicCredits">
             <button class="close-btn" onclick="this.parentElement.classList.remove('show')">&times;</button>
-            <p><span class="title">Coming Home (ID 2000)</span></p>
-            <p>by Lobo Loco</p>
+            <p><span class="title">Intro_with_Dat_Kidd</span></p>
+            <p>by The Custodian of Records</p>
             <p>Source: Free Music Archive</p>
-            <p>License: CC BY-NC-ND</p>
+            <p>License: CC BY-NC-SA</p>
         </div>
 
         <!-- JavaScript for audio control -->
