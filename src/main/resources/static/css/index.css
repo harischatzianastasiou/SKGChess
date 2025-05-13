@@ -6,7 +6,11 @@
     padding: 2rem 2rem;
     background:
         linear-gradient(270deg, rgba(26,26,46,0.5), rgba(40,40,70,0.5), rgba(60,60,80,0.3), rgba(40,40,70,0.5), rgba(26,26,46,0.5)),
+<<<<<<< HEAD
         url('/images/boardBanner3.jpg');
+=======
+        url('/images/Thessaloniki.png');
+>>>>>>> b47d30381eacd52c3f4bead387941ec2c0e5050a
     background-size: 200% 200%, 105% auto; /* Reduced from 120% to 105% to show more of the image */
     background-position: 0% 50%, 0% 50%;
     background-repeat: no-repeat, no-repeat;
@@ -1044,7 +1048,11 @@ body.authenticated::before {
 .think-chess-text {
     position: absolute;
     left: 50%;
+<<<<<<< HEAD
     top: 65%; /* Changed from 50% to 35% to position above buttons */
+=======
+    top: 28%; /* Changed from 50% to 35% to position above buttons */
+>>>>>>> b47d30381eacd52c3f4bead387941ec2c0e5050a
     transform: translate(-50%, -50%);
     font-family: 'Poppins', sans-serif;
     font-size: clamp(2rem, 5vw, 3.5rem);
