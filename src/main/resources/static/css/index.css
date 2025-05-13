@@ -4,15 +4,15 @@
 .hero-section {
     text-align: center;
     padding: 2rem 2rem;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/boardBanner2.png');
-    background-size: cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess4.jpg');
+    background-size: contain;
     background-position: center;
     border-radius: var(--border-radius-lg);
     margin-bottom: 2rem;
     position: relative;
     overflow: hidden;
     min-height: 100vh; /* Changed from default to 100vh to cover full viewport height */
-    animation: backgroundTravel 30s infinite alternate ease-in-out; /* Added animation */
+    animation: backgroundTravel 45s infinite alternate ease-in-out; /* Added animation */
 }
 
 /* Special styling for integrated hero section */
@@ -393,7 +393,7 @@ body.authenticated::before {
     left: 0;
     width: 100%;
     height: 100vh; /* Use viewport height instead of percentage */
-    background-image: url('/images/boardBanner2.png');
+    background-image: url('/images/retrochess1.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -464,10 +464,8 @@ body.authenticated::before {
     font-size: 1.3rem; /* Reduced from 1.5rem to 1.3rem */
     color: var(--text-secondary);
     margin-bottom: 2rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.248); /* Add text shadow for better readability */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Enhanced text shadow for better readability */
     padding: 0.5rem 1rem;
-    background-color: rgb(20, 19, 19); /* Fully opaque black background */
-    border-radius: 0; /* Remove rounded corners */
     display: block; /* Change from inline-block to block */
     width: auto; /* Allow width to be determined by content */
     text-align: center; /* Center the text */
@@ -496,13 +494,63 @@ body.authenticated::before {
     color: var(--text-secondary);
     font-size: 1.2rem;
     max-width: 600px;
-    margin: 0 auto;
+    margin-top: 10rem;
 }
 
-/* Ensure action cards are visible */
-.authenticated-hero .action-card {
-    /* Remove the duplicate style */
-} 
+/* Music Player Button Styles */
+.music-player {
+    position: fixed;      /* Fixed position */
+    bottom: 20px;        /* 20px from bottom */
+    right: 20px;         /* 20px from right */
+    z-index: 1000;       /* Ensure it's above other elements */
+    background: rgba(255, 255, 255, 0.1);  /* Semi-transparent background */
+    border: none;        /* No border */
+    border-radius: 50%;  /* Circular button */
+    cursor: pointer;     /* Show pointer cursor */
+    padding: 15px;       /* Add padding */
+    transition: all 0.3s ease;  /* Smooth transitions */
+}
+
+.music-player:hover {
+    background: rgba(255, 255, 255, 0.2);  /* Slightly more opaque on hover */
+    transform: scale(1.1);  /* Slightly larger on hover */
+}
+
+.music-player i {
+    font-size: 24px;     /* Icon size */
+    color: white;        /* Icon color */
+}
+
+/* Welcome Quote Styles */
+.welcome-quote {
+    text-align: center;  /* Center text */
+    margin: 30px 0;      /* Add margin top and bottom */
+    color: #fff;         /* White text */
+    font-style: italic;  /* Italic text */
+    position: relative;  /* For positioning quote marks */
+}
+
+.quote-mark {
+    font-size: 2em;      /* Larger font for quote marks */
+    color: rgba(255, 255, 255, 0.3);  /* Semi-transparent white */
+    position: absolute;  /* Position absolutely */
+}
+
+.quote-mark:first-child {
+    left: -20px;         /* Position left quote mark */
+    top: -10px;          /* Move up slightly */
+}
+
+.quote-mark:last-child {
+    right: -20px;        /* Position right quote mark */
+    bottom: -10px;       /* Move down slightly */
+}
+
+.quote-text {
+    font-size: 1.2em;    /* Larger font for quote text */
+    line-height: 1.6;    /* Line height for better readability */
+    padding: 0 40px;     /* Add padding for quote marks */
+}
 
 /* Active Games Section Styles */
 .all-games-section {
@@ -734,11 +782,11 @@ body.authenticated::before {
 }
 
 .square.light {
-    background-color: #e9d8fd;;
+    background-color: #c59d5cfe;  
 }
 
 .square.dark {
-    background-color: #553c9a;
+    background-color:  #563617;;
 }
 
 .piece {
@@ -751,23 +799,23 @@ body.authenticated::before {
 
 /* White pieces */
 .piece.w.p {
-    background-image: url('/images/pawnN.png');
+    background-image: url('/images/white_p.png');
 }
 
 .piece.w.r {
-    background-image: url('/images/rookN.png');
+    background-image: url('/images/white_r.png');
 }
 
 .piece.w.n {
-    background-image: url('/images/knightN.png');
+    background-image: url('/images/white_n.png');
 }
 
 .piece.w.b {
-    background-image: url('/images/bishopN.png');
+    background-image: url('/images/white_b.png');
 }
 
 .piece.w.q {
-    background-image: url('/images/queenN.png');
+    background-image: url('/images/white_q.png');
 }
 
 .piece.w.k {
@@ -1011,7 +1059,6 @@ body.authenticated::before {
     align-items: center;
     margin-top: 20rem; /* Increased from 2rem to move buttons down */
     padding: 0 20px;
-    transform: translateX(-50px); /* Move buttons slightly to the left */
 }
 
 .main-button {
@@ -1054,8 +1101,7 @@ body.authenticated::before {
 
 /* Authenticated buttons specific styles */
 .main-buttons-container.auth-buttons {
-    margin-right: 10rem;
-    margin-top: 5rem; /* Reduced from 20rem to 10rem to move buttons up */
+    margin-top: 10rem; /* Reduced from 20rem to 10rem to move buttons up */
     gap: 30px;
     display: flex;
     flex-wrap: wrap;

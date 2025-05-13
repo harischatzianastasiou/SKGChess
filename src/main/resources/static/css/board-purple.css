@@ -17,8 +17,8 @@
     --color-accent: #9f7aea;
     
     /* Chess-specific colors */
-    --color-white-square: #e9d8fd;  /* Light purple instead of white */
-    --color-black-square: #553c9a;  /* Dark purple */
+    --color-white-square: #c59d5cfe;  /* Light purple instead of white */
+    --color-black-square: #563617;  /* Dark purple */
     --color-white-piece: #ffffff;
     --color-black-piece: #000000;
     --color-selected: rgba(159, 122, 234, 0.4);
@@ -71,7 +71,7 @@ body {
 }
 
 .center-panel {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/images/boardBanner.png');
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/images/retrochess2.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -82,13 +82,13 @@ body {
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
-    border: 10px solid var(--color-accent);
+    border: 10px solid #a6a6a6;
     border-radius: 20px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
     background: #2C1B47;
     position: relative;
-    box-shadow: 0 0 10px rgba(159, 122, 234, 0.3);
+    box-shadow: 0 0 10px rgba(139, 69, 19, 0.3);
     padding: 0;
     gap: 0;
 }

@@ -47,6 +47,7 @@
     <script src="/js/modal.js"></script>
     <script src="/js/login-modal-bouncing-logo.js"></script>
     <script src="/js/chess-quotes.js"></script>
+    <script src="/js/music-player.js"></script>
     
     <!-- Inline script to ensure animations are triggered on direct page load -->
     <script>
@@ -84,7 +85,15 @@
         
         .music-player i {
             font-size: 24px;     /* Icon size */
-            color: white;        /* Icon color */
+            transition: color 0.3s ease;  /* Smooth color transition */
+        }
+
+        .music-player i.fa-volume-mute {
+            color: #ff4444;      /* Red color for muted state */
+        }
+
+        .music-player i.fa-volume-up {
+            color: #4CAF50;      /* Green color for unmuted state */
         }
 
         /* Game status styles */
@@ -412,23 +421,34 @@
                         <a href="#" onclick="showLoginForAction('newGame'); return false;" class="main-button get-started">Get Started</a>
                         <a href="#" onclick="openAboutModal(); return false;" class="main-button about">About SKG Chess</a>
                     </div>
+
+                    <!-- Quote styling for non-authenticated users -->
+                    <div class="welcome-quote">
+                        <span class="quote-mark">"</span>
+                        <p class="quote-text" id="quote-text"></p>
+                        <span class="quote-mark">"</span>
+                    </div>
+
+                    <!-- Music Player Button -->
+                    <button class="music-player" onclick="toggleModalMusic()">
+                        <i class="fas fa-volume-up" id="musicIcon"></i>
+                    </button>
                 </div>
             </section>
             
             <!-- Hero Section for authenticated users -->
             <section class="hero-section authenticated-hero" sec:authorize="isAuthenticated()">
-                <!-- Background image for authenticated users -->
-                <div class="auth-hero-background">
-                    <div class="bg-image-container">
-                        <img src="/images/boardBanner.png" alt="Chess Board Background" class="bg-image">
-                    </div>
-                </div>
-                
                 <div class="hero-content" sec:authorize="isAuthenticated()">
                     <h1>Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>
-                    <p class="welcome-quote"><span class="quote-mark">"</span><span class="quote-text">Loading chess wisdom...</span><span class="quote-mark">"</span></p>
+                    
+                    <!-- Quote styling for authenticated users -->
+                    <div class="welcome-quote">
+                        <span class="quote-mark">"</span>
+                        <p class="quote-text" id="quote-text-auth"></p>
+                        <span class="quote-mark">"</span>
+                    </div>
                 
-                    <!-- Main buttons container replacing cards -->
+                    <!-- Main buttons container for authenticated users -->
                     <div class="main-buttons-container auth-buttons">
                         <a href="#" onclick="newGame(); return false;" class="main-button get-started">New Game</a>
                         <a href="#" onclick="showJoinGameDialog(); return false;" class="main-button about">Join Game</a>

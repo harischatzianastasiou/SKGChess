@@ -9,34 +9,47 @@
             bottom: 20px;        /* 20px from bottom */
             right: 20px;         /* 20px from right */
             z-index: 1000;       /* Ensure it's above other elements */
-            background: rgba(255, 255, 255, 0.1);  /* Semi-transparent background */
-            border: none;        /* No border */
-            border-radius: 50%;  /* Circular button */
+            width: 45px;         /* Reduced width from 60px */
+            height: 22px;        /* Reduced height from 30px */
+            background: #ff4444; /* Red background when muted */
+            border-radius: 11px; /* Adjusted border radius for smaller size */
             cursor: pointer;     /* Show pointer cursor */
-            padding: 15px;       /* Add padding */
             transition: all 0.3s ease;  /* Smooth transitions */
-            width: 50px;         /* Fixed width */
-            height: 50px;        /* Fixed height */
             display: flex;       /* Flex container */
             align-items: center; /* Center vertically */
-            justify-content: center; /* Center horizontally */
+            border: none;        /* Remove border */
+            padding: 0;          /* Remove padding */
         }
-        
-        .music-player:hover {
-            background: rgba(255, 255, 255, 0.2);  /* Slightly more opaque on hover */
-            transform: scale(1.1);  /* Slightly larger on hover */
+
+        .music-player::before {
+            content: '';         /* Empty content */
+            position: absolute;  /* Position absolutely */
+            left: 2px;          /* Adjusted from 3px */
+            width: 18px;        /* Reduced from 24px */
+            height: 18px;       /* Reduced from 24px */
+            background: white;   /* White circle */
+            border-radius: 50%;  /* Make it circular */
+            transition: all 0.3s ease;  /* Smooth transitions */
         }
-        
+
+        .music-player.unmuted {
+            background: #4CAF50; /* Green background when unmuted */
+        }
+
+        .music-player.unmuted::before {
+            left: calc(100% - 20px); /* Adjusted from 27px */
+        }
+
+        /* Remove old icon styles */
         .music-player i {
-            font-size: 24px;     /* Icon size */
-            color: white;        /* Icon color */
+            display: none;      /* Hide the icon */
         }
 
         .music-credits {
             position: fixed;
             bottom: 80px;
             right: 20px;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(26, 22, 37, 0.95);  /* Dark purple background */
             color: white;
             padding: 12px 18px;
             border-radius: 8px;
@@ -44,8 +57,14 @@
             max-width: 300px;
             display: none;
             z-index: 1000;
-            border-left: 4px solid #4CAF50;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border-left: 4px solid #fafafa;  /* Purple accent border */
+            box-shadow: 0 2px 10px rgba(107, 70, 193, 0.3);  /* Purple shadow */
+            cursor: default;  /* Changed from pointer to default */
+            transition: all 0.3s ease;  /* Smooth transition for hover effect */
+        }
+
+        .music-credits:hover {
+            transform: none;  /* Remove hover effect */
         }
 
         .music-credits.show {
@@ -58,28 +77,53 @@
             right: 5px;
             background: none;
             border: none;
-            color: #aaa;
+            color: #9f7aea;  /* Light purple close button */
             cursor: pointer;
             font-size: 1.2em;
             padding: 0;
         }
 
         .music-credits .close-btn:hover {
-            color: white;
+            color: #ffffff;  /* Darker purple on hover */
         }
 
         .music-credits .title {
             font-weight: bold;
-            color: #4CAF50;
+            color: #ffffff;  /* Light purple title */
             font-size: 1.1em;
         }
 
         .music-credits .license {
             font-size: 0.9em;
-            color: #aaa;
+            color: #fefeff;  /* Light purple license text */
             margin-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid rgba(107, 70, 193, 0.3);  /* Purple separator */
             padding-top: 8px;
+        }
+
+        /* Add tooltip styles */
+        .music-player::after {
+            content: 'Toggle music';  /* Tooltip text */
+            position: absolute;       /* Position absolutely */
+            bottom: 100%;            /* Position above the toggle */
+            left: 50%;               /* Center horizontally */
+            transform: translateX(-50%);  /* Center the tooltip */
+            padding: 5px 10px;       /* Add padding */
+            background: rgba(0, 0, 0, 0.8);  /* Dark background */
+            color: white;            /* White text */
+            font-size: 12px;         /* Small font size */
+            border-radius: 4px;      /* Rounded corners */
+            white-space: nowrap;     /* Keep text in one line */
+            opacity: 0;              /* Start invisible */
+            visibility: hidden;      /* Hide by default */
+            transition: all 0.3s ease;  /* Smooth transition */
+            pointer-events: none;    /* Prevent tooltip from interfering with clicks */
+        }
+
+        .music-player:hover::after {
+            opacity: 1;              /* Show on hover */
+            visibility: visible;     /* Make visible on hover */
+            bottom: calc(100% + 5px);  /* Add some space between toggle and tooltip */
         }
     </style>
 </head>
@@ -87,30 +131,93 @@
     <!-- Define the fragment with a name -->
     <div th:fragment="audio-player">
         <!-- Audio element for background music -->
-        <audio id="backgroundMusic" loop preload="auto" muted>
-            <source th:src="@{/audio/background.mp3}" type="audio/mpeg">
+        <audio id="backgroundMusic" preload="auto" muted>
+            <!-- Audio sources will be added dynamically -->
         </audio>
 
-        <!-- Music player button -->
-        <button class="music-player" onclick="initializeAndToggleMusic()">
-            <i id="musicIcon" class="fas fa-volume-mute"></i>
-        </button>
+        <!-- Update the music player button -->
+        <button class="music-player" onclick="initializeAndToggleMusic()"></button>
 
         <!-- Music Credits -->
         <div class="music-credits" id="musicCredits">
-            <button class="close-btn" onclick="this.parentElement.classList.remove('show')">&times;</button>
-            <p><span class="title">Coming Home (ID 2000)</span></p>
-            <p>by Lobo Loco</p>
-            <p>Source: Free Music Archive</p>
-            <p>License: CC BY-NC-ND</p>
+            <button class="close-btn" onclick="event.stopPropagation(); this.parentElement.classList.remove('show')">&times;</button>
+            <p><span class="title" id="currentSongTitle">Loading...</span></p>
+            <p id="currentSongArtist"></p>
+            <p>Source: Free Music Archive / Incompetech</p>
+            <p id="currentSongLicense"></p>
         </div>
 
         <!-- JavaScript for audio control -->
         <script>
+            // Define the playlist
+            const playlist = [
+                {
+                    title: "Coming Home (ID 2000)",
+                    artist: "Lobo Loco",
+                    src: "/audio/background.mp3",
+                    license: "CC BY-NC-ND"
+                },
+                {
+                    title: "The Endless",
+                    artist: "Kevin MacLeod",
+                    src: "/audio/Kevin MacLeod - The Endless.mp3",
+                    license: "CC BY 4.0"
+                },
+                {
+                    title: "Spanish Dance No. 2, Oriental",
+                    artist: "Gregor Quendel (Granados)",
+                    src: "/audio/Gregor Quendel - Granados - Spanish Dance No. 2, Oriental - Arranged for Strings.mp3.mp3",
+                    license: "CC BY 4.0"
+                },
+                {
+                    title: "Eine Kleine Nachtmusik (Serenade No. 13)",
+                    artist: "Gregor Quendel (Mozart)",
+                    src: "/audio/Gregor Quendel - Mozart - Eine Kleine Nachtmusik _ Serenade No. 13 - KV 525.mp3.mp3",
+                    license: "CC BY 4.0"
+                },
+                {
+                    title: "Trio for Piano Violin and Viola",
+                    artist: "Kevin MacLeod",
+                    src: "/audio/Kevin MacLeod - Trio for Piano Violin and Viola.mp3",
+                    license: "CC BY 4.0"
+                }
+            ];
+
+            let currentSongIndex = -1; // Will be set when first song is played
+
+            // Function to get a random song index different from current
+            function getRandomSongIndex() {
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * playlist.length);
+                } while (newIndex === currentSongIndex && playlist.length > 1);
+                return newIndex;
+            }
+
+            // Function to play next random song
+            function playNextRandomSong() {
+                currentSongIndex = getRandomSongIndex();
+                const song = playlist[currentSongIndex];
+                const audio = document.getElementById('backgroundMusic');
+                
+                // Update audio source
+                audio.src = song.src;
+                
+                // Update credits
+                document.getElementById('currentSongTitle').textContent = song.title;
+                document.getElementById('currentSongArtist').textContent = `by ${song.artist}`;
+                document.getElementById('currentSongLicense').textContent = `License: ${song.license}`;
+                
+                // Play the song
+                audio.play().catch(error => {
+                    console.error("Playback failed:", error);
+                });
+            }
+
             // Make the function globally available
             window.initializeAndToggleMusic = function() {
                 const audio = document.getElementById('backgroundMusic');
-                const musicIcon = document.getElementById('musicIcon');
+                const musicPlayer = document.querySelector('.music-player');
                 const credits = document.getElementById('musicCredits');
                 
                 // Toggle play/pause
@@ -118,32 +225,54 @@
                     console.log('Unmuting audio');
                     // First unmute, then play
                     audio.muted = false;
-                    audio.play().catch(error => {
-                        console.error("Playback failed:", error);
-                    });
-                    musicIcon.classList.remove('fa-volume-mute');
-                    musicIcon.classList.add('fa-volume-up');
-                    credits.classList.add('show');
+                    localStorage.setItem('musicMuted', 'false');  // Store mute state
+                    if (currentSongIndex === -1) {
+                        // First time playing, start with a random song
+                        playNextRandomSong();
+                    } else {
+                        audio.play().catch(error => {
+                            console.error("Playback failed:", error);
+                        });
+                    }
+                    musicPlayer.classList.add('unmuted');
+                    credits.classList.add('show');  // Show credits when unmuted
                 } else {
                     console.log('Muting audio');
                     audio.pause();
                     audio.muted = true;  // Ensure it's muted when paused
-                    musicIcon.classList.remove('fa-volume-up');
-                    musicIcon.classList.add('fa-volume-mute');
-                    credits.classList.remove('show');
+                    localStorage.setItem('musicMuted', 'true');  // Store mute state
+                    musicPlayer.classList.remove('unmuted');
+                    credits.classList.remove('show');  // Hide credits when muted
                 }
             };
 
             // Initialize audio on page load
             document.addEventListener('DOMContentLoaded', function() {
                 const audio = document.getElementById('backgroundMusic');
-                const musicIcon = document.getElementById('musicIcon');
+                const musicPlayer = document.querySelector('.music-player');
+                const credits = document.getElementById('musicCredits');
 
-                // Set initial state
+                // Get stored mute state
+                const isMuted = localStorage.getItem('musicMuted') === 'true';
+                
+                // Set initial state based on stored preference
                 audio.volume = 0.5;  // Set to half volume
-                audio.muted = true;  // Start muted
-                audio.pause();       // Start paused
-                musicIcon.classList.add('fa-volume-mute');
+                audio.muted = isMuted;  // Use stored mute state
+                
+                if (isMuted) {
+                    musicPlayer.classList.remove('unmuted');
+                    credits.classList.remove('show');
+                } else {
+                    musicPlayer.classList.add('unmuted');
+                    credits.classList.add('show');
+                    // Start playing immediately only if not muted
+                    playNextRandomSong();
+                }
+
+                // Add event listener for when a song ends
+                audio.addEventListener('ended', () => {
+                    playNextRandomSong();
+                });
 
                 // Add event listeners for audio loading and errors
                 audio.addEventListener('loadeddata', () => {
@@ -157,11 +286,8 @@
                     console.error('Audio error details:', audio.error);
                     console.error('Audio source:', audio.currentSrc);
                     
-                    // Try to load the audio again after a short delay
-                    setTimeout(() => {
-                        console.log('Retrying audio load...');
-                        audio.load();
-                    }, 1000);
+                    // Try to load the next song if there's an error
+                    playNextRandomSong();
                 });
 
                 // Log initial audio state
@@ -172,9 +298,6 @@
                     paused: audio.paused,
                     src: audio.currentSrc
                 });
-
-                // Try to load the audio file
-                audio.load();
             });
         </script>
     </div>
