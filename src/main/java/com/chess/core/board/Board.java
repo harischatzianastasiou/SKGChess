@@ -355,10 +355,14 @@ public class Board implements IBoard {
 						if (allianceNode != null && symbolNode != null) {
 							Alliance pieceAlliance = Alliance.valueOf(allianceNode.asText());
 							String symbol = symbolNode.asText();
-							boolean isFirstMove = pieceNode.has("isFirstMove") ? 
-									pieceNode.get("isFirstMove").asBoolean() : false;
 							
-							// Create the appropriate piece based on the symbol
+							// Get isFirstMove from the piece node, default to true if not present
+							boolean isFirstMove = true;
+							if (pieceNode.has("firstMove")) {
+								isFirstMove = pieceNode.get("firstMove").asBoolean();
+							}
+							
+							// Create the appropriate piece based on the symbol with its first move status
 							Piece piece = null;
 							switch (symbol) {
 								case "PAWN":
