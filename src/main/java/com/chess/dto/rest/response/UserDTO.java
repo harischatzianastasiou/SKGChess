@@ -44,11 +44,6 @@ public class UserDTO {
                 .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
-                .rating(user.getRating())
-                .gamesPlayed(user.getGamesPlayed())
-                .gamesWon(user.getGamesWon())
-                .gamesLost(user.getGamesLost())
-                .gamesDraw(user.getGamesDraw())
                 .createdAt(user.getCreatedAt())
                 .lastLogin(user.getLastLogin())
                 .build();

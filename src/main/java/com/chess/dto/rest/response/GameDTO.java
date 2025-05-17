@@ -42,8 +42,6 @@ public class GameDTO {
     
     // Game statistics
     private int moveCount;
-    private boolean isBlackPlayerCastled;
-    private boolean isWhitePlayerCastled;
     
     // Current player turn
     private Alliance isPlayerTurn;
@@ -67,8 +65,6 @@ public class GameDTO {
                 .winnerId(game.getWinner() != null ? game.getWinner().getId() : null)
                 .winnerUsername(game.getWinner() != null ? game.getWinner().getUsername() : null)
                 .moveCount(game.getMoveCount())
-                .isBlackPlayerCastled(game.isBlackPlayerCastled())
-                .isWhitePlayerCastled(game.isWhitePlayerCastled())
                 .isPlayerTurn(game.getIsPlayerTurn())
                 .build();
     }

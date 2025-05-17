@@ -44,7 +44,4 @@ public abstract class Player {
 		return false; // Default implementation
 	}
 
-	public boolean isStalemate() {
-		return false; // Default implementation
-	}
 }

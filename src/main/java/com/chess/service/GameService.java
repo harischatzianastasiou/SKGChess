@@ -70,8 +70,6 @@ public class GameService {
             game.setWhitePlayer(user);
             game.setGameType(Optional.ofNullable(gameType).orElse("standard"));
             game.setTimeControlMinutes(Optional.ofNullable(timeControlMinutes).orElse(10));
-            game.setIsRated(Optional.ofNullable(isRated).orElse(true));
-            game.setCustomRules(Optional.ofNullable(customRules).orElse(""));
             game.setStatus(GameStatus.WAITING_FOR_OPPONENT.name());
             game.setCreatedAt(LocalDateTime.now());
             game.setIsPlayerTurn(com.chess.core.Alliance.WHITE);
@@ -227,10 +225,24 @@ public class GameService {
 
         if (currentPlayer.isCheckmate()) {
             Sounduser.playCheckmateSound();
+            game.setStatus(com.chess.model.entity.Game.GameStatus.CHECKMATE.name());
+        } else if(currentPlayer.isDraw() == GameStatus.DRAW) {
+            Sounduser.playCheckSound();
+            game.setStatus(com.chess.model.entity.Game.GameStatus.DRAW.name());
+        } else if(currentPlayer.isDraw() == GameStatus.STALEMATE) {
+            game.setStatus(com.chess.model.entity.Game.GameStatus.STALEMATE.name());
+        } else if(currentPlayer.isDraw() == GameStatus.THREEFOLD_REPETITION) {
+            game.setStatus(com.chess.model.entity.Game.GameStatus.THREEFOLD_REPETITION.name());
+        } else if(currentPlayer.isDraw() == GameStatus.FIFTY_MOVE_RULE) {
+            game.setStatus(com.chess.model.entity.Game.GameStatus.FIFTY_MOVE_RULE.name());
+        } else if(currentPlayer.isDraw() == GameStatus.INSUFFICIENT_MATERIAL) {
+            game.setStatus(com.chess.model.entity.Game.GameStatus.INSUFFICIENT_MATERIAL.name());
         } else if(currentPlayer.isInCheck()) {
+            game.setStatus(com.chess.model.entity.Game.GameStatus.CHECK.name());
             Sounduser.playCheckSound();
         }
         
+
         // Store the serialized last move data and check for castling
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -242,23 +254,7 @@ public class GameService {
             moveData.put("pieceSymbol", move.getPieceToMove().getPieceSymbol().toString());
             moveData.put("pieceAlliance", move.getPieceToMove().getPieceAlliance().toString());
             
-            if (move instanceof com.chess.core.moves.noncapturing.KingSideCastleMove) {
-                if (game.getIsPlayerTurn() == com.chess.core.Alliance.WHITE) {
-                    moveData.put("moveType", "KING_SIDE_CASTLE");
-                    game.setWhitePlayerCastled(true);
-                } else if (game.getIsPlayerTurn() == com.chess.core.Alliance.BLACK) {
-                    moveData.put("moveType", "KING_SIDE_CASTLE");
-                    game.setBlackPlayerCastled(true);
-                }
-            } else if (move instanceof com.chess.core.moves.noncapturing.QueenSideCastleMove) {
-                if (game.getIsPlayerTurn() == com.chess.core.Alliance.WHITE) {
-                    moveData.put("moveType", "QUEEN_SIDE_CASTLE");
-                    game.setWhitePlayerCastled(true);
-                } else if (game.getIsPlayerTurn() == com.chess.core.Alliance.BLACK) {
-                    moveData.put("moveType", "QUEEN_SIDE_CASTLE");
-                    game.setBlackPlayerCastled(true);
-                }
-            } else if (move instanceof com.chess.core.moves.noncapturing.PawnJumpMove) {
+            if (move instanceof com.chess.core.moves.noncapturing.PawnJumpMove) {
                 moveData.put("moveType", "PAWN_JUMP");
             } else {
                 moveData.put("moveType", "NORMAL");

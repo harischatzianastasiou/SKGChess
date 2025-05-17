@@ -16,7 +16,6 @@ const chessQuotes = [
     "It's not what happens to you, but how you react to it that matters.",
     "He who laughs at himself never runs out of things to laugh at.",
     "First, say to yourself what you would be, and then do what you have to do.",
-    "When you are offended at any man's fault, turn to yourself and study your own failings. Then you will forget your anger.",
     "We suffer more often in imagination than in reality.",
     "The greatest wealth is a poverty of desires.",
     "While we are postponing, life speeds by."

@@ -46,11 +46,6 @@ public class UserService implements UserDetailsService {
     }
 
     public User registerUser(User user) {
-        user.setRating(800);
-        user.setGamesPlayed(0);
-        user.setGamesWon(0);
-        user.setGamesLost(0);
-        user.setGamesDraw(0);
         user.setCreatedAt(LocalDateTime.now());
         user.setLastLogin(LocalDateTime.now());
 
@@ -59,6 +54,11 @@ public class UserService implements UserDetailsService {
 
     public User getUserByUsernameOrEmail(String usernameOrEmail) {
         return userRepository.findByUsernameOrEmail(usernameOrEmail)
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
             .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 

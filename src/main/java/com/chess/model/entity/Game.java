@@ -25,93 +25,67 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "games")
+@Table(name = "GAME")
 public class Game implements Serializable {
     // Serializable is used to convert the object to a byte stream, so it can be sent over the network
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "game_id")
+    @Column(name = "S_ID")
     private String id;
 
     // Essential Game Information
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "game_user_whiteId", nullable = false)
+    @JoinColumn(name = "S_WHITE_PLAYER_ID", nullable = false)
     private User whitePlayer;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "game_user_blackId", nullable = true)
+    @JoinColumn(name = "S_BLACK_PLAYER_ID", nullable = true)
     private User blackPlayer;
 
-    @NotNull
-    @Column(name = "game_status", nullable = false)
-    private String status = GameStatus.WAITING_FOR_OPPONENT.name();
-
-    @Column(name = "game_createdAt", nullable = false)
+    @Column(name = "D_CREATED_AT", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "game_winnerId")
+    @JoinColumn(name = "S_WINNER_ID")
     private User winner;
 
-    @Column(name = "game_type", nullable = true)
+    @Column(name = "S_GAMETYPE", nullable = true)
     private String gameType = "standard";
 
-    @Column(name = "game_timeControlMinutes", nullable = true)
+    @Column(name = "N_TIMECONTROLMINUTES", nullable = true)
     private Integer timeControlMinutes = 10;
 
-    @Column(name = "game_isRated", nullable = true)
-    private Boolean isRated = true;
-
-    @Column(name = "game_customRules", columnDefinition = "TEXT", nullable = true)
-    private String customRules = "";
-
-    @Column(name = "game_moveCount")
+    @Column(name = "N_MOVECOUNT")
     private int moveCount;
 
     @Column(name = "game_lastMoveData")
     private String lastMoveData;
 
-    @Column(name = "game_board", columnDefinition = "TEXT", nullable = true)
+    @Column(name = "S_BOARD", columnDefinition = "TEXT", nullable = true)
     private String board;
 
-    @Column(name = "game_isBlackPlayerCastled")
-    private boolean isBlackPlayerCastled;
-
-    @Column(name = "game_isWhitePlayerCastled")
-    private boolean isWhitePlayerCastled;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "game_isPlayerTurn", nullable = false)
+    @Column(name = "S_ISPLAYERTURN", nullable = false)
     private Alliance isPlayerTurn = Alliance.WHITE;
+
+    @NotNull
+    @Column(name = "S_STATUS", nullable = false)
+    private String status = GameStatus.WAITING_FOR_OPPONENT.name();
 
     public enum GameStatus {
         WAITING_FOR_OPPONENT,
         IN_PROGRESS,
-        COMPLETED,
-        ABANDONED,
-        ACTIVE,
+        RESIGNED,
+        CHECK,
         CHECKMATE,
         DRAW,
-    }
-
-    public enum DrawType {
-        STALEMATE("Draw by stalemate"),
-        THREEFOLD_REPETITION("Draw by threefold repetition"),
-        FIFTY_MOVE_RULE("Draw by fifty move rule"),
-        INSUFFICIENT_MATERIAL("Draw by insufficient material"),
-        MUTUAL_AGREEMENT("Draw by mutual agreement");
-
-        private final String description;
-
-        DrawType(String description) {
-            this.description = description;
-        }
-
-        public String getDescription() {
-            return description;
-        }
+        STALEMATE,
+        THREEFOLD_REPETITION,
+        FIFTY_MOVE_RULE,
+        INSUFFICIENT_MATERIAL,
+        MUTUAL_AGREEMENT;
     }
 
     public boolean isGameStarted() {

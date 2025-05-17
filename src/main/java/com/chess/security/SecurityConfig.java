@@ -15,11 +15,8 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
 
 import com.chess.service.UserService;
 
-@Configuration//Marks the class as a source of bean definitions for the application context.
-@EnableWebSecurity//Enables web security configuration.
-
-/*@Bean: Indicates that a method produces a bean that should be managed by the Spring container.
- In this case, it creates a PasswordEncoder and a SecurityFilterChain. */
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final UserService userService;
@@ -52,13 +49,15 @@ public class SecurityConfig {
                     .failureUrl("/index?error=true")
                     .permitAll();
             })
-            .oauth2Login(oauth2 -> oauth2
-                .defaultSuccessUrl("/index", true)
-                .failureUrl("/index?error=true")
-                .userInfoEndpoint(userInfo -> userInfo
-                    .userService(oauth2UserService())
-                )
-            )
+            .oauth2Login(oauth2 -> {
+                oauth2
+                    .loginPage("/index")
+                    .defaultSuccessUrl("/index", true)
+                    .failureUrl("/index?error=true")
+                    .userInfoEndpoint(userInfo -> {
+                        userInfo.userService(oauth2UserService());
+                    });
+            })
             .rememberMe(remember -> {
                 remember
                     .key("uniqueAndSecretKey")
@@ -88,7 +87,8 @@ public class SecurityConfig {
                     "/api/games/**",
                     "/index",
                     "/about",
-                    "/oauth2/**"
+                    "/oauth2/**",
+                    "/login/oauth2/**"
                 ).permitAll();
                 registry.anyRequest().authenticated();
             })
@@ -98,6 +98,6 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2UserService oauth2UserService() {
-        return new CustomOAuth2UserService(userService);
+        return new CustomOAuth2UserService(userService, passwordEncoder());
     }
 }

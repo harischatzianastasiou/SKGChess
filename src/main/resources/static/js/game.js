@@ -325,18 +325,16 @@ class ChessGame {
                                 await this.fetchGame();
                                 // No need to call updateBoard() here as it's called inside fetchGame()
                                 
-                                // Update status message based on game status
-                                if (this.gameStatus === 'CHECKMATE') {
-                                    this.statusElement.textContent = 'Checkmate';
-                                } else if (this.gameStatus === 'DRAW') {
-                                    this.statusElement.textContent = 'Draw';
-                                } else if (this.gameStatus === 'IN_PROGRESS') {
+                                if (this.gameStatus === 'IN_PROGRESS') {
                                     // Check if it's the current player's turn
                                     const isCurrentPlayerTurn = 
                                         (this.playerColor === 'WHITE' && this.boardDTO.currentPlayer.alliance === 'WHITE') ||
                                         (this.playerColor === 'BLACK' && this.boardDTO.currentPlayer.alliance === 'BLACK');
                                     
                                     this.statusElement.textContent = isCurrentPlayerTurn ? 'Your turn' : 'Opponent\'s turn';
+                                }
+                                else {
+                                    this.statusElement.textContent = this.gameStatus;
                                 }
                             }
                         } catch (error) {
@@ -788,23 +786,63 @@ class ChessGame {
         }
 
         // Check for game end conditions
-        if (this.boardDTO.checkmate) {
-            this.statusElement.textContent = 'Checkmate!';
+        if (this.gameStatus === 'CHECKMATE' || this.gameStatus === 'DRAW' || this.gameStatus === 'RESIGNED'
+            || this.gameStatus === 'STALEMATE' || this.gameStatus === 'THREEFOLD_REPETITION'
+            || this.gameStatus === 'FIFTY_MOVE_RULE' || this.gameStatus === 'INSUFFICIENT_MATERIAL'
+            || this.gameStatus === 'MUTUAL_AGREEMENT'
+        ) {
             this.statusElement.classList.remove('your-turn');
-        } else if (this.boardDTO.stalemate) {
-            this.statusElement.textContent = 'Stalemate - Game Draw';
-            this.statusElement.classList.remove('your-turn');
-        } else if (this.boardDTO.draw) {
-            this.statusElement.textContent = 'Game Draw';
-            this.statusElement.classList.remove('your-turn');
-        } else if (this.boardDTO.check) {
-            if (this.isPlayerTurn) {
-                this.statusElement.textContent = 'Your turn - You are in check!';
-                this.statusElement.classList.add('your-turn');
-            } else {
-                this.statusElement.textContent = 'Opponent in check';
-                this.statusElement.classList.remove('your-turn');
+            // Always display white on left, black on right
+            const whitePlayerAvatar = this.boardDTO.whitePlayerAvatar || '/images/white-k.png';
+            const blackPlayerAvatar = this.boardDTO.blackPlayerAvatar || '/images/black-k.png';
+            let winner, result;
+
+            if(this.gameStatus === 'CHECKMATE') {
+                this.statusElement.textContent = 'Checkmate!';
+                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                    winner = this.boardDTO.blackPlayerUsername;
+                    result = '0-1';
+                } else {
+                    winner = this.boardDTO.whitePlayerUsername;
+                    result = '1-0';
+                }
+            } else if(this.gameStatus === 'DRAW') {
+                this.statusElement.textContent = 'Draw!';
+                winner = 'Draw';
+                result = 'Draw';
+            } else if(this.gameStatus === 'RESIGNED') {
+                this.statusElement.textContent = 'Resigned!';
+                winner = this.boardDTO.currentPlayer.alliance === 'WHITE' ? blackPlayerUsername : whitePlayerUsername;
+                result = this.boardDTO.currentPlayer.alliance === 'WHITE' ? '0-1' : '1-0';
+            } else if(this.gameStatus === 'STALEMATE') {
+                this.statusElement.textContent = 'Draw by stalemate!';
+                winner = 'Draw';
+                result = 'Draw';
+            } else if(this.gameStatus === 'THREEFOLD_REPETITION') {
+                this.statusElement.textContent = 'Draw by threefold repetition!';
+                winner = 'Draw';
+                result = 'Draw';
+            } else if(this.gameStatus === 'FIFTY_MOVE_RULE') {
+                this.statusElement.textContent = 'Draw by fifty move rule!';
+                winner = 'Draw';
+                result = 'Draw';
+            } else if(this.gameStatus === 'INSUFFICIENT_MATERIAL') {
+                this.statusElement.textContent = 'Draw by insufficient material!';
+                winner = 'Draw';
+                result = 'Draw';
+            } else if(this.gameStatus === 'MUTUAL_AGREEMENT') {
+                this.statusElement.textContent = 'Draw by mutual agreement!';
+                winner = 'Draw';
+                result = 'Draw';
             }
+
+ 
+            this.showGameEndPopup(
+                winner,
+                result,
+                whitePlayerUsername, whitePlayerAvatar,
+                blackPlayerUsername, blackPlayerAvatar
+            );
         }
         
         const tiles = this.board.querySelectorAll('.tile');
@@ -968,6 +1006,140 @@ class ChessGame {
         setTimeout(() => {
             overlay.classList.remove('show');
         }, 2000);
+    }
+
+    showGameEndPopup(winner, result, winnerUsername, winnerAvatar, loserUsername, loserAvatar) {
+        // Remove existing popup if any
+        let existing = document.getElementById('game-end-popup');
+        if (existing) existing.remove();
+
+        // Create popup
+        const popup = document.createElement('div');
+        popup.id = 'game-end-popup';
+        popup.innerHTML = `
+            <button class="popup-close" id="close-game-end-popup" title="Close">&#10005;</button>
+            <div class="popup-title">Game Over</div>
+            <div class="popup-subtitle">by checkmate</div>
+            <div class="popup-players">
+                <div class="popup-player ${result === '1-0' ? 'popup-winner' : ''}">
+                    <img src="${winnerAvatar}" class="popup-avatar" alt="Winner">
+                    <div class="popup-username">${winnerUsername}</div>
+                </div>
+                <div class="popup-result-center">${result}</div>
+                <div class="popup-player ${result === '0-1' ? 'popup-winner' : ''}">
+                    <img src="${loserAvatar}" class="popup-avatar" alt="Loser">
+                    <div class="popup-username">${loserUsername}</div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(popup);
+
+        // Close button
+        document.getElementById('close-game-end-popup').onclick = () => popup.remove();
+
+        // Add styles if not present
+        if (!document.getElementById('game-end-popup-style')) {
+            const style = document.createElement('style');
+            style.id = 'game-end-popup-style';
+            style.innerHTML = `
+#game-end-popup {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(40, 30, 60, 0.97);
+    color: #fff;
+    padding: 2.5rem 2.5rem 2rem 2.5rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    z-index: 99999;
+    text-align: center;
+    min-width: 340px;
+    max-width: 95vw;
+    font-family: 'Poppins', sans-serif;
+    border: 2px solid var(--color-accent, #ffd700);
+    backdrop-filter: blur(6px);
+    animation: popupAppear 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+}
+#game-end-popup .popup-close {
+    background: none;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 2.2rem;
+    height: 2.2rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    transition: background 0.2s, color 0.2s;
+}
+#game-end-popup .popup-close:hover {
+    background: #fff;
+    color: #222;
+}
+#game-end-popup .popup-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.2rem;
+    letter-spacing: 1px;
+}
+#game-end-popup .popup-subtitle {
+    font-size: 1.1rem;
+    color: #ffd700;
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+}
+#game-end-popup .popup-players {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.2rem;
+    margin-top: 1.2rem;
+}
+#game-end-popup .popup-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 90px;
+}
+#game-end-popup .popup-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-bottom: 0.5rem;
+    object-fit: cover;
+    background: #222;
+}
+#game-end-popup .popup-winner .popup-avatar {
+    border: 3px solid var(--color-accent, #ffd700);
+    box-shadow: 0 0 12px 2px var(--color-accent, #ffd700);
+}
+#game-end-popup .popup-username {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 0.2rem;
+    color: #fff;
+    text-shadow: 0 1px 2px #0008;
+}
+#game-end-popup .popup-winner .popup-username {
+    color: var(--color-accent, #ffd700);
+}
+#game-end-popup .popup-result-center {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 1.2rem;
+    align-self: center;
+}
+@keyframes popupAppear {
+    0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+            `;
+            document.head.appendChild(style);
+        }
     }
 
 }

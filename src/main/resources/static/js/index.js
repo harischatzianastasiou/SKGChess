@@ -12,9 +12,11 @@ const username = document.querySelector('h1 span[sec\\:authentication="name"]')?
 document.addEventListener('DOMContentLoaded', function() {
     // If user is authenticated, check for pending actions
     if (document.body.classList.contains('authenticated')) {
-        handlePendingAction();
-        // Load existing messages from the database
-        loadExistingMessages();
+        // Only handle pending action if one exists
+        const pendingAction = sessionStorage.getItem('pendingAction');
+        if (pendingAction) {
+            handlePendingAction();
+        }
         // Render game boards
         renderGameBoards();
     }
@@ -230,135 +232,6 @@ function closeSharePopup(gameId) {
     }
 }
 
-// Function to add a game message
-async function addGameMessage(gameId, opponentUsername) {
-    // Check if a message for this game already exists
-    const existingMessage = gameMessages.find(msg => msg.gameId === gameId);
-    if (existingMessage) {
-        // Update existing message instead of creating a new one
-        existingMessage.opponentUsername = opponentUsername;
-        existingMessage.timestamp = new Date();
-        existingMessage.content = `Game ${gameId} vs ${opponentUsername} has started!`;
-        existingMessage.read = false;
-    } else {
-        // Create new message if none exists
-        const message = {
-            id: Date.now(),
-            gameId: gameId,
-            opponentUsername: opponentUsername,
-            timestamp: new Date(),
-            content: `Game ${gameId} vs ${opponentUsername} has started!`,
-            read: false
-        };
-        gameMessages.unshift(message);
-    }
-    
-    // Store message in database
-    try {
-        const response = await fetch('/api/messages', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                gameId: gameId,
-                opponentUsername: opponentUsername,
-                content: `Game ${gameId} vs ${opponentUsername} has started!`,
-                type: 'GAME_STARTED'
-            })
-        });
-        
-        if (!response.ok) {
-            console.error('Failed to store message in database:', await response.text());
-        }
-    } catch (error) {
-        console.error('Error storing message in database:', error);
-    }
-    
-    updateMessagesBadge();
-    updateMessagesDropdown();
-}
-
-// Function to update messages badge
-function updateMessagesBadge() {
-    const badge = document.querySelector('.messages-badge');
-    const unreadCount = gameMessages.filter(msg => !msg.read).length;
-    
-    if (badge) {
-        badge.textContent = unreadCount;
-        badge.classList.toggle('show', unreadCount > 0);
-    }
-}
-
-// Function to update messages dropdown
-function updateMessagesDropdown() {
-    const dropdown = document.querySelector('.messages-dropdown');
-    if (!dropdown) return;
-    
-    // Create dropdown content with clear button inside
-    dropdown.innerHTML = `
-        <div class="messages-header">
-            <h3>Game Messages</h3>
-        </div>
-        <div class="messages-list">
-            ${gameMessages.length > 0 ? 
-                gameMessages.map(message => `
-                    <div class="message-item ${message.read ? 'read' : 'unread'}" data-message-id="${message.id}">
-                        <div class="message-content">${message.content}</div>
-                        <div class="message-time">${formatTimestamp(message.timestamp)}</div>
-                        <a href="/games/${message.gameId}" class="message-link">Join Game</a>
-                    </div>
-                `).join('') : 
-                '<div class="no-messages">No messages</div>'
-            }
-        </div>
-        ${gameMessages.length > 0 ? 
-            '<div class="messages-footer"><button class="clear-messages-btn" onclick="clearAllMessages()"><i class="fas fa-trash"></i> Clear All Messages</button></div>' : 
-            ''
-        }
-    `;
-}
-
-// Function to format timestamp
-function formatTimestamp(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
-}
-
-// Function to toggle messages dropdown
-function toggleMessagesDropdown(event) {
-    event.stopPropagation(); // Prevent event from bubbling up
-    const dropdown = document.querySelector('.messages-dropdown');
-    if (dropdown) {
-        // Toggle the show class
-        dropdown.classList.toggle('show');
-        
-        // Mark messages as read when dropdown is shown
-        if (dropdown.classList.contains('show')) {
-            gameMessages.forEach(msg => msg.read = true);
-            updateMessagesBadge();
-            
-            // Add event listener to close dropdown when clicking outside
-            document.addEventListener('click', closeMessagesDropdownOnClickOutside);
-        } else {
-            // Remove event listener when dropdown is closed
-            document.removeEventListener('click', closeMessagesDropdownOnClickOutside);
-        }
-    }
-}
-
-// Function to close messages dropdown when clicking outside
-function closeMessagesDropdownOnClickOutside(event) {
-    const dropdown = document.querySelector('.messages-dropdown');
-    const messagesIcon = document.querySelector('.messages-icon');
-    
-    // Check if click is outside the dropdown and not on the messages icon
-    if (dropdown && !dropdown.contains(event.target) && !messagesIcon.contains(event.target)) {
-        dropdown.classList.remove('show');
-        document.removeEventListener('click', closeMessagesDropdownOnClickOutside);
-    }
-}
-
 // Function to subscribe to game start
 function subscribeToGameStart(gameId) {
     const socket = new SockJS('/chess-websocket');
@@ -379,16 +252,10 @@ function subscribeToGameStart(gameId) {
                     
                     if (data.type === 'GAME_STARTED') {
                         console.log('Game started, checking popup state');
-                        const opponentUsername = data.opponentUsername || 'Opponent';
-                        
                         if (isSharePopupOpen) {
                             // If popup is still open, redirect to game page
                             console.log('Popup is open, redirecting to game page');
                             window.location.href = `/games/${gameId}`;
-                        } else {
-                            // If popup was closed, show notification
-                            console.log('Popup was closed, showing notification');
-                            addGameMessage(gameId, opponentUsername);
                         }
                     }
                 } catch (error) {
@@ -402,18 +269,15 @@ function subscribeToGameStart(gameId) {
     );
 }
 
-// Add messages icon to header when document is loaded
+// Remove the messages icon from header when document is loaded
 document.addEventListener('DOMContentLoaded', function() {
     const headerRight = document.querySelector('.header-right');
     if (headerRight) {
-        const messagesContainer = document.createElement('div');
-        messagesContainer.className = 'header-messages';
-        messagesContainer.innerHTML = `
-            <i class="fas fa-bell messages-icon" onclick="toggleMessagesDropdown(event)"></i>
-            <span class="messages-badge">0</span>
-            <div class="messages-dropdown"></div>
-        `;
-        headerRight.insertBefore(messagesContainer, headerRight.firstChild);
+        // Remove any existing messages container
+        const messagesContainer = headerRight.querySelector('.header-messages');
+        if (messagesContainer) {
+            messagesContainer.remove();
+        }
     }
 });
 
@@ -949,66 +813,6 @@ function handleJoinGame() {
     closeJoinGameDialog();
 }
 
-// Function to clear all messages
-async function clearAllMessages() {
-    // Clear local messages
-    gameMessages = [];
-    updateMessagesBadge();
-    updateMessagesDropdown();
-    
-    // Mark messages as read in the database
-    try {
-        const response = await fetch('/api/messages/mark-read', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        
-        if (!response.ok) {
-            console.error('Failed to mark messages as read:', await response.text());
-        }
-    } catch (error) {
-        console.error('Error marking messages as read:', error);
-    }
-}
-
-// Function to load existing messages from the database
-async function loadExistingMessages() {
-    try {
-        const response = await fetch('/api/messages/unread');
-        if (!response.ok) {
-            throw new Error('Failed to fetch messages');
-        }
-        
-        const messages = await response.json();
-        
-        // Add messages to the local array
-        messages.forEach(message => {
-            // Check if a message for this game already exists
-            const existingMessage = gameMessages.find(msg => msg.gameId === message.gameId);
-            if (!existingMessage) {
-                // Create new message if none exists
-                const newMessage = {
-                    id: message.id,
-                    gameId: message.gameId,
-                    opponentUsername: message.opponentUsername,
-                    timestamp: new Date(message.timestamp),
-                    content: message.content,
-                    read: message.read
-                };
-                gameMessages.unshift(newMessage);
-            }
-        });
-        
-        // Update UI
-        updateMessagesBadge();
-        updateMessagesDropdown();
-    } catch (error) {
-        console.error('Error loading messages:', error);
-    }
-}
-
 /**
  * Render chess board previews for games
  */
@@ -1202,3 +1006,26 @@ function showErrorPopup(message) {
         errorPopup.classList.add('show');
     }, 10);
 }
+
+// Toggle play menu visibility
+function togglePlayMenu() {
+    const menu = document.querySelector('.play-menu');
+    menu.classList.toggle('show');
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function closeMenu(e) {
+        if (!e.target.closest('.play-menu-container')) {
+            menu.classList.remove('show');
+            document.removeEventListener('click', closeMenu);
+        }
+    });
+}
+
+// Close play menu when clicking outside
+document.addEventListener('click', function(e) {
+    const menu = document.querySelector('.play-menu');
+    const container = document.querySelector('.play-menu-container');
+    if (menu && container && !container.contains(e.target)) {
+        menu.classList.remove('show');
+    }
+});

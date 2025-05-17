@@ -21,6 +21,8 @@ import com.chess.dto.rest.response.UserDTO;
 import com.chess.exception.UserNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/users")
@@ -57,14 +59,24 @@ public class UserController {
     }
 
     @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<UserDTO> createUser(@RequestBody CreateUserRequestDTO requestDTO){
+    public ResponseEntity<Map<String, Object>> createUser(@RequestBody CreateUserRequestDTO requestDTO){
         // Create a new User entity from the DTO
         User user = new User();
         user.setUsername(requestDTO.getUsername());
         user.setEmail(requestDTO.getEmail());
         user.setPassword(passwordEncoder.encode(requestDTO.getPassword())); // Encode the password
         
-        // Register the user and return the DTO
-        return ResponseEntity.ok(UserDTO.fromUser(userService.registerUser(user))); // Register the user
+        // Register the user
+        User registeredUser = userService.registerUser(user);
+        
+        // Create response with user data and credentials for immediate login
+        Map<String, Object> response = new HashMap<>();
+        response.put("user", UserDTO.fromUser(registeredUser));
+        response.put("credentials", Map.of(
+            "username", requestDTO.getUsername(),
+            "password", requestDTO.getPassword()
+        ));
+        
+        return ResponseEntity.ok(response);
     }
 }

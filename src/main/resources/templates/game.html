@@ -58,7 +58,7 @@
                 <!-- Current player info -->
                 <div class="player-card">
                     <div class="player-avatar">
-                        <i class="fas fa-user"></i>
+                        <img id="white-player-avatar" class="player-avatar" th:src="${whitePlayerAvatar != null ? whitePlayerAvatar : '/images/white-k.png'}" src="/images/white-k.png" alt="White Player Avatar" />
                     </div>
                     <div class="player-details">
                         <h3 id="current-player-name" th:text="${username}">Current Player</h3>
@@ -102,7 +102,7 @@
                 <!-- Opponent info -->
                 <div class="player-card">
                     <div class="player-avatar">
-                        <i class="fas fa-user"></i>
+                        <img id="black-player-avatar" class="player-avatar" th:src="${blackPlayerAvatar != null ? blackPlayerAvatar : '/images/black-k.png'}" src="/images/black-k.png" alt="Black Player Avatar" />
                     </div>
                     <div class="player-details">
                         <h3 id="opponent-player-name" th:text="${userId == whitePlayerId ? blackPlayerUsername : whitePlayerUsername}">Opponent</h3>

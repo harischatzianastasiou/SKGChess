@@ -14,7 +14,7 @@ import com.chess.core.tiles.Tile;
 import com.chess.service.GameService;
 import com.google.common.collect.ImmutableList;
 import com.chess.core.player.Player;
-
+import com.chess.model.entity.Game.GameStatus;
 public final class CurrentPlayer extends Player {
 		
     private final boolean isInCheck;
@@ -85,7 +85,19 @@ public final class CurrentPlayer extends Player {
         return this.isInCheck;
     }
 
-    public boolean isStalemate() {
-        return !this.isInCheck() && this.getMoves().isEmpty();
+    public GameStatus isDraw() {
+        if(this.isInCheck && this.getMoves().isEmpty()){
+            return GameStatus.DRAW;
+        } 
+        // else if(isStalemate()){
+        //     return GameStatus.STALEMATE;
+        // } else if(isThreefoldRepetition()){
+        //     return GameStatus.THREEFOLD_REPETITION;
+        // } else if(isFiftyMoveRule()){
+        //     return GameStatus.FIFTY_MOVE_RULE;
+        // } else if(isInsufficientMaterial()){
+        //     return GameStatus.INSUFFICIENT_MATERIAL;
+        // }
+        return GameStatus.IN_PROGRESS;
     }
 }

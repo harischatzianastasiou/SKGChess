@@ -42,10 +42,10 @@ spring:
           google:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
-            scope: 
+            scope:
               - email
               - profile
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
 # Logging
 logging:
@@ -62,7 +62,11 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
-    web: DEBUG 
+    web: DEBUG
+    root: INFO
+    com.chess.security: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
 
 
     

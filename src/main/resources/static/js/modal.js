@@ -204,6 +204,77 @@ function switchToLoginForm() {
 }
 
 /**
+ * Submits the signup form data to the server
+ */
+async function submitSignupForm(username, email, password) {
+    try {
+        // Send data to server
+        const response = await fetch('/api/users/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({ username, email, password })
+        });
+        
+        // Check the content type of the response
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+            // Handle JSON response
+            const data = await response.json();
+            if (response.ok) {
+                console.log('Created user:', data);
+                alert('Signup successful!');
+                
+                // Perform immediate login
+                const formData = new FormData();
+                formData.append('username', data.credentials.username);
+                formData.append('password', data.credentials.password);
+                
+                const loginResponse = await fetch('/login', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'same-origin'
+                });
+                
+                if (loginResponse.ok) {
+                    // Just hide the modal without closing it (to preserve pendingAction)
+                    const modal = document.getElementById('login-modal');
+                    modal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    // Reload the page
+                    window.location.reload();
+                } else {
+                    console.error('Auto-login failed, redirecting to login page');
+                    closeModal();
+                    window.location.href = '/index';
+                }
+            } else {
+                // Handle JSON error response
+                const errorMessage = data.error || data.message || 'Unknown error occurred';
+                console.error('Server error:', data);
+                alert('Signup failed: ' + errorMessage);
+            }
+        } else {
+            // Handle non-JSON response
+            const errorText = await response.text();
+            console.error('Server returned non-JSON response:', errorText);
+            if (response.status === 403) {
+                alert('Access denied. Please try again later.');
+            } else if (response.status === 400) {
+                alert('Invalid input. Please check your details and try again.');
+            } else {
+                alert('An error occurred during signup. Please try again later.');
+            }
+        }
+    } catch (error) {
+        console.error('Network error:', error);
+        alert('Network error occurred. Please check your connection and try again.');
+    }
+}
+
+/**
  * Sets up event listeners for the signup form
  */
 function setupSignupFormEventListeners() {
@@ -221,6 +292,19 @@ function setupSignupFormEventListeners() {
         // Basic validation
         if (password !== confirmPassword) {
             alert('Passwords do not match');
+            return;
+        }
+
+        // Validate username length
+        if (username.length < 3 || username.length > 50) {
+            alert('Username must be between 3 and 50 characters');
+            return;
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address');
             return;
         }
         
@@ -332,9 +416,7 @@ function submitLoginForm(username, password, remember) {
     })
     .then(response => {
         if (response.ok) {
-            // Clear any pending actions
-            sessionStorage.removeItem('pendingAction');
-            // Reload the page
+            // Reload the page without clearing pendingAction
             window.location.reload();
         } else {
             // Login failed, show error
