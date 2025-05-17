@@ -49,6 +49,13 @@ spring:
 
 # Logging
 logging:
+  file:
+    name: logs/chess-application.log
+    max-size: 10MB
+    max-history: 7
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   level:
     com:
       chess: DEBUG

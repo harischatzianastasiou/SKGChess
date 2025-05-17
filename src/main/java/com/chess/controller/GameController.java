@@ -28,7 +28,9 @@ import com.chess.model.entity.Game;
 import com.chess.model.entity.Game.GameStatus;
 import com.chess.service.GameService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.chess.service.RateLimiterService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,15 +43,28 @@ public class GameController {
     private final GameService gameService;
     private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper objectMapper;
+    private final RateLimiterService rateLimiterService;
 
-    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate, ObjectMapper objectMapper) {
+    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate, ObjectMapper objectMapper, RateLimiterService rateLimiterService) {
         this.gameService = gameService;
         this.messagingTemplate = messagingTemplate;
         this.objectMapper = objectMapper;
+        this.rateLimiterService = rateLimiterService;
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> createGame(@RequestBody @Valid CreateGameRequestDTO request) {
+    public ResponseEntity<?> createGame(@RequestBody @Valid CreateGameRequestDTO request, 
+                                      HttpServletRequest httpRequest) {
+        // Get client IP address
+        String clientIp = httpRequest.getRemoteAddr();
+        
+        // Check rate limit
+        if (!rateLimiterService.isAllowed(clientIp)) {
+            log.warn("Rate limit exceeded for IP: {}", clientIp);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(new ErrorResponseDTO("Too many requests. Please try again later."));
+        }
+
         try {
             // Create game with parameters from the request
             Game game = gameService.createGame(

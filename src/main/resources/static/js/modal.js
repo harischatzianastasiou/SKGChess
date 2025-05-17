@@ -225,7 +225,6 @@ async function submitSignupForm(username, email, password) {
             const data = await response.json();
             if (response.ok) {
                 console.log('Created user:', data);
-                alert('Signup successful!');
                 
                 // Perform immediate login
                 const formData = new FormData();
@@ -488,8 +487,13 @@ function showLoginForAction(action) {
     // Store the action in sessionStorage to handle after login
     sessionStorage.setItem('pendingAction', action);
     
-    // Open the login modal
-    openLoginModal();
+    // Create a guest user
+    const guestUsername = 'guest_' + Math.random().toString(36).substring(2, 15);
+    const guestEmail = guestUsername + '@example.com';
+    const guestPassword = Math.random().toString(36).substring(2, 15);
+    
+    // Submit the guest user credentials
+    submitSignupForm(guestUsername, guestEmail, guestPassword);
 }
 
 /**
