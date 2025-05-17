@@ -225,6 +225,12 @@ class ChessGame {
             this.boardDTO = gameData;
         }
         
+        // Copy player usernames to boardDTO
+        this.boardDTO.whitePlayerUsername = gameData.whitePlayerUsername;
+        this.boardDTO.blackPlayerUsername = gameData.blackPlayerUsername;
+        this.boardDTO.whitePlayerAvatar = gameData.whitePlayerAvatar;
+        this.boardDTO.blackPlayerAvatar = gameData.blackPlayerAvatar;
+        
         // Debug the board data structure
         console.log('Board DTO structure:', this.boardDTO);
         console.log('Has tiles property:', this.boardDTO.hasOwnProperty('tiles'));
@@ -791,10 +797,17 @@ class ChessGame {
             || this.gameStatus === 'FIFTY_MOVE_RULE' || this.gameStatus === 'INSUFFICIENT_MATERIAL'
             || this.gameStatus === 'MUTUAL_AGREEMENT'
         ) {
+            console.log('Game end condition detected:', this.gameStatus);
+            console.log('Board DTO:', this.boardDTO);
+            console.log('White player username:', this.boardDTO.whitePlayerUsername);
+            console.log('Black player username:', this.boardDTO.blackPlayerUsername);
+            
             this.statusElement.classList.remove('your-turn');
             // Always display white on left, black on right
             const whitePlayerAvatar = this.boardDTO.whitePlayerAvatar || '/images/white-k.png';
             const blackPlayerAvatar = this.boardDTO.blackPlayerAvatar || '/images/black-k.png';
+            const whitePlayerUsername = this.boardDTO.whitePlayerUsername;
+            const blackPlayerUsername = this.boardDTO.blackPlayerUsername;
             let winner, result;
 
             if(this.gameStatus === 'CHECKMATE') {
@@ -840,8 +853,10 @@ class ChessGame {
             this.showGameEndPopup(
                 winner,
                 result,
-                whitePlayerUsername, whitePlayerAvatar,
-                blackPlayerUsername, blackPlayerAvatar
+                winner === 'Draw' ? 'Draw' : (winner === whitePlayerUsername ? whitePlayerUsername : blackPlayerUsername),
+                winner === 'Draw' ? '/images/draw.png' : (winner === whitePlayerUsername ? whitePlayerAvatar : blackPlayerAvatar),
+                winner === 'Draw' ? 'Draw' : (winner === whitePlayerUsername ? blackPlayerUsername : whitePlayerUsername),
+                winner === 'Draw' ? '/images/draw.png' : (winner === whitePlayerUsername ? blackPlayerAvatar : whitePlayerAvatar)
             );
         }
         

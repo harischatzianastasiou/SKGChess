@@ -17,7 +17,7 @@ public class RateLimiterService {
     private final Map<String, RequestCounter> requestCounters = new ConcurrentHashMap<>();
     
     // Rate limit configuration
-    private static final int MAX_REQUESTS_PER_HOUR = 10; // Maximum requests per hour
+    private static final int MAX_REQUESTS_PER_HOUR = 1000; // Maximum requests per hour
     private static final Duration WINDOW_SIZE = Duration.ofHours(1); // Time window for rate limiting
     
     /**

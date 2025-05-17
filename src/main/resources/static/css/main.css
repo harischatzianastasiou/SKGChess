@@ -523,13 +523,27 @@ body {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(26, 26, 26, 0.5);
-    backdrop-filter: blur(4px);
+    background: rgba(26, 26, 26, 0.7); /* Darker overlay */
+    backdrop-filter: blur(8px); /* Increased blur effect */
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
     color: var(--text-color);
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+/* Loading text */
+.loading-text {
+    position: absolute;
+    top: calc(50% + 30px); /* Position below spinner */
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    opacity: 0.8;
 }
 
 /* Accessibility */
@@ -2950,17 +2964,84 @@ body {
 
 /* Loading Spinner */
 .loading-spinner {
-    width: 30px;
-    height: 30px;
-    border: 3px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
-    border-top-color: var(--primary-light);
-    animation: spin 1s ease-in-out infinite;
-    margin: 10px auto;
+    width: 40px; /* Increased size for better visibility */
+    height: 40px;
+    position: relative; /* Added for absolute positioning of pseudo-elements */
+    margin: 20px auto; /* Increased margin for better spacing */
 }
 
+/* Outer ring */
+.loading-spinner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 3px solid rgba(255, 255, 255, 0.1); /* Subtle outer ring */
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite; /* Pulsing effect */
+}
+
+/* Spinning ring */
+.loading-spinner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 3px solid transparent; /* Transparent border */
+    border-top-color: var(--primary-light); /* Colored top border */
+    border-radius: 50%;
+    animation: spin 1s linear infinite; /* Smooth spinning animation */
+}
+
+/* Loading overlay */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.7); /* Darker overlay */
+    backdrop-filter: blur(8px); /* Increased blur effect */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--text-color);
+    z-index: 1000; /* Ensure it's above other content */
+}
+
+/* Loading text */
+.loading-text {
+    position: absolute;
+    top: calc(50% + 30px); /* Position below spinner */
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-color);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    opacity: 0.8;
+}
+
+/* Animations */
 @keyframes spin {
     to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 0.5; }
+}
+
+/* Loading container */
+.loading-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px; /* Minimum height to prevent layout shifts */
 }
 
 /* Confirmation Dialog */

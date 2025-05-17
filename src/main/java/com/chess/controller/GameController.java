@@ -42,7 +42,7 @@ public class GameController {
     
     private final GameService gameService;
     private final SimpMessagingTemplate messagingTemplate;
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;// to convert game object to json for websocket communication
     private final RateLimiterService rateLimiterService;
 
     public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate, ObjectMapper objectMapper, RateLimiterService rateLimiterService) {
