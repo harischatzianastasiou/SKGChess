@@ -55,13 +55,12 @@ public class GameService {
                 throw new IllegalArgumentException("Username cannot be null or empty");
             }
             
-            // Find user
-            User user = userRepository.findByUsername(username)
+            // Find user with pessimistic locking to prevent concurrent game creation
+            User user = userRepository.findByUsernameWithLock(username)
                 .orElseThrow(() -> new UserNotFoundException(username));
             
-            // Check if the user has active game
-            List<Game> activeGames = getActiveGamesByUsername(username);
-            if (!activeGames.isEmpty()) {
+            // Check if the user has active game using the new method
+            if (userRepository.existsActiveGameForUser(user.getId())) {
                 throw new UserAlreadyHasActiveGameException("User already has an active game");
             }
             
