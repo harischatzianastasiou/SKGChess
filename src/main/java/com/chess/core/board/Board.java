@@ -18,7 +18,6 @@ import  com.chess.core.pieces.Queen;
 import  com.chess.core.pieces.Rook;
 import  com.chess.core.player.Player;
 import com.chess.core.tiles.Tile;
-import com.chess.core.utils.FenUtils;
 import com.google.common.collect.ImmutableList;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,22 +32,22 @@ public class Board implements IBoard {
 
 	private Board(final Builder builder) {
 		this.tiles = createTiles(builder);
-		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null, null, false);
-		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer, null, false);
+		this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null, null);
+		this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer, null);
 	}
 
-	private Board(final Builder builder, final Move lastMove, final boolean isCastled) {
+	private Board(final Builder builder, final Move lastMove) {
         this.tiles = createTiles(builder);
-        this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null, null, false);
-        this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer, lastMove, isCastled);
+        this.opponentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance.getOpposite(),null, null);
+        this.currentPlayer = Player.createPlayer(tiles, builder.currentPlayerAlliance, this.opponentPlayer, lastMove);
     }
 
 	private static IBoard createBoard(Builder builder) {
         return new Board(builder);
     }
 
-	private static IBoard createBoard(Builder builder, Move lastMove, boolean isCastled) {
-        return new Board(builder, lastMove, isCastled);
+	private static IBoard createBoard(Builder builder, Move lastMove) {
+        return new Board(builder, lastMove);
     }
 	
 	private static List<Tile> createTiles(final Builder builder) {// list of 64 tiles. each occupied tile gets a piece mapped from the builder. if not mapped the tile is empty
@@ -126,8 +125,8 @@ public class Board implements IBoard {
             return this;
         }
         
-        public IBoard build(Move lastMove, boolean isCastled) {//build a new board everytime a move is executed.
-            return Board.createBoard(this, lastMove, isCastled);
+        public IBoard build(Move lastMove) {//build a new board everytime a move is executed.
+            return Board.createBoard(this, lastMove);
         }
 
 		public IBoard build() {//build a new board everytime a move is executed.
@@ -224,27 +223,6 @@ public class Board implements IBoard {
 	}
 
 	/**
-	 * Creates a board from a FEN string
-	 * 
-	 * @param fen The FEN string to parse
-	 * @param lastMove The last move made
-	 * @param isCastled Whether the current player has castled
-	 * @return A new Board object representing the FEN position
-	 */
-	public static IBoard createBoardFromFEN(String fen, Move lastMove, boolean isCastled) {
-		return FenUtils.fenToBoard(fen, lastMove, isCastled);
-	}
-	
-	/**
-	 * Converts the current board to a FEN string
-	 * 
-	 * @return FEN string representation of the board
-	 */
-	public String toFen() {
-		return FenUtils.boardToFen(this);
-	}
-
-	/**
 	 * Serializes the board to a JSON string for database storage
 	 * 
 	 * @return JSON string representation of the board
@@ -315,10 +293,9 @@ public class Board implements IBoard {
 	 * 
 	 * @param boardSerialized JSON string representation of the board
 	 * @param lastMoveSerialized JSON string representation of the last move
-	 * @param isCastled Whether the current player has castled
 	 * @return A new Board object
 	 */
-	public static IBoard deserialize(String boardSerialized, String lastMoveSerialized, boolean isCastled) {
+	public static IBoard deserialize(String boardSerialized, String lastMoveSerialized) {
 		if (boardSerialized == null || boardSerialized.trim().isEmpty()) {
 			return null;
 		}
@@ -344,51 +321,52 @@ public class Board implements IBoard {
 			
 			// Get pieces from the tiles node
 			JsonNode tilesNode = rootNode.get("tiles");
+			List<Tile> tiles = new ArrayList<>();
 			if (tilesNode != null && tilesNode.isArray()) {
 				for (JsonNode tileNode : tilesNode) {
-					JsonNode pieceNode = tileNode.get("piece");
-					if (pieceNode != null && !pieceNode.isNull()) {
-						int coordinate = tileNode.get("tileCoordinate").asInt();
-						JsonNode allianceNode = pieceNode.get("pieceAlliance");
-						JsonNode symbolNode = pieceNode.get("pieceSymbol");
-						
-						if (allianceNode != null && symbolNode != null) {
-							Alliance pieceAlliance = Alliance.valueOf(allianceNode.asText());
-							String symbol = symbolNode.asText();
+					int tileCoordinate = tileNode.get("tileCoordinate").asInt();
+					String tileAllianceStr = tileNode.get("tileAlliance").asText();
+					Alliance tileAlliance = Alliance.valueOf(tileAllianceStr);
+					boolean isOccupied = tileNode.get("tileOccupied").asBoolean();
+					
+					if (isOccupied) {
+						JsonNode pieceNode = tileNode.get("piece");
+						if (pieceNode != null) {
+							String pieceSymbol = pieceNode.get("pieceSymbol").asText();
+							int pieceCoordinate = pieceNode.get("pieceCoordinate").asInt();
+							String pieceAllianceStr = pieceNode.get("pieceAlliance").asText();
+							Alliance pieceAlliance = Alliance.valueOf(pieceAllianceStr);
+							boolean isFirstMove = pieceNode.get("firstMove").asBoolean();
 							
-							// Get isFirstMove from the piece node, default to true if not present
-							boolean isFirstMove = true;
-							if (pieceNode.has("firstMove")) {
-								isFirstMove = pieceNode.get("firstMove").asBoolean();
-							}
-							
-							// Create the appropriate piece based on the symbol with its first move status
 							Piece piece = null;
-							switch (symbol) {
+							switch (pieceSymbol) {
 								case "PAWN":
-									piece = new Pawn(coordinate, pieceAlliance, isFirstMove);
+									piece = new Pawn(pieceCoordinate, pieceAlliance, isFirstMove);
 									break;
 								case "KNIGHT":
-									piece = new Knight(coordinate, pieceAlliance, isFirstMove);
+									piece = new Knight(pieceCoordinate, pieceAlliance, isFirstMove);
 									break;
 								case "BISHOP":
-									piece = new Bishop(coordinate, pieceAlliance, isFirstMove);
+									piece = new Bishop(pieceCoordinate, pieceAlliance, isFirstMove);
 									break;
 								case "ROOK":
-									piece = new Rook(coordinate, pieceAlliance, isFirstMove);
+									piece = new Rook(pieceCoordinate, pieceAlliance, isFirstMove);
 									break;
 								case "QUEEN":
-									piece = new Queen(coordinate, pieceAlliance, isFirstMove);
+									piece = new Queen(pieceCoordinate, pieceAlliance, isFirstMove);
 									break;
 								case "KING":
-									piece = new King(coordinate, pieceAlliance, isFirstMove);
+									piece = new King(pieceCoordinate, pieceAlliance, isFirstMove);
 									break;
 							}
 							
 							if (piece != null) {
 								builder.setPiece(piece);
+								tiles.add(Tile.createTile(tileCoordinate, tileAlliance, piece));
 							}
 						}
+					} else {
+						tiles.add(Tile.createTile(tileCoordinate, tileAlliance, null));
 					}
 				}
 			}
@@ -396,24 +374,16 @@ public class Board implements IBoard {
 			// Deserialize the last move if provided
 			Move lastMove = null;
 			if (lastMoveSerialized != null && !lastMoveSerialized.isEmpty()) {
-				lastMove = deserializeMove(lastMoveSerialized);
+				lastMove = deserializeMove(lastMoveSerialized, tiles);
 			}
 			
-			// Build and return the board with the provided lastMove and isCastled parameters
-			return builder.build(lastMove, isCastled);
+			return builder.build(lastMove);
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to deserialize board", e);
 		}
 	}
 
-
-	/**
-	 * Deserializes a move from a JSON string
-	 * 
-	 * @param moveSerialized JSON string representation of the move
-	 * @return A Move object
-	 */
-	private static Move deserializeMove(String moveSerialized) {
+	private static Move deserializeMove(String moveSerialized, List<Tile> tiles) {
 		if (moveSerialized == null || moveSerialized.isEmpty()) {
 			return null;
 		}
@@ -436,24 +406,7 @@ public class Board implements IBoard {
 			switch (moveType) {
 				case "PAWN_JUMP":
 					Piece piece = new Pawn(targetCoordinate, pieceAlliance, true);
-					
-					// Get the board tiles from the move data
-					JsonNode boardTilesNode = moveNode.get("boardTiles");
-					List<Tile> boardTiles;
-					
-					if (boardTilesNode != null && !boardTilesNode.isNull()) {
-						// If boardTiles is provided in the JSON, deserialize it
-						// This would require a custom deserializer for List<Tile>
-						// For now, we'll create a standard board
-						IBoard tempBoard = createStandardBoard();//TODO: change to the board that was serialized
-						boardTiles = tempBoard.getTiles();
-					} else {
-						// If no boardTiles provided, create a standard board
-						IBoard tempBoard = createStandardBoard();
-						boardTiles = tempBoard.getTiles();
-					}
-					
-					return new PawnJumpMove(boardTiles, sourceCoordinate, targetCoordinate, piece);
+					return new PawnJumpMove(tiles, sourceCoordinate, targetCoordinate, piece);
 				default:
 					return null;
 			}

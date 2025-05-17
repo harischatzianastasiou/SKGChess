@@ -19,31 +19,19 @@ public final class CurrentPlayer extends Player {
 		
     private final boolean isInCheck;
     private final boolean isInCheckmate;
-    private final boolean isCastled;
-    
-    private CurrentPlayer(final Collection<Piece> pieces, final Collection<Move> moves, final Alliance alliance, boolean isInCheck, boolean isInCheckmate, boolean isCastled) {
+
+    private CurrentPlayer(final Collection<Piece> pieces, final Collection<Move> moves, final Alliance alliance, boolean isInCheck, boolean isInCheckmate) {
         super(pieces, moves, alliance);
         this.isInCheck = isInCheck;
         this.isInCheckmate = isInCheckmate;
-        this.isCastled = isCastled;
     }
 
-	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer, final Move lastMove, final boolean isCastled) {
+	public static CurrentPlayer createCurrentPlayer(final List<Tile> tiles, final Alliance alliance,final Player opponentPlayer, final Move lastMove) {
         final List<Piece> pieces = new ArrayList<>();
         final Collection<Move> moves = new ArrayList<>();
         final Collection<Move> opponentCheckingMoves = new ArrayList<>();
         boolean isInCheck = false;
         boolean isInCheckmate = false;
-    
-
-        // // Check if user has castled by looking for castle moves in game history
-        // for (Move move : GameService.getGameById(GameService.getGameById()).getMoveHistory()) {
-        //     if ((move instanceof KingSideCastleMove || move instanceof QueenSideCastleMove) && 
-        //         move.getPieceToMove().getPieceAlliance() == alliance) {
-        //         isCastled = true;
-        //         break;
-        //     }
-        // }
 
         opponentCheckingMoves.addAll(getOpponentCheckingMoves(tiles, alliance, opponentPlayer));
         if(!opponentCheckingMoves.isEmpty()){
@@ -62,7 +50,7 @@ public final class CurrentPlayer extends Player {
         if (isInCheck && moves.isEmpty()) {
             isInCheckmate = true; 
         }
-        return new CurrentPlayer(ImmutableList.copyOf(pieces), ImmutableList.copyOf(moves), alliance, isInCheck, isInCheckmate, isCastled);    
+        return new CurrentPlayer(ImmutableList.copyOf(pieces), ImmutableList.copyOf(moves), alliance, isInCheck, isInCheckmate);    
     }
 
     public static Collection<Move> getOpponentCheckingMoves(final List<Tile> tiles, final Alliance alliance, final Player opponentPlayer) {// moves that are checking the current user's king
@@ -99,9 +87,5 @@ public final class CurrentPlayer extends Player {
 
     public boolean isStalemate() {
         return !this.isInCheck() && this.getMoves().isEmpty();
-    }
-
-    public boolean isCastled() {
-        return this.isCastled;
     }
 }

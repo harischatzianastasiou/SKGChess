@@ -31,8 +31,6 @@ public class GameDTO {
     private String blackPlayerUsername;
     
     // Game state
-    private String fenPosition;
-    private String pgnMoves;
     private String board;
     private String lastMoveData;
     private String status;
@@ -44,7 +42,6 @@ public class GameDTO {
     
     // Game statistics
     private int moveCount;
-    private String lastMovePgn;
     private boolean isBlackPlayerCastled;
     private boolean isWhitePlayerCastled;
     
@@ -63,7 +60,6 @@ public class GameDTO {
                 .blackPlayerId(game.getBlackPlayer() != null ? game.getBlackPlayer().getId() : null)
                 .whitePlayerUsername(game.getWhitePlayer() != null ? game.getWhitePlayer().getUsername() : null)
                 .blackPlayerUsername(game.getBlackPlayer() != null ? game.getBlackPlayer().getUsername() : null)
-                .fenPosition(game.getFenPosition())
                 .board(game.getBoard())
                 .lastMoveData(game.getLastMoveData())
                 .status(game.getStatus())

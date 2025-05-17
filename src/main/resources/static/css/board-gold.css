@@ -549,4 +549,44 @@ body {
     50% {
         box-shadow: none;
     }
+}
+
+.tile.legal-move-en-passant::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 33%;
+    height: 33%;
+    background: orange;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #ff9800;
+    animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.tile.legal-move-en-passant::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 165, 0, 0.15);
+    border: 2px solid #ff9800;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.tile.legal-move-en-passant:hover::after {
+    animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: #ff9800;
+    border: 2px solid #ff9800;
+}
+
+.tile.legal-move-en-passant:hover::before {
+    background: rgba(255, 165, 0, 0.3);
+    border: 2px solid #ff9800;
 } 

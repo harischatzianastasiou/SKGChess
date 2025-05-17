@@ -716,6 +716,42 @@ class ChessGame {
                 targetTile.classList.add(isCapture ? 'legal-move-capture' : 'legal-move-non-capture');
             }
         });
+
+        // --- Frontend-only en passant highlight ---
+        if (this.lastMoveData) {
+            try {
+                const lastMoveDataObj = JSON.parse(this.lastMoveData);
+                const lastMoveSource = lastMoveDataObj.sourceCoordinate;
+                const lastMoveTarget = lastMoveDataObj.targetCoordinate;
+                const lastMoveType = lastMoveDataObj.moveType;
+                if (lastMoveType === 'PAWN_JUMP') {
+                    // For each tile, check if a pawn can capture en passant
+                    this.boardDTO.tiles.forEach(sourceTileData => {
+                        if (sourceTileData.piece?.pieceSymbol === 'PAWN') {
+                            const pawn = sourceTileData.piece;
+                            const pawnCoord = sourceTileData.tileCoordinate;
+                            const direction = pawn.pieceAlliance === 'WHITE' ? -8 : 8;
+                            // The jumped pawn must be adjacent
+                            if (Math.abs(pawnCoord - lastMoveTarget) === 1) {
+                                // The en passant target is behind the jumped pawn
+                                const enPassantTarget = lastMoveTarget + direction;
+                                // Only highlight if the target is empty
+                                const enPassantTile = this.boardDTO.tiles.find(t => t.tileCoordinate === enPassantTarget && !t.tileOccupied);
+                                if (enPassantTile) {
+                                    const targetTile = this.board.querySelector(`.tile[data-position='${enPassantTarget}']`);
+                                    if (targetTile) {
+                                        // Add a special highlight for en passant
+                                        targetTile.classList.add('legal-move-en-passant');
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Error parsing last move data for en passant:', e);
+            }
+        }
     }
 
     clearLegalMoves() {

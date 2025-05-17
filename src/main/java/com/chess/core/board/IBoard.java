@@ -6,7 +6,6 @@ import java.util.List;
 import  com.chess.core.pieces.Piece;
 import  com.chess.core.player.Player;
 import  com.chess.core.tiles.Tile;
-import com.chess.util.FENUtils;
 import com.chess.core.moves.Move;
 
 public interface IBoard {
@@ -15,15 +14,6 @@ public interface IBoard {
     Player getCurrentPlayer();
     Player getOpponentPlayer();
     
-
-    /**
-     * Gets the FEN (Forsyth-Edwards Notation) string representation of the current board position.
-     * This is used to uniquely identify positions for the opening book.
-     * @return The FEN string for this position
-     */
-    default String getFEN() {
-        return FENUtils.toFEN(this);
-    }
 
     /**
      * Creates a standard chess board with all pieces in their initial positions.
@@ -50,13 +40,11 @@ public interface IBoard {
         return Board.createRandomBoard(pieces);
     }
 
-    static IBoard createBoardFromFEN(String fen, Move lastMove, boolean isCastled) {
-        return Board.createBoardFromFEN(fen, lastMove, isCastled);
-    }
 
     String serialize();
-    static IBoard deserialize(String serialized, String lastMoveSerialized, boolean isCastled) {
-        return Board.deserialize(serialized, lastMoveSerialized, isCastled);
+
+    static IBoard deserialize(String serialized, String lastMoveSerialized) {
+        return Board.deserialize(serialized, lastMoveSerialized);
     }
     Collection<Piece> getAllPieces();
 } 

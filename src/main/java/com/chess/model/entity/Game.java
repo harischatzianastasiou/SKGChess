@@ -67,10 +67,6 @@ public class Game implements Serializable {
     @Column(name = "game_customRules", columnDefinition = "TEXT", nullable = true)
     private String customRules = "";
 
-    // Game State Information
-    @Column(name = "game_fenPosition", columnDefinition = "TEXT", nullable = true)
-    private String fenPosition;
-
     @Column(name = "game_moveCount")
     private int moveCount;
 

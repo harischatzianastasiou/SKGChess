@@ -193,7 +193,7 @@ public class GameService {
         }
         
         // Get current game state
-        IBoard currentBoard = IBoard.deserialize(game.getBoard(), game.getLastMoveData(), game.getIsPlayerTurn() == com.chess.core.Alliance.WHITE ? game.isWhitePlayerCastled() : game.isBlackPlayerCastled());
+        IBoard currentBoard = IBoard.deserialize(game.getBoard(), game.getLastMoveData());
         
         // Find the move from legal moves
         logger.info("sourceCoordinate: {}", sourceCoordinate);
@@ -273,8 +273,6 @@ public class GameService {
         // Store the serialized new board        
         game.setBoard(newBoard.serialize());
 
-        // Update game state
-        game.setFenPosition(newBoard.getFEN());
         // Increment move count each time a move is made
         game.setMoveCount(game.getMoveCount() + 1);
         game.setIsPlayerTurn(newBoard.getCurrentPlayer().getAlliance());
