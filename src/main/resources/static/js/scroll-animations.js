@@ -174,6 +174,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle wheel events for element-by-element scrolling
     window.addEventListener('wheel', function(event) {
+        // Check if newspaper overlay is active
+        const newspaperOverlay = document.getElementById('newspaperOverlay');
+        if (newspaperOverlay && newspaperOverlay.style.display === 'block') {
+            // Allow natural scrolling in newspaper overlay
+            return;
+        }
+
         // Check if the event originated from a scrollable container
         const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
         if (scrollableParent) {

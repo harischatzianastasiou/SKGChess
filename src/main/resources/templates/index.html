@@ -577,6 +577,10 @@
             color: #fff;
             font-weight: 600;
         }
+        .header,
+        .header.header-shadow {
+            z-index: 3001 !important; /* Ensure header is always above overlay */
+        }
     </style>
 </head>
 <body th:classappend="${#authorization.expression('isAuthenticated()')} ? 'authenticated'">
@@ -595,7 +599,7 @@
             <div class="header-right">
                 <div class="header-auth">
                     <div sec:authorize="isAuthenticated()">
-                        <a href="#" onclick="openAboutModal(); return false;" class="btn-home">
+                        <a href="#" onclick="showNewspaper(); return false;" class="btn-home">
                             <i class="fas fa-info-circle"></i>
                             About
                         </a>
@@ -613,6 +617,12 @@
                 </div>
             </div>
         </header>
+
+        <!-- Newspaper Overlay (hidden by default, covers whole page except header) -->
+        <div id="newspaperOverlay" style="display:none; position:fixed; top:70px; left:0; width:100vw; height:calc(100vh - 70px); z-index:2000;">
+            <button onclick="hideNewspaper()" style="position: absolute; top: 20px; right: 30px; z-index: 10; font-size: 2rem; background: none; border: none; cursor: pointer;">&times;</button>
+            <div th:replace="fragments/newspaper :: #newspaper-root"></div>
+        </div>
 
         <!-- Main Content - Single Page View -->
         <main class="main-content fade-in">
@@ -647,7 +657,7 @@
                             </div>
                             <div class="dual-help-text" id="dualHelpText"></div>
                         </div>
-                        <a href="#" onclick="openAboutModal(); return false;" class="main-button about">About SKG Chess</a>
+                        <a href="#" onclick="showNewspaper(); return false;" class="main-button about">About SKG Chess</a>
                     </div>
 
                     <!-- Quote styling for non-authenticated users -->
@@ -768,7 +778,7 @@
                     <div class="footer-section">
                         <h3>Quick Links</h3>
                         <ul>
-                            <li><a href="#" onclick="openAboutModal(); return false;">About</a></li>
+                            <li><a href="#" onclick="showNewspaper(); return false;">About</a></li>
                         </ul>
                     </div>
                     <div class="footer-section">
@@ -823,55 +833,6 @@
 
     <!-- Accessibility Skip Link (hidden visually) -->
     <a href="#main-content" class="screen-reader-only">Skip to main content</a>
-
-    <!-- About Modal -->
-    <div id="aboutModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <div class="about-modal-content">
-                <div class="cards-container">
-                    <!-- Author Introduction Card -->
-                    <div class="card" data-card="1">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-user" style="color: #9370DB;"></i>
-                            </div>
-                            <h3>Message from the Creator</h3>
-                            <button class="read-more-btn" onclick="showPopup('creator')">
-                                <i class="fas fa-book-open"></i> Open Message
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Features Card (replaces Journey) -->
-                    <div class="card" data-card="2">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-magic" style="color: #9370DB;"></i>
-                            </div>
-                            <h3>Features</h3>
-                            <button class="read-more-btn" onclick="showPopup('features')">
-                                <i class="fas fa-book-open"></i> Explore Features
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Tech Stack Card -->
-                    <div class="card" data-card="3">
-                        <div class="card-content">
-                            <div class="card-icon">
-                                <i class="fas fa-code" style="color: #9370DB;"></i>
-                            </div>
-                            <h3>Tech Stack</h3>
-                            <button class="read-more-btn" onclick="showTechStackBigPopup()">
-                                <i class="fas fa-book-open"></i> Explore Tech Stack
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Popup Content -->
     <div id="popupOverlay" class="popup-overlay">
@@ -1644,29 +1605,16 @@
         let musicStarted = false;
 
         // Modal functionality
-        function openAboutModal() {
-            const aboutModal = document.getElementById('aboutModal');
-            if (aboutModal) {
-                aboutModal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-                // Animate cards sequentially with pop-in
-                const cards = document.querySelectorAll('.card');
-                cards.forEach((card, index) => {
-                    card.classList.remove('active');
-                    card.style.setProperty('--card-delay', (index * 0.15) + 's');
-                    setTimeout(() => {
-                        card.classList.add('active');
-                    }, index * 150);
-                });
-            }
+        function showNewspaper() {
+            document.getElementById('newspaperOverlay').style.display = 'block';
+            // Add shadow to header when overlay is open
+            document.querySelector('.header').classList.add('header-shadow');
         }
 
-        function closeAboutModal() {
-            const aboutModal = document.getElementById('aboutModal');
-            if (aboutModal) {
-                aboutModal.style.display = 'none';
-                document.body.style.overflow = '';
-            }
+        function hideNewspaper() {
+            document.getElementById('newspaperOverlay').style.display = 'none';
+            // Remove shadow from header when overlay is closed
+            document.querySelector('.header').classList.remove('header-shadow');
         }
 
         // Initialize modal functionality when DOM is loaded
@@ -1675,20 +1623,20 @@
             const closeModal = document.querySelector('.close-modal');
             
             if (closeModal) {
-                closeModal.addEventListener('click', closeAboutModal);
+                closeModal.addEventListener('click', hideNewspaper);
             }
             
             if (aboutModal) {
                 window.addEventListener('click', (event) => {
                     if (event.target === aboutModal) {
-                        closeAboutModal();
+                        hideNewspaper();
                     }
                 });
 
                 // Add keyboard support for Escape key
                 document.addEventListener('keydown', (event) => {
                     if (event.key === 'Escape' && aboutModal.style.display === 'block') {
-                        closeAboutModal();
+                        hideNewspaper();
                     }
                 });
             }
@@ -1888,6 +1836,15 @@
             var help = document.getElementById('dualHelpText');
             help.classList.remove('show');
         }
+
+        // Add Escape key handler to close the newspaper overlay
+        window.addEventListener('keydown', function(event) {
+            // If Escape is pressed and the newspaper overlay is open
+            const newspaperOverlay = document.getElementById('newspaperOverlay');
+            if (event.key === 'Escape' && newspaperOverlay && newspaperOverlay.style.display === 'block') {
+                hideNewspaper();
+            }
+        });
     </script>
 </body>
 </html> 

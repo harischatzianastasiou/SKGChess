@@ -595,6 +595,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle wheel events for smooth scrolling
     window.addEventListener('wheel', (e) => {
+        // Check if newspaper overlay is active
+        const newspaperOverlay = document.getElementById('newspaperOverlay');
+        if (newspaperOverlay && newspaperOverlay.style.display === 'block') {
+            // Completely disable custom scroll handling when newspaper is open
+            return;
+        }
+
         // Find the closest scrollable container
         const scrollableContainer = e.target.closest('.all-games-section');
         
@@ -641,6 +648,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 scrollToSection(currentSection - 1);
             }
         }, 50);
+    }, { passive: false });
+
+    // Remove all gesture event listeners
+    window.removeEventListener('gesturestart', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
+    window.removeEventListener('gesturechange', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
+    window.removeEventListener('gestureend', (e) => {
+        e.preventDefault();
     }, { passive: false });
 
     // Handle keyboard navigation
