@@ -25,18 +25,28 @@
                 rgba(10, 13, 18, 0.95)
             ) !important;
         }
+        /* Container for both columns */
+        .decorative-columns-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+            background-image: url('/images/boardBanner3.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.4;
+            filter: brightness(0.8) contrast(0.9);
+        }
         .decorative-column {
             width: 150px;
             height: 100%;
             position: fixed;
             top: 0;
             bottom: 0;
-            background-image: url('/images/patternTile.png');
-            background-size: 150px 150px;
-            background-repeat: repeat-y;
             z-index: 1;
-            opacity: 0.4;
-            filter: brightness(0.8) contrast(0.9);
         }
         .decorative-column.left {
             left: 0;
@@ -71,21 +81,15 @@
             margin: 0 40px 0 0;
         }
         #newspaper-root header {
-            font-family: 'Playfair Display', serif;
-            font-weight: 900;
-            font-size: 48px;
-            text-transform: uppercase;
-            display: block;
-            line-height: 1.1;
-            margin-bottom: 20px;
-            margin-left: 0;
-            margin-right: 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: rgb(255, 255, 255);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
             text-align: center;
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
+            margin: 0 auto;
+            padding: 0.5em 0;
         }
         #newspaper-root p {
             margin-top: 0;
@@ -224,7 +228,10 @@
             }
         }
     </style>
-    <div class="decorative-column left"></div>
+    <div class="decorative-columns-container">
+        <div class="decorative-column left"></div>
+        <div class="decorative-column right"></div>
+    </div>
     <div class="newspaper-inner">
         <div class="head">
             <div class="headerobjectswrapper">
@@ -280,5 +287,4 @@
             </div>
         </div>
     </div>
-    <div class="decorative-column right"></div>
 </div>
