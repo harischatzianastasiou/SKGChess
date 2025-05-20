@@ -3175,3 +3175,135 @@ body {
 .error-content button:hover {
     background: #110d12;;
 }
+
+.icon-text {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-left: 8px;
+    color: var(--text-color);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all var(--transition-normal);
+}
+
+.icon-side:hover .icon-text {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.icon-side.left:hover .icon-text {
+    color: var(--color-white-piece);
+}
+
+.icon-side.right:hover .icon-text {
+    color: var(--color-black-piece);
+}
+
+/* Add these new styles for icon-side and icon-text */
+.icon-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3em;                   /* Reduced gap between icon and text */
+    flex: 1 1 0;
+    height: 100%;
+    cursor: pointer;
+    transition: background 0.2s;
+    position: relative;
+    z-index: 2;
+    padding: 0 0.5em;             /* Add padding to keep content more centered */
+}
+
+.icon-text {
+    font-size: 0.75em;            /* Even smaller font size */
+    font-weight: 500;
+    margin-left: 0;
+    color: var(--text-secondary);
+    opacity: 1;
+    transform: none;
+    transition: color 0.2s;
+    white-space: nowrap;
+}
+
+.icon-side i {
+    font-size: 1.3em;             /* Slightly smaller icon size */
+    transition: transform 0.3s cubic-bezier(.22,1,.36,1), filter 0.3s;
+}
+
+.icon-side.left:hover i, .icon-side.left:focus i {
+    transform: scale(1.1) translateX(5px) rotate(-5deg);  /* Reduced animation movement */
+    filter: drop-shadow(0 2px 8px #fff8);
+}
+
+.icon-side.right:hover i, .icon-side.right:focus i {
+    transform: scale(1.1) translateX(2px) rotate(5deg) !important;  /* Reduced from 5px to 2px */
+    filter: drop-shadow(0 2px 8px #2228) !important;
+}
+
+/* Remove the help text styles since we don't need them anymore */
+.dual-help-text {
+    display: none;
+}
+
+/* Override for black king icon animation */
+.dual-morph-btn .dual-morph-content.dual .icon-side.right:hover i,
+.dual-morph-btn .dual-morph-content.dual .icon-side.right:focus i {
+    transform: scale(1.1) translateX(2px) rotate(5deg) !important;  /* Reduced from 5px to 2px */
+    filter: drop-shadow(0 2px 8px #2228) !important;
+}
+
+/* Dropping letter animation */
+@keyframes letterDrop {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+}
+
+.dropping-letter {
+    display: inline-block;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.icon-side.left:hover .dropping-letter {
+    animation: letterDrop 0.5s forwards;
+    animation-delay: 0.1s;
+}
+
+/* Adjust the icon-text to handle the dropping letter */
+.icon-text {
+    position: relative;
+    display: inline-block;
+}
+
+.dual-morph-btn {
+    display: inline-flex;
+    position: relative;
+    border-radius: 2em;
+    overflow: hidden;
+    background: #55610a;
+    transition: background 0.2s;
+    min-width: 240px;
+    height: 56px;
+    box-shadow: 0 2px 16px 0 rgba(0,0,0,0.12);
+    cursor: pointer;
+}
+
+/* Remove any remaining dual-help-text styles */
+.dual-help-text,
+#dualHelpText {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+}
