@@ -709,9 +709,32 @@
                 <div class="all-games-container">
                     <!-- Two-column layout for games -->
                     <div class="games-two-column">
-                        <!-- Left: Last game preview card -->
+                        <!-- Left: Previous games list -->
                         <div class="games-left">
-                            <div th:each="game, iterStat : ${allGames}" th:if="${iterStat.last}" class="all-game-card glass-effect">
+                            <div class="game-row game-row-header">
+                                <span>Players</span>
+                                <span>Status</span>
+                                <span class="game-moves">Moves</span>
+                                <span>Date</span>
+                            </div>
+                            <!-- Show games from index 1 to 5 (5 older games) -->
+                            <div th:each="game, iterStat : ${allGames}" 
+                                th:if="${iterStat.index > 0 && iterStat.index < 6}" 
+                                class="game-row clickable-row" 
+                                th:attr="data-game-id=${game.id}">
+                                <span>
+                                    <span th:text="${game.whitePlayerUsername}"></span>
+                                    <span> vs </span>
+                                    <span th:text="${game.blackPlayerUsername}"></span>
+                                </span>
+                                <span class="game-status" th:classappend="${game.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
+                                <span class="game-moves" th:text="${game.moveCount}"></span>
+                                <span th:text="${#temporals.format(game.createdAt, 'yyyy-MM-dd')}"></span>
+                            </div>
+                        </div>
+                        <!-- Right: Latest game preview card -->
+                        <div class="games-right">
+                            <div th:each="game, iterStat : ${allGames}" th:if="${iterStat.index == 0}" class="all-game-card glass-effect">
                                 <div class="all-game-header">
                                     <h3 th:text="${game.whitePlayerUsername + ' vs ' + game.blackPlayerUsername}">Player1 vs Player2</h3>
                                     <span class="game-status" th:classappend="${game.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
@@ -731,29 +754,6 @@
                                     </a>
                                 </div>
                             </div>
-                        </div>
-                        <div th:if="${allGames != null && #lists.size(allGames) > 1}" class="games-right game-rows-list">
-                            <div class="game-row game-row-header">
-                                <span>Players</span>
-                                <span>Status</span>
-                                <span class="game-moves">Moves</span>
-                                <span>Date</span>
-                            </div>
-                            <div th:each="game, iterStat : ${allGames}" th:if="${!iterStat.last}" class="game-row clickable-row" th:attr="data-game-id=${game.id}">
-                                <span>
-                                    <span th:text="${game.whitePlayerUsername}"></span>
-                                    <span> vs </span>
-                                    <span th:text="${game.blackPlayerUsername}"></span>
-                                </span>
-                                <span class="game-status" th:classappend="${game.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
-                                <span class="game-moves" th:text="${game.moveCount}"></span>
-                                <span th:text="${#temporals.format(game.createdAt, 'yyyy-MM-dd')}"></span>
-                            </div>
-                        </div>
-                        <!-- Show message if only 1 or 0 completed games -->
-                        <div th:if="${allGames != null && #lists.size(allGames) > 0 && #lists.size(allGames) <= 1}" class="no-all-games glass-effect">
-                            <i class="fas fa-chess-board"></i>
-                            <p>Continue playing SKG Chess to unlock this section ! </p>
                         </div>
                     </div>
                     <div th:if="${allGames == null || allGames.empty}" class="no-all-games glass-effect">

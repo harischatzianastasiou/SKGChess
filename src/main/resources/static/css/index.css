@@ -782,11 +782,11 @@ body.authenticated::before {
 }
 
 .square.light {
-    background-color: #c59d5cfe;  
+    background-color: #9d74c4;  
 }
 
 .square.dark {
-    background-color:  #563617;;
+    background-color:  #4b286b;
 }
 
 .piece {

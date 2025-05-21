@@ -169,11 +169,11 @@ public class GameService {
             .collect(Collectors.toList());
     }
 
-    public List<Game> getAllGamesForUser(String userId) {
+    public List<Game> getLastGamesForUser(String userId) {
         // Get all games where the user is either the white or black player
-        List<Game> userGames = gameRepository.findByWhitePlayerIdOrBlackPlayerId(userId, userId);
+        List<Game> userGames = gameRepository.findLastGamesByWhitePlayerIdOrBlackPlayerId(userId, userId);
         
-        // Filter to only include games with IN_PROGRESS status
+        // Sort games by createdAt in descending order (most recent first) and limit to 6
         return userGames;
     }
     

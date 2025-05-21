@@ -69,7 +69,7 @@ public class MainController {
                 User currentUser = userService.getUserByUsername(username);
                 
                 // Get all games for the current user
-                List<Game> allGames = gameService.getAllGamesForUser(currentUser.getId());
+                List<Game> allGames = gameService.getLastGamesForUser(currentUser.getId());
                 
                 // Convert to DTOs for the view
                 List<GameDTO> allGameDTOs = allGames.stream()
@@ -102,7 +102,7 @@ public class MainController {
                 User currentUser = userService.getUserByUsername(username);
                 
                 // Get all games for the current user
-                List<Game> allGames = gameService.getAllGamesForUser(currentUser.getId());
+                List<Game> allGames = gameService.getLastGamesForUser(currentUser.getId());
                 
                 // Convert to DTOs for the view
                 List<GameDTO> allGameDTOs = allGames.stream()
