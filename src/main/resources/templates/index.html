@@ -703,37 +703,14 @@
                 <div class="section-header">
                     <h2>
                         <i class="fas fa-chess"></i>
-                        My Games
                     </h2>
                 </div>
                 <div class="all-games-container">
                     <!-- Two-column layout for games -->
                     <div class="games-two-column">
-                        <!-- Left: Previous games list -->
-                        <div class="games-left">
-                            <div class="game-row game-row-header">
-                                <span>Players</span>
-                                <span>Status</span>
-                                <span class="game-moves">Moves</span>
-                                <span>Date</span>
-                            </div>
-                            <!-- Show games from index 1 to 5 (5 older games) -->
-                            <div th:each="game, iterStat : ${allGames}" 
-                                th:if="${iterStat.index > 0 && iterStat.index < 6}" 
-                                class="game-row clickable-row" 
-                                th:attr="data-game-id=${game.id}">
-                                <span>
-                                    <span th:text="${game.whitePlayerUsername}"></span>
-                                    <span> vs </span>
-                                    <span th:text="${game.blackPlayerUsername}"></span>
-                                </span>
-                                <span class="game-status" th:classappend="${game.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
-                                <span class="game-moves" th:text="${game.moveCount}"></span>
-                                <span th:text="${#temporals.format(game.createdAt, 'yyyy-MM-dd')}"></span>
-                            </div>
-                        </div>
-                        <!-- Right: Latest game preview card -->
+                        <!-- Right section moved to left position -->
                         <div class="games-right">
+                            <h2 class="section-title">Latest Game</h2>
                             <div th:each="game, iterStat : ${allGames}" th:if="${iterStat.index == 0}" class="all-game-card glass-effect">
                                 <div class="all-game-header">
                                     <h3 th:text="${game.whitePlayerUsername + ' vs ' + game.blackPlayerUsername}">Player1 vs Player2</h3>
@@ -753,6 +730,30 @@
                                         View Game
                                     </a>
                                 </div>
+                            </div>
+                        </div>
+                        <!-- Left section moved to right position -->
+                        <div class="games-left">
+                            <h2 class="section-title">History</h2>
+                            <div class="game-row game-row-header">
+                                <span>Players</span>
+                                <span>Status</span>
+                                <span class="game-moves">Moves</span>
+                                <span>Date</span>
+                            </div>
+                            <!-- Show games from index 1 to 5 (5 older games) -->
+                            <div th:each="game, iterStat : ${allGames}" 
+                                th:if="${iterStat.index > 0 && iterStat.index < 6}" 
+                                class="game-row clickable-row" 
+                                th:attr="data-game-id=${game.id}">
+                                <span>
+                                    <span th:text="${game.whitePlayerUsername}"></span>
+                                    <span> vs </span>
+                                    <span th:text="${game.blackPlayerUsername}"></span>
+                                </span>
+                                <span class="game-status" th:classappend="${game.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
+                                <span class="game-moves" th:text="${game.moveCount}"></span>
+                                <span th:text="${#temporals.format(game.createdAt, 'yyyy-MM-dd')}"></span>
                             </div>
                         </div>
                     </div>

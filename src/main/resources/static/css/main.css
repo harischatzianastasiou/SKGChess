@@ -1533,6 +1533,7 @@ body {
     height: 3px;
     background: linear-gradient(90deg, var(--accent-light), var(--primary-light));
     border-radius: 3px;
+    font-size: 1.2rem;
 }
 
 /* Enhanced Animations */
