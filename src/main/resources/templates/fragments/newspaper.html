@@ -1,4 +1,5 @@
-<div id="newspaper-root">
+<div id="newspaper-root" th:with="isAuthenticated=${#authorization.expression('isAuthenticated()')}"
+     th:classappend="${isAuthenticated ? 'authenticated' : ''}">
     <!-- Google Fonts for newspaper styling -->
     <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic|Droid+Serif:400,700,400italic,700italic" rel="stylesheet" type="text/css">
     <style>
@@ -34,11 +35,20 @@
             bottom: 0;
             z-index: 1;
             pointer-events: none;
-            background-image: url('/images/boardBanner3.jpg');
             background-size: cover;
             background-position: center;
             opacity: 0.4;
             filter: brightness(0.8) contrast(0.9);
+        }
+        
+        /* Style for non-authenticated users */
+        body:not(.authenticated) .decorative-columns-container {
+            background-image: url('/images/retrochess4.jpg');
+        }
+        
+        /* Style for authenticated users */
+        body.authenticated .decorative-columns-container {
+            background-image: url('/images/boardBanner3.jpg');
         }
         .decorative-column {
             width: 150px;
