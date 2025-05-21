@@ -250,12 +250,6 @@ body {
     -ms-user-select: none;
 }
 
-.btn-sign-in:hover, .btn-sign-out:hover {
-    background: #2e272f; /* Changed to purple dark color */
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-sm);
-}
-
 /* Username Banner */
 .username-banner {
     display: flex;
@@ -382,18 +376,27 @@ body {
     transform: translateX(100%);
 }
 
-.btn-primary, .btn-secondary, .btn-about  {
-    background: var(--primary-color);
-    color: var(--text-color);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+.btn {
+    text-transform: uppercase;
+    border-radius: .15rem;
+    width: 200px;
+    padding: .150rem .75rem;
+    margin: 30px auto;
+    font-family: 'PT Sans', sans-serif;
+    letter-spacing: 2px;
+}
+ .btn-primary, .btn-secondary, .btn-about {
+    border-color: rgba(255, 255, 255, 0);
+    background: #f1da36;
+    background: -moz-linear-gradient(left, #f1da36 0%, #fca86c 99%);
+    background: -webkit-linear-gradient(left, #f1da36 0%,#fca86c 99%);
+    background: linear-gradient(to right, #f1da36 0%,#fca86c 99%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f1da36', endColorstr='#fca86c',GradientType=1);
+    width: 100%;
 }
 
 .btn-primary:hover, .btn-secondary:hover, .btn-about:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    border-color: var(--primary-light);
+    border-color: rgba(255, 255, 255, 0);
 }
 
 .btn-danger {
@@ -2891,8 +2894,7 @@ body {
     line-height: 1.4;
 }
 
-.btn-about, .btn-primary, .btn-secondary, .action-card .btn {
-    display: flex;
+.btn-home, .btn-sign-in, .btn-sign-out, .btn-about, .btn-primary, .btn-secondary, .action-card .btn {
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
@@ -2911,6 +2913,15 @@ body {
     transform: translateY(-2px);
 }
 
+.btn-sign-in:hover, .btn-sign-out:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+    /* Add glass effect on hover */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
 /* Remove any conflicting styles */
 .btn-primary, .btn-secondary {
     background: transparent !important;

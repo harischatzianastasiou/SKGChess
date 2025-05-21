@@ -48,7 +48,7 @@ function createSignupForm() {
                     </button>
                 </div>
             </div>
-            <button type="submit" class="login-btn">Sign Up</button>
+            <button type="submit" class="login-btn"> Login | Register </button>
         </form>
     `;
 }
