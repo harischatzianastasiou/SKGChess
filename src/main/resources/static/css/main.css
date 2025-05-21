@@ -138,16 +138,19 @@ body {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    height: 100%;
+    width: 200px;
 }
 
 .logo-img {
-    height: 45px; /* Adjusted height for better proportions */
+    height: 100%; /* Fill the entire header height */
     width: auto;
     transition: transform var(--transition-fast);
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
+    object-fit: contain;
 }
 
 /* Add shake animation for the logo */
@@ -2736,7 +2739,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
-    background: rgb(55, 55, 55);
+    background: rgb(78, 78, 78);
     width: 90%;
     max-width: 500px;
     border-radius: var(--border-radius-lg);
@@ -2777,43 +2780,21 @@ body {
 
 /* Popup Header */
 .popup-header {
+    position: relative;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: var(--spacing-md);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 80px;
 }
 
-.popup-header h3 {
+.popup-header-logo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
     margin: 0;
-    font-size: 1.5rem;
-    color: var(--text-color);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.popup-header h3 i {
-    color: var(--primary-light);
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.close-btn:hover {
-    color: var(--text-color);
-    transform: rotate(90deg);
+    align-items: left;
 }
 
 /* Popup Body */
@@ -2873,26 +2854,56 @@ body {
 
 .info-box {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: space-between;
     gap: var(--spacing-sm);
-    padding: var(--spacing-sm);
+    padding: 0 var(--spacing-md);
     background: rgba(255, 255, 255, 0.05);
     border-radius: var(--border-radius-sm);
-    margin-top: var(--spacing-md);
+    position: relative;
+    overflow: hidden;
+    height: 80px; /* Set exact height to match content */
 }
 
 .info-box i {
     color: var(--primary-light);
     font-size: 1.2rem;
-    margin-top: 2px;
+    margin: 0;
 }
 
 .info-box p {
     margin: 0;
     color: var(--text-secondary);
     font-size: 0.9rem;
-    line-height: 1.4;
+    text-align: left;
+    flex: 1;
+    height: 100%; /* Fill the container height */
+    display: flex;
+    align-items: center; /* Center text vertically */
 }
+
+.loading-container {
+    position: relative;
+    width: auto;
+    height: 100%; /* Fill the container height */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--spacing-md);
+}
+
+.loading-spinner {
+    width: 20px; /* Slightly reduced size */
+    height: 20px; /* Slightly reduced size */
+    margin: 0;
+}
+
+/* Hover effect to hide the logo */
+.info-box:hover .bouncing-logo {
+    opacity: 0;
+    pointer-events: none;
+}
+
 
 .btn-home, .btn-sign-in, .btn-sign-out, .btn-about, .btn-primary, .btn-secondary, .action-card .btn {
     align-items: center;
@@ -3279,4 +3290,57 @@ body {
 
 .icon-side:hover {
     gap: 0.8em;  /* Keep the same gap on hover to prevent text shift */
+}
+
+/* Popup Footer Logo */
+.popup-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.popup-footer-logo {
+    width: 50px;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.popup-footer-logo:hover {
+    opacity: 1;
+}
+
+/* Close button - restored original styling */
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+}
+
+.close-btn:hover {
+    color: var(--text-color);
+    transform: rotate(90deg);
+}
+
+/* Loading container adjustments */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
 }

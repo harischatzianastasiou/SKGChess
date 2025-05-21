@@ -809,14 +809,13 @@
     <!-- Join Game Dialog -->
     <div id="joinGameDialog" class="join-game-popup">
         <div class="popup-header">
-            <h3><i class="fas fa-sign-in-alt"></i> Join Game</h3>
+            <img src="/images/skgchess.svg" alt="SKGChess Logo" class="popup-header-logo">
             <button class="close-btn" onclick="closeJoinGameDialog()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="popup-body">
             <div class="game-id-container">
-                <p>Enter the game room ID to join:</p>
                 <div class="game-id-box">
                     <input type="text" id="gameIdInput" placeholder="Enter game ID" onkeypress="handleEnterKey(event)">
                     <button class="join-btn" onclick="handleJoinGame()">

@@ -137,14 +137,14 @@ function showShareGamePopup(gameId) {
     // Create popup content with modern design
     popup.innerHTML = `
         <div class="popup-header">
-            <h3><i class="fas fa-gamepad"></i> Game Room Created</h3>
+            <img src="/images/skgchess.svg" alt="SKGChess Logo" class="popup-header-logo">
             <button class="close-btn" onclick="confirmClosePopup('${gameId}')">
                 <i class="fas fa-times"></i>
             </button>
         </div>
         <div class="popup-body">
             <div class="game-id-container">
-                <p>Share this room ID with your friend:</p>
+                <p>Share room ID with your opponent :</p>
                 <div class="game-id-box">
                     <input type="text" value="${gameId}" readonly>
                     <button class="copy-btn" onclick="copyGameId('${gameId}')">
