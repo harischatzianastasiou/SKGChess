@@ -69,22 +69,33 @@ public class MainController {
                 User currentUser = userService.getUserByUsername(username);
                 
                 // Get all games for the current user
-                List<Game> allGames = gameService.getLastGamesForUser(currentUser.getId());
-                
+                List<Game> checkmateGames = gameService.getLast6CheckmateGamesForUser(currentUser.getId());
+                List<Game> lastGame = gameService.getLastGameForUser(currentUser.getId());
+                int numOfUserGames = gameService.numOfUserGames(currentUser.getId());
+
                 // Convert to DTOs for the view
-                List<GameDTO> allGameDTOs = allGames.stream()
+                List<GameDTO> checkmateGameDTOs = checkmateGames.stream()
                     .map(GameDTO::fromGame)
                     .collect(Collectors.toList());
+
+                // Handle last game conversion safely
+                GameDTO lastGameDTO = lastGame != null && !lastGame.isEmpty() ? 
+                    GameDTO.fromGame(lastGame.get(0)) : new GameDTO();
                 
                 // Add to model
-                model.addAttribute("allGames", allGameDTOs);
+                model.addAttribute("checkmateGames", checkmateGameDTOs);
+                model.addAttribute("lastGame", lastGameDTO);
+                model.addAttribute("numOfUserGames", numOfUserGames);
                 model.addAttribute("userId", currentUser.getId());
+                
             } catch (Exception e) {
                 // Log the error but don't let it crash the page
                 System.err.println("Error loading all games: " + e.getMessage());
                 e.printStackTrace();
                 // Add empty list to avoid null pointer in template
-                model.addAttribute("allGames", new ArrayList<>());
+                model.addAttribute("checkmateGames", new ArrayList<>());
+                model.addAttribute("lastGame", new GameDTO());
+                model.addAttribute("numOfUserGames", 0);
             }
         }
         
@@ -102,22 +113,30 @@ public class MainController {
                 User currentUser = userService.getUserByUsername(username);
                 
                 // Get all games for the current user
-                List<Game> allGames = gameService.getLastGamesForUser(currentUser.getId());
-                
+                List<Game> checkmateGames = gameService.getLast6CheckmateGamesForUser(currentUser.getId());
+                List<Game> lastGame = gameService.getLastGameForUser(currentUser.getId());
+                int numOfUserGames = gameService.numOfUserGames(currentUser.getId());
                 // Convert to DTOs for the view
-                List<GameDTO> allGameDTOs = allGames.stream()
+                List<GameDTO> checkmateGameDTOs = checkmateGames.stream()
                     .map(GameDTO::fromGame)
                     .collect(Collectors.toList());
+
+                GameDTO lastGameDTO = lastGame != null && !lastGame.isEmpty() ? 
+                    GameDTO.fromGame(lastGame.get(0)) : new GameDTO();
                 
                 // Add to model
-                model.addAttribute("allGames", allGameDTOs);
+                model.addAttribute("checkmateGames", checkmateGameDTOs);
+                model.addAttribute("lastGame", lastGameDTO);
+                model.addAttribute("numOfUserGames", numOfUserGames);
                 model.addAttribute("userId", currentUser.getId());
             } catch (Exception e) {
                 // Log the error but don't let it crash the page
                 System.err.println("Error loading all games: " + e.getMessage());
                 e.printStackTrace();
                 // Add empty list to avoid null pointer in template
-                model.addAttribute("allGames", new ArrayList<>());
+                model.addAttribute("checkmateGames", new ArrayList<>());
+                model.addAttribute("lastGame", new GameDTO());
+                model.addAttribute("numOfUserGames", 0);
             }
         }
         

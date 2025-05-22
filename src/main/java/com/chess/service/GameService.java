@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,28 +142,13 @@ public class GameService {
         return gameRepository.findAll();
     }
 
-    /**
-     * Get all active games (IN_PROGRESS) for a specific user by their username
-     * @param username The username of the user
-     * @return List of active games where the user is either the white or black player
-     */
     public List<Game> getActiveGamesByUsername(String username) {
         // Find the user first
         User user = userRepository.findByUsername(username)
             .orElseThrow(() -> new UserNotFoundException(username));
         
         // Use the existing method with the user's ID
-        return getActiveGamesForUser(user.getId());
-    }
-
-    /**
-     * Get all active games (IN_PROGRESS) for a specific user
-     * @param userId The ID of the user
-     * @return List of active games where the user is either the white or black player
-     */
-    public List<Game> getActiveGamesForUser(String userId) {
-        // Get all games where the user is either the white or black player
-        List<Game> userGames = gameRepository.findByWhitePlayerIdOrBlackPlayerId(userId, userId);
+        List<Game> userGames = gameRepository.findByWhitePlayerIdOrBlackPlayerId(user.getId(), user.getId());
         
         // Filter to only include games with IN_PROGRESS status
         return userGames.stream()
@@ -169,15 +156,28 @@ public class GameService {
             .collect(Collectors.toList());
     }
 
-    public List<Game> getLastGamesForUser(String userId) {
+    public List<Game> getLast6CheckmateGamesForUser(String userId) {
         // Get all games where the user is either the white or black player
-        List<Game> userGames = gameRepository.findLastGamesByWhitePlayerIdOrBlackPlayerId(userId, userId);
-        
-        // Sort games by createdAt in descending order (most recent first) and limit to 6
-        return userGames;
+        return gameRepository.findLast6CheckmateGamesByWhitePlayerIdOrBlackPlayerId(
+            userId,
+            userId,
+            PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+    }
+
+    public List<Game> getLastGameForUser(String userId) {
+        return gameRepository.findLastGameByWhitePlayerIdOrBlackPlayerId(
+            userId,
+            userId,
+            PageRequest.of(0, 1, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+    }
+
+    public int numOfUserGames(String userId) {
+        int count = gameRepository.numOfUserGames(userId, userId);
+        return count;
     }
     
-
     @Transactional
     public Game makeMove(String gameId, int sourceCoordinate, int targetCoordinate) {
         // Check if game exists
