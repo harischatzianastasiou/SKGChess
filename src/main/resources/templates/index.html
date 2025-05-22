@@ -12,6 +12,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Line Icons (3D) -->
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet">
     
     <!-- Internal stylesheets -->
     <link rel="stylesheet" href="/css/main.css">
@@ -477,6 +479,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-weight: normal;
         }
         .dual-morph-content.dual {
             opacity: 0;
@@ -749,6 +752,17 @@
         .confirm-buttons button:active {
             transform: translateY(0);
         }
+
+        .icon-text {
+            font-size: 1em;
+            font-weight: normal;
+            margin-left: 0;
+            color: #fff;               
+            opacity: 1;
+            transform: none;
+            transition: color 0.2s;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body th:classappend="${#authorization.expression('isAuthenticated()')} ? 'authenticated'">
@@ -814,15 +828,15 @@
                         <div class="dual-morph-btn-wrapper" style="position: relative; display: inline-block;">
                             <div class="dual-morph-btn">
                               <div class="dual-morph-content default">
-                                <i class="fas fa-chess"></i> Play as Guest
+                                <i class="lni lni-play"></i> Play as Guest
                               </div>
                               <div class="dual-morph-content dual">
                                 <div class="icon-side left" tabindex="0">
-                                  <i class="fas fa-chess-king white-icon"></i>
+                                  <i class="lni lni-crown white-icon"></i>
                                   <span class="icon-text">Create</span>
                                 </div>
                                 <div class="icon-side right" tabindex="0">
-                                  <i class="fas fa-chess-king black-icon"></i>
+                                  <i class="lni lni-crown black-icon"></i>
                                   <span class="icon-text">Join</span>
                                 </div>
                               </div>
