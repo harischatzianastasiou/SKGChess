@@ -188,20 +188,50 @@ function confirmClosePopup(gameId) {
     confirmDialog.className = 'confirm-dialog';
     confirmDialog.innerHTML = `
         <div class="confirm-content">
-            <h4>Do you want to cancel game creation?</h4>
+            <h4>Cancel Game Creation?</h4>
             <div class="confirm-buttons">
-                <button class="btn-yes" onclick="closeSharePopup('${gameId}'); this.closest('.confirm-dialog').remove()">Yes</button>
-                <button class="btn-no" onclick="this.closest('.confirm-dialog').remove()">No</button>
+                <button class="btn-no" onclick="this.closest('.confirm-dialog').remove()">Keep Waiting</button>
+                <button class="btn-yes" onclick="closeSharePopup('${gameId}')">Cancel Game</button>
             </div>
         </div>
     `;
     document.body.appendChild(confirmDialog);
+
+    // Add show class after a small delay to trigger animation
+    setTimeout(() => {
+        confirmDialog.classList.add('show');
+    }, 10);
+
+    // Close on escape key
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            confirmDialog.classList.remove('show');
+            setTimeout(() => confirmDialog.remove(), 300);
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+
+    // Close on clicking outside
+    confirmDialog.addEventListener('click', (e) => {
+        if (e.target === confirmDialog) {
+            confirmDialog.classList.remove('show');
+            setTimeout(() => confirmDialog.remove(), 300);
+        }
+    });
 }
 
 // Function to close the share game popup
 function closeSharePopup(gameId) {
     const popup = document.querySelector('.share-game-popup');
     const overlay = document.querySelector('.share-game-overlay');
+    const confirmDialog = document.querySelector('.confirm-dialog');
+    
+    // First remove the confirmation dialog with animation
+    if (confirmDialog) {
+        confirmDialog.classList.remove('show');
+        setTimeout(() => confirmDialog.remove(), 150);
+    }
     
     if (popup) {
         // Call the delete endpoint
@@ -220,7 +250,7 @@ function closeSharePopup(gameId) {
             console.error('Error deleting game:', error);
         })
         .finally(() => {
-            // Remove popup and overlay regardless of delete success
+            // Remove popup and overlay with animations
             popup.classList.remove('show');
             overlay.classList.remove('show');
             isSharePopupOpen = false;
@@ -229,7 +259,7 @@ function closeSharePopup(gameId) {
             setTimeout(() => {
                 popup.remove();
                 overlay.remove();
-            }, 300);
+            }, 150);
         });
     }
 }
@@ -1016,9 +1046,10 @@ function showErrorPopup(message) {
     errorPopup.className = 'error-popup';
     errorPopup.innerHTML = `
         <div class="error-content">
-            <i class="fas fa-exclamation-circle"></i>
+            <i class="fas fa-chess-king"></i>
+            <h3>Game in Progress</h3>
             <p>${message}</p>
-            <button onclick="this.closest('.error-popup').remove()">OK</button>
+            <button onclick="this.closest('.error-popup').remove()">Continue</button>
         </div>
     `;
     document.body.appendChild(errorPopup);
@@ -1027,6 +1058,15 @@ function showErrorPopup(message) {
     setTimeout(() => {
         errorPopup.classList.add('show');
     }, 10);
+
+    // Close on escape key
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            errorPopup.remove();
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
 }
 
 // Toggle play menu visibility
