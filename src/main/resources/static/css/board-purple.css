@@ -663,3 +663,44 @@ body {
     50% { transform: translate(-50%, -50%) rotate(5deg); }
     100% { transform: translate(-50%, -50%) rotate(0deg); }
 }
+
+/* Add en passant highlighting for purple theme */
+.tile.legal-move-en-passant::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 33%;
+    height: 33%;
+    background: #9f7aea;  /* Purple theme color */
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid #6b46c1;  /* Darker purple for border */
+    animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.tile.legal-move-en-passant::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(159, 122, 234, 0.15);  /* Light purple with transparency */
+    border: 2px solid #6b46c1;  /* Darker purple for border */
+    z-index: 1;
+    pointer-events: none;
+}
+
+.tile.legal-move-en-passant:hover::after {
+    animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: #6b46c1;  /* Darker purple on hover */
+    border: 2px solid #553c9a;  /* Even darker purple for border on hover */
+}
+
+.tile.legal-move-en-passant:hover::before {
+    background: rgba(159, 122, 234, 0.3);  /* More opaque purple on hover */
+    border: 2px solid #553c9a;  /* Even darker purple for border on hover */
+}
