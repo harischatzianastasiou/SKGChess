@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Error message fragment -->
+    <div th:fragment="error-message" class="error-message" th:if="${param.error}">
+        <div class="alert alert-danger" th:if="${param.error == 'unauthorized'}">
+            <i class="fas fa-exclamation-circle"></i>
+            You are not authorized to view this game. You must be a player in the game to access it.
+        </div>
+    </div>
+</body>
+</html> 

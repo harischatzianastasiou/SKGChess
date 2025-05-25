@@ -861,6 +861,9 @@
             
             <!-- Hero Section for authenticated users -->
             <section class="hero-section authenticated-hero" sec:authorize="isAuthenticated()">
+                <!-- Include error message fragment -->
+                <div th:replace="fragments/error-message :: error-message"></div>
+                
                 <div class="hero-content" sec:authorize="isAuthenticated()">
                     <div class="welcome-icon"></div>
                     <h1>Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>

@@ -76,10 +76,8 @@ class ChessGame {
         // Fetch initial game state
         await this.fetchGame();
 
-        // If this is the black player joining, show game start animation
-        if (this.playerColor === 'BLACK') {
-            this.showGameStartAnimation();
-        }
+        // Remove the redundant animation trigger for black player
+        // The animation will now only show when receiving the GAME_STARTED websocket message
     }
 
     initializeBoard() {
@@ -300,7 +298,7 @@ class ChessGame {
                             const moveData = JSON.parse(message.body);
                             
                             // Handle different message types
-                            if (moveData.type === 'GAME_STARTED') {
+                            if (moveData.boardDTO === 'GAME_STARTED') {
                                 // Update opponent's username in the UI
                                 const opponentPlayerName = document.getElementById('opponent-player-name');
                                 if (opponentPlayerName) {

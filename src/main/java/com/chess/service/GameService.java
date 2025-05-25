@@ -119,6 +119,11 @@ public class GameService {
                 throw new IllegalStateException("Game is already full");
             }
 
+            // Check if user is trying to join their own game
+            if (game.getWhitePlayer().getId().equals(joiningUser.getId())) {
+                throw new IllegalStateException("You cannot join your own game");
+            }
+
             // Set the black player
             game.setBlackPlayer(joiningUser);
             

@@ -45,6 +45,15 @@ public class MainController {
         String username = auth.getName();
         User currentUser = userService.getUserByUsername(username);
         
+        // Check if the current user is either the white or black player
+        boolean isAuthorized = gameDTO.getWhitePlayerId().equals(currentUser.getId()) || 
+                             (gameDTO.getBlackPlayerId() != null && gameDTO.getBlackPlayerId().equals(currentUser.getId()));
+        
+        if (!isAuthorized) {
+            // Redirect unauthorized users to the home page
+            return "redirect:/index?error=unauthorized";
+        }
+        
         // Add all necessary attributes to the model
         model.addAttribute("gameId", gameDTO.getId());
         model.addAttribute("whitePlayerId", gameDTO.getWhitePlayerId());
