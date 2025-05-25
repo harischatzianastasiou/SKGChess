@@ -2,10 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
     <!-- Error message fragment -->
-    <div th:fragment="error-message" class="error-message" th:if="${param.error}">
-        <div class="alert alert-danger" th:if="${param.error == 'unauthorized'}">
-            <i class="fas fa-exclamation-circle"></i>
-            You are not authorized to view this game. You must be a player in the game to access it.
+    <div th:fragment="error-message">
+        <div class="error-message" th:if="${param.error != null}">
+            <div class="alert alert-danger" th:if="${param.error[0] == 'unauthorized'}">
+                <div class="message-content">
+                    <i class="fas fa-exclamation-circle"></i>
+                    You are not authorized to view this game. You must be a player in the game to access it.
+                </div>
+                <i class="fas fa-times close-error" onclick="closeErrorMessage(event)"></i>
+            </div>
         </div>
     </div>
 </body>

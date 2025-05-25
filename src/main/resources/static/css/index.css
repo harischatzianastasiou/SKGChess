@@ -1357,25 +1357,63 @@ body.authenticated::before {
 
 /* Error message styles */
 .error-message {
-    margin: 20px auto;
+    margin: 0 auto 20px auto;
     max-width: 800px;
     padding: 0 20px;
+    position: fixed;
+    top: 120px; /* Moved down from 80px to 120px */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000000000;
+    width: 100%;
 }
 
 .alert {
-    padding: 15px;
+    padding: 15px 20px;
     border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between; /* Added to position close button */
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
+    animation: slideDown 0.3s ease-out;
 }
 
 .alert-danger {
-    background-color: rgba(220, 53, 69, 0.1);
-    color: #dc3545;
-    border: 1px solid rgba(220, 53, 69, 0.2);
+    background-color: rgba(220, 53, 69, 0.95);
+    color: white;
+    border: 1px solid rgba(220, 53, 69, 0.3);
 }
 
 .alert i {
+    font-size: 1.4em;
+}
+
+.alert .message-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.alert .close-error {
+    cursor: pointer;
+    padding: 5px;
     font-size: 1.2em;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.alert .close-error:hover {
+    opacity: 1;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
 }

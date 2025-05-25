@@ -2045,6 +2045,27 @@
                 hideNewspaper();
             }
         });
+
+        // Error message close functionality
+        function closeErrorMessage(event) {
+            // Find the error message container
+            const errorMessage = event.target.closest('.error-message');
+            if (errorMessage) {
+                // Add fade-out animation
+                errorMessage.style.opacity = '0';
+                errorMessage.style.transform = 'translate(-50%, -20px)';
+                
+                // Remove the element after animation
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 300);
+            }
+            
+            // Clean up the URL without refreshing the page
+            const url = new URL(window.location.href);
+            url.searchParams.delete('error');
+            window.history.replaceState({}, '', '/');
+        }
     </script>
 </body>
 </html> 
