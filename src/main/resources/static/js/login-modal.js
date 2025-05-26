@@ -357,7 +357,7 @@ function setupModalEventListeners() {
         const password = document.getElementById('modal-password').value;
         const remember = document.getElementById('modal-remember').checked;
         
-        // Submit form data to server
+        // Submit form data using our new handler
         submitLoginForm(username, password, remember);
     });
 }
@@ -385,6 +385,9 @@ function closeModal() {
     const modal = document.getElementById('login-modal');
     modal.classList.remove('active');
     
+    // Clear any error messages
+    clearLoginError();
+    
     // Restore body scrolling
     document.body.style.overflow = '';
     
@@ -392,13 +395,50 @@ function closeModal() {
     sessionStorage.removeItem('pendingAction');
 }
 
+// Function to show error message in the login form
+function showLoginError(message) {
+    // Remove any existing error message
+    const existingError = document.querySelector('.login-error');
+    if (existingError) {
+        existingError.remove();
+    }
+    
+    // Create error message element
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'login-error';
+    errorDiv.innerHTML = `
+        <div class="error-content">
+            <i class="fas fa-exclamation-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Insert error message after the password input group
+    const passwordGroup = document.querySelector('#login-form .form-group:nth-child(2)');
+    if (passwordGroup) {
+        passwordGroup.insertAdjacentElement('afterend', errorDiv);
+    }
+}
+
+// Function to clear error message
+function clearLoginError() {
+    const errorDiv = document.querySelector('.login-error');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+}
+
+
 /**
  * Submits the login form data to the server
  * @param {string} username - The username
  * @param {string} password - The password
  * @param {boolean} remember - Whether to remember the user
  */
-function submitLoginForm(username, password, remember) {
+// Function to submit login form
+async function submitLoginForm(username, password, remember) {
+    clearLoginError(); // Clear any existing error message
+    
     // Create form data
     const formData = new FormData();
     formData.append('username', username);
@@ -407,27 +447,31 @@ function submitLoginForm(username, password, remember) {
         formData.append('remember', 'on');
     }
     
-    // Submit form data to server
-    fetch('/login', {
-        method: 'POST',
-        body: formData,
-        credentials: 'same-origin' // Include cookies
-    })
-    .then(response => {
+    try {
+        // Submit form data to server
+        const response = await fetch('/login', {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin' // Include cookies
+        });
+        
         if (response.ok) {
-            // Reload the page without clearing pendingAction
+            // Login successful, reload the page
             window.location.reload();
         } else {
-            // Login failed, show error
-            return response.text().then(text => {
-                throw new Error(text || 'Login failed');
-            });
+            // Try to parse error response
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                const errorData = await response.json();
+                showLoginError(errorData.message || 'Invalid username or password');
+            } else {
+                showLoginError('Invalid username or password');
+            }
         }
-    })
-    .catch(error => {
-        // Show error message
-        alert('Login failed: ' + error.message);
-    });
+    } catch (error) {
+        console.error('Login error:', error);
+        showLoginError('An error occurred during login. Please try again.');
+    }
 }
 
 /**

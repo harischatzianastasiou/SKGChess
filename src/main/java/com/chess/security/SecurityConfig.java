@@ -37,6 +37,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CustomAuthenticationFailureHandler authenticationFailureHandler() {
+        return new CustomAuthenticationFailureHandler();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
             .formLogin(httpForm -> {
@@ -46,7 +51,7 @@ public class SecurityConfig {
                     .usernameParameter("username")
                     .passwordParameter("password")
                     .defaultSuccessUrl("/index", true)
-                    .failureUrl("/index?error=true")
+                    .failureHandler(authenticationFailureHandler())
                     .permitAll();
             })
             .oauth2Login(oauth2 -> {

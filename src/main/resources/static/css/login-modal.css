@@ -218,6 +218,7 @@
     background-clip: padding-box !important;
 }
 
+
 /* Firefox autofill */
 #login-modal .form-group input:autofill {
     background: rgba(26, 31, 38, 0.95) !important;
@@ -697,3 +698,45 @@
         right: 0.7rem;
     }
 }
+
+/* Login error message styling */
+.login-error {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #fee;
+    border: 1px solid #fcc;
+    color: #c00;
+}
+
+.login-error .error-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-error i {
+    font-size: 16px;
+    color: #c00;
+}
+
+.login-error span {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* Animation for error message */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-error {
+    animation: slideIn 0.3s ease-out forwards;
+} 
