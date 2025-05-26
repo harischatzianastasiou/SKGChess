@@ -94,9 +94,12 @@ function createLoginModal() {
                                     </button>
                                 </div>
                             </div>
-                            <div class="remember-me">
-                                <input type="checkbox" id="modal-remember" name="remember">
-                                <label for="modal-remember">Remember Me</label>
+                            <div class="remember-me-row">
+                                <div class="remember-me">
+                                    <input type="checkbox" id="modal-remember" name="remember">
+                                    <label for="modal-remember">Remember Me</label>
+                                </div>
+                                <div id="login-error-container"></div>
                             </div>
                             <button type="submit" class="login-btn">Log In</button>
                         </form>
@@ -187,9 +190,12 @@ function switchToLoginForm() {
                     </button>
                 </div>
             </div>
-            <div class="remember-me">
-                <input type="checkbox" id="modal-remember" name="remember">
-                <label for="modal-remember">Remember Me</label>
+            <div class="remember-me-row">
+                <div class="remember-me">
+                    <input type="checkbox" id="modal-remember" name="remember">
+                    <label for="modal-remember">Remember Me</label>
+                </div>
+                <div id="login-error-container"></div>
             </div>
             <button type="submit" class="login-btn">Log In</button>
         </form>
@@ -348,13 +354,20 @@ function setupModalEventListeners() {
         }
     });
     
+    // Clear error message when user types in username or password field
+    const usernameInput = document.getElementById('modal-username');
+    const passwordInput = document.getElementById('modal-password');
+    
+    usernameInput.addEventListener('input', clearLoginError);
+    passwordInput.addEventListener('input', clearLoginError);
+    
     // Handle form submission
     loginForm.addEventListener('submit', function(event) {
         event.preventDefault();
         
         // Get form data
-        const username = document.getElementById('modal-username').value;
-        const password = document.getElementById('modal-password').value;
+        const username = usernameInput.value;
+        const password = passwordInput.value;
         const remember = document.getElementById('modal-remember').checked;
         
         // Submit form data using our new handler
@@ -407,16 +420,14 @@ function showLoginError(message) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'login-error';
     errorDiv.innerHTML = `
-        <div class="error-content">
-            <i class="fas fa-exclamation-circle"></i>
-            <span>${message}</span>
-        </div>
+        <i class="fas fa-exclamation-circle"></i>
+        <span>${message}</span>
     `;
     
-    // Insert error message after the password input group
-    const passwordGroup = document.querySelector('#login-form .form-group:nth-child(2)');
-    if (passwordGroup) {
-        passwordGroup.insertAdjacentElement('afterend', errorDiv);
+    // Insert error message in the error container
+    const errorContainer = document.getElementById('login-error-container');
+    if (errorContainer) {
+        errorContainer.appendChild(errorDiv);
     }
 }
 
