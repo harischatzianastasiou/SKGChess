@@ -27,7 +27,15 @@ spring:
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
-    initialization-mode: always
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      idle-timeout: 300000
+      connection-timeout: 30000
+      max-lifetime: 1800000
+      validation-timeout: 5000
+      connection-test-query: SELECT 1
+      auto-commit: true
 
   web:
     resources:
