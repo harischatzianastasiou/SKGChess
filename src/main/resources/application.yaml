@@ -1,9 +1,23 @@
 # Common Configuration
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
+  address: ${SERVER_ADDRESS:0.0.0.0}
+  tomcat:
+    remote-ip-header: x-forwarded-for
+    protocol-header: x-forwarded-proto
   error:
     include-message: always
     include-binding-errors: always
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
 
 # Static resources
 spring:
@@ -13,6 +27,7 @@ spring:
     username: ${DATABASE_USERNAME:postgres}
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
+    initialization-mode: always
 
   web:
     resources:
@@ -34,6 +49,23 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        # Database creation and schema settings
+        hbm2ddl:
+          auto: update
+        # Connection settings
+        connection:
+          provider_disables_autocommit: true
+        # JDBC settings
+        jdbc:
+          batch_size: 50
+          batch_versioned_data: true
+        # Performance settings
+        order_inserts: true
+        order_updates: true
+        generate_statistics: true
+        # Schema settings
+        default_schema: public
+        default_catalog: skgchess
 
   security:
     oauth2:
