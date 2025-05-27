@@ -32,7 +32,6 @@ class ChessGame {
 
         // this.initializeBoard();
         this.setupEventListeners();
-        this.initializeArrowMarker();
         
         // Initialize gameId from URL
         this.gameId = window.location.pathname.split('/')[window.location.pathname.split('/').length - 1];
