@@ -28,14 +28,16 @@ spring:
     password: ${DATABASE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 5
-      minimum-idle: 2
-      idle-timeout: 300000
-      connection-timeout: 30000
-      max-lifetime: 1800000
-      validation-timeout: 5000
+      maximum-pool-size: 3
+      minimum-idle: 1
+      idle-timeout: 600000
+      connection-timeout: 60000
+      max-lifetime: 900000
+      validation-timeout: 10000
       connection-test-query: SELECT 1
-      auto-commit: true
+      auto-commit: false
+      pool-name: skgchess-pool
+      leak-detection-threshold: 60000
 
   web:
     resources:
@@ -52,25 +54,29 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    # Disabled show-sql for production
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        # Disabled format_sql for production
+        format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        # Reduced batch size for free tier
+        jdbc:
+          batch_size: 20
+          batch_versioned_data: true
+        # Disabled statistics for better performance
+        generate_statistics: false
+        # Added these settings for better performance
+        connection:
+          provider_disables_autocommit: false
+        # Cache settings for better performance
+        cache:
+          use_second_level_cache: false
+          use_query_cache: false
         # Database creation and schema settings
         hbm2ddl:
           auto: update
-        # Connection settings
-        connection:
-          provider_disables_autocommit: true
-        # JDBC settings
-        jdbc:
-          batch_size: 50
-          batch_versioned_data: true
-        # Performance settings
-        order_inserts: true
-        order_updates: true
-        generate_statistics: true
         # Schema settings
         default_schema: public
         default_catalog: skgchess
