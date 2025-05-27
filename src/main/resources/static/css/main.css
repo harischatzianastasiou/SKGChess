@@ -124,11 +124,6 @@ body {
     -ms-user-select: none;
 }
 
-.header.scrolled {
-    background: #000000; /* Changed to solid black to match the header */
-    box-shadow: var(--shadow-lg);
-}
-
 /* Logo Styles */
 .logo-container {
     display: flex;
@@ -195,35 +190,12 @@ body {
     opacity: 1;
 }
 
-/* Header Right Section */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    height: 100%;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-
 /* Username and Auth Section */
 .header-auth {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
     height: 100%;
-    user-select: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-}
-
-.user-welcome {
-    color: var(--text-color);
-    font-size: 0.95rem;
-    font-weight: 500;
-    white-space: nowrap;
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -359,41 +331,6 @@ body {
     box-shadow: var(--shadow-sm);
 }
 
-/* Stats Cards - Cleaner and more informative */
-.stat-card {
-    background: var(--primary-color);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: var(--border-radius-lg);
-    padding: var(--spacing-lg);
-    text-align: center;
-    transition: all var(--transition-normal);
-    position: relative;
-    overflow: hidden;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary-light);
-    box-shadow: var(--shadow-lg);
-}
-
-.stat-card h3 {
-    color: var(--text-secondary);
-    font-size: 1rem;
-    margin-bottom: var(--spacing-sm);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-}
-
-.stat-card span {
-    color: var(--text-color);
-    font-size: 2rem;
-    font-weight: bold;
-    background: linear-gradient(45deg, var(--primary-light), var(--accent-light));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
     .header {
@@ -403,17 +340,6 @@ body {
     
     .logo-img {
         height: 35px;
-    }
-
-    
-    .quick-actions-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
-        border-radius: var(--border-radius-lg);
-    }
-
-    .username-banner h3 {
-        font-size: 0.9rem;
     }
 
     .logout-btn {
@@ -540,20 +466,6 @@ body {
     overflow: visible;
 }
 
-.quick-actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
-    max-width: 1200px;
-    margin: 0 auto;
-    border-radius: var(--border-radius-lg);
-}
-
-.action-icon {
-    font-size: 2rem;
-    color: var(--primary-color);
-    margin-bottom: var(--spacing-sm);
-}
 
 /* Join Controls */
 .join-controls {

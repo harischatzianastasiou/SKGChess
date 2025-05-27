@@ -32,16 +32,14 @@
             <a href="/" class="logo-container">
                 <img src="/images/skgchess.svg" alt="SKG Chess Logo" class="logo-img">
             </a>
-            <div class="header-right">
-                <div sec:authorize="isAuthenticated()">
-                    <span sec:authentication="name" id="username" style="display: none;"></span>
-                    <form th:action="@{/logout}" method="post" style="display: inline;">
-                        <button type="submit" class="btn btn-sign-in">Sign Out</button>
-                    </form>
-                </div>
-                <div sec:authorize="!isAuthenticated()">
-                    <a href="/login" class="btn btn-sign-in">Sign In</a>
-                </div>
+            <div sec:authorize="isAuthenticated()">
+                <span sec:authentication="name" id="username" style="display: none;"></span>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-sign-in">Sign Out</button>
+                </form>
+            </div>
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/login" class="btn btn-sign-in">Sign In</a>
             </div>
         </header>
 

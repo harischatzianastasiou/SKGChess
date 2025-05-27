@@ -182,9 +182,6 @@
 
 /* Responsive Design */
 @media (max-width: 992px) {
-    .quick-actions-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
     
     .integrated-hero {
         min-height: auto;
@@ -213,11 +210,6 @@
     .hero-content p {
         font-size: 0.9rem;
     }
-
-    .quick-actions-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
     
     /* Adjust background sections for 1-column layout */
     .bg-section-1 {
@@ -225,19 +217,6 @@
         left: 0;
         height: 100%;
         clip-path: none;
-    }
-
-    .action-card {
-        min-height: 200px;
-        padding: 1.2rem;
-    }
-
-    .action-icon {
-        font-size: 2rem;
-    }
-
-    .action-card h3 {
-        font-size: 1.2rem;
     }
 }
 
@@ -277,10 +256,6 @@ body.authenticated::before {
     background: transparent;
 }
 
-/* Add specific styling for quick-actions-grid in authenticated view */
-.authenticated-hero .quick-actions-grid {
-    margin-top: 1rem; /* Match the non-authenticated version */
-}
 
 /* Remove the background from authenticated hero */
 .auth-hero-background {
@@ -288,8 +263,7 @@ body.authenticated::before {
 }
 
 /* Ensure content is visible over the background */
-.authenticated-hero .hero-content,
-.authenticated-hero .quick-actions-grid {
+.authenticated-hero .hero-content{
     position: relative;
     z-index: 2;
 }
