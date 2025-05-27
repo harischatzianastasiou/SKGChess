@@ -65,18 +65,6 @@
     height: 100%;
 }
 
-.bg-section-2 {
-    left: 33.33%;
-    width: 33.33%;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-}
-
-.bg-section-3 {
-    left: 66.66%;
-    width: 33.33%;
-    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
-}
-
 /* Background image containers */
 .bg-image-container {
     position: absolute;
@@ -108,25 +96,6 @@
     margin-top: -25%;
     margin-left: -30.5%;
     animation: none;
-}
-
-.bg-section-3 .bg-image {
-    max-width: 65%; /* Reduced from 70% to 65% */
-    max-height: 65%; /* Reduced from 70% to 65% */
-    transform: translateY(-20%); /* Move rook image up more (increased from -10%) */
-    margin-top: -30%; /* Reduced from 10% to 5% to move image up */
-    margin-left: -32%;
-    opacity: 1; /* Set default opacity to fully opaque */
-    transition: all 0.3s ease; /* Add smooth transition for all properties */
-    filter: none; /* Remove any filters */
-    animation: slowPan 30s infinite alternate ease-in-out; /* Keep animation for other sections */
-}
-
-/* Add hover effect for bg-section-3 image */
-.bg-section-3:hover .bg-image {
-    transform: translateY(-20%) scale(1.1); /* Scale up slightly on hover while maintaining position */
-    filter: brightness(1.2); /* Increase brightness on hover */
-    opacity: 1;
 }
 
 /* Animation for background images */
@@ -174,113 +143,6 @@
     animation: fadeInUp 0.8s ease-out 0.2s backwards;
 }
 
-/* Action Cards Grid - Now inside hero section */
-.quick-actions-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-    padding: 0.5rem;
-    margin-top: 22rem;
-    position: relative;
-    z-index: 2;
-}
-
-/* Enhanced Action Cards */
-.action-card {
-    background: rgba(26, 22, 37, 0.8);
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--border-radius-lg);
-    padding: 1.5rem;
-    transition: all 0.4s ease;
-    position: relative;
-    overflow: hidden;
-    min-height: 220px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    animation: fadeInUp 0.8s ease-out backwards;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.action-card:nth-child(1) { animation-delay: 0.2s; }
-.action-card:nth-child(2) { animation-delay: 0.4s; }
-.action-card:nth-child(3) { animation-delay: 0.6s; }
-
-.action-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, transparent, rgba(130, 90, 220, 0.1), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.5s ease;
-}
-
-/* Add a subtle glow effect to active cards */
-.action-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(130, 90, 220, 0.4);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 0 0 15px rgba(130, 90, 220, 0.2);
-}
-
-.action-card:hover::before {
-    transform: translateX(100%);
-}
-
-.action-content {
-    position: relative;
-    z-index: 1;
-    text-align: center;
-}
-
-.action-icon {
-    font-size: 2.5rem;
-    color: #553c9a;
-    margin-bottom: 1rem;
-    transition: transform 0.3s ease;
-}
-
-.action-card:hover .action-icon {
-    transform: scale(1.05) rotate(3deg);
-}
-
-.action-card h3 {
-    font-size: 1.3rem;
-    color: var(--text-color);
-    margin-bottom: 0.5rem;
-}
-
-.action-card p {
-    color: var(--text-secondary);
-    margin-bottom: 1.5rem;
-    line-height: 1.4;
-    font-size: 0.9rem;
-}
-
-/* Button Styles */
-.action-card .btn {
-    width: 100%;
-    padding: 0.8rem;
-    border-radius: var(--border-radius-md);
-    font-weight: 500;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.action-card .btn i {
-    transition: transform 0.3s ease;
-}
-
-.action-card .btn:hover i {
-    transform: translateX(5px);
-}
 
 /* Animations */
 @keyframes fadeInUp {
@@ -471,8 +333,13 @@ body.authenticated::before {
     text-align: center; /* Center the text */
 }
 
-/* Quote styling */
+/* Welcome Quote Styles */
 .welcome-quote {
+    text-align: center;  /* Center text */
+    margin: 30px 0;      /* Add margin top and bottom */
+    color: #fff;         /* White text */
+    font-style: italic;  /* Italic text */
+    position: relative;  /* For positioning quote marks */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -482,58 +349,11 @@ body.authenticated::before {
 }
 
 .quote-mark {
-    font-size: 1.8rem;
-    color: var(--primary-light);
-    font-family: serif;
-    line-height: 0.8;
-}
-
-.quote-text {
-    font-style: italic;
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 1.2rem;
-    max-width: 600px;
-    margin-top: 10rem;
-}
-
-/* Music Player Button Styles */
-.music-player {
-    position: fixed;      /* Fixed position */
-    bottom: 20px;        /* 20px from bottom */
-    right: 20px;         /* 20px from right */
-    z-index: 1000;       /* Ensure it's above other elements */
-    background: rgba(255, 255, 255, 0.1);  /* Semi-transparent background */
-    border: none;        /* No border */
-    border-radius: 50%;  /* Circular button */
-    cursor: pointer;     /* Show pointer cursor */
-    padding: 15px;       /* Add padding */
-    transition: all 0.3s ease;  /* Smooth transitions */
-}
-
-.music-player:hover {
-    background: rgba(255, 255, 255, 0.2);  /* Slightly more opaque on hover */
-    transform: scale(1.1);  /* Slightly larger on hover */
-}
-
-.music-player i {
-    font-size: 24px;     /* Icon size */
-    color: white;        /* Icon color */
-}
-
-/* Welcome Quote Styles */
-.welcome-quote {
-    text-align: center;  /* Center text */
-    margin: 30px 0;      /* Add margin top and bottom */
-    color: #fff;         /* White text */
-    font-style: italic;  /* Italic text */
-    position: relative;  /* For positioning quote marks */
-}
-
-.quote-mark {
     font-size: 2em;      /* Larger font for quote marks */
     color: rgba(255, 255, 255, 0.3);  /* Semi-transparent white */
     position: absolute;  /* Position absolutely */
+    font-family: serif;
+    line-height: 0.8;
 }
 
 .quote-mark:first-child {
@@ -550,6 +370,11 @@ body.authenticated::before {
     font-size: 1.2em;    /* Larger font for quote text */
     line-height: 1.6;    /* Line height for better readability */
     padding: 0 40px;     /* Add padding for quote marks */
+    font-style: italic;
+    text-align: center;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin-top: 10rem;
 }
 
 /* Active Games Section Styles */
@@ -688,18 +513,7 @@ body.authenticated::before {
     flex-grow: 1;
 }
 
-.game-player-info {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.player-label {
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.player-color, .opponent-name, .current-turn {
+.player-color {
     font-weight: 500;
 }
 
@@ -810,56 +624,6 @@ body.authenticated::before {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-}
-
-/* White pieces */
-.piece.w.p {
-    background-image: url('/images/white_p.png');
-}
-
-.piece.w.r {
-    background-image: url('/images/white_r.png');
-}
-
-.piece.w.n {
-    background-image: url('/images/white_n.png');
-}
-
-.piece.w.b {
-    background-image: url('/images/white_b.png');
-}
-
-.piece.w.q {
-    background-image: url('/images/white_q.png');
-}
-
-.piece.w.k {
-    background-image: url('/images/kingN.png');
-}
-
-/* Black pieces */
-.piece.b.p {
-    background-image: url('/images/pawnN1.png');
-}
-
-.piece.b.r {
-    background-image: url('/images/rookN1.png');
-}
-
-.piece.b.n {
-    background-image: url('/images/knightN1.png');
-}
-
-.piece.b.b {
-    background-image: url('/images/bishopN1.png');
-}
-
-.piece.b.q {
-    background-image: url('/images/queenN1.png');
-}
-
-.piece.b.k {
-    background-image: url('/images/kingN1.png');
 }
 
 /* Add keyframes for background travel animation */
