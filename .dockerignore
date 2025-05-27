@@ -1,47 +1,3 @@
-# flyctl launch added from .gitignore
-# Maven build directory
-**\target
-!**\.mvn\wrapper\maven-wrapper.jar
-
-# IDE files
-**\.idea
-**\*.iws
-**\*.iml
-**\*.ipr
-**\.settings
-**\.classpath
-**\.project
-**\.factorypath
-**\.vscode
-
-# Compiled class files
-**\*.class
-
-# Log files
-**\*.log
-
-# Package files
-**\*.jar
-**\*.war
-**\*.nar
-**\*.ear
-**\*.zip
-**\*.tar.gz
-**\*.rar
-
-# Environment files
-**\.env
-**\.env.local
-**\.env.*.local
-
-# Aider files
-**\.aider*
-
-# OS specific files
-**\.DS_Store
-**\Thumbs.db
-fly.toml
-
 # Git
 .git
 .gitignore
@@ -91,3 +47,6 @@ docs/
 *.tmp
 *.temp
 *.swp
+
+# Fly.io
+fly.toml
