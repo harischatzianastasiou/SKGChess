@@ -2,7 +2,7 @@
 .game-layout {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100vh;
     width: 100%;
     background-color: var(--color-background);
     overflow: hidden;
@@ -14,12 +14,13 @@
 /* Game Container */
 .game-container {
     display: grid;
-    grid-template-columns: var(--panel-width) 1fr var(--panel-width);
+    grid-template-columns: minmax(300px, 20%) 1fr minmax(300px, 20%);
     gap: 20px;
     flex: 1;
     padding: 20px;
     background: linear-gradient(135deg, #1a1625, #2d1f54);
     height: calc(100vh - 70px);
+    overflow: hidden;
 }
 
 /* Panel Styles */
@@ -32,7 +33,24 @@
     gap: 20px;
     border: 1px solid rgba(107, 70, 193, 0.1);
     height: 100%;
-    overflow-y: auto;
+    overflow: hidden;
+}
+
+/* Center panel with chess board */
+.center-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.board-wrapper {
+    aspect-ratio: 1;
+    max-height: 100%;
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Player Card Styles */
@@ -125,14 +143,16 @@
     text-transform: uppercase;
 }
 
-/* Move History */
+/* Move History with proper scrolling */
 .move-history {
     background: rgba(26, 22, 37, 0.8);
     border-radius: 12px;
     padding: 15px;
     border: 1px solid rgba(107, 70, 193, 0.15);
     flex: 1;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .move-history h3 {
@@ -151,9 +171,55 @@
     font-family: 'Lato', monospace;
     font-size: 0.9rem;
     color: var(--color-text);
+    overflow-y: auto;
+    padding-right: 5px;
 }
 
-/* Game Chat */
+/* Custom scrollbar styles */
+.moves-list::-webkit-scrollbar,
+.chat-messages::-webkit-scrollbar {
+    width: 4px;
+}
+
+.moves-list::-webkit-scrollbar-track,
+.chat-messages::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+}
+
+.moves-list::-webkit-scrollbar-thumb,
+.chat-messages::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 2px;
+}
+
+/* Message styles */
+.chat-message {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: rgba(26, 22, 37, 0.8);
+    border: 1px solid rgba(107, 70, 193, 0.15);
+    margin: 4px 0;
+}
+
+.chat-message .sender {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 4px;
+}
+
+.chat-message .content {
+    color: var(--color-text);
+}
+
+.chat-message .timestamp {
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 4px;
+    text-align: right;
+}
+
+/* Game Chat with proper scrolling */
 .game-chat {
     background: rgba(26, 22, 37, 0.8);
     border-radius: 12px;
@@ -162,11 +228,13 @@
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 .chat-messages {
     flex: 1;
     overflow-y: auto;
+    padding-right: 5px;
     margin-bottom: 15px;
     display: flex;
     flex-direction: column;

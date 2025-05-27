@@ -59,6 +59,20 @@ class ChessGame {
         // Reset all state
         this.selectedSourceTile = null;
         
+        // Initialize chat elements
+        this.chatMessages = document.getElementById('chat-messages');
+        this.chatInput = document.getElementById('chat-input');
+        this.sendMessageBtn = document.getElementById('send-message');
+        
+        // Bind chat event handlers
+        this.chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendChatMessage();
+            }
+        });
+        this.sendMessageBtn.addEventListener('click', () => this.sendChatMessage());
+        
         // Initialize the game asynchronously
         this.initializeGame();
     }
@@ -273,10 +287,9 @@ class ChessGame {
             return;
         }
         
-        const socket = new SockJS('/chess-websocket'); // Create a new SockJS connection
-        this.stompClient = Stomp.over(socket); // Wrap the socket with Stomp
+        const socket = new SockJS('/chess-websocket');
+        this.stompClient = Stomp.over(socket);
         
-        // Enable debug logging for STOMP
         this.stompClient.debug = function(str) {
             console.log('STOMP: ' + str);
         };
@@ -284,12 +297,9 @@ class ChessGame {
         this.stompClient.connect({}, 
             (frame) => {
                 console.log('Connected to WebSocket: ' + frame);
-                this.reconnectAttempts = 0; // Reset reconnection attempts on successful connection
+                this.reconnectAttempts = 0;
                 
-                // Subscribe to the queue messages for this session
-                console.log('Subscribing to /topic/game/' + this.gameId);
-                
-                // Check if stompClient is valid before subscribing
+                // Subscribe to game moves
                 if (this.stompClient && this.stompClient.connected) {
                     this.stompClient.subscribe('/topic/game/' + this.gameId, async (message) => {
                         console.log('Received WebSocket message for game ID:', this.gameId, 'Message:', message.body);
@@ -344,6 +354,16 @@ class ChessGame {
                             console.error('Error parsing WebSocket message:', error);
                         }
                     });
+                    
+                    // Subscribe to chat messages
+                    this.stompClient.subscribe('/topic/chat/' + this.gameId, (message) => {
+                        try {
+                            const chatMessage = JSON.parse(message.body);
+                            this.displayChatMessage(chatMessage);
+                        } catch (error) {
+                            console.error('Error parsing chat message:', error);
+                        }
+                    });
                 } else {
                     console.error('Cannot subscribe: stompClient is not connected');
                 }
@@ -352,11 +372,46 @@ class ChessGame {
                 console.error('STOMP connection error:', error);
             }
         );
+    }
+
+    sendChatMessage() {
+        const message = this.chatInput.value.trim();
+        if (!message || !this.stompClient || !this.stompClient.connected) return;
+        
+        const chatMessage = {
+            gameId: this.gameId,
+            message: message,
+            sender: this.username,
+            timestamp: Date.now()
+        };
+        
+        this.stompClient.send('/app/chat/' + this.gameId, {}, JSON.stringify(chatMessage));
+        this.chatInput.value = '';
+    }
     
-        // socket.onclose = function() {
-        //     console.log('WebSocket connection closed'); // Log when the connection is closed
-        //     handleDisconnect(); // Handle disconnection
-        // };
+    displayChatMessage(chatMessage) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message';
+        
+        const senderDiv = document.createElement('div');
+        senderDiv.className = 'sender';
+        senderDiv.textContent = chatMessage.sender;
+        
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'content';
+        contentDiv.textContent = chatMessage.message;
+        
+        const timestampDiv = document.createElement('div');
+        timestampDiv.className = 'timestamp';
+        const date = new Date(chatMessage.timestamp);
+        timestampDiv.textContent = date.toLocaleTimeString();
+        
+        messageDiv.appendChild(senderDiv);
+        messageDiv.appendChild(contentDiv);
+        messageDiv.appendChild(timestampDiv);
+        
+        this.chatMessages.appendChild(messageDiv);
+        this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
     }
 
     async handleTileClick(event) {
