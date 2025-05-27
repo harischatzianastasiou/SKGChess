@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login Modal</title>
+</head>
+<body>
+    <!-- Login Modal Fragment -->
+    <div th:fragment="loginModal">
+        <!-- Modal Container -->
+        <div id="login-modal" class="modal-overlay">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3 class="modal-title">Log in to Chess</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <!-- Google Sign In Button -->
+                    <button class="social-login-btn google-btn" onclick="handleGoogleSignIn()">
+                        <img src="https://www.google.com/favicon.ico" alt="Google Icon">
+                        Continue with Google
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="divider">
+                        <span class="divider-line"></span>
+                        <span class="divider-text">or</span>
+                        <span class="divider-line"></span>
+                    </div>
+
+                    <div id="login-form-container">
+                        <form id="login-form" class="login-form" action="/login" method="POST">
+                            <div class="form-group">
+                                <label for="modal-username">Email or username</label>
+                                <input type="text" id="modal-username" name="username" placeholder="Email or username" required autocomplete="username">
+                            </div>
+                            <div class="form-group">
+                                <label for="modal-password">Password</label>
+                                <div class="password-input">
+                                    <input type="password" id="modal-password" name="password" placeholder="Password" required autocomplete="current-password">
+                                    <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                                        <img src="/images/eye.svg" alt="Toggle password visibility">
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="remember-me-row">
+                                <div class="remember-me">
+                                    <input type="checkbox" id="modal-remember" name="remember">
+                                    <label for="modal-remember">Remember Me</label>
+                                </div>
+                                <div id="login-error-container"></div>
+                            </div>
+                            <button type="submit" class="login-btn">Log In</button>
+                        </form>
+                        <div class="modal-switch-msg">
+                            <span>Don't have an account?</span>
+                            <a href="#" class="modal-switch-link" onclick="switchToSignupForm()">Sign up</a>
+                        </div>
+                        <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Styles scoped to the modal -->
+        <style th:inline="css">
+            /* Modal styles for login popup */
+            #login-modal.modal-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.8);
+                display: none;
+                justify-content: center;
+                align-items: center;
+                z-index: 3000;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                backdrop-filter: blur(12px) saturate(180%);
+            }
+
+            #login-modal.modal-overlay.active {
+                opacity: 1;
+                visibility: visible;
+                display: flex;
+            }
+
+            #login-modal .modal-container {
+                width: 90%;
+                max-width: 500px;
+                max-height: 90vh;
+                overflow: hidden;
+                position: relative;
+                transform: translateY(-20px) scale(0.95);
+                transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+                border-radius: 24px;
+                box-shadow: 
+                    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+                    0 0 0 1px rgba(255, 255, 255, 0.1),
+                    0 0 40px rgba(0, 0, 0, 0.1);
+                border: none;
+                background: rgba(26, 31, 38, 0.6);
+                backdrop-filter: blur(8px);
+            }
+
+            #login-modal.modal-overlay.active .modal-container {
+                transform: translateY(0) scale(1);
+            }
+
+            /* Background wrapper that covers the entire modal */
+            #login-modal .modal-container::before {
+                content: '';
+                position: absolute;
+                top: 6%;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-image: url('/images/retrochess3.jpg');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                margin: -30px;
+                z-index: -1;
+                border: none;
+                opacity: 0.6;
+                transform: scale(1.1);
+            }
+
+            /* Overlay for better text readability */
+            #login-modal .modal-container::after {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(26, 31, 38, 0.5);
+                z-index: -1;
+            }
+
+            #login-modal .modal-header {
+                position: relative;
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+                align-items: flex-start;
+                padding: 0.7rem 1.25rem 0.7rem 1.25rem;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(4px);
+                gap: 0.5rem;
+            }
+
+            #login-modal .modal-title {
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #fff;
+                margin: 0;
+                letter-spacing: -0.5px;
+                background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                flex-shrink: 0;
+                z-index: 1;
+            }
+
+            #login-modal .modal-close {
+                position: absolute;
+                top: 0.5rem;
+                right: 1.25rem;
+                z-index: 10;
+                background: rgba(255, 255, 255, 0.08);
+                border: none;
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 1.5rem;
+                cursor: pointer;
+                padding: 0.5rem;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 12px;
+                width: 40px;
+                height: 40px;
+                backdrop-filter: blur(4px);
+            }
+
+            #login-modal .modal-close:hover {
+                color: #fff;
+                transform: rotate(90deg) scale(1.1);
+                background: rgba(255, 255, 255, 0.12);
+                box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            }
+
+            #login-modal .modal-body {
+                position: relative;
+                padding: 1.25rem;
+                overflow-y: auto;
+            }
+
+            /* Login form specific styles */
+            #login-modal .login-form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            #login-modal .form-group {
+                margin-bottom: 10px;
+            }
+
+            #login-modal .form-group label {
+                display: block;
+                margin-bottom: 4px;
+                color: #fff;
+                font-size: 0.875rem;
+                font-weight: 500;
+            }
+
+            #login-modal .form-group input {
+                width: 100%;
+                padding: 12px;
+                border-radius: 4px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgba(26, 31, 38, 0.7) !important;
+                color: #fff;
+                font-size: 1rem;
+                transition: all 0.3s ease;
+            }
+
+            #login-modal .form-group input:focus,
+            #login-modal .form-group input:hover {
+                border-color: #4A90E2;
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+                background: rgba(26, 31, 38, 0.95) !important;
+            }
+
+            /* Password visibility toggle */
+            #login-modal .password-input {
+                position: relative;
+            }
+
+            #login-modal .toggle-password {
+                position: absolute;
+                right: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: none;
+                border: none;
+                color: rgba(255, 255, 255, 0.6);
+                cursor: pointer;
+                padding: 4px;
+            }
+
+            #login-modal .toggle-password:hover {
+                color: #fff;
+            }
+
+            /* Social login button styles */
+            #login-modal .social-login-btn {
+                width: 100%;
+                padding: 0.75rem;
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                background: rgba(255, 255, 255, 0.08);
+                color: #fff;
+                font-weight: 600;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                transition: all 0.3s ease;
+                margin-bottom: 16px;
+            }
+
+            #login-modal .social-login-btn:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            #login-modal .social-login-btn img {
+                width: 20px;
+                height: 20px;
+            }
+
+            /* Divider styles */
+            #login-modal .divider {
+                display: flex;
+                align-items: center;
+                margin: 16px 0;
+                gap: 15px;
+            }
+
+            #login-modal .divider-line {
+                flex: 1;
+                height: 1px;
+                background: rgba(255, 255, 255, 0.1);
+            }
+
+            #login-modal .divider-text {
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 0.875rem;
+                text-transform: uppercase;
+            }
+
+            /* Login button style */
+            #login-modal .login-btn {
+                margin-top: 10px;
+                margin-bottom: 0.2rem;
+                background: #425007;
+                color: #fff;
+                width: 100%;
+                padding: 12px;
+                border-radius: 4px;
+                border: none;
+                font-weight: 700;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            #login-modal .login-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+            /* Remember me and links */
+            #login-modal .remember-me-row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 8px 0;
+            }
+
+            #login-modal .remember-me {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 0.9rem;
+            }
+
+            #login-modal .forgot-password {
+                display: block;
+                text-align: center;
+                margin-top: 12px;
+                color: rgba(255, 255, 255, 0.6);
+                text-decoration: none;
+                font-size: 0.875rem;
+                transition: color 0.3s ease;
+            }
+
+            #login-modal .forgot-password:hover {
+                color: #fff;
+                text-decoration: underline;
+            }
+
+            #login-modal .modal-switch-msg {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 0.2em;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.6);
+                margin: 1rem 0 0.2rem 0;
+            }
+
+            #login-modal .modal-switch-link {
+                color: #4A90E2;
+                font-weight: 600;
+                text-decoration: none;
+                margin-left: 0.2em;
+                cursor: pointer;
+                transition: color 0.2s;
+            }
+
+            #login-modal .modal-switch-link:hover {
+                color: #fff;
+                text-decoration: underline;
+            }
+
+            /* Mobile responsiveness */
+            @media (max-width: 480px) {
+                #login-modal .modal-header {
+                    padding: 0.5rem;
+                }
+                
+                #login-modal .modal-title {
+                    font-size: 1.1rem;
+                }
+                
+                #login-modal .modal-close {
+                    top: 0.3rem;
+                    right: 0.7rem;
+                }
+                
+                #login-modal .modal-body {
+                    padding: 1rem;
+                }
+            }
+        </style>
+
+        <!-- Your existing script -->
+        <script>
+            // Initialize modal functionality
+            document.addEventListener('DOMContentLoaded', function() {
+                // Get modal elements
+                const modal = document.getElementById('login-modal');
+                const closeBtn = modal.querySelector('.modal-close');
+                
+                // Setup close button handler
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        closeModal();
+                    });
+                }
+                
+                // Setup click outside handler
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                });
+
+                // Setup escape key handler
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && modal.classList.contains('active')) {
+                        closeModal();
+                    }
+                });
+
+                // Setup login button handler
+                const loginButtons = document.querySelectorAll('[onclick="openLoginModal()"]');
+                loginButtons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        openLoginModal();
+                    });
+                });
+            });
+
+            /**
+             * Creates the signup form HTML structure
+             */
+            function createSignupForm() {
+                return `
+                    <form id="signup-form" class="login-form" action="/signup" method="POST">
+                        <div class="form-group">
+                            <label for="modal-signup-username">Username</label>
+                            <input type="text" id="modal-signup-username" name="username" placeholder="Choose a username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-signup-email">Email</label>
+                            <input type="email" id="modal-signup-email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-signup-password">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="modal-signup-password" name="password" placeholder="Create a password" required>
+                                <button type="button" class="toggle-password" onclick="toggleSignupPasswordVisibility()">
+                                    <img src="/images/eye.svg" alt="Toggle password visibility">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-signup-confirm-password">Confirm Password</label>
+                            <div class="password-input">
+                                <input type="password" id="modal-signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
+                                <button type="button" class="toggle-password" onclick="toggleSignupConfirmPasswordVisibility()">
+                                    <img src="/images/eye.svg" alt="Toggle password visibility">
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="login-btn"> Login | Register </button>
+                    </form>
+                `;
+            }
+
+            /**
+             * Switches the modal content to show the signup form
+             */
+            function switchToSignupForm() {
+                const modalTitle = document.querySelector('.modal-title');
+                const loginFormContainer = document.getElementById('login-form-container');
+                // Update modal title
+                modalTitle.textContent = 'Sign up for Chess';
+                // Replace login form with signup form and switch message
+                loginFormContainer.innerHTML = `
+                    <form id="signup-form" class="login-form" action="/signup" method="POST">
+                        <div class="form-group">
+                            <label for="modal-signup-username">Username</label>
+                            <input type="text" id="modal-signup-username" name="username" placeholder="Choose a username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-signup-email">Email</label>
+                            <input type="email" id="modal-signup-email" name="email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-signup-password">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="modal-signup-password" name="password" placeholder="Create a password" required>
+                                <button type="button" class="toggle-password" onclick="toggleSignupPasswordVisibility()">
+                                    <img src="/images/eye.svg" alt="Toggle password visibility">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-signup-confirm-password">Confirm Password</label>
+                            <div class="password-input">
+                                <input type="password" id="modal-signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
+                                <button type="button" class="toggle-password" onclick="toggleSignupConfirmPasswordVisibility()">
+                                    <img src="/images/eye.svg" alt="Toggle password visibility">
+                                </button>
+                            </div>
+                        </div>
+                        <button type="submit" class="login-btn">Sign Up</button>
+                    </form>
+                    <div class="modal-switch-msg">
+                        <span>Already have an account?</span>
+                        <a href="#" class="modal-switch-link" onclick="switchToLoginForm()">Log in</a>
+                    </div>
+                `;
+                // Setup signup form event listeners
+                setupSignupFormEventListeners();
+            }
+
+            /**
+             * Switches the modal content back to the login form
+             */
+            function switchToLoginForm() {
+                const modalTitle = document.querySelector('.modal-title');
+                const loginFormContainer = document.getElementById('login-form-container');
+                // Update modal title
+                modalTitle.textContent = 'Log in to Chess';
+                // Replace signup form with login form and switch message
+                loginFormContainer.innerHTML = `
+                    <form id="login-form" class="login-form" action="/login" method="POST">
+                        <div class="form-group">
+                            <label for="modal-username">Email or username</label>
+                            <input type="text" id="modal-username" name="username" placeholder="Email or username" required autocomplete="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-password">Password</label>
+                            <div class="password-input">
+                                <input type="password" id="modal-password" name="password" placeholder="Password" required autocomplete="current-password">
+                                <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+                                    <img src="/images/eye.svg" alt="Toggle password visibility">
+                                </button>
+                            </div>
+                        </div>
+                        <div class="remember-me-row">
+                            <div class="remember-me">
+                                <input type="checkbox" id="modal-remember" name="remember">
+                                <label for="modal-remember">Remember Me</label>
+                            </div>
+                            <div id="login-error-container"></div>
+                        </div>
+                        <button type="submit" class="login-btn">Log In</button>
+                    </form>
+                    <div class="modal-switch-msg">
+                        <span>Don't have an account?</span>
+                        <a href="#" class="modal-switch-link" onclick="switchToSignupForm()">Sign up</a>
+                    </div>
+                    <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
+                `;
+                // Setup login form event listeners
+                setupModalEventListeners();
+            }
+
+            /**
+             * Submits the signup form data to the server
+             */
+            async function submitSignupForm(username, email, password) {
+                try {
+                    // Send data to server
+                    const response = await fetch('/api/users/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ username, email, password })
+                    });
+                    
+                    // Check the content type of the response
+                    const contentType = response.headers.get('content-type');
+                    if (contentType && contentType.includes('application/json')) {
+                        // Handle JSON response
+                        const data = await response.json();
+                        if (response.ok) {
+                            console.log('Created user:', data);
+                            
+                            // Perform immediate login
+                            const formData = new FormData();
+                            formData.append('username', data.credentials.username);
+                            formData.append('password', data.credentials.password);
+                            
+                            const loginResponse = await fetch('/login', {
+                                method: 'POST',
+                                body: formData,
+                                credentials: 'same-origin'
+                            });
+                            
+                            if (loginResponse.ok) {
+                                // Just hide the modal without closing it (to preserve pendingAction)
+                                const modal = document.getElementById('login-modal');
+                                modal.classList.remove('active');
+                                document.body.style.overflow = '';
+                                // Reload the page
+                                window.location.reload();
+                            } else {
+                                console.error('Auto-login failed, redirecting to login page');
+                                closeModal();
+                                window.location.href = '/index';
+                            }
+                        } else {
+                            // Handle JSON error response
+                            const errorMessage = data.error || data.message || 'Unknown error occurred';
+                            console.error('Server error:', data);
+                            alert('Signup failed: ' + errorMessage);
+                        }
+                    } else {
+                        // Handle non-JSON response
+                        const errorText = await response.text();
+                        console.error('Server returned non-JSON response:', errorText);
+                        if (response.status === 403) {
+                            alert('Access denied. Please try again later.');
+                        } else if (response.status === 400) {
+                            alert('Invalid input. Please check your details and try again.');
+                        } else {
+                            alert('An error occurred during signup. Please try again later.');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Network error:', error);
+                    alert('Network error occurred. Please check your connection and try again.');
+                }
+            }
+
+            /**
+             * Sets up event listeners for the signup form
+             */
+            function setupSignupFormEventListeners() {
+                const signupForm = document.getElementById('signup-form');
+                
+                signupForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    // Get form data
+                    const username = document.getElementById('modal-signup-username').value;
+                    const email = document.getElementById('modal-signup-email').value;
+                    const password = document.getElementById('modal-signup-password').value;
+                    const confirmPassword = document.getElementById('modal-signup-confirm-password').value;
+                    
+                    // Basic validation
+                    if (password !== confirmPassword) {
+                        alert('Passwords do not match');
+                        return;
+                    }
+
+                    // Validate username length
+                    if (username.length < 3 || username.length > 50) {
+                        alert('Username must be between 3 and 50 characters');
+                        return;
+                    }
+
+                    // Validate email format
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        alert('Please enter a valid email address');
+                        return;
+                    }
+                    
+                    // Submit form data to server
+                    submitSignupForm(username, email, password);
+                });
+            }
+
+            /**
+             * Toggles visibility of the signup password field
+             */
+            function toggleSignupPasswordVisibility() {
+                const passwordInput = document.getElementById('modal-signup-password');
+                passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+            }
+
+            /**
+             * Toggles visibility of the signup confirm password field
+             */
+            function toggleSignupConfirmPasswordVisibility() {
+                const passwordInput = document.getElementById('modal-signup-confirm-password');
+                passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+            }
+
+            /**
+             * Sets up event listeners for the modal
+             */
+            function setupModalEventListeners() {
+                const modal = document.getElementById('login-modal');
+                const closeBtn = modal.querySelector('.modal-close');
+                const loginForm = document.getElementById('login-form');
+                
+                // Close modal when clicking the close button
+                closeBtn.addEventListener('click', function() {
+                    closeModal();
+                });
+                
+                // Close modal when clicking outside the modal content
+                modal.addEventListener('click', function(event) {
+                    if (event.target === modal) {
+                        closeModal();
+                    }
+                });
+                
+                // Clear error message when user types in username or password field
+                const usernameInput = document.getElementById('modal-username');
+                const passwordInput = document.getElementById('modal-password');
+                
+                usernameInput.addEventListener('input', clearLoginError);
+                passwordInput.addEventListener('input', clearLoginError);
+                
+                // Handle form submission
+                loginForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    
+                    // Get form data
+                    const username = usernameInput.value;
+                    const password = passwordInput.value;
+                    const remember = document.getElementById('modal-remember').checked;
+                    
+                    // Submit form data using our new handler
+                    submitLoginForm(username, password, remember);
+                });
+            }
+
+            /**
+             * Opens the login modal
+             */
+            function openLoginModal() {
+                const modal = document.getElementById('login-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    setTimeout(() => {
+                        modal.classList.add('active');
+                        // Focus username input
+                        const usernameInput = document.getElementById('modal-username');
+                        if (usernameInput) {
+                            usernameInput.focus();
+                        }
+                    }, 10);
+                    // Prevent body scrolling
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+
+            /**
+             * Closes the login modal
+             */
+            function closeModal() {
+                const modal = document.getElementById('login-modal');
+                if (modal) {
+                    modal.classList.remove('active');
+                    setTimeout(() => {
+                        modal.style.display = 'none';
+                    }, 300); // Match transition duration
+                    // Restore body scrolling
+                    document.body.style.overflow = '';
+                }
+            }
+
+            // Function to show error message in the login form
+            function showLoginError(message) {
+                // Remove any existing error message
+                const existingError = document.querySelector('.login-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Create error message element
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'login-error';
+                errorDiv.innerHTML = `
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>${message}</span>
+                `;
+                
+                // Insert error message in the error container
+                const errorContainer = document.getElementById('login-error-container');
+                if (errorContainer) {
+                    errorContainer.appendChild(errorDiv);
+                }
+            }
+
+            // Function to clear error message
+            function clearLoginError() {
+                const errorDiv = document.querySelector('.login-error');
+                if (errorDiv) {
+                    errorDiv.remove();
+                }
+            }
+
+
+            /**
+             * Submits the login form data to the server
+             * @param {string} username - The username
+             * @param {string} password - The password
+             * @param {boolean} remember - Whether to remember the user
+             */
+            // Function to submit login form
+            async function submitLoginForm(username, password, remember) {
+                clearLoginError(); // Clear any existing error message
+                
+                // Create form data
+                const formData = new FormData();
+                formData.append('username', username);
+                formData.append('password', password);
+                if (remember) {
+                    formData.append('remember', 'on');
+                }
+                
+                try {
+                    // Submit form data to server
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        body: formData,
+                        credentials: 'same-origin' // Include cookies
+                    });
+                    
+                    if (response.ok) {
+                        // Login successful, reload the page
+                        window.location.reload();
+                    } else {
+                        // Try to parse error response
+                        const contentType = response.headers.get('content-type');
+                        if (contentType && contentType.includes('application/json')) {
+                            const errorData = await response.json();
+                            showLoginError(errorData.message || 'Invalid username or password');
+                        } else {
+                            showLoginError('Invalid username or password');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showLoginError('An error occurred during login. Please try again.');
+                }
+            }
+
+            /**
+             * Creates a new game directly after login
+             * @param {string} username - The username of the logged-in user
+             */
+            function createGameDirectly(username) {
+                // Create the request body
+                const requestBody = {
+                    username: username
+                };
+                
+                // Call the create game endpoint
+                fetch('/api/games', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`Failed to create game: ${response.status} ${response.statusText}. ${text}`);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data || !data.id) {
+                        throw new Error('Game ID not found in response');
+                    }
+                    
+                    // Clear the pending action
+                    sessionStorage.removeItem('pendingAction');
+                    
+                    // Store the game ID in sessionStorage to show popup after redirect
+                    sessionStorage.setItem('showGamePopup', data.id);
+                    
+                    // Redirect to index page instead of game page
+                    window.location.href = '/index';
+                })
+                .catch(error => {
+                    console.error("Error creating game:", error);
+                    alert(`Error creating game: ${error.message}`);
+                    
+                    // Clear the pending action
+                    sessionStorage.removeItem('pendingAction');
+                });
+            }
+
+            /**
+             * Shows the login modal when a user tries to access a protected feature
+             * @param {string} action - The action the user is trying to perform
+             */
+            function showLoginForAction(action) {
+                // Store the action in sessionStorage to handle after login
+                sessionStorage.setItem('pendingAction', action);
+                
+                // Create a guest user
+                const guestUsername = 'guest_' + Math.random().toString(36).substring(2, 15);
+                const guestEmail = guestUsername + '@example.com';
+                const guestPassword = Math.random().toString(36).substring(2, 15);
+                
+                // Submit the guest user credentials
+                submitSignupForm(guestUsername, guestEmail, guestPassword);
+            }
+
+            /**
+             * Handles the pending action after successful login
+             */
+            function handlePendingAction() {
+                const pendingAction = sessionStorage.getItem('pendingAction');
+                
+                if (pendingAction) {
+                    // Clear the pending action
+                    sessionStorage.removeItem('pendingAction');
+                    
+                    // Handle the action based on its type
+                    switch (pendingAction) {
+                        case 'newGame':
+                            newGame();
+                            break;
+                        case 'joinGame':
+                            showJoinGameDialog();
+                            break;
+                        default:
+                            console.log('Unknown pending action:', pendingAction);
+                    }
+                }
+            }
+
+            // Add password visibility toggle function
+            function togglePasswordVisibility() {
+                const passwordInput = document.getElementById('modal-password');
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+            }
+
+            // Add Google Sign In handler
+            function handleGoogleSignIn() {
+                // Redirect to the OAuth2 login endpoint
+                window.location.href = '/oauth2/authorization/google';
+            }
+
+            // Export functions for use in other scripts
+            window.openLoginModal = openLoginModal;
+            window.showLoginForAction = showLoginForAction;
+            window.handlePendingAction = handlePendingAction; 
+        </script>
+    </div>
+</body>
+</html> 
