@@ -398,21 +398,6 @@ body {
     background: var(--primary-dark);
 }
 
-/* Dual Morph Button */
-.dual-morph-btn {
-    min-width: 280px;
-    height: 56px;
-}
-
-.dual-morph-content.default {
-    font-size: 1em;
-    gap: 0.6em;
-}
-
-.dual-morph-content.default i {
-    font-size: 1.2em;
-}
-
 /* Close Button */
 .close-btn {
     background: none;
