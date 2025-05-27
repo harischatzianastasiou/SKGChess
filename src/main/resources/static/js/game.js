@@ -924,79 +924,6 @@ class ChessGame {
         }
     }
 
-    initializeArrowMarker() {
-        // Create SVG definitions for the arrow marker
-        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.style.position = 'absolute';
-        svg.style.width = '0';
-        svg.style.height = '0';
-        
-        const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
-        const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
-        marker.setAttribute("id", "arrowhead");
-        marker.setAttribute("markerWidth", "10");
-        marker.setAttribute("markerHeight", "7");
-        marker.setAttribute("refX", "9");
-        marker.setAttribute("refY", "3.5");
-        marker.setAttribute("orient", "auto");
-        
-        const polygon = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-        polygon.setAttribute("points", "0 0, 10 3.5, 0 7");
-        polygon.setAttribute("fill", "rgba(255, 255, 255, 0.7)");
-        
-        marker.appendChild(polygon);
-        defs.appendChild(marker);
-        svg.appendChild(defs);
-        document.body.appendChild(svg);
-    }
-
-    showLastMoveArrow(sourcePos, targetPos) {
-        // Remove existing arrow if any
-        if (this.lastMoveArrow) {
-            this.lastMoveArrow.remove();
-        }
-
-        // Clear previous highlights efficiently
-        const highlights = document.querySelectorAll('.last-move-highlight');
-        highlights.forEach(tile => tile.classList.remove('last-move-highlight'));
-
-        // Create SVG container with optimized attributes
-        const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        svg.setAttribute("class", "last-move-arrow");
-        svg.style.width = this.board.offsetWidth + "px";
-        svg.style.height = this.board.offsetHeight + "px";
-
-        // Calculate tile centers with optimized math
-        const tileSize = 70;
-        let sourceRow = Math.floor(sourcePos / 8);
-        let sourceCol = sourcePos % 8;
-        let targetRow = Math.floor(targetPos / 8);
-        let targetCol = targetPos % 8;
-
-        // Transform coordinates if player is black - optimized calculation
-        if (this.playerColor === 'BLACK') {
-            sourceRow = 7 - sourceRow;
-            sourceCol = 7 - sourceCol;
-            targetRow = 7 - targetRow;
-            targetCol = 7 - targetCol;
-        }
-
-        // Calculate positions with single operation
-        const startX = (sourceCol * tileSize) + (tileSize / 2);
-        const startY = (sourceRow * tileSize) + (tileSize / 2);
-        const endX = (targetCol * tileSize) + (tileSize / 2);
-        const endY = (targetRow * tileSize) + (tileSize / 2);
-
-        // Create path with optimized attributes
-        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        path.setAttribute("d", `M ${startX} ${startY} L ${endX} ${endY}`);
-
-        // Append elements efficiently
-        svg.appendChild(path);
-        this.board.appendChild(svg);
-        this.lastMoveArrow = svg;
-    }
-
     highlightLastMove(sourcePos, targetPos) {
         // Clear previous highlights
         document.querySelectorAll('.last-move-source, .last-move-target').forEach(tile => {
@@ -1009,16 +936,6 @@ class ChessGame {
         
         if (sourceTile) sourceTile.classList.add('last-move-source');
         if (targetTile) targetTile.classList.add('last-move-target');
-    }
-
-    showGameStartAnimation() {
-        const overlay = document.getElementById('game-start-overlay');
-        overlay.classList.add('show');
-        
-        // Remove the show class after animation completes
-        setTimeout(() => {
-            overlay.classList.remove('show');
-        }, 2000);
     }
 
     showGameEndPopup(winner, result, winnerUsername, winnerAvatar, loserUsername, loserAvatar) {
@@ -1055,101 +972,101 @@ class ChessGame {
             const style = document.createElement('style');
             style.id = 'game-end-popup-style';
             style.innerHTML = `
-#game-end-popup {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(40, 30, 60, 0.97);
-    color: #fff;
-    padding: 2.5rem 2.5rem 2rem 2.5rem;
-    border-radius: 18px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
-    z-index: 99999;
-    text-align: center;
-    min-width: 340px;
-    max-width: 95vw;
-    font-family: 'Poppins', sans-serif;
-    border: 2px solid var(--color-accent, #ffd700);
-    backdrop-filter: blur(6px);
-    animation: popupAppear 0.4s cubic-bezier(.68,-0.55,.27,1.55);
-}
-#game-end-popup .popup-close {
-    background: none;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 2.2rem;
-    height: 2.2rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    transition: background 0.2s, color 0.2s;
-}
-#game-end-popup .popup-close:hover {
-    background: #fff;
-    color: #222;
-}
-#game-end-popup .popup-title {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin-bottom: 0.2rem;
-    letter-spacing: 1px;
-}
-#game-end-popup .popup-subtitle {
-    font-size: 1.1rem;
-    color: #ffd700;
-    margin-bottom: 1.2rem;
-    font-weight: 500;
-}
-#game-end-popup .popup-players {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2.2rem;
-    margin-top: 1.2rem;
-}
-#game-end-popup .popup-player {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 90px;
-}
-#game-end-popup .popup-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    border: 3px solid #fff;
-    margin-bottom: 0.5rem;
-    object-fit: cover;
-    background: #222;
-}
-#game-end-popup .popup-winner .popup-avatar {
-    border: 3px solid var(--color-accent, #ffd700);
-    box-shadow: 0 0 12px 2px var(--color-accent, #ffd700);
-}
-#game-end-popup .popup-username {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-top: 0.2rem;
-    color: #fff;
-    text-shadow: 0 1px 2px #0008;
-}
-#game-end-popup .popup-winner .popup-username {
-    color: var(--color-accent, #ffd700);
-}
-#game-end-popup .popup-result-center {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #fff;
-    margin: 0 1.2rem;
-    align-self: center;
-}
-@keyframes popupAppear {
-    0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
+            #game-end-popup {
+                position: fixed;
+                top: 50%; left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(40, 30, 60, 0.97);
+                color: #fff;
+                padding: 2.5rem 2.5rem 2rem 2.5rem;
+                border-radius: 18px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+                z-index: 99999;
+                text-align: center;
+                min-width: 340px;
+                max-width: 95vw;
+                font-family: 'Poppins', sans-serif;
+                border: 2px solid var(--color-accent, #ffd700);
+                backdrop-filter: blur(6px);
+                animation: popupAppear 0.4s cubic-bezier(.68,-0.55,.27,1.55);
+            }
+            #game-end-popup .popup-close {
+                background: none;
+                color: #fff;
+                border: none;
+                border-radius: 50%;
+                width: 2.2rem;
+                height: 2.2rem;
+                font-size: 1.5rem;
+                cursor: pointer;
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                transition: background 0.2s, color 0.2s;
+            }
+            #game-end-popup .popup-close:hover {
+                background: #fff;
+                color: #222;
+            }
+            #game-end-popup .popup-title {
+                font-size: 2.2rem;
+                font-weight: 800;
+                margin-bottom: 0.2rem;
+                letter-spacing: 1px;
+            }
+            #game-end-popup .popup-subtitle {
+                font-size: 1.1rem;
+                color: #ffd700;
+                margin-bottom: 1.2rem;
+                font-weight: 500;
+            }
+            #game-end-popup .popup-players {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 2.2rem;
+                margin-top: 1.2rem;
+            }
+            #game-end-popup .popup-player {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                min-width: 90px;
+            }
+            #game-end-popup .popup-avatar {
+                width: 64px;
+                height: 64px;
+                border-radius: 50%;
+                border: 3px solid #fff;
+                margin-bottom: 0.5rem;
+                object-fit: cover;
+                background: #222;
+            }
+            #game-end-popup .popup-winner .popup-avatar {
+                border: 3px solid var(--color-accent, #ffd700);
+                box-shadow: 0 0 12px 2px var(--color-accent, #ffd700);
+            }
+            #game-end-popup .popup-username {
+                font-size: 1.1rem;
+                font-weight: 600;
+                margin-top: 0.2rem;
+                color: #fff;
+                text-shadow: 0 1px 2px #0008;
+            }
+            #game-end-popup .popup-winner .popup-username {
+                color: var(--color-accent, #ffd700);
+            }
+            #game-end-popup .popup-result-center {
+                font-size: 2rem;
+                font-weight: 700;
+                color: #fff;
+                margin: 0 1.2rem;
+                align-self: center;
+            }
+            @keyframes popupAppear {
+                0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
+                100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            }
             `;
             document.head.appendChild(style);
         }

@@ -512,23 +512,6 @@ function handleGameCreated(game) {
     }
 }
 
-// Function to handle disconnection and reconnection logic
-// function handleDisconnect() {
-//     if (stompClient !== null) {
-//         stompClient.disconnect(); // Disconnect the client
-//         stompClient = null; // Reset stompClient
-//     }
-
-//     if (reconnectAttempts < maxReconnectAttempts) {
-//         console.log('Attempting to reconnect...'); // Log reconnection attempt
-//         reconnectAttempts++; // Increment the reconnect attempts
-//         setTimeout(connect, 2000 * Math.pow(2, reconnectAttempts - 1)); // Exponential backoff for reconnection
-//     } else {
-//         console.error('Max reconnection attempts reached'); // Log max attempts reached
-//         // Show user-friendly error message
-//     }
-// }
-
 
 // Cleanup on page unload
 window.onbeforeunload = function() {
