@@ -4,8 +4,10 @@ FROM maven:3.9-eclipse-temurin-17-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy pom.xml and source code
+# Copy pom.xml first to cache dependencies
 COPY pom.xml .
+
+# Copy source code
 COPY src ./src
 
 # Build the application
