@@ -41,3 +41,53 @@
 **\.DS_Store
 **\Thumbs.db
 fly.toml
+
+# Git
+.git
+.gitignore
+
+# Maven
+target/
+!target/*.jar
+pom.xml
+pom.xml.asc
+*.jar
+*.war
+*.ear
+*.class
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Logs
+logs/
+*.log
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Build directories
+bin/
+build/
+dist/
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Test files
+**/test/
+**/tests/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp

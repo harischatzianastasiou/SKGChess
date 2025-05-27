@@ -1,11 +1,24 @@
-# Use OpenJDK 17 as the base image
-FROM eclipse-temurin:17-jdk-alpine
+# Build stage
+FROM maven:3.9-eclipse-temurin-17-alpine AS builder
 
-# Set the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy the JAR file into the container
-COPY target/*.jar app.jar
+# Copy pom.xml and source code
+COPY pom.xml .
+COPY src ./src
+
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:17-jre-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy the built artifact from builder stage
+COPY --from=builder /app/target/*.jar app.jar
 
 # Expose the port your app runs on
 EXPOSE 8080
