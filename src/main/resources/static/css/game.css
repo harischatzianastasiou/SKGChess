@@ -1,0 +1,232 @@
+/* Game Layout */
+.game-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--color-background);
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    padding-top: 70px;
+}
+
+/* Game Container */
+.game-container {
+    display: grid;
+    grid-template-columns: var(--panel-width) 1fr var(--panel-width);
+    gap: 20px;
+    flex: 1;
+    padding: 20px;
+    background: linear-gradient(135deg, #1a1625, #2d1f54);
+    height: calc(100vh - 70px);
+}
+
+/* Panel Styles */
+.left-panel, .right-panel {
+    background: #14121d;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border: 1px solid rgba(107, 70, 193, 0.1);
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Player Card Styles */
+.player-card {
+    background: linear-gradient(135deg, rgba(26, 22, 37, 0.92), rgba(42, 33, 85, 0.85));
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border: 1px solid rgba(107, 70, 193, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.player-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.player-details {
+    flex: 1;
+}
+
+.player-details h3 {
+    margin: 0 0 5px 0;
+    color: var(--color-text);
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.player-color-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+
+.white-player {
+    background: #fff;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+.black-player {
+    background: #000;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+.player-timer {
+    font-family: 'Lato', monospace;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* Game Controls */
+.game-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    background: rgba(26, 22, 37, 0.8);
+    border-radius: 12px;
+    border: 1px solid rgba(107, 70, 193, 0.15);
+}
+
+.game-controls button {
+    width: 100%;
+    height: 40px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+}
+
+/* Move History */
+.move-history {
+    background: rgba(26, 22, 37, 0.8);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(107, 70, 193, 0.15);
+    flex: 1;
+    overflow-y: auto;
+}
+
+.move-history h3 {
+    margin: 0 0 15px 0;
+    color: var(--color-text);
+    font-size: 1.1rem;
+    font-weight: 500;
+    position: relative;
+    padding-left: 20px;
+}
+
+.moves-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    font-family: 'Lato', monospace;
+    font-size: 0.9rem;
+    color: var(--color-text);
+}
+
+/* Game Chat */
+.game-chat {
+    background: rgba(26, 22, 37, 0.8);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(107, 70, 193, 0.15);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-input {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(107, 70, 193, 0.2);
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--color-text);
+    font-size: 0.9rem;
+}
+
+.chat-input button {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: var(--primary-color);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Game-specific animations */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 0.5; }
+}
+
+/* Responsive Design for Game Layout */
+@media (max-width: 768px) {
+    .game-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr auto;
+        height: auto;
+    }
+    
+    .left-panel, .right-panel {
+        height: auto;
+    }
+    
+    .player-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .moves-list {
+        grid-template-columns: 1fr;
+    }
+} 
