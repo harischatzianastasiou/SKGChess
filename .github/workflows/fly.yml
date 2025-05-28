@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           
       - name: Build with Maven
-        run: chmod +x mvnw && ./mvnw clean package -DskipTests
+        run: chmod +x mvnw && ./mvnw clean package -Dmaven.test.skip=true
         
       - name: Install Flyctl
         uses: superfly/flyctl-actions/setup-flyctl@master
