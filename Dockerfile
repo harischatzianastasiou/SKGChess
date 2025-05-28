@@ -1,5 +1,5 @@
 # Build stage
-FROM maven:3.9-eclipse-temurin-17-alpine AS builder
+FROM maven:3.8.4-openjdk-17-slim AS build
 
 # Set working directory
 WORKDIR /app
@@ -13,14 +13,14 @@ COPY src ./src
 # Build the application
 RUN mvn clean package -DskipTests
 
-# Runtime stage
-FROM eclipse-temurin:17-jre-alpine
+# Run stage
+FROM openjdk:17-slim
 
 # Set working directory
 WORKDIR /app
 
 # Copy the built artifact from builder stage
-COPY --from=builder /app/target/*.jar app.jar
+COPY --from=build /app/target/*.jar app.jar
 
 # Expose the port your app runs on
 EXPOSE 8080
