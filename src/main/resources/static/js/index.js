@@ -337,13 +337,14 @@ function copyGameId(gameId) {
 }
 
 function newGame() {
-    // Get the username from the welcome message span using data-username attribute
+    // Check if user is logged in
     const usernameElement = document.querySelector('span[data-username="true"]');
     if (!usernameElement) {
-        console.error('Username element not found');
-        alert('Error: Could not find username. Please try logging in again.');
+        // User is not logged in, show login modal
+        showLoginForAction('newGame');
         return;
     }
+
     const username = usernameElement.textContent;
     console.log("Username for matchmaking:", username);
     
