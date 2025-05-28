@@ -769,6 +769,8 @@
                     }, 300); // Match transition duration
                     // Restore body scrolling
                     document.body.style.overflow = '';
+                    // Clear any pending actions
+                    sessionStorage.removeItem('pendingAction');
                 }
             }
 
@@ -906,13 +908,21 @@
                 // Store the action in sessionStorage to handle after login
                 sessionStorage.setItem('pendingAction', action);
                 
-                // Create a guest user
-                const guestUsername = 'guest_' + Math.random().toString(36).substring(2, 15);
-                const guestEmail = guestUsername + '@example.com';
-                const guestPassword = Math.random().toString(36).substring(2, 15);
-                
-                // Submit the guest user credentials
-                submitSignupForm(guestUsername, guestEmail, guestPassword);
+                // Show the login modal with the same animation as openLoginModal
+                const modal = document.getElementById('login-modal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                    setTimeout(() => {
+                        modal.classList.add('active');
+                        // Focus username input
+                        const usernameInput = document.getElementById('modal-username');
+                        if (usernameInput) {
+                            usernameInput.focus();
+                        }
+                    }, 10);
+                    // Prevent body scrolling
+                    document.body.style.overflow = 'hidden';
+                }
             }
 
             /**

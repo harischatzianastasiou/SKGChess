@@ -558,17 +558,17 @@
     transition: transform 0.3s cubic-bezier(.22,1,.36,1), filter 0.3s;
 }
 .icon-side.left:hover i, .icon-side.left:focus i {
-    transform: scale(1.15) translateX(10px) rotate(-10deg);
+    transform: scale(1.15);
     filter: drop-shadow(0 2px 8px #fff8);
 }
 .icon-side.right:hover i, .icon-side.right:focus i {
-    transform: scale(1.15) translateX(-10px) rotate(10deg);
+    transform: scale(1.15);
     filter: drop-shadow(0 2px 8px #2228);
 }
 
 .icon-side:hover .icon-text {
     opacity: 1;
-    transform: translateX(0);
+    transform: none;
 }
 
 .icon-side.left:hover .icon-text {
@@ -1932,4 +1932,41 @@ body.authenticated::before {
     gap: 0.2rem;
     width: 100%;
     flex-wrap: wrap;
+}
+
+/* Scroll Indicator for Authenticated Users */
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    animation: bounce 2s infinite;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.scroll-indicator:hover {
+    opacity: 1;
+}
+
+.scroll-indicator i {
+    font-size: 1.5rem;
+}
+
+.scroll-indicator span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
+    40% { transform: translateY(-10px) translateX(-50%); }
+    60% { transform: translateY(-5px) translateX(-50%); }
 }
