@@ -589,33 +589,29 @@
                     // Check the content type of the response
                     const contentType = response.headers.get('content-type');
                     if (contentType && contentType.includes('application/json')) {
-                        // Handle JSON response
                         const data = await response.json();
                         if (response.ok) {
-                            console.log('Created user:', data);
-                            
-                            // Perform immediate login
-                            const formData = new FormData();
-                            formData.append('username', data.credentials.username);
-                            formData.append('password', data.credentials.password);
-                            
+                            // First login with the credentials
                             const loginResponse = await fetch('/login', {
                                 method: 'POST',
-                                body: formData,
-                                credentials: 'same-origin'
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                },
+                                body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
                             });
-                            
+
                             if (loginResponse.ok) {
-                                // Just hide the modal without closing it (to preserve pendingAction)
-                                const modal = document.getElementById('login-modal');
-                                modal.classList.remove('active');
-                                document.body.style.overflow = '';
-                                // Reload the page
-                                window.location.reload();
+                                // Wait a short moment to ensure session is established
+                                await new Promise(resolve => setTimeout(resolve, 1000));
+                                
+                                // Now create the game
+                                createGameDirectly(username);
+                                
+                                // Close the modal
+                                closeLoginModal();
                             } else {
-                                console.error('Auto-login failed, redirecting to login page');
-                                closeModal();
-                                window.location.href = '/index';
+                                console.error('Login failed after signup');
+                                alert('Signup successful but login failed. Please try logging in manually.');
                             }
                         } else {
                             // Handle JSON error response
@@ -855,29 +851,28 @@
              * Creates a new game directly after login
              * @param {string} username - The username of the logged-in user
              */
-            function createGameDirectly(username) {
-                // Create the request body
-                const requestBody = {
-                    username: username
-                };
-                
-                // Call the create game endpoint
-                fetch('/api/games', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                })
-                .then(response => {
+            async function createGameDirectly(username) {
+                try {
+                    // Create the request body
+                    const requestBody = {
+                        username: username
+                    };
+                    
+                    // Call the create game endpoint
+                    const response = await fetch('/api/games', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestBody)
+                    });
+
                     if (!response.ok) {
-                        return response.text().then(text => {
-                            throw new Error(`Failed to create game: ${response.status} ${response.statusText}. ${text}`);
-                        });
+                        const text = await response.text();
+                        throw new Error(`Failed to create game: ${response.status} ${response.statusText}. ${text}`);
                     }
-                    return response.json();
-                })
-                .then(data => {
+
+                    const data = await response.json();
                     if (!data || !data.id) {
                         throw new Error('Game ID not found in response');
                     }
@@ -890,14 +885,13 @@
                     
                     // Redirect to index page instead of game page
                     window.location.href = '/index';
-                })
-                .catch(error => {
+                } catch (error) {
                     console.error("Error creating game:", error);
                     alert(`Error creating game: ${error.message}`);
                     
                     // Clear the pending action
                     sessionStorage.removeItem('pendingAction');
-                });
+                }
             }
 
             /**
