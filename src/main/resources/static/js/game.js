@@ -75,6 +75,55 @@ class ChessGame {
         
         // Initialize the game asynchronously
         this.initializeGame();
+        
+        // Add sound effects
+        console.log('[Sound Debug] Initializing sound effects...');
+        this.sounds = {
+            move: new Audio('/audio/Move.wav'),
+            capture: new Audio('/audio/Capture.wav'),
+            check: new Audio('/audio/Check.wav')
+        };
+        
+        // Preload sounds with comprehensive debugging
+        Object.entries(this.sounds).forEach(([type, sound]) => {
+            console.log(`[Sound Debug] Initializing ${type} sound from ${sound.src}`);
+            
+            // Add error handler first
+            sound.addEventListener('error', (e) => {
+                console.error(`[Sound Debug] Error loading ${type} sound:`, {
+                    error: e,
+                    errorCode: sound.error?.code,
+                    errorMessage: sound.error?.message,
+                    readyState: sound.readyState,
+                    src: sound.src
+                });
+            });
+            
+            // Add success handlers
+            sound.addEventListener('loadeddata', () => {
+                console.log(`[Sound Debug] ${type} sound loaded successfully:`, {
+                    duration: sound.duration,
+                    readyState: sound.readyState,
+                    src: sound.src
+                });
+            });
+            
+            sound.addEventListener('canplaythrough', () => {
+                console.log(`[Sound Debug] ${type} sound can play through:`, {
+                    duration: sound.duration,
+                    readyState: sound.readyState,
+                    src: sound.src
+                });
+            });
+            
+            // Try to load the sound
+            try {
+                sound.load();
+                console.log(`[Sound Debug] Load called for ${type} sound`);
+            } catch (e) {
+                console.error(`[Sound Debug] Error calling load() for ${type} sound:`, e);
+            }
+        });
     }
     
     // Initialize the game asynchronously
@@ -334,9 +383,30 @@ class ChessGame {
                                     this.isPlayerTurn = false;
                                 }
                             } else if (moveData.type === 'MOVE_MADE') {
-                                console.log('Move made, fetching updated game state');
+                                console.log('[Sound Debug] Move made, processing move data:', moveData);
                                 await this.fetchGame();
-                                // No need to call updateBoard() here as it's called inside fetchGame()
+                                
+                                // Map move types to sound types
+                                const moveTypeToSound = {
+                                    'NORMAL': 'move',
+                                    'CAPTURE': 'capture',
+                                    'CHECK': 'check',
+                                    'CHECKMATE': 'check',
+                                    'CASTLE': 'move',
+                                    'EN_PASSANT': 'capture',
+                                    'PAWN_PROMOTION': 'move'
+                                };
+                                
+                                // Play sound based on move type
+                                if (moveData.moveType) {
+                                    console.log('[Sound Debug] Move type detected:', moveData.moveType);
+                                    const soundType = moveTypeToSound[moveData.moveType] || 'move';
+                                    console.log('[Sound Debug] Mapped to sound type:', soundType);
+                                    this.playSound(soundType);
+                                } else {
+                                    console.log('[Sound Debug] No move type in move data, defaulting to move sound');
+                                    this.playSound('move');
+                                }
                                 
                                 if (this.gameStatus === 'IN_PROGRESS') {
                                     // Check if it's the current player's turn
@@ -1126,6 +1196,57 @@ class ChessGame {
         }
     }
 
+    // Update the playSound method with better debugging
+    playSound(moveType) {
+        console.log(`[Sound Debug] Attempting to play sound for move type: ${moveType}`);
+        const sound = this.sounds[moveType.toLowerCase()];
+        
+        if (!sound) {
+            console.error(`[Sound Debug] No sound found for move type: ${moveType}`);
+            return;
+        }
+        
+        console.log(`[Sound Debug] Sound object state before playing:`, {
+            readyState: sound.readyState,
+            error: sound.error,
+            duration: sound.duration,
+            currentTime: sound.currentTime,
+            paused: sound.paused,
+            ended: sound.ended,
+            src: sound.src
+        });
+        
+        // Reset the sound to start
+        sound.currentTime = 0;
+        
+        // Try to play the sound
+        const playPromise = sound.play();
+        
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    console.log(`[Sound Debug] Successfully started playing ${moveType} sound`);
+                })
+                .catch(error => {
+                    console.error(`[Sound Debug] Error playing ${moveType} sound:`, {
+                        error: error,
+                        errorCode: sound.error?.code,
+                        errorMessage: sound.error?.message,
+                        readyState: sound.readyState,
+                        src: sound.src
+                    });
+                    
+                    // Try to reload and play again
+                    console.log(`[Sound Debug] Attempting to reload and play ${moveType} sound`);
+                    try {
+                        sound.load();
+                        sound.play().catch(e => console.error(`[Sound Debug] Second attempt to play failed:`, e));
+                    } catch (e) {
+                        console.error(`[Sound Debug] Error during reload attempt:`, e);
+                    }
+                });
+        }
+    }
 }
 
 // Initialize the game when the page loads

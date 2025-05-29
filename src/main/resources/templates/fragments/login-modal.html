@@ -605,10 +605,11 @@
                                 await new Promise(resolve => setTimeout(resolve, 1000));
                                 
                                 // Now create the game
-                                createGameDirectly(username);
+                                await createGameDirectly(username);
                                 
-                                // Close the modal
+                                // Close the modal and reload the page
                                 closeLoginModal();
+                                window.location.href = '/index?login=success';
                             } else {
                                 console.error('Login failed after signup');
                                 alert('Signup successful but login failed. Please try logging in manually.');
@@ -632,8 +633,8 @@
                         }
                     }
                 } catch (error) {
-                    console.error('Network error:', error);
-                    alert('Network error occurred. Please check your connection and try again.');
+                    console.error('Error during signup:', error);
+                    alert('An error occurred during signup. Please try again later.');
                 }
             }
 
@@ -801,7 +802,6 @@
                 }
             }
 
-
             /**
              * Submits the login form data to the server
              * @param {string} username - The username
@@ -829,8 +829,8 @@
                     });
                     
                     if (response.ok) {
-                        // Login successful, reload the page
-                        window.location.reload();
+                        // Login successful, redirect to index with success parameter
+                        window.location.href = '/index?login=success';
                     } else {
                         // Try to parse error response
                         const contentType = response.headers.get('content-type');

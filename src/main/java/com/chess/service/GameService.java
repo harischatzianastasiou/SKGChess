@@ -207,16 +207,32 @@ public class GameService {
                     && m.getTargetCoordinate() == targetCoordinate)
             .findFirst()
             .orElseThrow(() -> new InvalidMoveException("Invalid move"));
+            
         // Execute the move
         com.chess.core.board.IBoard newBoard = move.execute();
+        CurrentPlayer currentPlayer = (CurrentPlayer) newBoard.getCurrentPlayer();
 
-        // Play appropriate sound based on move type
+        // Create move data object
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode moveData = objectMapper.createObjectNode();
+        
+        // Add common move properties
+        moveData.put("sourceCoordinate", move.getSourceCoordinate());
+        moveData.put("targetCoordinate", move.getTargetCoordinate());
+        moveData.put("pieceSymbol", move.getPieceToMove().getPieceSymbol().toString());
+        moveData.put("pieceAlliance", move.getPieceToMove().getPieceAlliance().toString());
+        
+        // Determine move type for sound effects
         if(move instanceof CapturingMove) {
-            Sounduser.playCaptureSound();
+            moveData.put("moveType", "CAPTURE");
+        } else if(currentPlayer.isInCheck()) {
+            moveData.put("moveType", "CHECK");
+        } else if(currentPlayer.isCheckmate()) {
+            moveData.put("moveType", "CHECKMATE");
         } else {
-            Sounduser.playMoveSound();
+            moveData.put("moveType", "NORMAL");
         }
-            
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///   With each move a new currentBoard is created to represent the new state of the tiles and the turn of the next users.     //           
         ///   At least one tile has now changed to occupied or empty (tiles hold pieces).                                         // 
@@ -225,13 +241,10 @@ public class GameService {
         ///   Tiles, current user and opponent user are created with the currentBoard, and are immutable afterwards.                 //
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        CurrentPlayer currentPlayer = (CurrentPlayer) newBoard.getCurrentPlayer();
-
+        // Update game status based on board state
         if (currentPlayer.isCheckmate()) {
-            Sounduser.playCheckmateSound();
             game.setStatus(com.chess.model.entity.Game.GameStatus.CHECKMATE.name());
         } else if(currentPlayer.isDraw() == GameStatus.DRAW) {
-            Sounduser.playCheckSound();
             game.setStatus(com.chess.model.entity.Game.GameStatus.DRAW.name());
         } else if(currentPlayer.isDraw() == GameStatus.STALEMATE) {
             game.setStatus(com.chess.model.entity.Game.GameStatus.STALEMATE.name());
@@ -243,27 +256,9 @@ public class GameService {
             game.setStatus(com.chess.model.entity.Game.GameStatus.INSUFFICIENT_MATERIAL.name());
         } else if(currentPlayer.isInCheck()) {
             game.setStatus(com.chess.model.entity.Game.GameStatus.CHECK.name());
-            Sounduser.playCheckSound();
         }
         
-
-        // Store the serialized last move data and check for castling
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            ObjectNode moveData = objectMapper.createObjectNode();
-            
-            // Add common move properties
-            moveData.put("sourceCoordinate", move.getSourceCoordinate());
-            moveData.put("targetCoordinate", move.getTargetCoordinate());
-            moveData.put("pieceSymbol", move.getPieceToMove().getPieceSymbol().toString());
-            moveData.put("pieceAlliance", move.getPieceToMove().getPieceAlliance().toString());
-            
-            if (move instanceof com.chess.core.moves.noncapturing.PawnJumpMove) {
-                moveData.put("moveType", "PAWN_JUMP");
-            } else {
-                moveData.put("moveType", "NORMAL");
-            }
-            
             // Store the serialized move data
             game.setLastMoveData(objectMapper.writeValueAsString(moveData));
         } catch (JsonProcessingException e) {
@@ -279,7 +274,7 @@ public class GameService {
         
         // Save the game (which will cascade to save the position)
         return gameRepository.save(game);
-    } 
+    }
 
     @Transactional
     public void deleteGame(String gameId) {

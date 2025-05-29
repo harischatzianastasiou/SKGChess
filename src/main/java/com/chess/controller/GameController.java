@@ -146,13 +146,15 @@ public class GameController {
                 "\"whitePlayerUsername\":\"%s\"," +
                 "\"blackPlayerId\":\"%s\"," +
                 "\"blackPlayerUsername\":\"%s\"," +
-                "\"boardDTO\":%s}",
+                "\"boardDTO\":%s," +
+                "\"moveType\":\"%s\"}",
                 request.getGameId(),
                 game.getWhitePlayer().getId(),
                 game.getWhitePlayer().getUsername(),
                 game.getBlackPlayer().getId(),
                 game.getBlackPlayer().getUsername(),
-                objectMapper.writeValueAsString(game.getBoard())
+                objectMapper.writeValueAsString(game.getBoard()),
+                objectMapper.readTree(game.getLastMoveData()).get("moveType").asText()
             );
 
             messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
