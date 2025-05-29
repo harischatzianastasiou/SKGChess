@@ -126,6 +126,13 @@ public class SecurityConfig {
                 .contentSecurityPolicy(csp -> csp
                     .policyDirectives("default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws: http://localhost:*; img-src 'self' https: data:; form-action 'self' https: http://localhost:*;")
                 )
+                .httpStrictTransportSecurity(hsts -> hsts
+                    .includeSubDomains(true)
+                    .maxAgeInSeconds(31536000)
+                )
+            )
+            .requiresChannel(channel -> channel
+                .anyRequest().requiresSecure()
             )
             .build();
     }
