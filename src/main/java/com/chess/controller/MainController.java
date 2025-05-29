@@ -159,6 +159,11 @@ public class MainController {
     public String about(){
         return "about";
     }
+
+    @GetMapping("/health")
+    public String healthCheck() {
+        return "OK";
+    }
 }
 
 // Get requests to /req/login and /req/signup return HTML templates AS @Controller is for views
