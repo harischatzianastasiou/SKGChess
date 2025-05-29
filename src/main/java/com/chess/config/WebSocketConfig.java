@@ -32,7 +32,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chess-websocket")
-                .setAllowedOriginPatterns("http://localhost:[*]", "https://skgchess.fly.dev")
+                .setAllowedOriginPatterns(
+                    "http://localhost:[*]",
+                    "https://skgchess.fly.dev",
+                    "https://skgchess.com",
+                    "https://www.skgchess.com"
+                )
                 .withSockJS()
                 .setClientLibraryUrl("https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js")
                 .setWebSocketEnabled(true)

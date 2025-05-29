@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.chess.dto.rest.response.GameDTO;
 import com.chess.model.entity.Game;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 @Controller
+@CrossOrigin(origins = {"https://skgchess.com", "https://www.skgchess.com", "https://skgchess.fly.dev", "http://localhost:8080"}, maxAge = 3600)
 public class MainController {
 
     private final GameService gameService;

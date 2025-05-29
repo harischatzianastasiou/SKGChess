@@ -93,11 +93,22 @@ public class SecurityConfig {
                     "/index",
                     "/about",
                     "/oauth2/**",
-                    "/login/oauth2/**"
+                    "/login/oauth2/**",
+                    "/chess-websocket/**",
+                    "/topic/**",
+                    "/app/**"
                 ).permitAll();
                 registry.anyRequest().authenticated();
             })
-            .csrf(csrf -> csrf.disable())
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/chess-websocket/**", "/topic/**", "/app/**")
+            )
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+                .contentSecurityPolicy(csp -> csp
+                    .policyDirectives("default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws:; img-src 'self' https: data:;")
+                )
+            )
             .build();
     }
 
