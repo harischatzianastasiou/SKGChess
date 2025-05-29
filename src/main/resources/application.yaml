@@ -5,7 +5,9 @@ server:
   tomcat:
     remote-ip-header: x-forwarded-for
     protocol-header: x-forwarded-proto
+    port-header: x-forwarded-port
   use-forward-headers: true
+  forward-headers-strategy: framework
   error:
     include-message: always
     include-binding-errors: always
