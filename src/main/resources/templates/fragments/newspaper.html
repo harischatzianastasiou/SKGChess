@@ -76,6 +76,13 @@
             max-height: calc(100vh - 100px); /* Account for padding-top */
             border-radius: 8px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            &::-webkit-scrollbar {
+                display: none;
+            }
+            /* Hide scrollbar for IE, Edge and Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
         #newspaper-root .headerobjectswrapper {
             position: relative;
