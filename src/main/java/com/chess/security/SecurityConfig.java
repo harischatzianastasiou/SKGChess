@@ -50,14 +50,14 @@ public class SecurityConfig {
                     .loginProcessingUrl("/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/index", true)
+                    .defaultSuccessUrl("/index?login=true", true)
                     .failureHandler(authenticationFailureHandler())
                     .permitAll();
             })
             .oauth2Login(oauth2 -> {
                 oauth2
                     .loginPage("/index")
-                    .defaultSuccessUrl("/index", true)
+                    .defaultSuccessUrl("/index?login=true", true)
                     .failureUrl("/index?error=true")
                     .userInfoEndpoint(userInfo -> {
                         userInfo.userService(oauth2UserService());
@@ -72,8 +72,11 @@ public class SecurityConfig {
             })
             .logout(logout -> {
                 logout
-                    .logoutSuccessUrl("/")
-                    .deleteCookies("remember-me-cookie")
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/?logout=true")
+                    .deleteCookies("remember-me-cookie", "JSESSIONID")
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
                     .permitAll();
             })
             .exceptionHandling(exception -> {
@@ -85,6 +88,7 @@ public class SecurityConfig {
                     "/api/users/signup",
                     "/api/users/login",
                     "/login",
+                    "/logout",
                     "/game/**",
                     "/css/**",
                     "/js/**",
@@ -107,6 +111,8 @@ public class SecurityConfig {
                     "/api/users/signup",
                     "/api/users/login",
                     "/login",
+                    "/logout",
+                    "/api/games/**",
                     "/chess-websocket/**",
                     "/topic/**",
                     "/app/**"
