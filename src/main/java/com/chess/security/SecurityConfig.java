@@ -83,6 +83,8 @@ public class SecurityConfig {
                 registry.requestMatchers(
                     "/",
                     "/api/users/signup",
+                    "/api/users/login",
+                    "/login",
                     "/game/**",
                     "/css/**",
                     "/js/**",
@@ -101,7 +103,14 @@ public class SecurityConfig {
                 registry.anyRequest().authenticated();
             })
             .csrf(csrf -> csrf
-                .ignoringRequestMatchers("/chess-websocket/**", "/topic/**", "/app/**")
+                .ignoringRequestMatchers(
+                    "/api/users/signup",
+                    "/api/users/login",
+                    "/login",
+                    "/chess-websocket/**",
+                    "/topic/**",
+                    "/app/**"
+                )
             )
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())
