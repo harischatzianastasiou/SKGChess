@@ -618,7 +618,6 @@
                             // Handle JSON error response
                             const errorMessage = data.error || data.message || 'Unknown error occurred';
                             console.error('Server error:', data);
-                            alert('Signup failed: ' + errorMessage);
                         }
                     } else {
                         // Handle non-JSON response
@@ -629,12 +628,11 @@
                         } else if (response.status === 400) {
                             alert('Invalid input. Please check your details and try again.');
                         } else {
-                            alert('An error occurred during signup. Please try again later.');
+                            console.error('Error during signup:', errorText);
                         }
                     }
                 } catch (error) {
                     console.error('Error during signup:', error);
-                    alert('An error occurred during signup. Please try again later.');
                 }
             }
 
