@@ -130,6 +130,10 @@ public class GameController {
     @PostMapping(value = "/join", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> joinGame(@RequestBody @Valid JoinGameRequestDTO request) {
         try {
+            // Log the incoming join request
+            log.info("Processing join request for game {} by user {}", 
+                request.getGameId(), request.getUsername());
+
             // Join the game
             Game game = gameService.joinGame(
                 request.getGameId(), 
@@ -146,33 +150,40 @@ public class GameController {
                 "\"whitePlayerUsername\":\"%s\"," +
                 "\"blackPlayerId\":\"%s\"," +
                 "\"blackPlayerUsername\":\"%s\"," +
-                "\"boardDTO\":%s," +
-                "\"moveType\":\"%s\"}",
+                "\"boardDTO\":%s}",
                 request.getGameId(),
                 game.getWhitePlayer().getId(),
                 game.getWhitePlayer().getUsername(),
                 game.getBlackPlayer().getId(),
                 game.getBlackPlayer().getUsername(),
-                objectMapper.writeValueAsString(game.getBoard()),
-                objectMapper.readTree(game.getLastMoveData()).get("moveType").asText()
+                objectMapper.writeValueAsString(game.getBoard())
             );
 
+            // Send the message to the game topic
             messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
 
+            // Return the updated game state
             return ResponseEntity.ok()
                     .body(GameDTO.fromGame(game));
+
         } catch (UserAlreadyHasActiveGameException e) {
             // Log the exception
             log.error("User already has an active game: {}", e.getMessage());
             // Return a more specific error response
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponseDTO("Please finish or forfeit your current game before joining a new one"));
-        } catch (Exception e) {
+        } catch (GameNotFoundException e) {
             // Log the exception
-            log.error("Error joining game", e);
+            log.error("Game not found: {}", request.getGameId(), e);
+            // Return a more specific error response
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("Game not found"));
+        } catch (Exception e) {
+            // Log the exception with stack trace
+            log.error("Error joining game: {}", e.getMessage(), e);
             // Return an error response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponseDTO("Failed to join game"));
+                .body(new ErrorResponseDTO("Failed to join game: " + e.getMessage()));
         }
     }
 
