@@ -5,6 +5,7 @@ server:
   tomcat:
     remote-ip-header: x-forwarded-for
     protocol-header: x-forwarded-proto
+  use-forward-headers: true
   error:
     include-message: always
     include-binding-errors: always
