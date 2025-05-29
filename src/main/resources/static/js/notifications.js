@@ -40,9 +40,7 @@ function showNotification(message, type = 'info') {
 
 // Function to handle sign out
 function handleSignOut() {
-    // Show the sign out notification
-    showNotification('Signed Out Successfully', 'success');
-    
+
     // Wait for 1.5 seconds to show the notification before submitting the form
     setTimeout(() => {
         // Create and submit a form to trigger the logout

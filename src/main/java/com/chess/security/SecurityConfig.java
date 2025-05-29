@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.chess.service.UserService;
 
@@ -20,10 +21,12 @@ import com.chess.service.UserService;
 public class SecurityConfig {
 
     private final UserService userService;
+    private final String baseUrl;
 
     @Autowired
-    public SecurityConfig(UserService userService) {
+    public SecurityConfig(UserService userService, @Value("${app.base-url:http://localhost:8080}") String baseUrl) {
         this.userService = userService;
+        this.baseUrl = baseUrl;
     }
 
     @Bean
@@ -50,15 +53,15 @@ public class SecurityConfig {
                     .loginProcessingUrl("/login")
                     .usernameParameter("username")
                     .passwordParameter("password")
-                    .defaultSuccessUrl("/index?login=true", true)
+                    .defaultSuccessUrl(baseUrl + "/index?login=true", true)
                     .failureHandler(authenticationFailureHandler())
                     .permitAll();
             })
             .oauth2Login(oauth2 -> {
                 oauth2
                     .loginPage("/index")
-                    .defaultSuccessUrl("/index?login=true", true)
-                    .failureUrl("/index?error=true")
+                    .defaultSuccessUrl(baseUrl + "/index?login=true", true)
+                    .failureUrl(baseUrl + "/index?error=true")
                     .userInfoEndpoint(userInfo -> {
                         userInfo.userService(oauth2UserService());
                     });
@@ -73,7 +76,7 @@ public class SecurityConfig {
             .logout(logout -> {
                 logout
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/?logout=true")
+                    .logoutSuccessUrl(baseUrl + "/?logout=true")
                     .deleteCookies("remember-me-cookie", "JSESSIONID")
                     .invalidateHttpSession(true)
                     .clearAuthentication(true)
@@ -121,7 +124,7 @@ public class SecurityConfig {
             .headers(headers -> headers
                 .frameOptions(frame -> frame.sameOrigin())
                 .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws:; img-src 'self' https: data:;")
+                    .policyDirectives("default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws: http://localhost:*; img-src 'self' https: data:; form-action 'self' https: http://localhost:*;")
                 )
             )
             .build();

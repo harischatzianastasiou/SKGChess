@@ -9,6 +9,10 @@ server:
     include-message: always
     include-binding-errors: always
 
+# Application Configuration
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+
 # Actuator Configuration
 management:
   endpoints:
