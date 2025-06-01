@@ -2079,3 +2079,11 @@ body.authenticated::before {
 .main-buttons-container {
     margin-top: 1.5rem !important;
 }
+
+@media (max-width: 1000px) {
+    .hero-section {
+        background-size: cover;
+        background-repeat: no-repeat;
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess2.jpg');
+    }
+}
