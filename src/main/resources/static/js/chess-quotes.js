@@ -36,6 +36,12 @@ function updateWelcomeQuote() {
 }
 
 // Update the quote when the page loads
+// On small screens, always show the pin quote
 document.addEventListener('DOMContentLoaded', function() {
-    updateWelcomeQuote();
+    const quoteElement = document.querySelector('.welcome-quote .quote-text');
+    if (window.innerWidth < 600) {
+        if (quoteElement) quoteElement.textContent = 'The Pin is mightier than the sword.';
+    } else {
+        updateWelcomeQuote();
+    }
 }); 
