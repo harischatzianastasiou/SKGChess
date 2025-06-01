@@ -121,12 +121,14 @@ body {
     gap: var(--spacing-sm);
     height: 100%;
     width: 200px;
+    transition: width var(--transition-normal);
 }
 
 .logo-img {
     height: 100%;
     width: auto;
-    transition: transform var(--transition-fast);
+    max-height: 50px; /* Set a maximum height for the logo */
+    transition: all var(--transition-normal);
     object-fit: contain;
 }
 
@@ -135,6 +137,13 @@ body {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
+    height: 100%;
+}
+
+.header-auth > div {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Add a small gap between buttons */
     height: 100%;
 }
 
@@ -334,6 +343,8 @@ body {
     height: 36px;
     text-decoration: none;
     z-index: 10;
+    border-top-left-radius: var(--border-radius-md);
+    border-bottom-left-radius: var(--border-radius-md);
 }
 
 .btn-home:hover {
@@ -358,23 +369,34 @@ body {
 }
 
 /* Sign in/out buttons */
-.btn-sign-in, .btn-sign-out {
+.btn-sign-in, .btn-sign-out, .btn-home {
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--border-radius-md); /* Restore border radius for all buttons */
     background: transparent;
     color: var(--text-color);
     border: 1px solid var(--primary-color);
     text-decoration: none;
     font-weight: 500;
+    height: 40px;
+    white-space: nowrap;
+    transition: all var(--transition-normal);
 }
 
-.btn-sign-in:hover, .btn-sign-out:hover {
+.btn-sign-out {
+    border-top-right-radius: var(--border-radius-md);
+    border-bottom-right-radius: var(--border-radius-md);
+    border-left: none;
+}
+
+.btn-sign-in:hover, .btn-sign-out:hover, .btn-home:hover {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
 }
 
 /* Yes/No buttons */
@@ -545,32 +567,54 @@ body {
 /* Responsive Design */
 @media (max-width: 768px) {
     .header {
-        padding: var(--spacing-xs) var(--spacing-sm);
-        height: 60px;
+        padding: 10px;
+    }
+    
+    .logo-container {
+        width: 150px;
     }
     
     .logo-img {
-        height: 35px;
+        max-height: 40px;
     }
     
-    .hero-content h1 {
-        font-size: 3rem;
+    .header-auth {
+        gap: var(--spacing-sm);
     }
     
-    .hero-content p {
-        font-size: 1.2rem;
+    .header-auth > div {
+        gap: 3px; /* Slightly smaller gap on tablets */
     }
     
-    .section-header h2 {
-        font-size: 2rem;
-    }
-    
-    .stat-card span {
-        font-size: 1.8rem;
-    }
-    
-    .btn {
-        padding: var(--spacing-sm) var(--spacing-md);
+    .btn-sign-in, .btn-sign-out, .btn-home {
+        padding: 0.4rem 0.8rem;
         font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 8px;
+    }
+    
+    .logo-container {
+        width: 120px;
+    }
+    
+    .logo-img {
+        max-height: 35px;
+    }
+    
+    .header-auth {
+        gap: var(--spacing-xs);
+    }
+    
+    .header-auth > div {
+        gap: 2px; /* Even smaller gap on mobile */
+    }
+    
+    .btn-sign-in, .btn-sign-out, .btn-home {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.85rem;
     }
 }
