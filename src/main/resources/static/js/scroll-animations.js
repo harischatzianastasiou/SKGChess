@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to check if we're in the footer
     function isInFooter() {
-        return navigableElements[currentSectionIndex] === footer;
+        return document.activeElement && document.activeElement.classList.contains('site-footer');
     }
     
     // Function to check if we're in the quick-actions title area
@@ -172,8 +172,14 @@ document.addEventListener('DOMContentLoaded', function() {
         return contentArea.scrollHeight - contentArea.scrollTop - contentArea.clientHeight <= 10; // 10px threshold
     }
     
+    // 1. Enable section-based scrolling only for screens wider than 1000px
+    function isSectionScrollEnabled() {
+        return window.innerWidth > 1000;
+    }
+    
     // Handle wheel events for element-by-element scrolling
     window.addEventListener('wheel', function(event) {
+        if (!isSectionScrollEnabled()) return; // Only enable on large screens
         // Check if newspaper overlay is active
         const newspaperOverlay = document.getElementById('newspaperOverlay');
         if (newspaperOverlay && newspaperOverlay.style.display === 'block') {
@@ -222,12 +228,14 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Special handling for footer
         if (isInFooter()) {
-            // Only allow scrolling down from footer to next section
             if (scrollDown && isAtBottomOfSection()) {
                 event.preventDefault();
                 scrollToNextElement();
+            } else if (!scrollDown && isAtTopOfSection()) {
+                event.preventDefault();
+                scrollToPreviousElement(); // Go to previous section, not first
             }
-            // Allow natural scrolling up in footer
+            // Allow natural scrolling otherwise
             return;
         }
         
