@@ -4,16 +4,20 @@
 
 /* Hero Section Base Styles */
 .hero-section {
-    text-align: center;
-    padding: 2rem 2rem;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess4.jpg');
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 4vw 2vw;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess41.jpg');
     background-size: contain;
     background-position: center;
-    border-radius: var(--border-radius-lg);
-    margin-bottom: 2rem;
+    background-repeat: repeat;
+    border-radius: 2vw;
+    margin-bottom: 2vw;
     position: relative;
     overflow: hidden;
-    min-height: 100vh; /* Changed from default to 100vh to cover full viewport height */
     animation: backgroundTravel 45s infinite alternate ease-in-out; /* Added animation */
 }
 
@@ -85,10 +89,10 @@
 
 /* Enhanced animation for background images */
 .bg-image {
-    width: auto;
+    width: 18vw;
+    min-width: 5em;
+    max-width: 12em;
     height: auto;
-    max-width: 80%;
-    max-height: 80%;
     object-fit: contain;
     transform-origin: center;
     transition: all 0.5s ease;
@@ -124,11 +128,12 @@
 }
 
 .integrated-hero .hero-content {
-    margin-top: -2rem; /* Add negative margin to move content up */
     margin-bottom: 2rem;
     position: relative;
     z-index: 2; /* Ensure content appears above background */
     padding-top: 0; /* Remove top padding */
+    max-width: 600px; /* Prevents hero content from stretching too wide */
+    width: 100%;
 }
 
 .hero-content h1 {
@@ -154,11 +159,13 @@
 
 .main-buttons-container {
     display: flex;
-    gap: 20px;
+    flex-direction: row;
+    gap: 2vw;
     justify-content: center;
     align-items: center;
-    margin-top: 20rem; /* Increased from 2rem to move buttons down */
-    padding: 0 20px;
+    margin-top: 20vw !important;
+    margin-bottom: 0vw;
+    padding: 0 2vw;
 }
 
 .main-button {
@@ -191,6 +198,7 @@
     background-color: #553c9a;
     color: #333;
     border: 2px solid #333;
+    z-index: 3000;
 }
 
 .main-button.about:hover {
@@ -198,7 +206,6 @@
     background-color: #2d1f2e;
     transform: translateY(-2px);
 }
-
 
 .dual-morph-btn {
     display: inline-flex;
@@ -644,7 +651,7 @@
 
 @media (max-width: 768px) {
     .hero-section {
-        padding: 1.5rem 1rem;
+        padding: 2vw 1vw;
     }
 
     .integrated-hero {
@@ -757,46 +764,25 @@ body.authenticated::before {
 
 /* Welcome Quote Styles */
 .welcome-quote {
-    text-align: center;  /* Center text */
-    margin: 30px 0;      /* Add margin top and bottom */
-    color: #fff;         /* White text */
-    font-style: italic;  /* Italic text */
-    position: relative;  /* For positioning quote marks */
+    font-size: 1.5vw;
+    color: #bfc9d1;
+    text-align: center;
+    margin-top: 1vw;
+    max-width: 80vw;
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: 0.2rem;
-    width: 100%;
-    flex-wrap: wrap;
 }
 
 .quote-mark {
-    font-size: 2em;      /* Larger font for quote marks */
-    color: rgba(255, 255, 255, 0.3);  /* Semi-transparent white */
-    position: absolute;  /* Position absolutely */
-    font-family: serif;
-    line-height: 0.8;
-}
-
-.quote-mark:first-child {
-    left: -20px;         /* Position left quote mark */
-    top: -10px;          /* Move up slightly */
-}
-
-.quote-mark:last-child {
-    right: -20px;        /* Position right quote mark */
-    bottom: -10px;       /* Move down slightly */
+    font-size: 2em;
+    color: rgba(255,255,255,0.3);
 }
 
 .quote-text {
-    font-size: 1.2em;    /* Larger font for quote text */
-    line-height: 1.6;    /* Line height for better readability */
-    padding: 0 40px;     /* Add padding for quote marks */
-    font-style: italic;
-    text-align: center;
-    color: var(--text-secondary);
-    max-width: 600px;
-    margin-top: 10rem;
+    font-size: 1.2em;
+    padding: 0 2vw;
 }
 
 /* Active Games Section Styles */
@@ -1051,54 +1037,18 @@ body.authenticated::before {
 }
 
 
-.think-chess-text {
-    position: absolute;
-    left: 43%;
-    top: 1cap;
-    transform: translateY(55%);
-    font-family: 'Poppins', sans-serif;
-    font-size: 3.5rem;
-    font-weight: 700;
-    color: rgb(255, 255, 255);
-    z-index: 2;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    user-select: none; /* Prevent text selection */
-    -webkit-user-select: none; /* Safari */
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE/Edge */
-}
 
 .think-chess-text .dot {
     color: #553c9a;
-    font-size: 4rem;
-    margin-left: 2rem;      /* Added indentation for the second line */
+    font-size: 4.5vw;
+    margin-left: 1vw;
+    display: block; /* Force Chess. to new line */
+    margin-top: 0.1em; /* Optional: add spacing between lines */
 }
 
-/* Main buttons container styles */
-.main-buttons-container {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20rem; /* Increased from 2rem to move buttons down */
-    padding: 0 20px;
-}
-
-.main-button {
-    padding: 15px 30px;
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 500;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    min-width: 180px;
-    text-align: center;
+@media (max-width: 600px) {
+    .think-chess-text { font-size: 2rem; }
+    .think-chess-text .dot { font-size: 2.2rem; }
 }
 
 .main-button.get-started {
@@ -1118,6 +1068,7 @@ body.authenticated::before {
     background-color: #553c9a;
     color: #333;
     border: 2px solid #333;
+    z-index: 3000;
 }
 
 .main-button.about:hover {
@@ -1471,19 +1422,6 @@ body.authenticated::before {
     .chess-board-preview {
         max-width: 280px; /* Fixed width for smaller screens */
     }
-}
-
-.welcome-icon {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
-    display: block;
-    position: relative;
-    margin-bottom: 2rem;
-    background-image: url('/images/knight.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
 @keyframes enhancedBounceLogo {
@@ -1907,19 +1845,6 @@ body.authenticated::before {
    Welcome Section Styles
    ========================================================================== */
 
-.welcome-icon {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
-    display: block;
-    position: relative;
-    margin-bottom: 2rem;
-    background-image: url('/images/knight.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
 .welcome-quote {
     text-align: center;
     margin: 30px 0;
@@ -1969,4 +1894,170 @@ body.authenticated::before {
     0%, 20%, 50%, 80%, 100% { transform: translateY(0) translateX(-50%); }
     40% { transform: translateY(-10px) translateX(-50%); }
     60% { transform: translateY(-5px) translateX(-50%); }
+}
+
+/* Media Queries for Responsive Layout */
+@media (max-width: 768px) {
+    .welcome-icon {
+        width: 150px; /* Smaller size for mobile */
+        height: 150px;
+        margin-bottom: 1rem;
+    }
+
+    .think-chess-text {
+        position: static;
+        left: auto;
+        top: auto;
+        transform: none;
+        margin: 1rem 0;
+        text-align: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    .main-buttons-container {
+        flex-direction: column; /* Stack buttons vertically */
+        margin-top: 2rem !important; /* Reduce top margin */
+        gap: 1rem; /* Reduce gap between buttons */
+        padding: 0 1rem;
+    }
+
+    .main-button {
+        width: 100%; /* Full width buttons */
+        max-width: 300px; /* Maximum width for buttons */
+    }
+
+    .welcome-quote {
+        margin: 1.5rem 0;
+        font-size: 0.9rem;
+        padding: 0 1rem;
+    }
+}
+
+/* Additional breakpoint for very small screens */
+@media (max-width: 480px) {
+    .welcome-icon {
+        width: 120px;
+        height: 120px;
+    }
+
+    .think-chess-text {
+        font-size: 1.8rem;
+    }
+
+    .main-button {
+        max-width: 250px;
+    }
+}
+
+/* Flex column for welcome section */
+.welcome-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .welcome-section > * {
+        margin-bottom: 1.2rem;
+    }
+}
+
+/* Row for logo and text */
+.welcome-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 2rem;
+    gap: 1.5rem;
+}
+
+.welcome-icon {
+    width: clamp(90px, 18vw, 250px); /* Responsive: min 90px, max 250px, scales with viewport */
+    height: clamp(90px, 18vw, 250px);
+    margin: 0;
+    min-width: 60px;
+    min-height: 60px;
+    background-image: url('/images/knight.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.think-chess-text {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    display: flex;
+    align-items: left;
+    font-size: clamp(1.5rem, 5vw, 4vw);
+    font-weight: 700;
+    text-align: left;
+    margin: 0;
+    background: none;
+    width: auto;
+    justify-content: flex-start;
+    word-break: break-word;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    user-select: none; /* Prevent text selection */
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE/Edge */
+    font-family: 'Poppins', sans-serif;
+    flex-direction: column;
+}
+
+.think-chess-text .dot {
+    color: #553c9a;
+    font-size: clamp(1.8rem, 6vw, 4.5vw);
+    margin-left: 1vw;
+    display: block; /* Force Chess. to new line */
+    margin-top: 0.1em; /* Optional: add spacing between lines */
+}
+
+@media (max-width: 900px) {
+    .welcome-icon {
+        width: clamp(70px, 22vw, 180px);
+        height: clamp(70px, 22vw, 180px);
+    }
+    .think-chess-text {
+        font-size: clamp(1.2rem, 6vw, 2.5rem);
+    }
+    .think-chess-text .dot {
+        font-size: clamp(1.2rem, 7vw, 2.5rem);
+    }
+}
+
+@media (max-width: 600px) {
+    .welcome-row {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .welcome-icon {
+        width: clamp(60px, 32vw, 120px);
+        height: clamp(60px, 32vw, 120px);
+    }
+    .think-chess-text {
+        font-size: clamp(2.2rem, 12vw, 3.5rem); /* Much bigger on mobile */
+        text-align: center;
+        justify-content: center;
+    }
+    .think-chess-text .dot {
+        font-size: clamp(2.2rem, 13vw, 4rem); /* Much bigger on mobile */
+    }
+    .btn-sign-in {
+        font-size: 0.95rem;
+        padding: 0.5em 1em;
+        font-weight: 300;
+        width: auto;
+        white-space: nowrap;
+    }
+}
+
+.main-buttons-container {
+    margin-top: 1.5rem !important;
 }

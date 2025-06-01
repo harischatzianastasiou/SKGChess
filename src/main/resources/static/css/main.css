@@ -197,79 +197,77 @@ body {
     animation: fadeInUp 1s ease-out 0.2s backwards;
 }
 
-/* Footer */
+/* ================= FOOTER (RESPONSIVE) ================= */
 .site-footer {
-    background: rgb(35, 35, 35);
-    padding: var(--spacing-xl) var(--spacing-lg);
-    color: var(--text-secondary);
-    position: relative;
-    overflow: hidden;
+  background: rgb(35, 35, 35); /* Footer background */
+  padding: 6vw 3vw; /* Responsive padding */
+  color: var(--text-secondary); /* Footer text color */
+  position: relative; /* For stacking */
+  overflow: hidden; /* Hide overflow */
 }
 
 .site-footer::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+  content: ''; /* Decorative line */
+  position: absolute; /* Absolute positioning */
+  top: 0; left: 0; right: 0;
+  height: 0.1em; /* Responsive height */
+  background: linear-gradient(90deg, transparent, var(--primary-light), transparent); /* Gradient line */
 }
 
 .footer-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-xl);
-    max-width: 1200px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
+  display: grid; /* Use grid for layout */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* Responsive columns */
+  gap: 3vw; /* Responsive gap */
+  max-width: 1200px; /* Max width for large screens */
+  margin: 0 auto; /* Center horizontally */
+  position: relative; /* For stacking */
+  z-index: 1; /* Above background */
 }
 
 .footer-section h3 {
-    color: var(--text-color);
-    margin-bottom: var(--spacing-md);
+  color: var(--text-color); /* Section title color */
+  margin-bottom: 2vw; /* Responsive margin */
 }
 
 .footer-section ul {
-    list-style: none;
+  list-style: none; /* Remove bullets */
 }
 
 .footer-section ul li {
-    margin-bottom: var(--spacing-sm);
+  margin-bottom: 1vw; /* Responsive margin */
 }
 
-/* Social Links */
 .social-links {
-    display: flex;
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-md);
+  display: flex; /* Flexbox for layout */
+  gap: 2vw; /* Responsive gap */
+  margin-top: 2vw; /* Responsive margin */
 }
 
 .social-link {
-    color: var(--text-secondary);
-    font-size: 1.4rem;
-    transition: all var(--transition-normal);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary); /* Social icon color */
+  font-size: 2vw; /* Responsive icon size */
+  transition: all 0.4s; /* Smooth transition */
+  display: inline-flex; /* Inline flex for icons */
+  align-items: center; /* Center vertically */
+  justify-content: center; /* Center horizontally */
+  width: 3em; /* Responsive width */
+  height: 3em; /* Responsive height */
+  border-radius: 50%; /* Circular icons */
+  background: rgba(255, 255, 255, 0.05); /* Subtle background */
 }
 
 .social-link:hover {
-    color: var(--primary-light);
-    background: rgba(74, 144, 226, 0.1);
-    transform: translateY(-3px);
+  color: var(--primary-light); /* Highlight on hover */
+  background: rgba(74, 144, 226, 0.1); /* Subtle background on hover */
+  transform: translateY(-0.3em); /* Lift on hover */
 }
 
 .footer-bottom {
-    text-align: center;
-    margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-lg);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center; /* Center text */
+  margin-top: 4vw; /* Responsive margin */
+  padding-top: 2vw; /* Responsive padding */
+  border-top: 0.1em solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  font-size: 1em; /* Responsive font size */
 }
 
 /* Buttons - Base styles */

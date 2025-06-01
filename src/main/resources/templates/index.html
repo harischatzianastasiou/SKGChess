@@ -103,46 +103,36 @@
         <main class="main-content fade-in">
             <!-- Integrated Hero Section with Cards -->
             <section class="hero-section integrated-hero" sec:authorize="!isAuthenticated()">
-                <!-- Background sections with diagonal dividers -->
-                <div class="hero-background">
-                    <div class="bg-section bg-section-1" data-card="new-game">
-                        <div class="bg-image-container">
-                            <div class="think-chess-text">Skg<span class="dot"> Chess.</span></div>
-                            <img src="/images/knight.png" alt="New Game Background" class="bg-image">
-                        </div>
+                <div class="welcome-section">
+                    <div class="welcome-row">
+                        <div class="welcome-icon"></div>
+                        <div class="think-chess-text">Skg<br><span class="dot">Chess.</span></div>
                     </div>
-                </div>
-                
-                <div class="hero-content">
-                    <!-- Main buttons container -->
                     <div class="main-buttons-container">
                         <div class="dual-morph-btn-wrapper" style="position: relative; display: inline-block;">
                             <div class="dual-morph-btn">
-                              <div class="dual-morph-content default">
+                                <div class="dual-morph-content default">
                                 <i class="lni lni-play"></i> Quick Game
-                              </div>
-                              <div class="dual-morph-content dual">
+                                </div>
+                                <div class="dual-morph-content dual">
                                 <div class="icon-side left" tabindex="0">
-                                  <i class="lni lni-crown white-icon"></i>
-                                  <span class="icon-text">Create</span>
+                                    <i class="lni lni-crown white-icon"></i>
+                                    <span class="icon-text">Create</span>
                                 </div>
                                 <div class="icon-side right" tabindex="0">
-                                  <i class="lni lni-crown black-icon"></i>
-                                  <span class="icon-text">Join</span>
+                                    <i class="lni lni-crown black-icon"></i>
+                                    <span class="icon-text">Join</span>
                                 </div>
-                              </div>
+                                </div>
                             </div>
                         </div>
                         <a href="#" onclick="showNewspaper(); return false;" class="main-button about">About SKG Chess</a>
                     </div>
-
-                    <!-- Quote styling for non-authenticated users -->
                     <div class="welcome-quote">
                         <span class="quote-mark">"</span>
                         <p class="quote-text" id="quote-text"></p>
                         <span class="quote-mark">"</span>
                     </div>
-
                 </div>
             </section>
             
