@@ -2064,6 +2064,16 @@ body.authenticated::before {
         padding-left: 0.5em;
         padding-right: 0.5em;
     }
+    .welcome-quote {
+        font-size: 0.9rem;      /* or even 0.8rem for extra small */
+        padding: 0 0.5rem;
+    }
+    .welcome-quote .quote-text {
+        font-size: 1em;         /* Ensures it doesn't get too large */
+    }
+    .welcome-quote .quote-mark {
+        font-size: 1.2em;       /* Adjust quote mark size if needed */
+    }
 }
 
 .main-buttons-container {
