@@ -33,6 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to scroll to a specific element
     function scrollToElement(element, index) {
+        // Prevent section scrolling on mobile
+        if (!isSectionScrollEnabled()) return;
+        
         // Prevent multiple scroll events and check debounce time
         const currentTime = Date.now();
         if (isScrolling || currentTime - lastScrollTime < scrollDebounceTime) return;
@@ -50,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             element.classList.add('section-visible');
             isScrolling = false;
-        }, 500); // Increased timeout to ensure animation completes
+        }, 500);
     }
     
     // Function to scroll to the next element
@@ -286,7 +289,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let touchStartY = 0;
     
     function touchMoveHandler(event) {
-        if (!isSectionScrollEnabled()) return; // Only enable on large screens
+        // First check if section scroll is enabled
+        if (!isSectionScrollEnabled()) {
+            return; // Exit early if on mobile screen
+        }
+
         // Check if the event originated from a scrollable container
         const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
         const quickActions = event.target.closest('.quick-actions');
@@ -527,4 +534,31 @@ document.addEventListener('DOMContentLoaded', function() {
     // Call on load and on resize
     removeNavDotsIfSmallScreen();
     window.addEventListener('resize', removeNavDotsIfSmallScreen);
+
+    // Function to handle mobile detection and cleanup
+    function handleMobileDetection() {
+        if (!isSectionScrollEnabled()) {
+            // Remove all section-based scroll event listeners
+            window.removeEventListener('wheel', wheelHandler);
+            window.removeEventListener('touchmove', touchMoveHandler);
+            document.removeEventListener('keydown', keydownHandler);
+            
+            // Remove navigation dots if they exist
+            const navDots = document.querySelector('.nav-dots');
+            if (navDots) navDots.remove();
+            
+            // Enable natural scrolling
+            document.body.style.overflow = 'auto';
+            document.documentElement.style.overflow = 'auto';
+        } else {
+            // Re-add event listeners for desktop
+            window.addEventListener('wheel', wheelHandler, { passive: false });
+            window.addEventListener('touchmove', touchMoveHandler, { passive: false });
+            document.addEventListener('keydown', keydownHandler);
+        }
+    }
+
+    // Call handleMobileDetection on load and resize
+    handleMobileDetection();
+    window.addEventListener('resize', handleMobileDetection);
 }); 
