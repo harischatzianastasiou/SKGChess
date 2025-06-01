@@ -178,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Handle wheel events for element-by-element scrolling
-    window.addEventListener('wheel', function(event) {
+    function wheelHandler(event) {
         if (!isSectionScrollEnabled()) return; // Only enable on large screens
         // Check if newspaper overlay is active
         const newspaperOverlay = document.getElementById('newspaperOverlay');
@@ -279,23 +279,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }, 50);
-    }, { passive: false });
+    }
+    window.addEventListener('wheel', wheelHandler, { passive: false });
     
     // Handle touch events for mobile devices
     let touchStartY = 0;
     
-    window.addEventListener('touchstart', function(event) {
-        // Check if the event originated from a scrollable container
-        const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
-        if (scrollableParent) {
-            // Allow natural touch handling within scrollable containers
-            return;
-        }
-        
-        touchStartY = event.touches[0].clientY;
-    }, { passive: true });
-    
-    window.addEventListener('touchmove', function(event) {
+    function touchMoveHandler(event) {
+        if (!isSectionScrollEnabled()) return; // Only enable on large screens
         // Check if the event originated from a scrollable container
         const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
         const quickActions = event.target.closest('.quick-actions');
@@ -344,10 +335,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update touch start position
             touchStartY = touchEndY;
         }
-    }, { passive: false });
+    }
+    window.addEventListener('touchmove', touchMoveHandler, { passive: false });
     
     // Add keyboard navigation for accessibility
-    document.addEventListener('keydown', function(event) {
+    function keydownHandler(event) {
+        if (!isSectionScrollEnabled()) return; // Only enable on large screens
         // Special handling for quick-actions and features sections
         if (isInSpecialSection()) {
             // Only trigger next section when at the bottom and pressing down arrow or space
@@ -406,83 +399,76 @@ document.addEventListener('DOMContentLoaded', function() {
         if (event.key === ' ' && !event.repeat) {
             scrollToNextElement();
         }
-    });
-    
-    // Add navigation dots to the page
-    const navDots = document.createElement('div');
-    navDots.className = 'nav-dots';
-    navDots.style.position = 'fixed';
-    navDots.style.right = '20px';
-    navDots.style.top = '50%';
-    navDots.style.transform = 'translateY(-50%)';
-    navDots.style.zIndex = '100';
-    navDots.style.display = 'flex';
-    navDots.style.flexDirection = 'column';
-    navDots.style.gap = '10px';
-    
-    // Create a dot for each navigable element
-    navigableElements.forEach((element, index) => {
-        const dot = document.createElement('div');
-        dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
-        dot.setAttribute('data-section', index);
-        
-        // Add click event to each dot
-        dot.addEventListener('click', function() {
-            scrollToElement(navigableElements[index], index);
-        });
-        
-        navDots.appendChild(dot);
-    });
-    
-    // Add the navigation dots to the page
-    document.body.appendChild(navDots);
-    
-    // Update active dot when scrolling
-    function updateActiveDot() {
-        const dots = document.querySelectorAll('.nav-dot');
-        dots.forEach((dot, index) => {
-            if (index === currentSectionIndex) {
-                dot.classList.add('active');
-            } else {
-                dot.classList.remove('active');
-            }
-        });
     }
+    document.addEventListener('keydown', keydownHandler);
     
-    // Update active dot when scrolling to an element
-    const originalScrollToElement = scrollToElement;
-    scrollToElement = function(element, index) {
-        originalScrollToElement(element, index);
-        updateActiveDot();
-    };
-
-    // Add scroll event listener to update active dot when manually scrolling
-    window.addEventListener('scroll', function() {
-        // Find which section is currently most visible in the viewport
-        let maxVisibility = 0;
-        let mostVisibleIndex = currentSectionIndex;
-        
+    // Only add navigation dots for large screens
+    if (isSectionScrollEnabled()) {
+        // Add navigation dots to the page
+        const navDots = document.createElement('div');
+        navDots.className = 'nav-dots';
+        navDots.style.position = 'fixed';
+        navDots.style.right = '20px';
+        navDots.style.top = '50%';
+        navDots.style.transform = 'translateY(-50%)';
+        navDots.style.zIndex = '100';
+        navDots.style.display = 'flex';
+        navDots.style.flexDirection = 'column';
+        navDots.style.gap = '10px';
+        // Create a dot for each navigable element
         navigableElements.forEach((element, index) => {
-            const rect = element.getBoundingClientRect();
-            const windowHeight = window.innerHeight;
-            
-            // Calculate how much of the element is visible in the viewport
-            const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-            const visibility = visibleHeight > 0 ? visibleHeight / element.offsetHeight : 0;
-            
-            // Update the most visible section if this one is more visible
-            if (visibility > maxVisibility) {
-                maxVisibility = visibility;
-                mostVisibleIndex = index;
-            }
+            const dot = document.createElement('div');
+            dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
+            dot.setAttribute('data-section', index);
+            // Add click event to each dot
+            dot.addEventListener('click', function() {
+                scrollToElement(navigableElements[index], index);
+            });
+            navDots.appendChild(dot);
         });
-        
-        // Only update if we've found a different section to be most visible
-        if (mostVisibleIndex !== currentSectionIndex) {
-            currentSectionIndex = mostVisibleIndex;
-            updateActiveDot();
+        // Add the navigation dots to the page
+        document.body.appendChild(navDots);
+        // Update active dot when scrolling
+        function updateActiveDot() {
+            const dots = document.querySelectorAll('.nav-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentSectionIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
         }
-    }, { passive: true });
+        // Update active dot when scrolling to an element
+        const originalScrollToElement = scrollToElement;
+        scrollToElement = function(element, index) {
+            originalScrollToElement(element, index);
+            updateActiveDot();
+        };
+        // Add scroll event listener to update active dot when manually scrolling
+        window.addEventListener('scroll', function() {
+            // Find which section is currently most visible in the viewport
+            let maxVisibility = 0;
+            let mostVisibleIndex = currentSectionIndex;
+            navigableElements.forEach((element, index) => {
+                const rect = element.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+                // Calculate how much of the element is visible in the viewport
+                const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+                const visibility = visibleHeight > 0 ? visibleHeight / element.offsetHeight : 0;
+                // Update the most visible section if this one is more visible
+                if (visibility > maxVisibility) {
+                    maxVisibility = visibility;
+                    mostVisibleIndex = index;
+                }
+            });
+            // Only update if we've found a different section to be most visible
+            if (mostVisibleIndex !== currentSectionIndex) {
+                currentSectionIndex = mostVisibleIndex;
+                updateActiveDot();
+            }
+        }, { passive: true });
+    }
 
     // Intersection Observer for section animations
     const observerOptions = {
@@ -522,11 +508,23 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('scroll', function() {
         // Only check if we're in a special section
         if (isInSpecialSection() && isAtBottomOfSection()) {
-            // Add a class to indicate we're at the bottom
-            navigableElements[currentSectionIndex].classList.add('at-bottom');
+            const el = navigableElements[currentSectionIndex];
+            if (el && el.classList) el.classList.add('at-bottom');
         } else {
-            // Remove the class if we're not at the bottom
-            navigableElements[currentSectionIndex].classList.remove('at-bottom');
+            const el = navigableElements[currentSectionIndex];
+            if (el && el.classList) el.classList.remove('at-bottom');
         }
     }, { passive: true });
+
+    // Utility: Remove nav-dots if present on small screens
+    function removeNavDotsIfSmallScreen() {
+        if (window.innerWidth <= 1000) {
+            const navDots = document.querySelector('.nav-dots');
+            if (navDots) navDots.remove();
+        }
+    }
+
+    // Call on load and on resize
+    removeNavDotsIfSmallScreen();
+    window.addEventListener('resize', removeNavDotsIfSmallScreen);
 }); 
