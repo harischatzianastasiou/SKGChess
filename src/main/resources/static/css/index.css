@@ -788,465 +788,118 @@ body.authenticated::before {
 
 /* Active Games Section Styles */
 .all-games-section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
     background: transparent;
-    padding: 0.25rem;
-    margin: 0;
+    padding: 2rem 2rem;
+    margin: 0 auto;
     min-height: 100vh;
     position: relative;
     z-index: 10;
     border-radius: 0;
     overflow-y: auto;
-    scroll-behavior: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-    scroll-snap-align: none;
-    scroll-snap-stop: always;
-}
-
-/* Remove the ::before background */
-.all-games-section::before {
-    display: none;
-}
-
-/* Custom scrollbar for Webkit browsers */
-.all-games-section::-webkit-scrollbar {
-    width: 8px;
-}
-
-.all-games-section::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.all-games-section::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-}
-
-.all-games-section::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .all-games-container {
     width: 100%;
     max-width: 1600px;
-    margin: 0;
+    margin: 0 auto;
     position: relative;
     z-index: 1;
-}
-
-/* Add a title for the section with better contrast */
-.all-games-title {
-    color: var(--text-color);
-    font-size: 2rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    padding-top: 1rem;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Update the game cards to stand out better without a background */
-.all-game-card {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-/* Remove transform from hover effect */
-.all-game-card:hover {
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.all-game-header {
-    padding: 0.5rem 0.75rem;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(0, 0, 0, 0.2);
-}
-
-.all-game-header h3 {
-    margin: 0;
-    font-size: 1rem; /* Reduced from 1.1rem */
-    font-weight: 600;
-}
-
-.game-status {
-    padding: 0.2rem 0.4rem; /* Reduced padding */
-    border-radius: 4px;
-    font-size: 0.75rem; /* Reduced from 0.8rem */
-}
-
-.all-game-board {
-    padding: 0.75rem 0.75rem 0.25rem 0.75rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: transform 0.3s ease, filter 0.3s ease;
-}
-
-.all-game-board:hover {
-    transform: scale(1.02);
-    filter: brightness(1.2);
-}
-
-.chess-board-preview {
-    width: 100%;
-    max-width: 75%;
-    aspect-ratio: 1 / 1;
-    border-radius: 6px;
-    margin: 0 auto;
-    transition: box-shadow 0.3s ease;
-}
-
-.all-game-board:hover .chess-board-preview {
-    box-shadow: 0 0 20px rgba(147, 112, 219, 0.4);
-}
-
-.all-game-info {
-    padding: 1rem;
-    flex-grow: 1;
-}
-
-.player-color {
-    font-weight: 500;
-}
-
-.all-game-actions {
-    display: none;
-}
-
-.no-all-games {
-    text-align: center;
-    padding: 3rem 2rem;
-    border-radius: 12px;
-    margin: 2rem auto;
-    width: 100%;
-    max-width: 600px;
-    min-height: 400px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.85);
-}
-
-.no-all-games i {
-    font-size: 4rem;
-    color: rgba(255, 255, 255, 0.3);
-    margin-bottom: 1.5rem;
-}
-
-.no-all-games h3 {
-    margin-bottom: 1rem;
-    font-size: 2rem;
-    color: #fff;
-}
-
-.no-all-games p {
-    color: rgba(255, 255, 255, 0.7);
-    margin-bottom: 2rem;
-    font-size: 1.1rem;
-}
-
-.no-all-games .main-buttons-container.auth-buttons {
-    margin-top: 1rem;
-    background: none;
-    padding: 0;
-}
-
-/* Responsive adjustments for all games */
-@media (max-width: 768px) {
-    .all-games-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .chess-board-preview {
-        max-width: 200px;
-    }
-}
-
-/* Chess Board Preview Styles */
-.board-preview {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.board-grid {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    grid-template-rows: repeat(8, 1fr);
-    width: 100%;
-    height: 100%;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Add rotation for black's perspective */
-.board-grid.black-perspective {
-    transform: rotate(180deg);
-}
-
-/* Rotate pieces back when board is rotated */
-.board-grid.black-perspective .piece {
-    transform: rotate(180deg);
-}
-
-.square {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.square.light {
-    background-color: #9d74c4;  
-}
-
-.square.dark {
-    background-color:  #4b286b;
-}
-
-.piece {
-    width: 80%;
-    height: 80%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-/* Add keyframes for background travel animation */
-@keyframes backgroundTravel {
-    from {
-        background-position: left center;
-    }
-    to {
-        background-position: right center;
-    }
-}
-
-
-
-.think-chess-text .dot {
-    color: #553c9a;
-    font-size: 4.5vw;
-    margin-left: 1vw;
-    display: block; /* Force Chess. to new line */
-    margin-top: 0.1em; /* Optional: add spacing between lines */
-}
-
-@media (max-width: 600px) {
-    .think-chess-text { font-size: 2rem; }
-    .think-chess-text .dot { font-size: 2.2rem; }
-}
-
-.main-button.get-started {
-    background-color:  #425007; /* Your orange/coral color from the example */
-    color: white;
-    border: none;
-    box-shadow: 0 4px 15px rgba(226, 125, 96, 0.3);
-}
-
-.main-button.get-started:hover {
-    background-color: #849d14;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(226, 125, 96, 0.4);
-}
-
-.main-button.about {
-    background-color: #553c9a;
-    color: #333;
-    border: 2px solid #333;
-    z-index: 3000;
-}
-
-.main-button.about:hover {
-    color: #ffffff;
-    background-color: #2d1f2e;
-    transform: translateY(-2px);
-}
-
-/* Authenticated buttons specific styles */
-.main-buttons-container.auth-buttons {
-    margin-top: auto; /* Push to bottom */
-    gap: 1rem;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    margin-bottom: 0;
-}
-
-.main-buttons-container.auth-buttons .main-button {
-    min-width: 140px;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    margin: 0;
-}
-
-@media (max-width: 768px) {
-    .main-buttons-container.auth-buttons {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.8rem;
-        padding: 0.8rem;
-    }
-    
-    .main-buttons-container.auth-buttons .main-button {
-        width: 100%;
-        max-width: 200px;
-    }
-}
-
-/* Container for the list of game rows */
-.game-rows-list {
-    width: 100%;
-    max-width: 900px;
-    margin: 1.5rem auto 0 auto;
-    background: rgba(0,0,0,0.10);
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    padding: 0.5rem 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-}
-
-.game-row,
-.game-row-header {
-    display: grid;
-    grid-template-columns: 1fr 110px 100px 220px; /* Players | Status | Moves | Date */
-    column-gap: 32px; /* Add space between columns */
-    align-items: center;
-    padding: 0.6rem 1rem; /* Slightly reduced padding */
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    background: transparent;
-    font-size: 0.95rem; /* Slightly reduced font size */
-    min-height: 40px;
-}
-
-.game-row-header {
-    font-weight: bold;
-    background: rgba(255,255,255,0.04);
-    border-bottom: 2px solid #849d14;
-    color: #e0e0e0;
-    margin-top: 0; /* Removed margin to align with left section */
-    border-radius: 6px 6px 0 0; /* Added radius to match left section */
-}
-
-.game-row .game-moves,
-.game-row-header .game-moves {
-    text-align: center;
 }
 
 .games-two-column {
     display: flex;
+    flex-direction: row;
     gap: 2rem;
-    align-items: stretch; /* Make children stretch to equal height */
+    align-items: stretch;
     width: 100%;
     max-width: 1600px;
     margin: 0 auto;
     padding: 2rem 1.5rem;
     justify-content: space-between;
-    height: calc(100vh - 160px); /* Set fixed height based on viewport */
+    height: auto;
+    box-sizing: border-box;
 }
 
 .games-right {
     flex: 0 0 35%;
     min-width: 350px;
-    order: 1;
     background-color: rgba(0, 0, 0, 0.85);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    position: relative;
     border-radius: 10px;
     padding: 0.75rem;
     display: flex;
     flex-direction: column;
-    height: 100%; /* Take full height of parent */
-}
-
-.games-right .section-title {
-    margin-bottom: 0.4rem;
-    background: #585858;
-    padding: 0.4rem 0.75rem;
-    border-radius: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-bottom: none;
-    width: 100%;
-    text-align: center;
+    height: 100%;
+    box-sizing: border-box;
 }
 
 .games-left {
     flex: 1 1 auto;
     min-width: 0;
     max-width: 63%;
-    order: 2;
     position: relative;
     overflow: hidden;
     height: 100%;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
 }
 
-/* When there's only buttons (no history), center them vertically */
-.games-left:not(:has(.game-row-container)) .main-buttons-container.auth-buttons {
-    margin: auto;
-    padding: 2rem;
-    width: 80%;
-    max-width: 500px;
-}
-
-/* Add scrolling to the game rows container */
-.games-left .game-row-container {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 1rem;
-}
-
-/* Add pseudo-element for background with opacity */
-.games-left::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.85); /* Changed to dark semi-transparent background */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 1;
-    filter: brightness(0.6); /* Add brightness filter to darken the image */
-    z-index: -1; /* Place behind content */
-}
-
-/* Update media queries */
 @media (max-width: 1200px) {
-    .games-right {
-        flex: 0 0 40%;
-        height: calc(100vh - 150px);
+    .all-games-section {
+        padding: 1.5rem 0.5rem;
     }
-    
+    .games-two-column {
+        gap: 1rem;
+        padding: 1rem 0.5rem;
+    }
+    .games-right {
+        min-width: 250px;
+        flex: 0 0 40%;
+    }
     .games-left {
         max-width: 58%;
+    }
+}
+
+@media (max-width: 900px) {
+    .all-games-section {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 1rem 0.2rem;
+    }
+    .games-two-column {
+        flex-direction: column;
+        gap: 1.2rem;
+        padding: 1rem 0.2rem;
+    }
+    .games-right, .games-left {
+        min-width: 0;
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .all-games-section {
+        padding: 0.5rem 0.1rem;
+    }
+    .games-two-column {
+        gap: 0.5rem;
+        padding: 0.5rem 0.1rem;
+    }
+    .games-right, .games-left {
+        padding: 0.5rem 0.1rem;
+        border-radius: 6px;
     }
 }
 
@@ -1702,8 +1355,6 @@ body.authenticated::before {
     transform: translateY(0);
 }
 
-
-
 /* ==========================================================================
    Layout Components
    ========================================================================== */
@@ -2086,4 +1737,133 @@ body.authenticated::before {
         background-repeat: no-repeat;
         background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess2.jpg');
     }
+}
+
+/* Add a title for the section with better contrast */
+.all-games-title {
+    color: var(--text-color);
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-top: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Update the game cards to stand out better without a background */
+.all-game-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Remove transform from hover effect */
+.all-game-card:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.all-game-header {
+    padding: 0.5rem 0.75rem;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.all-game-header h3 {
+    margin: 0;
+    font-size: 1rem; /* Reduced from 1.1rem */
+    font-weight: 600;
+}
+
+.game-status {
+    padding: 0.2rem 0.4rem; /* Reduced padding */
+    border-radius: 4px;
+    font-size: 0.75rem; /* Reduced from 0.8rem */
+}
+
+.all-game-board {
+    padding: 0.75rem 0.75rem 0.25rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.all-game-board:hover {
+    transform: scale(1.02);
+    filter: brightness(1.2);
+}
+
+.chess-board-preview {
+    width: 100%;
+    max-width: 75%;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    margin: 0 auto;
+    transition: box-shadow 0.3s ease;
+    display: block;
+    background: transparent;
+}
+
+.all-game-board:hover .chess-board-preview {
+    box-shadow: 0 0 20px rgba(147, 112, 219, 0.4);
+}
+
+.all-game-info {
+    padding: 1rem;
+    flex-grow: 1;
+}
+
+.player-color {
+    font-weight: 500;
+}
+
+.all-game-actions {
+    display: none;
+}
+
+.no-all-games {
+    text-align: center;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    margin: 2rem auto;
+    width: 100%;
+    max-width: 600px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.no-all-games i {
+    font-size: 4rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-bottom: 1.5rem;
+}
+
+.no-all-games h3 {
+    margin-bottom: 1rem;
+    font-size: 2rem;
+    color: #fff;
+}
+
+.no-all-games p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.no-all-games .main-buttons-container.auth-buttons {
+    margin-top: 1rem;
+    background: none;
+    padding: 0;
 }
