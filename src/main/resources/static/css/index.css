@@ -12,7 +12,7 @@
     padding: 4vw 2vw;
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess41.jpg');
     background-size: contain;
-    background-position: center;
+    background-position: center top;
     background-repeat: repeat;
     border-radius: 2vw;
     margin-bottom: 2vw;
@@ -652,6 +652,7 @@
 @media (max-width: 768px) {
     .hero-section {
         padding: 2vw 1vw;
+        background-position: top center;
     }
 
     .integrated-hero {
@@ -1971,7 +1972,7 @@ body.authenticated::before {
     justify-content: center;
     width: 100%;
     margin-bottom: 2rem;
-    gap: 1.5rem;
+    gap: 0.3rem; /* Reduced gap for closer spacing */
 }
 
 .welcome-icon {
@@ -2035,14 +2036,14 @@ body.authenticated::before {
 @media (max-width: 600px) {
     .welcome-row {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.1rem; /* Even closer on mobile */
     }
     .welcome-icon {
         width: clamp(60px, 32vw, 120px);
         height: clamp(60px, 32vw, 120px);
     }
     .think-chess-text {
-        font-size: clamp(2.2rem, 12vw, 3.5rem); /* Much bigger on mobile */
+        font-size: clamp(2.2rem, 13vw, 4rem); /* Much bigger on mobile */
         text-align: center;
         justify-content: center;
     }
@@ -2055,6 +2056,13 @@ body.authenticated::before {
         font-weight: 300;
         width: auto;
         white-space: nowrap;
+    }
+    .main-button {
+        max-width: 180px;
+        width: 100%;
+        min-width: unset;
+        padding-left: 0.5em;
+        padding-right: 0.5em;
     }
 }
 
