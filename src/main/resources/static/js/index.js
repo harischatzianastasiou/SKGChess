@@ -607,8 +607,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 800); // Match this with your CSS transition duration
     }
 
+    // Function to check if we're on mobile
+    function isMobileScreen() {
+        return window.innerWidth <= 1000;
+    }
+
+    // Function to handle mobile detection and cleanup
+    function handleMobileDetection() {
+        if (isMobileScreen()) {
+            // Remove all section-based scroll event listeners
+            window.removeEventListener('wheel', wheelHandler);
+            window.removeEventListener('touchstart', touchStartHandler);
+            window.removeEventListener('touchend', touchEndHandler);
+            window.removeEventListener('keydown', keydownHandler);
+            
+            // Enable natural scrolling
+            document.body.style.overflow = 'auto';
+            document.documentElement.style.overflow = 'auto';
+            
+            // Remove any scroll prevention
+            document.body.style.height = '';
+            document.documentElement.style.height = '';
+            
+            // Add passive scroll listener to prevent section-based behavior
+            window.addEventListener('scroll', function preventSectionScroll(e) {
+                e.stopPropagation();
+            }, { passive: true });
+        } else {
+            // Re-add event listeners for desktop
+            window.addEventListener('wheel', wheelHandler, { passive: false });
+            window.addEventListener('touchstart', touchStartHandler, { passive: true });
+            window.addEventListener('touchend', touchEndHandler, { passive: true });
+            window.addEventListener('keydown', keydownHandler);
+        }
+    }
+
     // Handle wheel events for smooth scrolling
-    window.addEventListener('wheel', (e) => {
+    function wheelHandler(e) {
+        // Exit early if on mobile
+        if (isMobileScreen()) return;
+
         // Check if newspaper overlay is active
         const newspaperOverlay = document.getElementById('newspaperOverlay');
         if (newspaperOverlay && newspaperOverlay.style.display === 'block') {
@@ -662,35 +700,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 scrollToSection(currentSection - 1);
             }
         }, 50);
-    }, { passive: false });
-
-    // Remove all gesture event listeners
-    window.removeEventListener('gesturestart', (e) => {
-        e.preventDefault();
-    }, { passive: false });
-
-    window.removeEventListener('gesturechange', (e) => {
-        e.preventDefault();
-    }, { passive: false });
-
-    window.removeEventListener('gestureend', (e) => {
-        e.preventDefault();
-    }, { passive: false });
-
-    // Handle keyboard navigation
-    window.addEventListener('keydown', (e) => {
-        if (isScrolling) return;
-        
-        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-            scrollToSection(currentSection + 1);
-        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-            scrollToSection(currentSection - 1);
-        }
-    });
+    }
 
     // Handle touch events for mobile
     let touchStartY = 0;
-    window.addEventListener('touchstart', (e) => {
+    
+    function touchStartHandler(e) {
+        // Exit early if on mobile
+        if (isMobileScreen()) return;
+        
         // Check if the event originated from a scrollable container
         const scrollableParent = e.target.closest('.scrollable-content, .scrollable-features');
         if (scrollableParent) {
@@ -699,9 +717,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         touchStartY = e.touches[0].clientY;
-    }, { passive: true });
+    }
 
-    window.addEventListener('touchend', (e) => {
+    function touchEndHandler(e) {
+        // Exit early if on mobile
+        if (isMobileScreen()) return;
+        
         // Check if the event originated from a scrollable container
         const scrollableParent = e.target.closest('.scrollable-content, .scrollable-features');
         if (scrollableParent) {
@@ -721,25 +742,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 scrollToSection(currentSection - 1);
             }
         }
-    }, { passive: true });
+    }
 
-    // Header background change optimization
-    const header = document.querySelector('.header');
-    const scrollThreshold = 50;
-    let lastScrollY = window.scrollY;
-    let tickingHeader = false;
-
-    window.addEventListener('scroll', () => {
-        lastScrollY = window.scrollY;
-
-        if (!tickingHeader) {
-            requestAnimationFrame(() => {
-                header.classList.toggle('scrolled', lastScrollY > scrollThreshold);
-                tickingHeader = false;
-            });
-            tickingHeader = true;
+    // Handle keyboard navigation
+    function keydownHandler(e) {
+        // Exit early if on mobile
+        if (isMobileScreen()) return;
+        
+        if (isScrolling) return;
+        
+        if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+            scrollToSection(currentSection + 1);
+        } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+            scrollToSection(currentSection - 1);
         }
-    }, { passive: true });
+    }
+
+    // Call handleMobileDetection on load and resize
+    handleMobileDetection();
+    window.addEventListener('resize', handleMobileDetection);
+
+    // Remove all gesture event listeners
+    window.removeEventListener('gesturestart', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
+    window.removeEventListener('gesturechange', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
+    window.removeEventListener('gestureend', (e) => {
+        e.preventDefault();
+    }, { passive: false });
 
     // Smooth scroll implementation
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {

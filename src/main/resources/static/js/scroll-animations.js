@@ -550,6 +550,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // Enable natural scrolling
             document.body.style.overflow = 'auto';
             document.documentElement.style.overflow = 'auto';
+            
+            // Remove any section-based classes
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.remove('section-visible', 'section-hidden');
+            });
+            
+            // Add a passive scroll listener to prevent any section-based behavior
+            window.addEventListener('scroll', function preventSectionScroll(e) {
+                // Prevent any section-based scrolling behavior
+                e.stopPropagation();
+            }, { passive: true });
+            
+            // Remove any scroll prevention
+            document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            document.body.style.height = '';
+            document.documentElement.style.height = '';
         } else {
             // Re-add event listeners for desktop
             window.addEventListener('wheel', wheelHandler, { passive: false });
@@ -557,6 +574,19 @@ document.addEventListener('DOMContentLoaded', function() {
             document.addEventListener('keydown', keydownHandler);
         }
     }
+
+    // Add touch event handling specifically for mobile
+    function handleMobileTouch(e) {
+        if (!isSectionScrollEnabled()) {
+            // Allow all touch events to propagate naturally on mobile
+            return;
+        }
+    }
+
+    // Add the mobile touch handler
+    window.addEventListener('touchstart', handleMobileTouch, { passive: true });
+    window.addEventListener('touchmove', handleMobileTouch, { passive: true });
+    window.addEventListener('touchend', handleMobileTouch, { passive: true });
 
     // Call handleMobileDetection on load and resize
     handleMobileDetection();
