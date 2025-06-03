@@ -926,8 +926,8 @@ class ChessGame {
             
             this.statusElement.classList.remove('your-turn');
             // Always display white on left, black on right
-            const whitePlayerAvatar = this.boardDTO.whitePlayerAvatar || '/images/white-k.png';
-            const blackPlayerAvatar = this.boardDTO.blackPlayerAvatar || '/images/black-k.png';
+            const whitePlayerAvatar = this.boardDTO.whitePlayerAvatar || '/images/default-avatar.png';
+            const blackPlayerAvatar = this.boardDTO.blackPlayerAvatar || '/images/default-avatar.png';
             const whitePlayerUsername = this.boardDTO.whitePlayerUsername;
             const blackPlayerUsername = this.boardDTO.blackPlayerUsername;
             let winner, result;

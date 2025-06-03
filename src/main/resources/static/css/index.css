@@ -18,7 +18,7 @@
     margin-bottom: 2vw;
     position: relative;
     overflow: hidden;
-    animation: backgroundTravel 45s infinite alternate ease-in-out; /* Added animation */
+    animation: backgroundTravel 30s infinite alternate ease-in-out; /* Added animation */
 }
 
 /* ==========================================================================
@@ -107,7 +107,6 @@
     animation: none;
 }
 
-/* Animation for background images */
 @keyframes slowPan {
     0% {
         transform: scale(1.1) translate(0, 0);
@@ -629,6 +628,15 @@
     }
     100% {
         transform: scale(1.1) translate(5%, 5%) rotate(0deg);
+    }
+}
+
+@keyframes backgroundTravel {
+    from {
+        background-position: left center;
+    }
+    to {
+        background-position: right center;
     }
 }
 
@@ -1749,6 +1757,7 @@ body.authenticated::before {
         background-size: cover;
         background-repeat: no-repeat;
         background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess2.jpg');
+        animation: backgroundTravel 50s infinite alternate ease-in-out; /* Added animation */
     }
 }
 

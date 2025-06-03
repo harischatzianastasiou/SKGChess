@@ -36,7 +36,7 @@
 }
 
 .theme-color.gold {
-    background: linear-gradient(135deg, #ededed, #757575);
+    background: linear-gradient(135deg, #b8860b, #8b6914);
 }
 
 /* Default purple theme (original) */
@@ -47,8 +47,8 @@
 
 /* Gold theme */
 .theme-switcher.gold-theme {
-    background-color: #919191; /* Gold */
-    border: 2px solid #c5c5c5; /* Bright gold border */
+    background-color: #b8860b; /* Gold */
+    border: 2px solid #8b6914; /* Bright gold border */
 }
 
 /* Theme switcher animation */
