@@ -133,11 +133,14 @@
             line-height: 0;
             word-spacing: -.31em;
             margin: 30px 2% 0 2%;
+            gap: 20px; /* Add gap between columns */
         }
         #newspaper-root .collumns {
             display: flex !important;
             justify-content: center !important;
             width: 100%;
+            flex-wrap: wrap; /* Allow wrapping of columns */
+            gap: 20px; /* Add gap between columns */
         }
         #newspaper-root .collumn {
             font-size: 14px;
@@ -149,6 +152,8 @@
             border-right: 1px solid #2f2f2f;
             margin-bottom: 50px;
             transition: all .7s;
+            flex: 1; /* Allow columns to grow and shrink */
+            min-width: 250px; /* Minimum width before stacking */
         }
         #newspaper-root .collumn .headline {
             text-align: center;
@@ -219,15 +224,15 @@
             #newspaper-root .weatherforcastbox {
                 display: none;
             }
-        }
-        @media only all and (max-width: 1200px) {
             #newspaper-root .collumn {
-                width: 31%;
+                width: calc(33.33% - 20px); /* Account for gap */
+                border-right: none;
+                border-bottom: 1px solid #2f2f2f;
             }
         }
         @media only all and (max-width: 900px) {
             #newspaper-root .collumn {
-                width: 47%;
+                width: calc(50% - 20px); /* Account for gap */
             }
         }
         @media only all and (max-width: 600px) {
@@ -242,6 +247,10 @@
                 line-height: 54px;
                 overflow: hidden;
                 text-align: center;
+            }
+            #newspaper-root .newspaper-inner {
+                width: calc(100% - 40px); /* Adjust width for mobile */
+                margin: 0 20px;
             }
         }
     </style>
