@@ -149,21 +149,83 @@
 
         <!-- JavaScript for audio control -->
         <script>
-            // Define the playlist
-            const playlist = [
-                {
-                    title: "STAY IN THE GREAT",
-                    artist: "BOCREW",
-                    src: "/audio/STAY IN THE GREAT - BOCREW (OFFICIAL AUDIO).mp3",
-                    license: "CC BY 3.0"
-                },
-                {
-                    title: "SUNBIRDS",
-                    artist: "BOCREW THEDEEPR",
-                    src: "/audio/SUNBIRDS BY BOCREW THEDEEPR (OFFICIAL AUDIO).mp3",
-                    license: "CC BY 3.0"
-                }
-            ];
+            // Define the playlists
+            const playlists = {
+                index: [
+                    {
+                        title: "STAY IN THE GREAT",
+                        artist: "BOCREW",
+                        src: "/audio/STAY IN THE GREAT - BOCREW (OFFICIAL AUDIO).mp3",
+                        license: "CC BY 3.0"
+                    },
+                    {
+                        title: "SUNBIRDS",
+                        artist: "BOCREW THEDEEPR",
+                        src: "/audio/SUNBIRDS BY BOCREW THEDEEPR (OFFICIAL AUDIO).mp3",
+                        license: "CC BY 3.0"
+                    }
+                ],
+                game: [
+                    {
+                        title: "Bach - Invention No. 13 in A Minor",
+                        artist: "Gregor Quendel",
+                        src: "/audio/Gregor Quendel - Bach - Invention No. 13 in A Minor - BWV 784 (Arr. for Strings).mp3.mp3",
+                        license: "Public Domain"
+                    },
+                    {
+                        title: "Brahms - Sonata No.1, Opus 1 - 1st Movement",
+                        artist: "Gregor Quendel",
+                        src: "/audio/Gregor Quendel - Brahms - Sonata No.1, Opus 1 - 1st Movement - Allegro (Arr. for Strings).mp3.mp3",
+                        license: "Public Domain"
+                    },
+                    {
+                        title: "Granados - Spanish Dance No. 2, Oriental",
+                        artist: "Gregor Quendel",
+                        src: "/audio/Gregor Quendel - Granados - Spanish Dance No. 2, Oriental - Arranged for Strings.mp3.mp3",
+                        license: "Public Domain"
+                    },
+                    {
+                        title: "Mozart - Eine Kleine Nachtmusik",
+                        artist: "Gregor Quendel",
+                        src: "/audio/Gregor Quendel - Mozart - Eine Kleine Nachtmusik _ Serenade No. 13 - KV 525.mp3.mp3",
+                        license: "Public Domain"
+                    },
+                    {
+                        title: "Paganini - Sonata in A minor, Op. 2, No. 6",
+                        artist: "Gregor Quendel",
+                        src: "/audio/Gregor Quendel - Paganini - Sonata in A minor, Op. 2, No. 6, MS 26; Tempo di Walzer - Arranged for Strings.mp3.mp3",
+                        license: "Public Domain"
+                    },
+                    {
+                        title: "Rachmaninoff - Études-tableaux, Opus 33 - No. 6",
+                        artist: "Gregor Quendel",
+                        src: "/audio/Gregor Quendel - Rachmaninoff - Études-tableaux, Opus 33 - No. 6 - Allegro con fuoco - Arranged for Strings.mp3.mp3",
+                        license: "Public Domain"
+                    },
+                    {
+                        title: "Vivaldi - The Four Seasons - Summer - Presto",
+                        artist: "Gregor Quendel",
+                        src: "/audio/Gregor Quendel - Vivaldi - The Four Seasons _Summer_ - Presto - RV 315.mp3.mp3",
+                        license: "Public Domain"
+                    },
+                    {
+                        title: "The Endless",
+                        artist: "Kevin MacLeod",
+                        src: "/audio/Kevin MacLeod - The Endless.mp3",
+                        license: "CC BY 3.0"
+                    },
+                    {
+                        title: "Lunar",
+                        artist: "The Sky Beats",
+                        src: "/audio/theskybeats-lunar-160bpm-mp3-stream.mp3",
+                        license: "CC BY 3.0"
+                    }
+                ]
+            };
+
+            // Determine which playlist to use based on the current page
+            const currentPage = window.location.pathname.includes('/game') ? 'game' : 'index';
+            const playlist = playlists[currentPage];
 
             let currentSongIndex = -1; // Will be set when first song is played
 

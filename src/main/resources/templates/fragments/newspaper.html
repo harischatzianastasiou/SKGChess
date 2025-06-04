@@ -307,13 +307,12 @@
 Board (Immutable Class)
 │
 ├── tiles: List of Tile
-│   |  64 tiles representing the chess board 
+│   |  64 tiles 
 │   |  (0-63)
 │   │
 │   └── Tile (Abstract Class)
 │       ├── tileCoordinate: int        
-│       │   // Position on board (0-63)
-│       │   // 0 = a1, 1 = b1, ..., 63 = h8
+│       │   // 0 = a1, 1 = b1...
 │       │
 │       └── tileAlliance: Alliance     
 │           // WHITE or BLACK
@@ -321,37 +320,32 @@ Board (Immutable Class)
 │           └── Subclasses:
 │               ├── EmptyTile
 │               │   // Empty square
-│               │   // No piece on this tile
 │               │
 │               └── OccupiedTile
-│                   // Contains a piece
+│                   // Has a piece
 │
 ├── currentPlayer: Player  
 │   // Player whose turn it is
-│   // Manages active player's pieces and moves
+│   // Manages active player's pieces 
+│     // and moves
 │   │
 │   └── Player (Abstract Class)
 │       ├── pieces: Collection<Piece>  
-│       │   // All pieces of this player
-│       │   // Updated after each move
 │       │
 │       ├── moves: Collection<Move>   
-│       │   // All legal moves for this player
 │       │
 │       └── alliance: Alliance         
 │           // WHITE or BLACK
 │
 ├── opponentPlayer: Player 
 |    // Player waiting for their turn
-|    // Same structure as currentPlayer
+|    // Same structure 
+|    // as currentPlayer
 |    │
 |    └── Player (Abstract Class)
 |        ├── pieces: Collection<Piece>  
-|        │   // All pieces of this player
-|        │   // Updated after each move
 |        │
 |        ├── moves: Collection<Move>   
-|        │   // All legal moves for this player
 |        │
 |        └── alliance: Alliance         
 |            // WHITE or BLACK
@@ -375,11 +369,9 @@ Piece (Abstract Class)
 │
 ├── pieceAlliance: Alliance     
 │   // WHITE or BLACK
-│   // Determines which player owns this piece
 │
 ├── pieceCoordinate: int       
 │   // Current position (0-63)
-│   // Updated after each move
 │
 ├── isFirstMove: boolean     
 │   // Tracks if piece has moved
@@ -394,9 +386,11 @@ Piece (Abstract Class)
     │
     └── Subclasses:
         ├── Pawn
-        │   // Can move forward 1 or 2 squares
+        │   / Moves 1 or 2 squares
         │   // Captures diagonally
-        │   // Can promote at end of board
+        │   // Can promote at end
+        │      of board
+        │   // (PawnPromotionMove class)
         │
         ├── Knight
         │   // Moves in L-shape
@@ -404,20 +398,23 @@ Piece (Abstract Class)
         │
         ├── Bishop
         │   // Moves diagonally
-        │   // Cannot jump over pieces
+        │   // Cannot jump 
+        |       over pieces
         │
         ├── Rook
-        │   // Moves horizontally/vertically
-        │   // Cannot jump over pieces
+        │   // Moves horizontally
+        |          or vertically
+        │   // Cannot jump 
+        |             over pieces
         │
         ├── Queen
-        │   // Combines Bishop and Rook
-        |   //   movement patterns
+        │   // Combines Bishop 
+        |            and Rook movement
         │   // Most powerful piece
         │
         └── King
             // Moves one square 
-            //   in any direction
+                in any direction
             // Special move: Castling
             // Must be protected from check
 
@@ -438,7 +435,8 @@ Move (Abstract Class)
 │
 ├── boardTiles: List<Tile>      
 │   // Current board state
-│   // Used to validate and execute moves
+│   // Used to validate and
+|      execute moves
 │
 ├── sourceCoordinate: int       
 │   // Starting position (0-63)
@@ -449,38 +447,37 @@ Move (Abstract Class)
 │   // Where the piece is moving to
 │
 └── pieceToMove: Piece         
-    // Piece being moved
-    // Contains piece-specific logic
-    │
-    └── Subclasses:
-        ├── CapturingMove
-        │   // Represents a capture
-        │   // Removes captured piece
-        │   │
-        │   └── Subclasses:
-        │       ├── PawnPromotionCapturingMove
-        │       │
-        │       └── PawnEnPassantAttack
-        │           // Special pawn capture
-        │
-        └── NonCapturingMove
-            // Represents a normal move
-            // No piece is captured
-            │
-            └── Subclasses:
-                ├── PawnPromotionMove
-                │
-                ├── QueenSideCastleMove
-                │
-                ├── KingSideCastleMove
-                │
-                ├── PawnJumpMove
-                │   // Pawn's first move
-                │   // Moves 2 squares forward
-                │
-                └── PawnMove
-                    // Normal pawn move
-                    // Moves 1 square forward
+|    // Piece being moved
+|    // Contains piece-specific logic
+|    │
+|    └── Subclasses:
+|    |    ├── CapturingMove
+|    |    │   // Represents a capture
+|    |    │   // Removes captured piece
+|    |    │   │
+|    |    │   └── Subclasses:
+|    |    │       ├──    PawnPromotion
+|    |    |       |      CapturingMove
+|    |    │       │
+|    |    │       └──    PawnEn
+|    |    |              PassantAttack
+|    |    │
+|    |    └── NonCapturingMove
+|    |    |    // Represents a normal move
+|    |    |    // No piece is captured
+|    |    |    │
+|    |    |    └── Subclasses:
+|    |    |        ├── PawnPromotionMove
+|    |    |        │
+|    |    |        ├── QueenSideCastleMove
+|    |    |        │
+|    |    |        ├── KingSideCastleMove
+|    |    |        │
+|    |    |        ├── PawnJumpMove
+|    |    |        │   // Pawn's first move
+|    |    |        │   // Moves 2 squares
+|    |    |        └── PawnMove
+|    |    |        │   // Moves 1 square
 
 Key Points:
 1. Each move type handles specific scenarios
