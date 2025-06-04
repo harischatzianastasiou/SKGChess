@@ -153,7 +153,7 @@
             margin-bottom: 50px;
             transition: all .7s;
             flex: 1; /* Allow columns to grow and shrink */
-            min-width: 250px; /* Minimum width before stacking */
+            min-width: 300px; /* Minimum width before stacking */
         }
         #newspaper-root .collumn .headline {
             text-align: center;
@@ -253,6 +253,28 @@
                 margin: 0 20px;
             }
         }
+        /* Add these new styles for code blocks */
+        #newspaper-root pre {
+            white-space: pre-wrap;       /* Since CSS 2.1 */
+            white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            overflow-x: auto;
+            max-width: 100%;
+            font-size: 12px;
+            line-height: 1.4;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 4px;
+        }
+
+        #newspaper-root pre code {
+            display: block;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
     </style>
     <div class="decorative-columns-container">
         <div class="decorative-column left"></div>
@@ -262,53 +284,445 @@
         <div class="head">
             <div class="headerobjectswrapper">
                 <div class="weatherforcastbox">
-                    <span style="font-style: italic;">Thessaloniki Edition</span><br>
-                    <span>Creative Coding</span>
+                    <span style="font-style: italic;">Core Architecture</span><br>
+                    <span>Deep Dive</span>
                 </div>
                 <header>Welcome to SKG Chess</header>
             </div>
-            <div class="subhead">May 2025</div>
+            <div class="subhead">Just the beginning <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" target="_blank" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a> <a href="https://github.com/harischatzianastasiou/SKGChess" target="_blank" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a> <a href="mailto:harischatzi@tutanota.com" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Email" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a></div>
         </div>
         <div class="content">
             <div class="collumns">
                 <div class="collumn">
                     <div class="head">
-                        <span class="headline hl3">ICT and Computing!</span>
-                        <p><span class="headline hl4">by Annie Mator</span></p>
+                        <span class="headline hl3">Custom Chess Engine!</span>
+                        <p><span class="headline hl4">by Haris Chatzianastasiou</span></p>
                     </div>
-                    In your lessons over the next few weeks, you will be learning computer science. For instance, you will learn how to code, program computers, understand how computers work, and build computers. You will also develop your ability to use programming languages (like this!) to create your very own web pages (right here!)
-                    <p>You will learn programming languages HTML, CSS and JS. (Just for reference, this article has been written using HTML and CSS programming languages!)! Even more exciting, you will be doing all of this with Codepen (that's this interactive programming environment)! During your lessons, you can experiment and develop your programming skills whilst also seeing your programming skills develop in real-time, online in your web browser!</p>
+                    <p>Unlike most chess projects that rely on existing libraries, SKG Chess implements its own chess engine from scratch in Java. This gives us complete control over the game logic and allows for deep optimization. Let's see how this works!</p>
+
+                    <p><strong>The heart of the engine</strong></p>
+                    <p>At the heart of the engine lies the Board class, which follows an immutable design pattern. The important thing to understand is that each time a move is played, a new Board is created, hoding the information of the tiles (empty or occupied -- which piece is on it -- ) and the players (current and opponent, with their pieces and list of moves they can play). Here's the Board class describing the structure of the board:</p>
+
+                    <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
+Board (Immutable Class)
+│
+├── tiles: List of Tile
+│   |  64 tiles representing the chess board 
+│   |  (0-63)
+│   │
+│   └── Tile (Abstract Class)
+│       ├── tileCoordinate: int        
+│       │   // Position on board (0-63)
+│       │   // 0 = a1, 1 = b1, ..., 63 = h8
+│       │
+│       └── tileAlliance: Alliance     
+│           // WHITE or BLACK
+│           │
+│           └── Subclasses:
+│               ├── EmptyTile
+│               │   // Empty square
+│               │   // No piece on this tile
+│               │
+│               └── OccupiedTile
+│                   // Contains a piece
+│
+├── currentPlayer: Player  
+│   // Player whose turn it is
+│   // Manages active player's pieces and moves
+│   │
+│   └── Player (Abstract Class)
+│       ├── pieces: Collection<Piece>  
+│       │   // All pieces of this player
+│       │   // Updated after each move
+│       │
+│       ├── moves: Collection<Move>   
+│       │   // All legal moves for this player
+│       │
+│       └── alliance: Alliance         
+│           // WHITE or BLACK
+│
+├── opponentPlayer: Player 
+|    // Player waiting for their turn
+|    // Same structure as currentPlayer
+|    │
+|    └── Player (Abstract Class)
+|        ├── pieces: Collection<Piece>  
+|        │   // All pieces of this player
+|        │   // Updated after each move
+|        │
+|        ├── moves: Collection<Move>   
+|        │   // All legal moves for this player
+|        │
+|        └── alliance: Alliance         
+|            // WHITE or BLACK
+
+Key Points:
+1. Board is immutable - new instance created for each move
+2. Each tile knows its position and alliance
+3. Each tile knows if it is occupied or empty
+4. Players manage their own pieces and legal moves
+5. Players switch roles after each move, the new current player is the color of the opponent and vice versa.
+6. All state changes create new objects (immutable design)
+</pre>
+<br>
+
+<p><strong>Pieces and Moves</strong></p>
+<p></p>Each player has a collection of pieces and a collections of moves they can make.</p>
+<p>Let's see how each piece on the board is represented by a Piece object.</p>
+
+<pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
+Piece (Abstract Class)
+│
+├── pieceAlliance: Alliance     
+│   // WHITE or BLACK
+│   // Determines which player owns this piece
+│
+├── pieceCoordinate: int       
+│   // Current position (0-63)
+│   // Updated after each move
+│
+├── isFirstMove: boolean     
+│   // Tracks if piece has moved
+│   // Important for:
+│   // - Pawns (first move can be 2 squares)
+│   // - Kings (castling rights)
+│   // - Rooks (castling rights)
+│
+└── pieceSymbol: PieceSymbol   
+    // Visual representation
+    // Used for display and notation
+    │
+    └── Subclasses:
+        ├── Pawn
+        │   // Can move forward 1 or 2 squares
+        │   // Captures diagonally
+        │   // Can promote at end of board
+        │
+        ├── Knight
+        │   // Moves in L-shape
+        │   // Can jump over pieces
+        │
+        ├── Bishop
+        │   // Moves diagonally
+        │   // Cannot jump over pieces
+        │
+        ├── Rook
+        │   // Moves horizontally/vertically
+        │   // Cannot jump over pieces
+        │
+        ├── Queen
+        │   // Combines Bishop and Rook
+        |   //   movement patterns
+        │   // Most powerful piece
+        │
+        └── King
+            // Moves one square 
+            //   in any direction
+            // Special move: Castling
+            // Must be protected from check
+
+Key Points:
+1. Each piece knows its position and alliance
+2. First move tracking enables special moves
+3. Each piece type has unique movement patterns
+4. Pieces are owned by players
+5. Piece positions are updated after each move
+
+</pre>
+
+                    <p><br>
+                        Let's also see how we represent a move with the Move class.</p>
+
+                    <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
+Move (Abstract Class)
+│
+├── boardTiles: List<Tile>      
+│   // Current board state
+│   // Used to validate and execute moves
+│
+├── sourceCoordinate: int       
+│   // Starting position (0-63)
+│   // Where the piece is moving from
+│
+├── targetCoordinate: int       
+│   // Ending position (0-63)
+│   // Where the piece is moving to
+│
+└── pieceToMove: Piece         
+    // Piece being moved
+    // Contains piece-specific logic
+    │
+    └── Subclasses:
+        ├── CapturingMove
+        │   // Represents a capture
+        │   // Removes captured piece
+        │   │
+        │   └── Subclasses:
+        │       ├── PawnPromotionCapturingMove
+        │       │
+        │       └── PawnEnPassantAttack
+        │           // Special pawn capture
+        │
+        └── NonCapturingMove
+            // Represents a normal move
+            // No piece is captured
+            │
+            └── Subclasses:
+                ├── PawnPromotionMove
+                │
+                ├── QueenSideCastleMove
+                │
+                ├── KingSideCastleMove
+                │
+                ├── PawnJumpMove
+                │   // Pawn's first move
+                │   // Moves 2 squares forward
+                │
+                └── PawnMove
+                    // Normal pawn move
+                    // Moves 1 square forward
+
+Key Points:
+1. Each move type handles specific scenarios
+2. Moves are validated before execution
+3. Special moves have unique logic
+4. Moves create new board state
+
+</pre>
                 </div>
+
                 <div class="collumn">
                     <div class="head">
-                        <span class="headline hl5">Kids learn to code</span>
-                        <p><span class="headline hl6">Fantastic News!</span></p>
+                        <span class="headline hl5">But how does it work?</span>
+                        <p><span class="headline hl6">Warning : Technical content ahead! If you thought the left section was complex, buckle up - we're about to dive into the chess engine's brain! 🧠♟️</span></p>
                     </div>
-                    Codepen is a fantastic programming playground where you can work together and share your amazing creations!
-                    <p>REMEMBER to abide by the Code of Conduct provided by Codepen. This is important because Codepen is an online space available to the world! Ensure that you understand the Code of Conduct and then you are ready to explore and experiment!</p>
-                    <p>As you are aware, you must always keep yourself and others safe when you are online!</p>
+                    
+                    <p><strong>Step 1 : Game Initialization</strong></p>
+                    <p>When a new game starts, a new Game entity is created in the database. The initial board state is created using the Builder pattern through the createStandardBoard() method:</p>
+
+                    <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
+public static IBoard createStandardBoard() {
+    final Builder builder = new Builder();
+    
+    // Set up Black pieces
+    builder.setPiece(new Rook  (0, Alliance.BLACK));
+    builder.setPiece(new Knight(1, Alliance.BLACK));
+    builder.setPiece(new Bishop(2, Alliance.BLACK));
+    builder.setPiece(new Queen (3, Alliance.BLACK));
+    builder.setPiece(new King  (4, Alliance.BLACK));
+    builder.setPiece(new Bishop(5, Alliance.BLACK));
+    builder.setPiece(new Knight(6, Alliance.BLACK));
+    builder.setPiece(new Rook  (7, Alliance.BLACK));
+    for(int coordinate = 8; coordinate < 16; coordinate++) {
+        builder.setPiece(new Pawn(coordinate, Alliance.BLACK));
+    }
+    
+    // Set up White pieces
+    builder.setPiece(new Rook  (56, Alliance.WHITE));
+    builder.setPiece(new Knight(57, Alliance.WHITE));
+    builder.setPiece(new Bishop(58, Alliance.WHITE));
+    builder.setPiece(new Queen (59, Alliance.WHITE));
+    builder.setPiece(new King  (60, Alliance.WHITE));
+    builder.setPiece(new Bishop(61, Alliance.WHITE));
+    builder.setPiece(new Knight(62, Alliance.WHITE));
+    builder.setPiece(new Rook  (63, Alliance.WHITE));
+    for(int coordinate = 48; coordinate < 56; coordinate++) {
+        builder.setPiece(new Pawn(coordinate, Alliance.WHITE));
+    }
+   
+    // Set initial player to WHITE
+    builder.setcurrentPlayerAlliance(Alliance.WHITE);
+
+    return createBoard(builder);
+}</pre>
+
+                    <p><br><strong>Step 2 : User clicks a piece from position x to position y</strong></p>
+                    <p>When a player clicks a piece, the following sequence occurs:</p>
+                    <ol>
+                        <li>Frontend captures the tile coordinate of the clicked piece</li>
+                        <li>Frontend sends a POST request to <code>/api/game/{gameId}/move</code> with:
+                            <ul>
+                                <li>sourceCoordinate: The tile coordinate of the clicked piece</li>
+                                <li>targetCoordinate: The tile coordinate where the piece will move</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <p><br><strong>Step 3 : The move is processed</strong></p>
+                    <p>The move is processed through several steps:</p>
+                    <ol>
+                        <li>GameController receives the move request and calls GameService</li>
+                        <li>GameService retrieves the current game state from the database</li>
+                        <li>The board is deserialized from the stored JSON:
+                            <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
+IBoard currentBoard = IBoard.deserialize(game.getBoard(), game.getLastMoveData());</pre>
+                        </li>
+                        <li>The current player's legal moves are retrieved:
+                            <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
+Player player = currentBoard.getCurrentPlayer();
+Move move = player.getMoves().stream()
+    .filter(m -> m.getSourceCoordinate() == sourceCoordinate 
+            && m.getTargetCoordinate() == targetCoordinate)
+    .findFirst()
+    .orElseThrow(() -> new InvalidMoveException("Invalid move"));</pre>
+                        </li>
+                    </ol>
+
+                    <p><br><strong>Step 4 : Board Creation & Player Updates</strong></p>
+                    <p>If the move played is in the list of legal moves, a new Board is created with updated tiles and players.</p>
+                    <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
+private Board(final Builder builder, final Move lastMove) {
+    // Create new tiles
+    this.tiles = createTiles(builder);
+    
+    // Create new opponent player (previous current player)
+    this.opponentPlayer = Player.createPlayer(tiles, 
+        builder.currentPlayerAlliance.getOpposite(), null, null);
+    
+    // Create new current player (previous opponent)
+    this.currentPlayer = Player.createPlayer(tiles, 
+        builder.currentPlayerAlliance, this.opponentPlayer, lastMove);
+}</pre>
+
+                    <p><br>For each player, the following happens:</p>
+                    <div style="margin-left: 20px;">
+                        <p style="margin: 10px 0;"><strong>1.</strong> All pieces of the player's color are collected from the tiles</p>
+                        
+                        <p style="margin: 10px 0;"><strong>2.</strong> Legal moves are calculated for each piece through a complex process:</p>
+                        <div style="margin-left: 20px;">
+                            <p style="margin: 10px 0;"><strong>a.</strong> For each piece, calculate all possible destination coordinates based on its movement pattern:</p>
+                            <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px; margin: 10px 0;">
+// Example for a Bishop's move offsets
+private static final int[] CANDIDATE_MOVE_COORDINATES = { -9, -7, 7, 9 };
+// These represent diagonal directions: up-left, up-right, down-left, down-right</pre>
+
+                            <p style="margin: 10px 0;"><strong>b.</strong> Apply multiple validation layers for each potential move:</p>
+                            <div style="margin-left: 20px;">
+                                • Basic validations (bounds, alliance, pattern)<br>
+                                • Check validations (king safety, pins)<br>
+                                • Special move validations (castling, en passant)
+                            </div>
+
+                            <p style="margin: 10px 0;"><strong>c.</strong> For sliding pieces (Bishop, Rook, Queen), continue checking in each direction until:</p>
+                            <div style="margin-left: 20px;">
+                                • Hitting the board edge<br>
+                                • Hitting a piece (stop or capture)<br>
+                                • Failing a validation
+                            </div>
+
+                            <p style="margin: 10px 0;"><strong>d.</strong> For fixed-distance pieces (Pawn, Knight, King):</p>
+                            <div style="margin-left: 20px;">
+                                • Check each possible destination once<br>
+                                • Validate special conditions (first move, castling rights)
+                            </div>
+                        </div>
+
+                        <p style="margin: 10px 0;"><strong>3.</strong> The player is created with:</p>
+                        <div style="margin-left: 20px;">
+                            • Collection of pieces<br>
+                            • Collection of legal moves<br>
+                            • Player's alliance (WHITE/BLACK)
+                        </div>
+                    </div>
+
+                    <p><br><strong>Step 5 : Game Update</strong></p>
+                    <p>After the move is executed:</p>
+                    <ol>
+                        <li>The new board state is serialized to JSON</li>
+                        <li>The game entity is updated in the database</li>
+                        <li>The new state is broadcast to both players via WebSocket</li>
+                        <li>The frontend updates the board display</li>
+                    </ol>
                 </div>
+
                 <div class="collumn">
                     <div class="head">
-                        <span class="headline hl1">Codepen</span>
-                        <p><span class="headline hl2">Explore and Experiment!</span></p>
+                        <span class="headline hl1">Spring Boot Integration</span>
+                        <p><span class="headline hl2">Because We're Not Savages - We Use Spring Boot! 🌱</span></p>
                     </div>
-                    Are you ready to explore and experiment with programming languages that create the World Wide Web? Now it's the time to unleash your creativity!
-                    <p><span class="citation">"Don't be shy, give it a try!"</span> What's more, you can also save your creations!</p>
+                    <p>Ah yes, Spring Boot! The framework that makes Java developers feel like they're not living in the stone age. SKG Chess proudly rides the Spring Boot train, because who doesn't love auto-configuration and not having to write XML files until 3 AM? 🚂</p>
+
+                    <p><strong>Our Fancy Application Layers</strong></p>
+                    <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
+Application Layers (AKA The Organized Chaos)
+├── Controllers (REST API)
+│   ├── GameController    // Where chess moves come to party 🎮
+│   ├── UserController    // The bouncer of our application 🚫
+│   └── MainController    // The page router and view manager 🗺️
+├── Services
+│   ├── GameService      // The brain behind chess operations 🧠
+│   ├── UserService      // User management wizardry 🧙
+│   └── RateLimiterService // Keeps the spammers at bay 🛡️
+├── Repositories
+│   ├── GameRepository   // Database whisperer for games 📚
+│   └── UserRepository   // User data hoarder 🗄️
+└── Domain Models
+    ├── Game            // The game state container 🎲
+    └── User            // Player information holder 👤</pre>
+
+                    <p><strong>Our Tech Stack (AKA The Cool Kids' Table)</strong></p>
+                    <ul>
+                        <li><strong>WebSocket</strong> - For those sweet, sweet real-time updates (no carrier pigeons here!) 📡</li>
+                        <li><strong>PostgreSQL</strong> - Our reliable data butler, always ready to serve 🎩</li>
+                        <li><strong>Thymeleaf</strong> - Our trusty template engine for server-side rendering 🎨</li>
+                    </ul>
+
+                    <p><br><em>P.S. Can't wait to finish this project and go back to my life 😐</em></p>
                 </div>
+
                 <div class="collumn">
                     <div class="head">
-                        <span class="headline hl3">Coming soon... the BB Beats!</span>
-                        <p><span class="headline hl4">That's another exciting opportunity we are letting ourselves in for!</span></p>
+                        <span class="headline hl1">Frontend</span>
+                        <p><span class="headline hl2">The "We Had To" Part</span></p>
                     </div>
-                    <p>Not only will you be able to listen to music on the BBB but you will be making music for the BBB! Whether you prefer to be back stage making the music, or upfront as a BBB DJ (or both!), it's up to you! Stay tuned to the BBB to find out more!</p>
+                    <p>Look, we're here for the backend magic, but since you asked... 🤷‍♂️</p>
+
+                    <p>SKG Chess uses the holy trinity of web development:</p>
+                    <ul>
+                        <li><strong>HTML</strong> - For structure (because we're not savages)</li>
+                        <li><strong>CSS</strong> - To make it not look like it's from 1995</li>
+                        <li><strong>JavaScript</strong> - To make things move and stuff</li>
+                    </ul>
+
+                    <p><br>And because we're fancy, we threw in Thymeleaf with its cool fragments feature. It's like copy-paste but for grown-ups! 🎭</p>
+
+                    <p><em>Now, can we get to the fun stuff? What does SKG Chess really offers to chess players? 🎪</em></p>
                 </div>
+
                 <div class="collumn">
                     <div class="head">
-                        <span class="headline hl1">So, are you ready?</span>
-                        <p><span class="headline hl4">for the exciting year ahead</span></p>
+                        <span class="headline hl1">What's in the Box?</span>
+                        <p><span class="headline hl2">SKG Chess Package</span></p>
                     </div>
-                    <p>Not forgetting, we will also be using iPads in lessons but we are aiming for a technology enhanced learning environment where we can continue to share amazing creations with the world! Oh, and there's more! We will be up there with Stanford University so let's show them what we are made of! Finally, last but not least, we will also be making our own apps to share with the world via our BBB!</p>
+                    <p>Alright, let's talk about what makes SKG Chess special!</p>
+
+                    <p><strong>Thessaloniki Vibes 🏛️</strong></p>
+                    <p>Ever wondered why it's called SKG Chess? Well, we borrowed the name from Thessaloniki's airport code (SKG) because, you know, we're fancy like that! ✈️</p>
+                    <p>Are you from Thessaloniki? Great! You'll see your city in the background. Not from Thessaloniki? Welcome to the club! Time to experience the magic of the Queen of the North! 👑</p>
+
+                    <p><strong>Entertainment Package 🎮</strong></p>
+                    <ul>
+                        <li>Chess moves that'll make your opponent go "Wait, what?" 🤔</li>
+                        <li>Daily wisdom quotes (because why not?) 📚</li>
+                        <li>Background music to set the mood (because silence is awkward) 🎵</li>
+                    </ul>
+
+                    <p><br><strong>Fancy Features </strong></p>
+                    <ul>
+                        <li>Two themes to switch between (because one is boring) 🎨</li>
+                        <li>Game history collection (to show off your wins) 🏆</li>
+                        <li>Chat with your opponent (trash talk included, free of charge) 💬</li>
+                        <li>Save your games (because memory is overrated) 💾</li>
+                    </ul>
+
+                    <p><br><strong>The Fine Print (AKA The Not-So-Fun Part) 📝</strong></p>
+                    <ul>
+                        <li>Yes, you need an account (we're not savages, we need to know who you are) 👤</li>
+                        <li>Matchmaking is manual (copy-paste-share-play, because we're old school) 🔗</li>
+                        <li>No AI opponents (yet) - we're keeping it human for now 🤖</li>
+                    </ul>
+
+                    <p><br><em>P.S. If you're still reading this, you're probably procrastinating. Go play some chess! ♟️</em></p>
                 </div>
             </div>
         </div>
