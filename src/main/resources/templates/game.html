@@ -31,9 +31,6 @@
         </a>
         <div sec:authorize="isAuthenticated()">
             <span sec:authentication="name" id="username" style="display: none;"></span>
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="btn btn-sign-in">Sign Out</button>
-            </form>
         </div>
         <div sec:authorize="!isAuthenticated()">
             <a href="/login" class="btn btn-sign-in">Sign In</a>

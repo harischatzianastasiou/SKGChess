@@ -374,7 +374,7 @@ body {
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border-radius: var(--border-radius-md); /* Restore border radius for all buttons */
+    border-radius: var(--border-radius-md);
     background: transparent;
     color: var(--text-color);
     border: 1px solid var(--primary-color);
@@ -397,6 +397,14 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.2);
     box-shadow: var(--shadow-sm);
     transform: translateY(-1px);
+}
+
+/* Fix for sign-out button hover */
+.btn-sign-out:hover {
+    border-left: none;  /* Ensure left border stays removed on hover */
+    border-top: 1px solid rgba(255, 255, 255, 0.2);  /* Match other borders */
+    border-right: 1px solid rgba(255, 255, 255, 0.2);  /* Match other borders */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);  /* Match other borders */
 }
 
 /* Yes/No buttons */
