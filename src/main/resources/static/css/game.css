@@ -656,11 +656,10 @@
     margin-bottom: 20px; /* Remove any bottom margin */
     background: 
         linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), /* dark overlay */
-        url('/images/patternTile.png'); /* repeating pattern */
-    background-position: center center; /* center the pattern */
-    background-repeat: repeat; /* tile the pattern */
-    background-size: 500px 500px; /* adjust this value for your preferred tile size */
-    /* You can change 120px to any value that looks best for your pattern */
+        url('/images/retrochess2.jpg'); 
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 @media (min-width: 1024px) {
