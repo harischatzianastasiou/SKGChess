@@ -589,4 +589,26 @@ body {
 .tile.legal-move-en-passant:hover::before {
     background: rgba(255, 165, 0, 0.3);
     border: 2px solid #ff9800;
+}
+
+/* Move highlighting styles for gold theme */
+/* Source tile - warm gold color to show where the piece moved from */
+.last-move-source {
+    background-color: rgba(255, 215, 0, 0.3) !important; /* Bright gold background */
+}
+
+/* Target tile - darker gold color to show where the piece moved to */
+.last-move-target {
+    background-color: rgba(189, 136, 0, 0.385) !important;
+     /* Darker gold background */
+}
+
+/* Special highlighting for capture moves - red background */
+.last-move-capture {
+    background-color: rgba(189, 136, 0, 0.385) !important;  /* Semi-transparent red background */
+}
+
+@keyframes fadeHighlight {
+    from { opacity: 0; }
+    to { opacity: 1; }
 } 

@@ -60,7 +60,7 @@ public class Game implements Serializable {
     @Column(name = "N_MOVECOUNT")
     private int moveCount;
 
-    @Column(name = "game_lastMoveData")
+    @Column(name = "S_LASTMOVEDATA")
     private String lastMoveData;
 
     @Column(name = "S_BOARD", columnDefinition = "TEXT", nullable = true)

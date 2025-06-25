@@ -882,8 +882,8 @@ class ChessGame {
 
     clearLegalMoves() {
         // Remove all legal move highlights - using the correct CSS class names
-        document.querySelectorAll('.legal-move-non-capture, .legal-move-capture').forEach(tile => {
-            tile.classList.remove('legal-move-non-capture', 'legal-move-capture');
+        document.querySelectorAll('.legal-move-non-capture, .legal-move-capture, .legal-move-en-passant').forEach(tile => {
+            tile.classList.remove('legal-move-non-capture', 'legal-move-capture', 'legal-move-en-passant');
         });
     }
 
@@ -1023,18 +1023,36 @@ class ChessGame {
 
         // Check if lastMoveData exists before trying to use it
         if (this.lastMoveData) {
-            const lastMoveDataArray = JSON.parse(this.lastMoveData);
-            const lastMoveSourceCoordinate = lastMoveDataArray[0];
-            const lastMoveTargetCoordinate = lastMoveDataArray[1];
-            document.querySelector('.selected')?.classList.remove('selected');
-            this.clearLegalMoves();
-            document.querySelectorAll('.tile.dragover').forEach(tile => {
-                tile.classList.remove('dragover');
-            });
-            // Clear selection
-            document.querySelector('.selected')?.classList.remove('selected');
-            this.selectedSourceTile = null;
-            this.highlightLastMove(lastMoveSourceCoordinate, lastMoveTargetCoordinate);
+            try {
+                // Parse lastMoveData as a JSON object (not array)
+                const lastMoveDataObj = JSON.parse(this.lastMoveData);
+                const lastMoveSourceCoordinate = lastMoveDataObj.sourceCoordinate;
+                const lastMoveTargetCoordinate = lastMoveDataObj.targetCoordinate;
+                const lastMoveType = lastMoveDataObj.moveType;
+                
+                // Clear previous selections and highlights
+                document.querySelector('.selected')?.classList.remove('selected');
+                this.clearLegalMoves();
+                document.querySelectorAll('.tile.dragover').forEach(tile => {
+                    tile.classList.remove('dragover');
+                });
+                // Clear selection
+                document.querySelector('.selected')?.classList.remove('selected');
+                this.selectedSourceTile = null;
+                
+                // Highlight the last move with move type information
+                this.highlightLastMove(lastMoveSourceCoordinate, lastMoveTargetCoordinate, lastMoveType);
+            } catch (e) {
+                console.error('Error parsing lastMoveData:', e);
+                // Fallback: clear selections without highlighting
+                document.querySelector('.selected')?.classList.remove('selected');
+                this.clearLegalMoves();
+                document.querySelectorAll('.tile.dragover').forEach(tile => {
+                    tile.classList.remove('dragover');
+                });
+                document.querySelector('.selected')?.classList.remove('selected');
+                this.selectedSourceTile = null;
+            }
         } else {
             // If no last move data, just clear selections
             document.querySelector('.selected')?.classList.remove('selected');
@@ -1048,18 +1066,37 @@ class ChessGame {
         }
     }
 
-    highlightLastMove(sourcePos, targetPos) {
-        // Clear previous highlights
-        document.querySelectorAll('.last-move-source, .last-move-target').forEach(tile => {
-            tile.classList.remove('last-move-source', 'last-move-target');
+    /**
+     * Highlights the last move made on the chess board
+     * @param {number} sourcePos - The source coordinate of the move (0-63)
+     * @param {number} targetPos - The target coordinate of the move (0-63)
+     * @param {string} moveType - The type of move (NORMAL, CAPTURE, CHECK, etc.)
+     */
+    highlightLastMove(sourcePos, targetPos, moveType) {
+        // Clear previous move highlights to avoid conflicts
+        document.querySelectorAll('.last-move-source, .last-move-target, .last-move-capture').forEach(tile => {
+            tile.classList.remove('last-move-source', 'last-move-target', 'last-move-capture');
         });
 
-        // Add highlights to source and target tiles
+        // Find the source and target tiles using their data-position attribute
         const sourceTile = this.board.querySelector(`.tile[data-position='${sourcePos}']`);
         const targetTile = this.board.querySelector(`.tile[data-position='${targetPos}']`);
         
-        if (sourceTile) sourceTile.classList.add('last-move-source');
-        if (targetTile) targetTile.classList.add('last-move-target');
+        // Add highlighting to source tile (where the piece moved from)
+        if (sourceTile) {
+            sourceTile.classList.add('last-move-source');
+        }
+        
+        // Add highlighting to target tile (where the piece moved to)
+        if (targetTile) {
+            targetTile.classList.add('last-move-target');
+        }
+        
+        // Add special red highlighting for capture moves
+        // This makes it easy to distinguish captures from normal moves
+        if (moveType === 'CAPTURE' && targetTile) {
+            targetTile.classList.add('last-move-capture');
+        }
     }
 
     showGameEndPopup(winner, result, winnerUsername, winnerAvatar, loserUsername, loserAvatar) {
