@@ -74,6 +74,16 @@ public class Game implements Serializable {
     @Column(name = "S_STATUS", nullable = false)
     private String status = GameStatus.WAITING_FOR_OPPONENT.name();
 
+    // Timer-related fields
+    @Column(name = "N_WHITE_TIME_LEFT_SECONDS", nullable = true)
+    private Integer whiteTimeLeftSeconds; // White player's remaining time in seconds
+
+    @Column(name = "N_BLACK_TIME_LEFT_SECONDS", nullable = true)
+    private Integer blackTimeLeftSeconds; // Black player's remaining time in seconds
+
+    @Column(name = "D_LAST_MOVE_AT", nullable = true)
+    private LocalDateTime lastMoveAt; // When the last move was made (for timer calculations)
+
     public enum GameStatus {
         WAITING_FOR_OPPONENT,
         IN_PROGRESS,
@@ -85,7 +95,8 @@ public class Game implements Serializable {
         THREEFOLD_REPETITION,
         FIFTY_MOVE_RULE,
         INSUFFICIENT_MATERIAL,
-        MUTUAL_AGREEMENT;
+        MUTUAL_AGREEMENT,
+        TIME_OUT; // New status for when a player runs out of time
     }
 
     public boolean isGameStarted() {

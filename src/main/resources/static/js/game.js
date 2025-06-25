@@ -15,6 +15,14 @@ class ChessGame {
         this.playerColor = null;
         this.isPlayerTurn = null;
         this.lastMoveArrow = null;
+        
+        // Timer-related properties
+        this.whiteTimeLeftSeconds = null;
+        this.blackTimeLeftSeconds = null;
+        this.lastMoveAt = null;
+        this.timeControlMinutes = null;
+        this.timerInterval = null;
+        
         this.pieceImages = {
             'WHITE_PAWN': '/images/pawnN.png',
             'WHITE_KNIGHT': '/images/knightN.png',
@@ -140,6 +148,137 @@ class ChessGame {
 
         // Remove the redundant animation trigger for black player
         // The animation will now only show when receiving the GAME_STARTED websocket message
+    }
+
+    // Start the timer countdown
+    startTimer() {
+        // Only start timer if game is in progress
+        if (this.gameStatus !== 'IN_PROGRESS') {
+            return;
+        }
+        
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+        }
+        
+        this.timerInterval = setInterval(() => {
+            this.updateTimerDisplay();
+        }, 1000); // Update every second
+    }
+
+    // Stop the timer
+    stopTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+    }
+
+    // Update timer display
+    updateTimerDisplay() {
+        if (!this.lastMoveAt || !this.whiteTimeLeftSeconds || !this.blackTimeLeftSeconds) {
+            return;
+        }
+
+        // Don't update timer if game has ended
+        if (this.gameStatus !== 'IN_PROGRESS') {
+            return;
+        }
+
+        const now = new Date();
+        const lastMoveTime = new Date(this.lastMoveAt);
+        const elapsedSeconds = Math.floor((now - lastMoveTime) / 1000);
+
+        // Calculate current time left for each player
+        let whiteTimeLeft = this.whiteTimeLeftSeconds;
+        let blackTimeLeft = this.blackTimeLeftSeconds;
+
+        // Only decrease time for the player whose turn it is currently
+        if (this.boardDTO && this.boardDTO.currentPlayer) {
+            const currentPlayerAlliance = this.boardDTO.currentPlayer.alliance;
+            
+            if (currentPlayerAlliance === 'WHITE') {
+                // White's turn - decrease white's time
+                whiteTimeLeft = Math.max(0, this.whiteTimeLeftSeconds - elapsedSeconds);
+                // Black's time stays the same
+                blackTimeLeft = this.blackTimeLeftSeconds;
+            } else {
+                // Black's turn - decrease black's time
+                blackTimeLeft = Math.max(0, this.blackTimeLeftSeconds - elapsedSeconds);
+                // White's time stays the same
+                whiteTimeLeft = this.whiteTimeLeftSeconds;
+            }
+        }
+
+        // Update display using existing timer elements
+        const timerElements = document.querySelectorAll('.player-timer');
+        if (timerElements.length >= 2) {
+            // First timer element is opponent's timer (top)
+            const opponentTimer = timerElements[0];
+            const currentPlayerTimer = timerElements[1];
+            
+            // Determine which timer shows which player based on current player's color
+            if (this.playerColor === 'WHITE') {
+                // Current player is white, so opponent is black
+                opponentTimer.textContent = this.formatTime(blackTimeLeft);
+                currentPlayerTimer.textContent = this.formatTime(whiteTimeLeft);
+                
+                // Add low time warning
+                opponentTimer.className = blackTimeLeft <= 10 ? 'player-timer low-time' : 'player-timer';
+                currentPlayerTimer.className = whiteTimeLeft <= 10 ? 'player-timer low-time' : 'player-timer';
+            } else {
+                // Current player is black, so opponent is white
+                opponentTimer.textContent = this.formatTime(whiteTimeLeft);
+                currentPlayerTimer.textContent = this.formatTime(blackTimeLeft);
+                
+                // Add low time warning
+                opponentTimer.className = whiteTimeLeft <= 10 ? 'player-timer low-time' : 'player-timer';
+                currentPlayerTimer.className = blackTimeLeft <= 10 ? 'player-timer low-time' : 'player-timer';
+            }
+        }
+
+        // Check for timeout - only check the player whose turn it is
+        if (this.boardDTO && this.boardDTO.currentPlayer) {
+            const currentPlayerAlliance = this.boardDTO.currentPlayer.alliance;
+            if ((currentPlayerAlliance === 'WHITE' && whiteTimeLeft <= 0) || 
+                (currentPlayerAlliance === 'BLACK' && blackTimeLeft <= 0)) {
+                this.handleTimeout();
+            }
+        }
+    }
+
+    // Format time as MM:SS
+    formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Handle timeout
+    async handleTimeout() {
+        this.stopTimer();
+        
+        try {
+            const response = await fetch(`/api/games/${this.gameId}/timeout`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                console.log('Timeout handled successfully');
+                // Fetch the updated game state to get the new status and winner
+                await this.fetchGame();
+                
+                // Update the board to show the end game popup
+                this.updateBoard();
+            } else {
+                console.error('Failed to handle timeout');
+            }
+        } catch (error) {
+            console.error('Error handling timeout:', error);
+        }
     }
 
     initializeBoard() {
@@ -309,6 +448,20 @@ class ChessGame {
             this.board.classList.add('black-perspective');
         }
 
+        // Initialize timer data from server
+        this.whiteTimeLeftSeconds = gameData.whiteTimeLeftSeconds;
+        this.blackTimeLeftSeconds = gameData.blackTimeLeftSeconds;
+        this.lastMoveAt = gameData.lastMoveAt;
+        this.timeControlMinutes = gameData.timeControlMinutes;
+
+        // Start timer if game has started and timer is enabled
+        if (this.gameStatus === 'IN_PROGRESS' && this.timeControlMinutes) {
+            this.startTimer();
+        } else {
+            // Stop timer if game is not in progress
+            this.stopTimer();
+        }
+
         // Reinitialize the board with correct coordinate labels
         this.initializeBoard();
 
@@ -374,6 +527,11 @@ class ChessGame {
                                 // Fetch and update the game state
                                 await this.fetchGame();
                                 
+                                // Start timer if game has started and timer is enabled
+                                if (this.gameStatus === 'IN_PROGRESS' && this.timeControlMinutes) {
+                                    this.startTimer();
+                                }
+                                
                                 // Update the status based on player color
                                 if (this.playerColor === 'WHITE') {
                                     this.statusElement.textContent = 'Your turn';
@@ -385,6 +543,12 @@ class ChessGame {
                             } else if (moveData.type === 'MOVE_MADE') {
                                 console.log('[Sound Debug] Move made, processing move data:', moveData);
                                 await this.fetchGame();
+                                
+                                // Timer data is already updated from fetchGame() call above
+                                // Just restart timer with the updated data
+                                if (this.timeControlMinutes && this.gameStatus === 'IN_PROGRESS') {
+                                    this.startTimer();
+                                }
                                 
                                 // Map move types to sound types
                                 const moveTypeToSound = {
@@ -418,6 +582,17 @@ class ChessGame {
                                 }
                                 else {
                                     this.statusElement.textContent = this.gameStatus;
+                                }
+                            } else if (moveData.type === 'TIME_OUT') {
+                                console.log('Timeout detected, stopping timer and updating game state');
+                                this.stopTimer();
+                                await this.fetchGame();
+                                
+                                // Update game status and show end game popup if it's timeout
+                                if (this.gameStatus === 'TIME_OUT') {
+                                    this.statusElement.textContent = 'Game over by timeout!';
+                                    // The updateBoard method will handle showing the end game popup
+                                    this.updateBoard();
                                 }
                             }
                         } catch (error) {
@@ -917,8 +1092,20 @@ class ChessGame {
         if (this.gameStatus === 'CHECKMATE' || this.gameStatus === 'DRAW' || this.gameStatus === 'RESIGNED'
             || this.gameStatus === 'STALEMATE' || this.gameStatus === 'THREEFOLD_REPETITION'
             || this.gameStatus === 'FIFTY_MOVE_RULE' || this.gameStatus === 'INSUFFICIENT_MATERIAL'
-            || this.gameStatus === 'MUTUAL_AGREEMENT'
+            || this.gameStatus === 'MUTUAL_AGREEMENT' || this.gameStatus === 'TIME_OUT'
         ) {
+            // Stop the timer when game ends
+            this.stopTimer();
+            
+            // Update timer display to show final times
+            this.updateTimerDisplay();
+            
+            // Add visual indicator that timer has stopped
+            const timerElements = document.querySelectorAll('.player-timer');
+            timerElements.forEach(timer => {
+                timer.classList.add('timer-stopped');
+            });
+            
             console.log('Game end condition detected:', this.gameStatus);
             console.log('Board DTO:', this.boardDTO);
             console.log('White player username:', this.boardDTO.whitePlayerUsername);
@@ -932,53 +1119,86 @@ class ChessGame {
             const blackPlayerUsername = this.boardDTO.blackPlayerUsername;
             let winner, result;
 
-            if(this.gameStatus === 'CHECKMATE') {
-                this.statusElement.textContent = 'Checkmate!';
-                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
-                    winner = this.boardDTO.blackPlayerUsername;
-                    result = '0-1';
+            if (this.gameStatus === 'TIME_OUT') {
+                // Use the winner information from the game data
+                if (this.winnerUsername) {
+                    winner = this.winnerUsername;
                 } else {
-                    winner = this.boardDTO.whitePlayerUsername;
-                    result = '1-0';
+                    // Fallback logic if winner is not set
+                    if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                        // White ran out of time, so black wins
+                        winner = this.boardDTO.blackPlayerUsername;
+                    } else {
+                        // Black ran out of time, so white wins
+                        winner = this.boardDTO.whitePlayerUsername;
+                    }
                 }
-            } else if(this.gameStatus === 'DRAW') {
-                this.statusElement.textContent = 'Draw!';
+            } else if (this.gameStatus === 'CHECKMATE') {
+                // For checkmate, determine winner based on current player
+                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                    // White's turn but checkmate, so black won
+                    winner = this.boardDTO.blackPlayerUsername;
+                } else {
+                    // Black's turn but checkmate, so white won
+                    winner = this.boardDTO.whitePlayerUsername;
+                }
+            } else if (this.gameStatus === 'DRAW') {
                 winner = 'Draw';
-                result = 'Draw';
-            } else if(this.gameStatus === 'RESIGNED') {
-                this.statusElement.textContent = 'Resigned!';
-                winner = this.boardDTO.currentPlayer.alliance === 'WHITE' ? blackPlayerUsername : whitePlayerUsername;
-                result = this.boardDTO.currentPlayer.alliance === 'WHITE' ? '0-1' : '1-0';
+            } else if (this.gameStatus === 'RESIGNED') {
+                // For resignation, the current player resigned, so opponent wins
+                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                    // White resigned, so black won
+                    winner = this.boardDTO.blackPlayerUsername;
+                } else {
+                    // Black resigned, so white won
+                    winner = this.boardDTO.whitePlayerUsername;
+                }
             } else if(this.gameStatus === 'STALEMATE') {
                 this.statusElement.textContent = 'Draw by stalemate!';
                 winner = 'Draw';
-                result = 'Draw';
             } else if(this.gameStatus === 'THREEFOLD_REPETITION') {
                 this.statusElement.textContent = 'Draw by threefold repetition!';
                 winner = 'Draw';
-                result = 'Draw';
             } else if(this.gameStatus === 'FIFTY_MOVE_RULE') {
                 this.statusElement.textContent = 'Draw by fifty move rule!';
                 winner = 'Draw';
-                result = 'Draw';
             } else if(this.gameStatus === 'INSUFFICIENT_MATERIAL') {
                 this.statusElement.textContent = 'Draw by insufficient material!';
                 winner = 'Draw';
-                result = 'Draw';
             } else if(this.gameStatus === 'MUTUAL_AGREEMENT') {
                 this.statusElement.textContent = 'Draw by mutual agreement!';
                 winner = 'Draw';
-                result = 'Draw';
             }
 
- 
+            // Determine result based on winner vs current player
+            if (winner === 'Draw') {
+                result = 'Draw';
+            } else {
+                // Check if winner's alliance matches current player's alliance
+                const winnerAlliance = (winner === this.boardDTO.whitePlayerUsername) ? 'WHITE' : 'BLACK';
+                const currentPlayerAlliance = this.playerColor;
+                
+                if (winnerAlliance === currentPlayerAlliance) {
+                    result = '1-0'; // Current player won
+                } else {
+                    result = '0-1'; // Opponent won
+                }
+            }
+
+            // Always show current player on left, opponent on right
+            const currentPlayerUsername = (this.playerColor === 'WHITE') ? this.boardDTO.whitePlayerUsername : this.boardDTO.blackPlayerUsername;
+            const opponentUsername = (this.playerColor === 'WHITE') ? this.boardDTO.blackPlayerUsername : this.boardDTO.whitePlayerUsername;
+            const currentPlayerColor = (this.playerColor === 'WHITE') ? 'white' : 'black';
+            const opponentColor = (this.playerColor === 'WHITE') ? 'black' : 'white';
+
             this.showGameEndPopup(
                 winner,
                 result,
-                winner === 'Draw' ? 'Draw' : (winner === whitePlayerUsername ? whitePlayerUsername : blackPlayerUsername),
-                winner === 'Draw' ? '/images/draw.png' : (winner === whitePlayerUsername ? whitePlayerAvatar : blackPlayerAvatar),
-                winner === 'Draw' ? 'Draw' : (winner === whitePlayerUsername ? blackPlayerUsername : whitePlayerUsername),
-                winner === 'Draw' ? '/images/draw.png' : (winner === whitePlayerUsername ? blackPlayerAvatar : whitePlayerAvatar)
+                currentPlayerUsername,  // Always current player on left
+                currentPlayerColor,     // Current player's color
+                opponentUsername,       // Always opponent on right
+                opponentColor,          // Opponent's color
+                this.gameStatus === 'TIME_OUT' ? 'by timeout' : 'by checkmate'
             );
         }
         
@@ -1099,10 +1319,14 @@ class ChessGame {
         }
     }
 
-    showGameEndPopup(winner, result, winnerUsername, winnerAvatar, loserUsername, loserAvatar) {
+    showGameEndPopup(winner, result, currentPlayerUsername, currentPlayerColor, opponentUsername, opponentColor, subtitle) {
         // Remove existing popup if any
         let existing = document.getElementById('game-end-popup');
         if (existing) existing.remove();
+
+        // Determine which player is the winner for styling
+        const isCurrentPlayerWinner = winner === currentPlayerUsername;
+        const isOpponentWinner = winner === opponentUsername;
 
         // Create popup
         const popup = document.createElement('div');
@@ -1110,16 +1334,16 @@ class ChessGame {
         popup.innerHTML = `
             <button class="popup-close" id="close-game-end-popup" title="Close">&#10005;</button>
             <div class="popup-title">Game Over</div>
-            <div class="popup-subtitle">by checkmate</div>
+            <div class="popup-subtitle">${subtitle}</div>
             <div class="popup-players">
-                <div class="popup-player ${result === '1-0' ? 'popup-winner' : ''}">
-                    <img src="${winnerAvatar}" class="popup-avatar" alt="Winner">
-                    <div class="popup-username">${winnerUsername}</div>
+                <div class="popup-player ${isCurrentPlayerWinner ? 'popup-winner' : ''}">
+                    <div class="popup-color" style="background-color: ${currentPlayerColor};"></div>
+                    <div class="popup-username">${currentPlayerUsername}</div>
                 </div>
                 <div class="popup-result-center">${result}</div>
-                <div class="popup-player ${result === '0-1' ? 'popup-winner' : ''}">
-                    <img src="${loserAvatar}" class="popup-avatar" alt="Loser">
-                    <div class="popup-username">${loserUsername}</div>
+                <div class="popup-player ${isOpponentWinner ? 'popup-winner' : ''}">
+                    <div class="popup-color" style="background-color: ${opponentColor};"></div>
+                    <div class="popup-username">${opponentUsername}</div>
                 </div>
             </div>
         `;
@@ -1194,18 +1418,28 @@ class ChessGame {
                 align-items: center;
                 min-width: 90px;
             }
-            #game-end-popup .popup-avatar {
-                width: 64px;
-                height: 64px;
+            #game-end-popup .popup-color {
+                width: 24px;
+                height: 24px;
                 border-radius: 50%;
-                border: 3px solid #fff;
                 margin-bottom: 0.5rem;
-                object-fit: cover;
-                background: #222;
+                border: 2px solid #fff;
             }
-            #game-end-popup .popup-winner .popup-avatar {
-                border: 3px solid var(--color-accent, #ffd700);
-                box-shadow: 0 0 12px 2px var(--color-accent, #ffd700);
+            #game-end-popup .popup-color[style*="white"] {
+                background-color: #fff !important;
+                border: 2px solid #333;
+            }
+            #game-end-popup .popup-color[style*="black"] {
+                background-color: #333 !important;
+                border: 2px solid #fff;
+            }
+            #game-end-popup .popup-color[style*="draw"] {
+                background: linear-gradient(45deg, #fff 50%, #333 50%);
+                border: 2px solid #fff;
+            }
+            #game-end-popup .popup-winner .popup-color {
+                border: 2px solid var(--color-accent, #ffd700);
+                box-shadow: 0 0 8px 2px var(--color-accent, #ffd700);
             }
             #game-end-popup .popup-username {
                 font-size: 1.1rem;

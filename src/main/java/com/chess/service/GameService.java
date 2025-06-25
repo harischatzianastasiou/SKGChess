@@ -18,6 +18,7 @@ import com.chess.core.moves.Move;
 import com.chess.core.moves.capturing.CapturingMove;
 import com.chess.core.player.CurrentPlayer;
 import com.chess.core.player.Player;
+import com.chess.core.Alliance;
 import com.chess.exception.GameNotFoundException;
 import com.chess.exception.InvalidMoveException;
 import com.chess.exception.UserNotFoundException;
@@ -155,6 +156,15 @@ public class GameService {
             // Update game status to IN_PROGRESS
             game.setStatus(GameStatus.IN_PROGRESS.name());
             
+            // Initialize timer when game starts (both players have joined)
+            if (game.getTimeControlMinutes() != null) {
+                // Set initial time for both players (convert minutes to seconds)
+                game.setWhiteTimeLeftSeconds(game.getTimeControlMinutes() * 60);
+                game.setBlackTimeLeftSeconds(game.getTimeControlMinutes() * 60);
+                // Set the last move time to now
+                game.setLastMoveAt(LocalDateTime.now());
+            }
+            
             // Save and return the updated game
             return gameRepository.save(game);
         } catch (Exception e) {
@@ -237,6 +247,27 @@ public class GameService {
         com.chess.core.board.IBoard newBoard = move.execute();
         CurrentPlayer currentPlayer = (CurrentPlayer) newBoard.getCurrentPlayer();
 
+        // Calculate time used for this move (if timer is enabled)
+        int timeUsedSeconds = 0;
+        if (game.getLastMoveAt() != null) {
+            LocalDateTime now = LocalDateTime.now();
+            timeUsedSeconds = (int) java.time.Duration.between(game.getLastMoveAt(), now).getSeconds();
+        }
+
+        // Update timer for the player who just moved
+        if (game.getTimeControlMinutes() != null) {
+            Alliance playerAlliance = move.getPieceToMove().getPieceAlliance();
+            if (playerAlliance == Alliance.WHITE) {
+                int newTime = game.getWhiteTimeLeftSeconds() - timeUsedSeconds;
+                game.setWhiteTimeLeftSeconds(Math.max(0, newTime));
+            } else {
+                int newTime = game.getBlackTimeLeftSeconds() - timeUsedSeconds;
+                game.setBlackTimeLeftSeconds(Math.max(0, newTime));
+            }
+            // Update last move time
+            game.setLastMoveAt(LocalDateTime.now());
+        }
+
         // Create move data object
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode moveData = objectMapper.createObjectNode();
@@ -246,6 +277,7 @@ public class GameService {
         moveData.put("targetCoordinate", move.getTargetCoordinate());
         moveData.put("pieceSymbol", move.getPieceToMove().getPieceSymbol().toString());
         moveData.put("pieceAlliance", move.getPieceToMove().getPieceAlliance().toString());
+        moveData.put("timeUsedSeconds", timeUsedSeconds); // Add time used to move data
         
         // Determine move type for sound effects
         if(move instanceof CapturingMove) {
@@ -314,5 +346,41 @@ public class GameService {
         
         // Delete the game
         gameRepository.delete(game);
+    }
+
+    /**
+     * Handle timeout when a player runs out of time
+     * @param gameId The ID of the game
+     * @return The updated game with timeout status
+     */
+    @Transactional
+    public Game handleTimeout(String gameId) {
+        // Check if game exists
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Check if game is in progress
+        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name())) {
+            throw new IllegalStateException("Cannot handle timeout for game that is not in progress");
+        }
+        
+        // Determine which player ran out of time based on current turn
+        Alliance currentPlayerAlliance = game.getIsPlayerTurn();
+        
+        // The player whose turn it is when they run out of time is the one who loses
+        // The opposite player wins
+        if (currentPlayerAlliance == Alliance.WHITE) {
+            // White ran out of time, so Black wins
+            game.setWinner(game.getBlackPlayer());
+        } else {
+            // Black ran out of time, so White wins
+            game.setWinner(game.getWhitePlayer());
+        }
+        
+        // Set game status to TIME_OUT
+        game.setStatus(GameStatus.TIME_OUT.name());
+        
+        // Save and return the updated game
+        return gameRepository.save(game);
     }
 }

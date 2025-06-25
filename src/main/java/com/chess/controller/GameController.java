@@ -256,6 +256,44 @@ public class GameController {
         }
     }
 
+    @PostMapping(value = "/{gameId}/timeout", produces = "application/json")
+    public ResponseEntity<GameDTO> handleTimeout(@PathVariable String gameId) {
+        try {
+            log.info("Processing timeout for game: {}", gameId);
+            
+            // Handle the timeout using the service
+            Game updatedGame = gameService.handleTimeout(gameId);
+            
+            // Create a message for WebSocket notification
+            String message = String.format(
+                "{\"type\":\"TIME_OUT\"," +
+                "\"message\":\"Player ran out of time\"," +
+                "\"gameId\":\"%s\"," +
+                "\"gameStatus\":\"TIME_OUT\"," +
+                "\"whitePlayerId\":\"%s\"," +
+                "\"blackPlayerId\":\"%s\"," +
+                "\"boardDTO\":%s}",
+                gameId,
+                updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
+                updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+                objectMapper.writeValueAsString(updatedGame.getBoard())
+            );
+
+            messagingTemplate.convertAndSend("/topic/game/" + gameId, message);
+
+            // Return the updated game state
+            return ResponseEntity.ok()
+                    .body(GameDTO.fromGame(updatedGame));
+
+        } catch (GameNotFoundException e) {
+            log.error("Game not found: {}", gameId, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (Exception e) {
+            log.error("Error handling timeout for game: {}", gameId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     
     // @MessageMapping("/game/{gameId}/chat")
     // @SendTo("/topic/game/{gameId}")

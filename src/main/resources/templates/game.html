@@ -48,7 +48,7 @@
                                 <div class="player-color-indicator" th:classappend="${userId == whitePlayerId ? 'black-player' : 'white-player'}"></div>
                                 <h3 id="opponent-player-name" th:text="${userId == whitePlayerId ? blackPlayerUsername : whitePlayerUsername}">Opponent</h3>
                             </div>
-                            <div class="player-timer">10:00</div>
+                            <div class="player-timer"></div>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                                 <div class="player-color-indicator" th:classappend="${userId == whitePlayerId ? 'white-player' : 'black-player'}"></div>
                                 <h3 id="current-player-name" th:text="${username}">Current Player</h3>
                             </div>
-                            <div class="player-timer">10:00</div>
+                            <div class="player-timer"></div>
                         </div>
                     </div>
                 </div>

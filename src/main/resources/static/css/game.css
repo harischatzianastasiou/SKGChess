@@ -198,10 +198,59 @@
     font-family: 'Lato', monospace;
     font-size: 1.1rem; /* Slightly smaller font */
     font-weight: 600;
-    color: var(--primary-color);
+    color: whitesmoke;
     padding: 2px 8px; /* Reduced vertical padding */
     border-radius: 4px;
     background: rgba(0, 0, 0, 0.2);
+}
+
+/* Timer styles */
+.timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    margin: 10px 0;
+    background: rgba(40, 30, 60, 0.9);
+    border: 2px solid var(--color-accent, #ffd700);
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.timer-label {
+    margin-right: 10px;
+    color: var(--color-accent, #ffd700);
+}
+
+.timer-time {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    min-width: 60px;
+    text-align: center;
+}
+
+.timer-time.low-time {
+    color: #ff4444;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.white-timer {
+    border-color: #fff;
+}
+
+.black-timer {
+    border-color: #333;
 }
 
 /* Game Controls */
@@ -747,4 +796,36 @@
 /* Hide the status message in the sidebar */
 #status {
     display: none !important; /* Hide the status div and its messages */
+}
+
+/* Game section layout adjustments for timers */
+.game-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#game-board {
+    order: 2;
+}
+
+.white-timer {
+    order: 1;
+}
+
+.black-timer {
+    order: 3;
+}
+
+/* Low time warning for existing player-timer elements */
+.player-timer.low-time {
+    color: #ff6b6b;
+    animation: pulse 1s infinite;
+}
+
+.player-timer.timer-stopped {
+    color: #888;
+    opacity: 0.7;
+    animation: none;
 } 

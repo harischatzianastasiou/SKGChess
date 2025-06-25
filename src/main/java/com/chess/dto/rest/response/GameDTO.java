@@ -46,6 +46,12 @@ public class GameDTO {
     // Current player turn
     private Alliance isPlayerTurn;
     
+    // Timer-related fields
+    private Integer whiteTimeLeftSeconds;
+    private Integer blackTimeLeftSeconds;
+    private LocalDateTime lastMoveAt;
+    private Integer timeControlMinutes;
+    
     /**
      * Convert a Game entity to a GameDTO
      * @param game The Game entity to convert
@@ -66,6 +72,10 @@ public class GameDTO {
                 .winnerUsername(game.getWinner() != null ? game.getWinner().getUsername() : null)
                 .moveCount(game.getMoveCount())
                 .isPlayerTurn(game.getIsPlayerTurn())
+                .whiteTimeLeftSeconds(game.getWhiteTimeLeftSeconds())
+                .blackTimeLeftSeconds(game.getBlackTimeLeftSeconds())
+                .lastMoveAt(game.getLastMoveAt())
+                .timeControlMinutes(game.getTimeControlMinutes())
                 .build();
     }
 } 
