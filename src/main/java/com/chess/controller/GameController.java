@@ -72,7 +72,8 @@ public class GameController {
                 request.getGameType(),
                 request.getTimeControlMinutes(),
                 request.getIsRated(),
-                request.getCustomRules()
+                request.getCustomRules(),
+                request.getPlayerColor()
             );
 
             return ResponseEntity.ok()
@@ -152,10 +153,10 @@ public class GameController {
                 "\"blackPlayerUsername\":\"%s\"," +
                 "\"boardDTO\":%s}",
                 request.getGameId(),
-                game.getWhitePlayer().getId(),
-                game.getWhitePlayer().getUsername(),
-                game.getBlackPlayer().getId(),
-                game.getBlackPlayer().getUsername(),
+                game.getWhitePlayer() != null ? game.getWhitePlayer().getId() : "",
+                game.getWhitePlayer() != null ? game.getWhitePlayer().getUsername() : "",
+                game.getBlackPlayer() != null ? game.getBlackPlayer().getId() : "",
+                game.getBlackPlayer() != null ? game.getBlackPlayer().getUsername() : "",
                 objectMapper.writeValueAsString(game.getBoard())
             );
 
@@ -212,8 +213,8 @@ public class GameController {
             "\"blackPlayerId\":\"%s\"," +
             "\"boardDTO\":%s}",
             request.getGameId(),
-            updatedGame.getWhitePlayer().getId(),
-            updatedGame.getBlackPlayer().getId(),
+            updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
+            updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
             objectMapper.writeValueAsString(updatedGame.getBoard())
             );
 

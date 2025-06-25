@@ -345,16 +345,154 @@ function newGame() {
         return;
     }
 
+    // Show the game creation popup
+    showGameCreationPopup();
+}
+
+// Function to show game creation popup
+function showGameCreationPopup() {
+    // Create popup HTML
+    const popupHTML = `
+        <div id="gameCreationPopup" class="game-creation-popup">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h3>Create New Game</h3>
+                    <button class="close-btn" onclick="closeGameCreationPopup()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="popup-body">
+                    <div class="form-group">
+                        <label for="timeControl">Time Control (minutes):</label>
+                        <select id="timeControl" required>
+                            <option value="">Select time control</option>
+                            <option value="1">1 minute (Blitz)</option>
+                            <option value="3">3 minutes (Blitz)</option>
+                            <option value="5">5 minutes (Blitz)</option>
+                            <option value="10" selected>10 minutes (Rapid)</option>
+                            <option value="15">15 minutes (Rapid)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Your Color:</label>
+                        <div class="color-selection">
+                            <label class="color-option">
+                                <input type="radio" name="playerColor" value="white" checked>
+                                <span class="color-box white-piece">♔</span>
+                                <span>White</span>
+                            </label>
+                            <label class="color-option">
+                                <input type="radio" name="playerColor" value="black">
+                                <span class="color-box black-piece">♚</span>
+                                <span>Black</span>
+                            </label>
+                            <label class="color-option">
+                                <input type="radio" name="playerColor" value="random">
+                                <span class="color-box random-piece">?</span>
+                                <span>Random</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="create-button-container">
+                        <button class="btn-create" onclick="createGameWithOptions()">Create Game</button>
+                    </div>
+                    
+                    <div class="popup-actions">
+                        <button class="btn-cancel" onclick="closeGameCreationPopup()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add popup to body
+    document.body.insertAdjacentHTML('beforeend', popupHTML);
+    
+    // Show the popup with animation
+    setTimeout(() => {
+        const popup = document.getElementById('gameCreationPopup');
+        if (popup) {
+            popup.classList.add('show');
+        }
+    }, 10);
+    
+    // Add escape key listener
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            closeGameCreationPopup();
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+    
+    // Add click outside to close
+    const popup = document.getElementById('gameCreationPopup');
+    const handleOutsideClick = (e) => {
+        if (e.target === popup) {
+            closeGameCreationPopup();
+            popup.removeEventListener('click', handleOutsideClick);
+        }
+    };
+    popup.addEventListener('click', handleOutsideClick);
+    
+    // Focus on time control select
+    setTimeout(() => {
+        const timeControlSelect = document.getElementById('timeControl');
+        if (timeControlSelect) {
+            timeControlSelect.focus();
+        }
+    }, 100);
+}
+
+// Function to close game creation popup
+function closeGameCreationPopup() {
+    const popup = document.getElementById('gameCreationPopup');
+    if (popup) {
+        // Remove show class for smooth animation
+        popup.classList.remove('show');
+        
+        // Wait for animation to complete before removing
+        setTimeout(() => {
+            popup.remove();
+        }, 300);
+    }
+}
+
+// Function to create game with selected options
+function createGameWithOptions() {
+    // Get form values
+    const timeControl = document.getElementById('timeControl').value;
+    const playerColor = document.querySelector('input[name="playerColor"]:checked').value;
+    
+    // Validate form
+    if (!timeControl) {
+        showErrorPopup('Please select a time control');
+        return;
+    }
+    
+    // Get username
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    if (!usernameElement) {
+        showErrorPopup('User not found. Please try logging in again.');
+        return;
+    }
+    
     const username = usernameElement.textContent;
     console.log("Username for matchmaking:", username);
     
     // Create the request body according to CreateGameRequestDTO
     const requestBody = {
-        username: username
-        // Other fields will use default values
+        username: username,
+        timeControlMinutes: parseInt(timeControl), // Convert string to integer
+        playerColor: playerColor // Pass the selected color
     };
     
     console.log("Calling game creation endpoint with request:", requestBody);
+    
+    // Close popup first
+    closeGameCreationPopup();
     
     // Call the create game endpoint with the request body
     fetch('/api/games', {

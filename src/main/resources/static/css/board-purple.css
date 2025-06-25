@@ -392,7 +392,7 @@ body {
 
 /* Enhanced styling for source and target tiles */
 .last-move-source {
-    background-color: rgba(64, 32, 128, 0.263) !important;
+    background-color: rgba(59, 45, 87, 0.263) !important;
 }
 
 .last-move-target {

@@ -48,7 +48,7 @@ public class GameService {
     }
 
     @Transactional
-    public Game createGame(String username, String gameType, Integer timeControlMinutes, Boolean isRated, String customRules) {
+    public Game createGame(String username, String gameType, Integer timeControlMinutes, Boolean isRated, String customRules, String playerColor) {
         try {
             // Validate username
             if (username == null || username.trim().isEmpty()) {
@@ -67,7 +67,28 @@ public class GameService {
             
             // Create game object
             Game game = new Game();
-            game.setWhitePlayer(user);
+            
+            // Handle player color assignment
+            if (playerColor == null || playerColor.trim().isEmpty()) {
+                playerColor = "white"; // Default to white if no color specified
+            }
+            
+            if (playerColor.equals("white")) {
+                game.setWhitePlayer(user);
+            } else if (playerColor.equals("black")) {
+                game.setBlackPlayer(user);
+            } else if (playerColor.equals("random")) {
+                // Randomly assign player to white or black
+                boolean isWhite = Math.random() < 0.5;
+                if (isWhite) {
+                    game.setWhitePlayer(user);
+                } else {
+                    game.setBlackPlayer(user);
+                }
+            } else {
+                // Default to white for any unrecognized color
+                game.setWhitePlayer(user);
+            }
             game.setGameType(Optional.ofNullable(gameType).orElse("standard"));
             game.setTimeControlMinutes(Optional.ofNullable(timeControlMinutes).orElse(10));
             game.setStatus(GameStatus.WAITING_FOR_OPPONENT.name());
@@ -114,17 +135,22 @@ public class GameService {
                 .orElseThrow(() -> new GameNotFoundException(gameId));
 
             // Check if game is already full
-            if (game.getBlackPlayer() != null) {
+            if (game.getWhitePlayer() != null && game.getBlackPlayer() != null) {
                 throw new IllegalStateException("Game is already full");
             }
 
             // Check if user is trying to join their own game
-            if (game.getWhitePlayer().getId().equals(joiningUser.getId())) {
+            if ((game.getWhitePlayer() != null && game.getWhitePlayer().getId().equals(joiningUser.getId())) ||
+                (game.getBlackPlayer() != null && game.getBlackPlayer().getId().equals(joiningUser.getId()))) {
                 throw new IllegalStateException("You cannot join your own game");
             }
 
-            // Set the black player
-            game.setBlackPlayer(joiningUser);
+            // Set the player to the available position
+            if (game.getWhitePlayer() == null) {
+                game.setWhitePlayer(joiningUser);
+            } else {
+                game.setBlackPlayer(joiningUser);
+            }
             
             // Update game status to IN_PROGRESS
             game.setStatus(GameStatus.IN_PROGRESS.name());

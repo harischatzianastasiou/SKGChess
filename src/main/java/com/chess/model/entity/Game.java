@@ -37,7 +37,7 @@ public class Game implements Serializable {
 
     // Essential Game Information
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "S_WHITE_PLAYER_ID", nullable = false)
+    @JoinColumn(name = "S_WHITE_PLAYER_ID", nullable = true)
     private User whitePlayer;
 
     @ManyToOne(fetch = FetchType.EAGER)
