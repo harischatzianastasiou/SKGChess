@@ -1192,7 +1192,7 @@ function loadPendingInvitations(username) {
                         </div>
                         <div class="invitation-details">
                             <span class="invitation-text">invited you to a game</span>
-                            <span class="invitation-color">(You will play as ${invitation.playerColor === 'white' ? 'black' : invitation.playerColor === 'black' ? 'white' : 'random'} color)</span>
+                            <span class="invitation-color">(You will play as ${invitation.playerColor === 'white' ? 'black' : invitation.playerColor === 'black' ? 'white' : 'random'})</span>
                         </div>
                         <div class="invitation-actions">
                             <button class="btn-accept" onclick="respondToInvitation('${invitation.id}', 'accept')">
