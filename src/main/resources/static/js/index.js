@@ -1641,7 +1641,7 @@ function showInvitationReceivedNotification(notification) {
                       notification.playerColor === 'black' ? 'white' : 'random';
     
     const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
-    showSuccessPopup(message);
+    showInvitationNotification(message);
     
     // If join dialog is open, refresh invitations
     const joinDialog = document.getElementById('joinGameDialog');
@@ -1868,7 +1868,7 @@ function checkForPendingInvitationsOnLoad() {
                                           invitation.playerColor === 'black' ? 'white' : 'random';
                         
                         const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
-                        showSuccessPopup(message);
+                        showInvitationNotification(message);
                     }, index * 2000); // 2 second delay between each notification
                 });
             }
@@ -1876,4 +1876,54 @@ function checkForPendingInvitationsOnLoad() {
         .catch(error => {
             console.error('Error checking for pending invitations:', error);
         });
+}
+
+// Function to show clickable invitation notification
+function showInvitationNotification(message) {
+    // Remove any existing invitation popup
+    const existingPopup = document.querySelector('.invitation-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    // Create invitation popup
+    const popup = document.createElement('div');
+    popup.className = 'invitation-popup';
+    popup.innerHTML = `
+        <div class="invitation-content">
+            <i class="fas fa-chess"></i>
+            <p>${message}</p>
+            <div class="invitation-actions">
+                <button class="btn-view-invitations" onclick="viewInvitations()">View Invitations</button>
+                <button class="btn-dismiss" onclick="this.parentElement.parentElement.parentElement.remove()">Dismiss</button>
+            </div>
+        </div>
+    `;
+    
+    // Add to body
+    document.body.appendChild(popup);
+    
+    // Show popup
+    setTimeout(() => {
+        popup.classList.add('show');
+    }, 10);
+    
+    // Auto-remove after 8 seconds (longer than regular notifications)
+    setTimeout(() => {
+        if (popup.parentElement) {
+            popup.remove();
+        }
+    }, 8000);
+}
+
+// Function to view invitations (opens join dialog)
+function viewInvitations() {
+    // Remove the notification
+    const popup = document.querySelector('.invitation-popup');
+    if (popup) {
+        popup.remove();
+    }
+    
+    // Open the join game dialog
+    showJoinGameDialog();
 }

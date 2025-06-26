@@ -208,6 +208,15 @@ public class GameService {
         );
     }
 
+    public List<Game> getLast6GamesForUser(String userId) {
+        // Get all games where the user is either the white or black player (excluding waiting games)
+        return gameRepository.findLast6GamesByWhitePlayerIdOrBlackPlayerId(
+            userId,
+            userId,
+            PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"))
+        );
+    }
+
     public List<Game> getLastGameForUser(String userId) {
         return gameRepository.findLastGameByWhitePlayerIdOrBlackPlayerId(
             userId,

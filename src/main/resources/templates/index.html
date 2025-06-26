@@ -188,9 +188,9 @@
                         <!-- Left section moved to right position -->
                         <div class="games-left">
                             <!-- Only show History section if there are completed games -->
-                            <div th:with="checkmateGames=${checkmateGames}">
-                                <div th:if="${checkmateGames.size() ge 1}">
-                                    <h2 class="section-title">My Games</h2>
+                            <div th:with="recentGames=${checkmateGames}">
+                                <div th:if="${recentGames.size() ge 1}">
+                                    <h2 class="section-title">Recent Games</h2>
                                     <div class="game-row-container">
                                         <div class="game-row game-row-header">
                                             <span>Players</span>
@@ -198,8 +198,8 @@
                                             <span class="game-moves">Moves</span>
                                             <span>Date</span>
                                         </div>
-                                        <!-- Show completed games -->
-                                        <div th:each="game : ${checkmateGames}" 
+                                        <!-- Show recent games -->
+                                        <div th:each="game : ${recentGames}" 
                                             class="game-row clickable-row" 
                                             th:attr="data-game-id=${game.id}">
                                             <span>
@@ -207,18 +207,18 @@
                                                 <span> vs </span>
                                                 <span th:text="${game.blackPlayerUsername}"></span>
                                             </span>
-                                            <span class="game-status status-completed" th:text="${game.status}"></span>
+                                            <span class="game-status" th:classappend="${game.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
                                             <span class="game-moves" th:text="${game.moveCount}"></span>
                                             <span th:text="${#temporals.format(game.createdAt, 'yyyy-MM-dd')}"></span>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Show placeholder message when no completed games -->
-                                <div th:if="${checkmateGames.size() lt 1}" class="history-placeholder">
-                                    <h2 class="section-title">My Games</h2>
+                                <!-- Show placeholder message when no games -->
+                                <div th:if="${recentGames.size() lt 1}" class="history-placeholder">
+                                    <h2 class="section-title">Recent Games</h2>
                                     <div class="placeholder-message">
                                         <i class="fas fa-history"></i>
-                                        <p>Your game history will appear here after completing games.</p>
+                                        <p>Your recent games will appear here after playing.</p>
                                     </div>
                                 </div>
 
@@ -226,7 +226,7 @@
                                 <div class="main-buttons-container auth-buttons">
                                     <a href="#" onclick="newGame(); return false;" class="main-button get-started">New Game</a>
                                     <a href="#" onclick="showJoinGameDialog(); return false;" class="main-button about">Join Game</a>
-                                    <div th:if="${checkmateGames.size() ge 1}">
+                                    <div th:if="${recentGames.size() ge 1}">
                                         <div class="main-buttons-container auth-buttons">
                                             <a href="#all-games-section" class="main-button about">View All Games</a>
                                         </div>

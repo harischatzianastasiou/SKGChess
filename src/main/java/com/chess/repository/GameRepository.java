@@ -21,6 +21,9 @@ public interface GameRepository extends JpaRepository<Game, String> {
     @Query(value = "SELECT g FROM Game g WHERE (g.whitePlayer.id = ?1 OR g.blackPlayer.id = ?2) AND g.status = 'CHECKMATE' ORDER BY g.createdAt DESC")
     List<Game> findLast6CheckmateGamesByWhitePlayerIdOrBlackPlayerId(String playerId1, String playerId2, Pageable pageable);
 
+    @Query(value = "SELECT g FROM Game g WHERE (g.whitePlayer.id = ?1 OR g.blackPlayer.id = ?2) AND g.status != 'WAITING_FOR_OPPONENT' ORDER BY g.createdAt DESC")
+    List<Game> findLast6GamesByWhitePlayerIdOrBlackPlayerId(String playerId1, String playerId2, Pageable pageable);
+
     @Query(value = "SELECT g FROM Game g WHERE g.whitePlayer.id = ?1 OR g.blackPlayer.id = ?2 ORDER BY g.createdAt DESC")
     List<Game> findLastGameByWhitePlayerIdOrBlackPlayerId(String playerId1, String playerId2, Pageable pageable);
 
