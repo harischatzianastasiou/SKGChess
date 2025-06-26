@@ -400,6 +400,62 @@
                 
                 #login-modal .modal-body {
                     padding: 1rem;
+                    /* Ensure the modal body is scrollable on mobile */
+                    max-height: 70vh;
+                    overflow-y: auto;
+                }
+                
+                /* Make the modal container more mobile-friendly */
+                #login-modal .modal-container {
+                    width: 95%;
+                    max-height: 85vh;
+                    margin: 20px;
+                }
+                
+                /* Ensure form elements are properly spaced on mobile */
+                #login-modal .form-group {
+                    margin-bottom: 0.8rem;
+                }
+                
+                /* Make buttons more accessible on mobile */
+                #login-modal .login-btn {
+                    margin-top: 1rem;
+                    margin-bottom: 1rem;
+                    padding: 14px;
+                    font-size: 1.1rem;
+                }
+                
+                /* Ensure the signup form is scrollable and buttons are visible */
+                #login-modal .login-form {
+                    gap: 0.8rem;
+                }
+                
+                /* Add padding to bottom to ensure submit button is visible */
+                #login-modal .modal-body {
+                    padding-bottom: 2rem;
+                }
+            }
+            
+            /* Additional mobile styles for very small screens */
+            @media (max-width: 360px) {
+                #login-modal .modal-container {
+                    width: 98%;
+                    margin: 10px;
+                }
+                
+                #login-modal .modal-body {
+                    padding: 0.8rem;
+                    max-height: 75vh;
+                }
+                
+                #login-modal .form-group input {
+                    padding: 14px;
+                    font-size: 16px; /* Prevent zoom on iOS */
+                }
+                
+                #login-modal .login-btn {
+                    padding: 16px;
+                    font-size: 1.2rem;
                 }
             }
         </style>
@@ -526,6 +582,16 @@
                 `;
                 // Setup signup form event listeners
                 setupSignupFormEventListeners();
+                
+                // Scroll to bottom on mobile to ensure submit button is visible
+                setTimeout(() => {
+                    if (window.innerWidth <= 480) {
+                        const modalBody = document.querySelector('#login-modal .modal-body');
+                        if (modalBody) {
+                            modalBody.scrollTop = modalBody.scrollHeight;
+                        }
+                    }
+                }, 100);
             }
 
             /**

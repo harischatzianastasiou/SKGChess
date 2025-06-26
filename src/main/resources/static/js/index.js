@@ -398,10 +398,6 @@ function showGameCreationPopup() {
                     <div class="create-button-container">
                         <button class="btn-create" onclick="createGameWithOptions()">Create Game</button>
                     </div>
-                    
-                    <div class="popup-actions">
-                        <button class="btn-cancel" onclick="closeGameCreationPopup()">Cancel</button>
-                    </div>
                 </div>
             </div>
         </div>
@@ -415,6 +411,16 @@ function showGameCreationPopup() {
         const popup = document.getElementById('gameCreationPopup');
         if (popup) {
             popup.classList.add('show');
+            
+            // On mobile, scroll to bottom to ensure create button is visible
+            if (window.innerWidth <= 768) {
+                setTimeout(() => {
+                    const popupBody = popup.querySelector('.popup-body');
+                    if (popupBody) {
+                        popupBody.scrollTop = popupBody.scrollHeight;
+                    }
+                }, 200);
+            }
         }
     }, 10);
     
