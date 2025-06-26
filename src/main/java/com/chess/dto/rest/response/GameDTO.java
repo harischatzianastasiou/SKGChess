@@ -65,26 +65,26 @@ public class GameDTO {
      */
     public static GameDTO fromGame(com.chess.model.entity.Game game) {
         // DECOMPRESS the board data before sending to frontend
-        String decompressedBoard = CompressionUtil.safeDecompress(game.board); // fallback to field access if Lombok getters are not recognized
-        // Use direct field access as a workaround for environments where Lombok annotation processing is not working as expected
+        String decompressedBoard = CompressionUtil.safeDecompress(game.getBoard()); // Use proper getter method
+        // Use Lombok-generated getters for all fields (best practice for encapsulation)
         return GameDTO.builder()
-                .id(game.id)
-                .whitePlayerId(game.whitePlayer != null ? game.whitePlayer.id : null)
-                .blackPlayerId(game.blackPlayer != null ? game.blackPlayer.id : null)
-                .whitePlayerUsername(game.whitePlayer != null ? game.whitePlayer.username : null)
-                .blackPlayerUsername(game.blackPlayer != null ? game.blackPlayer.username : null)
+                .id(game.getId())
+                .whitePlayerId(game.getWhitePlayer() != null ? game.getWhitePlayer().getId() : null)
+                .blackPlayerId(game.getBlackPlayer() != null ? game.getBlackPlayer().getId() : null)
+                .whitePlayerUsername(game.getWhitePlayer() != null ? game.getWhitePlayer().getUsername() : null)
+                .blackPlayerUsername(game.getBlackPlayer() != null ? game.getBlackPlayer().getUsername() : null)
                 .board(decompressedBoard) // Use decompressed board data
-                .lastMoveData(game.lastMoveData)
-                .status(game.status)
-                .createdAt(game.createdAt)
-                .winnerId(game.winner != null ? game.winner.id : null)
-                .winnerUsername(game.winner != null ? game.winner.username : null)
-                .moveCount(game.moveCount)
-                .isPlayerTurn(game.isPlayerTurn)
-                .whiteTimeLeftSeconds(game.whiteTimeLeftSeconds)
-                .blackTimeLeftSeconds(game.blackTimeLeftSeconds)
-                .lastMoveAt(game.lastMoveAt)
-                .timeControlMinutes(game.timeControlMinutes)
+                .lastMoveData(game.getLastMoveData())
+                .status(game.getStatus())
+                .createdAt(game.getCreatedAt())
+                .winnerId(game.getWinner() != null ? game.getWinner().getId() : null)
+                .winnerUsername(game.getWinner() != null ? game.getWinner().getUsername() : null)
+                .moveCount(game.getMoveCount())
+                .isPlayerTurn(game.getIsPlayerTurn())
+                .whiteTimeLeftSeconds(game.getWhiteTimeLeftSeconds())
+                .blackTimeLeftSeconds(game.getBlackTimeLeftSeconds())
+                .lastMoveAt(game.getLastMoveAt())
+                .timeControlMinutes(game.getTimeControlMinutes())
                 // .serverTime is NOT set here; it will be set in the controller for accurate response time
                 .build();
     }
