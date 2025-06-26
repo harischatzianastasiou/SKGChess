@@ -16,6 +16,11 @@
     --transition-speed: 0.3s;
     --color-accent: #ffd700;
     
+    /* Chess-specific colors for gold theme */
+    --color-white-square: #f0d9b5;
+    --color-black-square: #b58863;
+    --color-capture: rgba(255, 0, 0, 0.6);  /* Red color for capture highlights */
+    
     /* Dynamic base unit that adapts to screen size */
     --base-unit: clamp(0.0325rem, 0.0325rem + 0.01vw, 0.04rem);
     
@@ -182,7 +187,6 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     border: 2px solid var(--color-accent);
-    animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     z-index: 1;
     pointer-events: none;
 }
@@ -194,9 +198,8 @@ body {
     left: 50%;
     width: 100%;
     height: 100%;
-    background: var(--color-capture);
-    border: 2px solid rgba(184, 134, 11, 0.8);
-    animation: pulseCapture 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: var(--color-capture);  /* Red color for capture highlights */
+    border: 2px solid rgba(255, 0, 0, 0.8);  /* Red border for capture */
     z-index: 1;
     pointer-events: none;
     transform: translate(-50%, -50%);
@@ -204,7 +207,6 @@ body {
 
 /* Enhanced hover effects for legal moves */
 .tile.legal-move-non-capture:hover::after {
-    animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     background: var(--color-accent);
     border: 2px solid var(--color-accent);
     width: 40%;
@@ -212,9 +214,8 @@ body {
 }
 
 .tile.legal-move-capture:hover::before {
-    animation: pulseCaptureHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    background: rgba(184, 134, 11, 0.4);
-    border: 2px solid rgba(184, 134, 11, 1);
+    background: rgba(255, 0, 0, 0.8);  /* Darker red on hover */
+    border: 2px solid rgba(255, 0, 0, 1);  /* Solid red border on hover */
 }
 
 /* Clean selected tile effect */
@@ -562,7 +563,6 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     border: 2px solid #ff9800;
-    animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     z-index: 2;
     pointer-events: none;
 }
@@ -581,7 +581,6 @@ body {
 }
 
 .tile.legal-move-en-passant:hover::after {
-    animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     background: #ff9800;
     border: 2px solid #ff9800;
 }

@@ -197,7 +197,6 @@ body {
     bottom: 0;
     background: var(--color-capture);
     border: 2px solid rgba(214, 48, 49, 0.8);
-    animation: pulseCapture 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
 }
 
 /* Enhanced hover effects for legal moves */
@@ -208,7 +207,6 @@ body {
 }
 
 .tile.legal-move-capture:hover::before {
-    animation: pulseCaptureHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     background: rgba(214, 48, 49, 0.4);
     border: 2px solid rgba(214, 48, 49, 1);
 }
