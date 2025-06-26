@@ -30,6 +30,7 @@ import com.chess.model.entity.Game.GameStatus;
 import com.chess.service.GameService;
 import com.chess.util.CompressionUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -201,7 +202,21 @@ public class GameController {
             // DECOMPRESS the board before sending to frontend
             String decompressedBoard = CompressionUtil.safeDecompress(updatedGame.getBoard());
 
-            // Create a message that includes both game status and board information
+            // Parse the lastMoveData to get the moveType for sound effects
+            String moveType = "NORMAL"; // Default move type
+            if (updatedGame.getLastMoveData() != null && !updatedGame.getLastMoveData().isEmpty()) {
+                try {
+                    JsonNode moveDataNode = objectMapper.readTree(updatedGame.getLastMoveData());
+                    if (moveDataNode.has("moveType")) {
+                        moveType = moveDataNode.get("moveType").asText();
+                        log.info("Move type for sound effect: {}", moveType);
+                    }
+                } catch (Exception e) {
+                    log.warn("Failed to parse lastMoveData for moveType, using default: {}", e.getMessage());
+                }
+            }
+
+            // Create a message that includes both game status, board information, and move type for sound effects
             String message = String.format(
             "{\"type\":\"MOVE_MADE\"," +
             "\"message\":\"Game is now in progress\"," +
@@ -209,10 +224,12 @@ public class GameController {
             "\"gameStatus\":\"IN_PROGRESS\"," +
             "\"whitePlayerId\":\"%s\"," +
             "\"blackPlayerId\":\"%s\"," +
+            "\"moveType\":\"%s\"," +
             "\"boardDTO\":%s}",
             request.getGameId(),
             updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
             updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+            moveType,
             objectMapper.writeValueAsString(decompressedBoard)
             );
 

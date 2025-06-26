@@ -623,6 +623,7 @@ class ChessGame {
                                 }
                             } else if (moveData.type === 'MOVE_MADE') {
                                 console.log('[Sound Debug] Move made, processing move data:', moveData);
+                                console.log('[Sound Debug] Complete move data received:', JSON.stringify(moveData, null, 2));
                                 await this.fetchGame();
                                 
                                 // Timer data is already updated from fetchGame() call above
@@ -639,7 +640,8 @@ class ChessGame {
                                     'CHECKMATE': 'check',
                                     'CASTLE': 'move',
                                     'EN_PASSANT': 'capture',
-                                    'PAWN_PROMOTION': 'move'
+                                    'PAWN_PROMOTION': 'move',
+                                    'PAWN_JUMP': 'move'
                                 };
                                 
                                 // Play sound based on move type
