@@ -193,8 +193,8 @@ class ChessGame {
 
     // Start the timer countdown
     startTimer() {
-        // Only start timer if game is in progress
-        if (this.gameStatus !== 'IN_PROGRESS') {
+        // Only start timer if game is in progress or in check (allow timeout detection)
+        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
             return;
         }
         
@@ -221,8 +221,8 @@ class ChessGame {
             return;
         }
 
-        // Don't update timer if game has ended
-        if (this.gameStatus !== 'IN_PROGRESS') {
+        // Don't update timer if game has ended (but allow CHECK status for timeout detection)
+        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
             return;
         }
 
@@ -282,9 +282,11 @@ class ChessGame {
         }
 
         // Check for timeout - only check the player whose turn it is
+        // Allow timeout detection even when game is in CHECK status
         if (currentPlayerAlliance) {
             if ((currentPlayerAlliance === 'WHITE' && whiteTimeLeft <= 0) || 
                 (currentPlayerAlliance === 'BLACK' && blackTimeLeft <= 0)) {
+                console.log('Timeout detected! Current player alliance:', currentPlayerAlliance, 'Game status:', this.gameStatus);
                 this.handleTimeout();
             }
         }
@@ -529,10 +531,10 @@ class ChessGame {
         this.timeControlMinutes = gameData.timeControlMinutes;
 
         // Start timer if game has started and timer is enabled
-        if (this.gameStatus === 'IN_PROGRESS' && this.timeControlMinutes) {
+        if ((this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK') && this.timeControlMinutes) {
             this.startTimer();
-        } else {
-            // Stop timer if game is not in progress
+        } else if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
+            // Stop timer only if game is not in progress and not in check
             this.stopTimer();
         }
 
@@ -607,7 +609,7 @@ class ChessGame {
                                 await this.fetchGame();
                                 
                                 // Start timer if game has started and timer is enabled
-                                if (this.gameStatus === 'IN_PROGRESS' && this.timeControlMinutes) {
+                                if ((this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK') && this.timeControlMinutes) {
                                     this.startTimer();
                                 }
                                 
@@ -625,7 +627,7 @@ class ChessGame {
                                 
                                 // Timer data is already updated from fetchGame() call above
                                 // Just restart timer with the updated data
-                                if (this.timeControlMinutes && this.gameStatus === 'IN_PROGRESS') {
+                                if (this.timeControlMinutes && (this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK')) {
                                     this.startTimer();
                                 }
                                 
@@ -1177,6 +1179,9 @@ class ChessGame {
         document.querySelectorAll('.legal-move-non-capture, .legal-move-capture, .legal-move-en-passant').forEach(tile => {
             tile.classList.remove('legal-move-non-capture', 'legal-move-capture', 'legal-move-en-passant');
         });
+        
+        // Also clear king check highlighting when clearing legal moves
+        this.clearKingCheckHighlight();
     }
 
     hasPiece(tile) {
@@ -1369,6 +1374,17 @@ class ChessGame {
             }
         });
 
+        // Highlight king in check with orange color
+        console.log('Checking game status for king highlighting:', this.gameStatus);
+        if (this.gameStatus === 'CHECK') {
+            console.log('Game status is CHECK, highlighting king');
+            this.highlightKingInCheck();
+        } else {
+            console.log('Game status is not CHECK, clearing king highlighting');
+            // Clear king check highlighting if not in check
+            this.clearKingCheckHighlight();
+        }
+
         // Check if lastMoveData exists before trying to use it
         if (this.lastMoveData) {
             try {
@@ -1445,6 +1461,61 @@ class ChessGame {
         if (moveType === 'CAPTURE' && targetTile) {
             targetTile.classList.add('last-move-capture');
         }
+
+        if(moveType === 'CHECK') {
+            this.highlightKingInCheck();
+        }
+    }
+
+    /**
+     * Highlights the king's square with orange color when the king is in check
+     */
+    highlightKingInCheck() {
+        console.log('highlightKingInCheck called');
+        console.log('Game status:', this.gameStatus);
+        console.log('Board DTO:', this.boardDTO);
+        
+        // Clear any existing king check highlighting first
+        this.clearKingCheckHighlight();
+        
+        // Find the king of the current player (the one in check)
+        const currentPlayerAlliance = this.boardDTO.currentPlayer.alliance;
+        console.log('Current player alliance:', currentPlayerAlliance);
+        
+        const kingTile = this.boardDTO.tiles.find(tile => 
+            tile.tileOccupied && 
+            tile.piece.pieceSymbol === 'KING' && 
+            tile.piece.pieceAlliance === currentPlayerAlliance
+        );
+        
+        console.log('Found king tile:', kingTile);
+        
+        if (kingTile) {
+            // Find the corresponding DOM tile and add the check highlighting class
+            const tileElement = this.board.querySelector(`.tile[data-position='${kingTile.tileCoordinate}']`);
+            console.log('Found tile element:', tileElement);
+            
+            if (tileElement) {
+                tileElement.classList.add('king-in-check');
+                console.log(`King in check highlighted at position ${kingTile.tileCoordinate}`);
+                console.log('Tile element classes after adding:', tileElement.className);
+            } else {
+                console.error('Could not find tile element for king at position:', kingTile.tileCoordinate);
+            }
+        } else {
+            console.error('Could not find king tile for alliance:', currentPlayerAlliance);
+            console.log('Available tiles:', this.boardDTO.tiles);
+        }
+    }
+
+    /**
+     * Clears the king check highlighting
+     */
+    clearKingCheckHighlight() {
+        // Remove king check highlighting from all tiles
+        document.querySelectorAll('.tile.king-in-check').forEach(tile => {
+            tile.classList.remove('king-in-check');
+        });
     }
 
     showGameEndPopup(winner, result, currentPlayerUsername, currentPlayerColor, opponentUsername, opponentColor, subtitle) {

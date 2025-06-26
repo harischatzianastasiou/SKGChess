@@ -387,9 +387,10 @@ public class GameService {
         Game game = gameRepository.findById(gameId)
             .orElseThrow(() -> new GameNotFoundException(gameId));
         
-        // Check if game is in progress
-        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name())) {
-            throw new IllegalStateException("Cannot handle timeout for game that is not in progress");
+        // Check if game is in progress or in check (allow timeout in both cases)
+        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name()) && 
+            !game.getStatus().equals(GameStatus.CHECK.name())) {
+            throw new IllegalStateException("Cannot handle timeout for game that is not in progress or in check");
         }
         
         // Determine which player ran out of time based on current turn
