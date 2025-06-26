@@ -1,5 +1,6 @@
 package com.chess.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,14 @@ public interface UserRepository extends JpaRepository<User, String> {
     // Check if user has any active games
     @Query("SELECT COUNT(g) > 0 FROM Game g WHERE (g.whitePlayer.id = :userId OR g.blackPlayer.id = :userId) AND g.status = 'IN_PROGRESS'")
     boolean existsActiveGameForUser(@Param("userId") String userId);
+    
+    /**
+     * Search for users by username containing the query (case-insensitive)
+     * Excludes a specific user from results
+     * @param query The username query to search for
+     * @param excludeUsername The username to exclude from results
+     * @return List of users matching the query
+     */
+    @Query("SELECT u FROM User u WHERE LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')) AND u.username != :excludeUsername ORDER BY u.username ASC")
+    List<User> findByUsernameContainingIgnoreCaseAndUsernameNot(@Param("query") String query, @Param("excludeUsername") String excludeUsername);
 }

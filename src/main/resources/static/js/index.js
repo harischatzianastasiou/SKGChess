@@ -87,6 +87,17 @@ function connect() {
                         }
                     });
 
+                    // Subscribe to invitation notifications
+                    stompClient.subscribe('/topic/user/' + userId, function(message) {
+                        console.log('User notification received:', message.body);
+                        try {
+                            const notification = JSON.parse(message.body);
+                            handleInvitationNotification(notification);
+                        } catch (error) {
+                            console.error('Error parsing invitation notification:', error);
+                        }
+                    });
+
                     // Subscribe to errors
                     stompClient.subscribe('/user/queue/errors', function(message) {
                         console.error('Error received:', message.body);
@@ -351,7 +362,7 @@ function newGame() {
 
 // Function to show game creation popup
 function showGameCreationPopup() {
-    // Create popup HTML
+    // Create popup HTML with opponent search
     const popupHTML = `
         <div id="gameCreationPopup" class="game-creation-popup">
             <div class="popup-content">
@@ -362,6 +373,14 @@ function showGameCreationPopup() {
                     </button>
                 </div>
                 <div class="popup-body">
+                    <div class="form-group">
+                        <label for="opponentSearch">Search for opponent:</label>
+                        <div class="search-container">
+                            <input type="text" id="opponentSearch" placeholder="Enter username to search..." autocomplete="off">
+                            <div id="searchResults" class="search-results"></div>
+                        </div>
+                    </div>
+                    
                     <div class="form-group">
                         <label for="timeControl">Time Control (minutes):</label>
                         <select id="timeControl" required>
@@ -396,7 +415,7 @@ function showGameCreationPopup() {
                     </div>
                     
                     <div class="create-button-container">
-                        <button class="btn-create" onclick="createGameWithOptions()">Create Game</button>
+                        <button class="btn-create" onclick="createInvitation()" id="createInvitationBtn" disabled>Send Invitation</button>
                     </div>
                 </div>
             </div>
@@ -443,13 +462,16 @@ function showGameCreationPopup() {
     };
     popup.addEventListener('click', handleOutsideClick);
     
-    // Focus on time control select
+    // Focus on opponent search input
     setTimeout(() => {
-        const timeControlSelect = document.getElementById('timeControl');
-        if (timeControlSelect) {
-            timeControlSelect.focus();
+        const opponentSearch = document.getElementById('opponentSearch');
+        if (opponentSearch) {
+            opponentSearch.focus();
         }
     }, 100);
+    
+    // Add search functionality
+    setupOpponentSearch();
 }
 
 // Function to close game creation popup
@@ -1009,24 +1031,6 @@ function monitorPerformance() {
 // Initialize performance monitoring
 document.addEventListener('DOMContentLoaded', monitorPerformance);
 
-// Function to handle join game dialog submission
-function handleJoinGame() {
-    const gameIdInput = document.getElementById('gameIdInput');
-    const gameId = gameIdInput.value.trim();
-    
-    if (!gameId) {
-        alert('Please enter a game ID');
-        return;
-    }
-    
-    // Call the joinGame function with the entered game ID
-    joinGame(gameId);
-    
-    // Clear the input and close the dialog
-    gameIdInput.value = '';
-    closeJoinGameDialog();
-}
-
 /**
  * Render chess board previews for games
  */
@@ -1146,6 +1150,8 @@ function showJoinGameDialog() {
         return;
     }
     
+    const username = usernameElement.textContent;
+    
     // Show the join game dialog and overlay
     const dialog = document.getElementById('joinGameDialog');
     const overlay = document.getElementById('joinGameOverlay');
@@ -1154,19 +1160,127 @@ function showJoinGameDialog() {
         dialog.classList.add('active');
         overlay.classList.add('active');
         
-        // Focus on the input field
-        setTimeout(() => {
-            const input = document.getElementById('gameIdInput');
-            if (input) {
-                input.focus();
-            }
-        }, 100);
+        // Load pending invitations
+        loadPendingInvitations(username);
         
         // Prevent body scrolling
         document.body.style.overflow = 'hidden';
     } else {
         console.error('Join game dialog elements not found');
     }
+}
+
+// Function to load pending invitations
+function loadPendingInvitations(username) {
+    const invitationsContainer = document.getElementById('invitationsContainer');
+    if (!invitationsContainer) return;
+    
+    // Show loading state
+    invitationsContainer.innerHTML = '<div class="loading">Loading invitations...</div>';
+    
+    fetch(`/api/invitations/pending/${username}`)
+        .then(response => response.json())
+        .then(invitations => {
+            if (invitations.length === 0) {
+                invitationsContainer.innerHTML = '<div class="no-invitations">No pending invitations</div>';
+            } else {
+                invitationsContainer.innerHTML = invitations.map(invitation => `
+                    <div class="invitation-item" data-invitation-id="${invitation.id}">
+                        <div class="invitation-header">
+                            <span class="inviter-name">${invitation.inviterUsername}</span>
+                            <span class="invitation-time">${invitation.timeControlMinutes} min</span>
+                        </div>
+                        <div class="invitation-details">
+                            <span class="invitation-text">invited you to a game</span>
+                            <span class="invitation-color">(You will play as ${invitation.playerColor === 'white' ? 'black' : invitation.playerColor === 'black' ? 'white' : 'random'} color)</span>
+                        </div>
+                        <div class="invitation-actions">
+                            <button class="btn-accept" onclick="respondToInvitation('${invitation.id}', 'accept')">
+                                <i class="fas fa-check"></i> Accept
+                            </button>
+                            <button class="btn-decline" onclick="respondToInvitation('${invitation.id}', 'decline')">
+                                <i class="fas fa-times"></i> Decline
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        })
+        .catch(error => {
+            console.error('Error loading invitations:', error);
+            invitationsContainer.innerHTML = '<div class="error">Error loading invitations</div>';
+        });
+}
+
+// Function to respond to an invitation
+function respondToInvitation(invitationId, action) {
+    console.log('respondToInvitation called with:', { invitationId, action });
+    
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    if (!usernameElement) {
+        console.error('No username element found');
+        showErrorPopup('User not found. Please try logging in again.');
+        return;
+    }
+    
+    const username = usernameElement.textContent;
+    console.log('Current username:', username);
+    
+    const requestBody = {
+        username: username,
+        invitationId: invitationId,
+        action: action
+    };
+    
+    console.log('Sending request body:', requestBody);
+    
+    fetch('/api/invitations/respond', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                console.error('Error response:', errorData);
+                showErrorPopup(errorData.message);
+                throw new Error(errorData.message);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (action === 'accept') {
+            showSuccessPopup('Invitation accepted! Redirecting to game...');
+            
+            // Redirect to game if gameId is provided (both users should be redirected)
+            if (data.gameId) {
+                console.log('Redirecting to game:', data.gameId);
+                
+                // If this is the inviter, delete the invitation immediately
+                if (username === data.inviterUsername && invitationId) {
+                    console.log('Inviter is redirecting, deleting invitation:', invitationId);
+                    deleteInvitation(invitationId);
+                }
+                
+                setTimeout(() => {
+                    console.log('Executing redirect to:', `/games/${data.gameId}`);
+                    window.location.href = `/games/${data.gameId}`;
+                }, 2000);
+            }
+        } else {
+            showSuccessPopup('Invitation declined');
+            // Reload invitations to remove the declined one
+            loadPendingInvitations(username);
+        }
+    })
+    .catch(error => {
+        console.error('Error responding to invitation:', error);
+    });
 }
 
 // Function to close the join game dialog
@@ -1184,14 +1298,6 @@ function closeJoinGameDialog() {
     }
 }
 
-// Function to handle Enter key press in the game ID input
-function handleEnterKey(event) {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        handleJoinGame();
-    }
-}
-
 // Add event listener for escape key
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape' && isSharePopupOpen) {
@@ -1204,31 +1310,72 @@ document.addEventListener('keydown', function(event) {
 
 // Function to show error popup
 function showErrorPopup(message) {
-    const errorPopup = document.createElement('div');
-    errorPopup.className = 'error-popup';
-    errorPopup.innerHTML = `
+    // Remove any existing error popup
+    const existingPopup = document.querySelector('.error-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    // Create error popup
+    const popup = document.createElement('div');
+    popup.className = 'error-popup';
+    popup.innerHTML = `
         <div class="error-content">
-            <i class="fas fa-chess-king"></i>
-            <h3>Game in Progress</h3>
+            <i class="fas fa-exclamation-triangle"></i>
             <p>${message}</p>
-            <button onclick="this.closest('.error-popup').remove()">Continue</button>
+            <button onclick="this.parentElement.parentElement.remove()">OK</button>
         </div>
     `;
-    document.body.appendChild(errorPopup);
     
-    // Add show class after a small delay for animation
+    // Add to body
+    document.body.appendChild(popup);
+    
+    // Show popup
     setTimeout(() => {
-        errorPopup.classList.add('show');
+        popup.classList.add('show');
     }, 10);
-
-    // Close on escape key
-    const handleEscape = (e) => {
-        if (e.key === 'Escape') {
-            errorPopup.remove();
-            document.removeEventListener('keydown', handleEscape);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (popup.parentElement) {
+            popup.remove();
         }
-    };
-    document.addEventListener('keydown', handleEscape);
+    }, 5000);
+}
+
+// Function to show success popup
+function showSuccessPopup(message) {
+    // Remove any existing success popup
+    const existingPopup = document.querySelector('.success-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    // Create success popup
+    const popup = document.createElement('div');
+    popup.className = 'success-popup';
+    popup.innerHTML = `
+        <div class="success-content">
+            <i class="fas fa-check-circle"></i>
+            <p>${message}</p>
+            <button onclick="this.parentElement.parentElement.remove()">OK</button>
+        </div>
+    `;
+    
+    // Add to body
+    document.body.appendChild(popup);
+    
+    // Show popup
+    setTimeout(() => {
+        popup.classList.add('show');
+    }, 10);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (popup.parentElement) {
+            popup.remove();
+        }
+    }, 5000);
 }
 
 // Toggle play menu visibility
@@ -1252,4 +1399,442 @@ document.addEventListener('click', function(e) {
     if (menu && container && !container.contains(e.target)) {
         menu.classList.remove('show');
     }
+});
+
+// Add search functionality
+setupOpponentSearch();
+
+// Function to setup opponent search functionality
+function setupOpponentSearch() {
+    const searchInput = document.getElementById('opponentSearch');
+    const searchResults = document.getElementById('searchResults');
+    const createBtn = document.getElementById('createInvitationBtn');
+    let selectedOpponent = null;
+    let searchTimeout = null;
+    
+    if (!searchInput) return;
+    
+    // Get current username for exclusion
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    const currentUsername = usernameElement ? usernameElement.textContent : '';
+    
+    // Search as user types
+    searchInput.addEventListener('input', function() {
+        const query = this.value.trim();
+        
+        // Clear previous timeout
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        // Clear results if query is empty
+        if (query.length === 0) {
+            searchResults.innerHTML = '';
+            searchResults.style.display = 'none';
+            selectedOpponent = null;
+            createBtn.disabled = true;
+            return;
+        }
+        
+        // Debounce search requests
+        searchTimeout = setTimeout(() => {
+            if (query.length >= 2) { // Only search if query has at least 2 characters
+                searchUsers(query, currentUsername);
+            }
+        }, 300);
+    });
+    
+    // Handle keyboard navigation
+    searchInput.addEventListener('keydown', function(e) {
+        const results = searchResults.querySelectorAll('.search-result-item');
+        const currentIndex = Array.from(results).findIndex(item => item.classList.contains('selected'));
+        
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            const nextIndex = (currentIndex + 1) % results.length;
+            selectSearchResult(nextIndex, results);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            const prevIndex = currentIndex <= 0 ? results.length - 1 : currentIndex - 1;
+            selectSearchResult(prevIndex, results);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (currentIndex >= 0 && results[currentIndex]) {
+                selectOpponent(results[currentIndex].dataset.username);
+            }
+        } else if (e.key === 'Escape') {
+            searchResults.style.display = 'none';
+            searchInput.blur();
+        }
+    });
+    
+    // Close search results when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+    
+    // Function to search users
+    function searchUsers(query, currentUsername) {
+        const params = new URLSearchParams({
+            q: query,
+            currentUser: currentUsername
+        });
+        
+        fetch(`/api/users/search?${params}`)
+            .then(response => response.json())
+            .then(users => {
+                displaySearchResults(users);
+            })
+            .catch(error => {
+                console.error('Error searching users:', error);
+                searchResults.innerHTML = '<div class="search-error">Error searching users</div>';
+                searchResults.style.display = 'block';
+            });
+    }
+    
+    // Function to display search results
+    function displaySearchResults(users) {
+        if (users.length === 0) {
+            searchResults.innerHTML = '<div class="no-results">No users found</div>';
+        } else {
+            searchResults.innerHTML = users.map(user => `
+                <div class="search-result-item" data-username="${user.username}">
+                    <span class="username">${user.username}</span>
+                </div>
+            `).join('');
+            
+            // Add click handlers to results
+            searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    selectOpponent(this.dataset.username);
+                });
+            });
+        }
+        searchResults.style.display = 'block';
+    }
+    
+    // Function to select a search result
+    function selectSearchResult(index, results) {
+        results.forEach(item => item.classList.remove('selected'));
+        if (results[index]) {
+            results[index].classList.add('selected');
+        }
+    }
+    
+    // Function to select an opponent
+    function selectOpponent(username) {
+        selectedOpponent = username;
+        searchInput.value = username;
+        searchResults.style.display = 'none';
+        createBtn.disabled = false;
+        createBtn.textContent = `Send Invitation to ${username}`;
+    }
+}
+
+// Function to create invitation
+function createInvitation() {
+    // Get form values
+    const opponentSearch = document.getElementById('opponentSearch');
+    const timeControl = document.getElementById('timeControl').value;
+    const playerColor = document.querySelector('input[name="playerColor"]:checked').value;
+    
+    // Validate form
+    if (!opponentSearch || !opponentSearch.value.trim()) {
+        showErrorPopup('Please select an opponent');
+        return;
+    }
+    
+    if (!timeControl) {
+        showErrorPopup('Please select a time control');
+        return;
+    }
+    
+    // Get username
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    if (!usernameElement) {
+        showErrorPopup('User not found. Please try logging in again.');
+        return;
+    }
+    
+    const username = usernameElement.textContent;
+    const opponentUsername = opponentSearch.value.trim();
+    
+    console.log("Creating invitation from", username, "to", opponentUsername);
+    
+    // Create the invitation request body
+    const requestBody = {
+        username: username,
+        opponentUsername: opponentUsername,
+        timeControlMinutes: parseInt(timeControl),
+        playerColor: playerColor
+    };
+    
+    console.log("Calling invitation creation endpoint with request:", requestBody);
+    
+    // Close popup first
+    closeGameCreationPopup();
+    
+    // Call the create invitation endpoint
+    fetch('/api/invitations/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+        console.log("Invitation creation response status:", response.status);
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                showErrorPopup(errorData.message);
+                throw new Error(errorData.message);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data) return; // Return if we showed an error popup
+        console.log("Invitation created:", data);
+        showSuccessPopup(`Invitation sent to ${opponentUsername}! You will be redirected to the game page once they join.`);
+    })
+    .catch(error => {
+        console.error("Error creating invitation:", error);
+        // Don't show another error popup here since we already showed one in the response handling
+    });
+}
+
+// Function to handle invitation notification
+function handleInvitationNotification(notification) {
+    console.log('Handling invitation notification:', notification);
+    
+    switch (notification.type) {
+        case 'INVITATION_RECEIVED':
+            showInvitationReceivedNotification(notification);
+            break;
+        case 'INVITATION_ACCEPTED':
+            showInvitationAcceptedNotification(notification);
+            break;
+        case 'INVITATION_DECLINED':
+            showInvitationDeclinedNotification(notification);
+            break;
+        case 'INVITATION_CANCELLED':
+            showInvitationCancelledNotification(notification);
+            break;
+        case 'INVITATION_EXPIRED':
+            showInvitationExpiredNotification(notification);
+            break;
+        default:
+            console.log('Unknown notification type:', notification.type);
+    }
+}
+
+// Function to show invitation received notification
+function showInvitationReceivedNotification(notification) {
+    const message = `${notification.inviterUsername} invited you to a ${notification.timeControlMinutes}-minute game!`;
+    showSuccessPopup(message);
+    
+    // If join dialog is open, refresh invitations
+    const joinDialog = document.getElementById('joinGameDialog');
+    if (joinDialog && joinDialog.classList.contains('active')) {
+        const usernameElement = document.querySelector('span[data-username="true"]');
+        if (usernameElement) {
+            loadPendingInvitations(usernameElement.textContent);
+        }
+    }
+}
+
+// Function to show invitation accepted notification
+function showInvitationAcceptedNotification(notification) {
+    console.log('showInvitationAcceptedNotification called with:', notification);
+    
+    // Get current user's username
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    const currentUsername = usernameElement ? usernameElement.textContent : '';
+    
+    console.log('Current username:', currentUsername);
+    console.log('Inviter username:', notification.inviterUsername);
+    console.log('Invitee username:', notification.inviteeUsername);
+    
+    // Check if user is still authenticated
+    if (!currentUsername) {
+        console.error('No current username found - user might be logged out');
+        showErrorPopup('You appear to be logged out. Please refresh the page and try again.');
+        return;
+    }
+    
+    // Determine which message to show based on current user
+    let message;
+    if (currentUsername === notification.inviterUsername) {
+        // Current user is the inviter
+        message = `${notification.inviteeUsername} accepted your invitation!`;
+        console.log('Current user is the inviter');
+    } else if (currentUsername === notification.inviteeUsername) {
+        // Current user is the invitee
+        message = `You accepted ${notification.inviterUsername}'s invitation!`;
+        console.log('Current user is the invitee');
+    } else {
+        // Fallback message
+        message = `Invitation accepted! Game is ready.`;
+        console.log('Current user is neither inviter nor invitee');
+    }
+    
+    showSuccessPopup(message);
+    
+    // Redirect to game if gameId is provided (both users should be redirected)
+    if (notification.gameId) {
+        console.log('Redirecting to game:', notification.gameId);
+        
+        // If this is the inviter, delete the invitation immediately
+        if (currentUsername === notification.inviterUsername && notification.invitationId) {
+            console.log('Inviter is redirecting, deleting invitation:', notification.invitationId);
+            deleteInvitation(notification.invitationId);
+        }
+        
+        setTimeout(() => {
+            console.log('Executing redirect to:', `/games/${notification.gameId}`);
+            window.location.href = `/games/${notification.gameId}`;
+        }, 2000);
+    } else {
+        console.error('No gameId provided in notification');
+    }
+}
+
+// Function to delete an accepted invitation
+function deleteInvitation(invitationId) {
+    console.log('=== DELETE INVITATION DEBUG ===');
+    console.log('Attempting to delete invitation:', invitationId);
+    console.log('Current URL:', window.location.href);
+    console.log('Current pathname:', window.location.pathname);
+    
+    fetch(`/api/invitations/${invitationId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        console.log('Delete response status:', response.status);
+        console.log('Delete response ok:', response.ok);
+        
+        if (response.ok) {
+            console.log('✅ Successfully deleted invitation:', invitationId);
+            return response.text();
+        } else {
+            console.error('❌ Failed to delete invitation:', invitationId, 'Status:', response.status);
+            return response.text().then(text => {
+                console.error('Error response body:', text);
+                throw new Error(`HTTP ${response.status}: ${text}`);
+            });
+        }
+    })
+    .then(responseText => {
+        console.log('Delete response body:', responseText);
+    })
+    .catch(error => {
+        console.error('❌ Error deleting invitation:', invitationId, error);
+    });
+}
+
+// Function to show invitation declined notification
+function showInvitationDeclinedNotification(notification) {
+    const message = `${notification.inviteeUsername} declined your invitation.`;
+    showErrorPopup(message);
+}
+
+// Function to show invitation cancelled notification
+function showInvitationCancelledNotification(notification) {
+    const message = `${notification.inviterUsername} cancelled the invitation.`;
+    showErrorPopup(message);
+    
+    // If join dialog is open, refresh invitations
+    const joinDialog = document.getElementById('joinGameDialog');
+    if (joinDialog && joinDialog.classList.contains('active')) {
+        const usernameElement = document.querySelector('span[data-username="true"]');
+        if (usernameElement) {
+            loadPendingInvitations(usernameElement.textContent);
+        }
+    }
+}
+
+// Function to show invitation expired notification
+function showInvitationExpiredNotification(notification) {
+    const message = 'An invitation has expired.';
+    showErrorPopup(message);
+    
+    // If join dialog is open, refresh invitations
+    const joinDialog = document.getElementById('joinGameDialog');
+    if (joinDialog && joinDialog.classList.contains('active')) {
+        const usernameElement = document.querySelector('span[data-username="true"]');
+        if (usernameElement) {
+            loadPendingInvitations(usernameElement.textContent);
+        }
+    }
+}
+
+// Add polling mechanism to check for accepted invitations
+let invitationPollingInterval = null;
+
+// Function to start polling for accepted invitations
+function startInvitationPolling() {
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    if (!usernameElement) return;
+    
+    const username = usernameElement.textContent;
+    
+    // Check every 2 seconds for accepted invitations
+    invitationPollingInterval = setInterval(() => {
+        checkForAcceptedInvitations(username);
+    }, 2000);
+}
+
+// Function to check for accepted invitations
+function checkForAcceptedInvitations(username) {
+    fetch(`/api/invitations/sent/${username}`)
+        .then(response => response.json())
+        .then(invitations => {
+            // Look for accepted invitations
+            const acceptedInvitation = invitations.find(inv => 
+                inv.status === 'ACCEPTED' && inv.gameId
+            );
+            
+            if (acceptedInvitation) {
+                console.log('Found accepted invitation, redirecting inviter to game:', acceptedInvitation.gameId);
+                showSuccessPopup('Your invitation was accepted! Redirecting to game...');
+                
+                // Delete the invitation immediately since inviter is redirecting
+                console.log('Inviter is redirecting, deleting invitation:', acceptedInvitation.id);
+                deleteInvitation(acceptedInvitation.id);
+                
+                setTimeout(() => {
+                    window.location.href = `/games/${acceptedInvitation.gameId}`;
+                }, 1500);
+                stopInvitationPolling();
+            }
+        })
+        .catch(error => {
+            console.error('Error checking for accepted invitations:', error);
+        });
+}
+
+// Function to stop polling
+function stopInvitationPolling() {
+    if (invitationPollingInterval) {
+        clearInterval(invitationPollingInterval);
+        invitationPollingInterval = null;
+    }
+}
+
+// Start polling when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Start polling after a short delay to ensure user is loaded
+    setTimeout(() => {
+        startInvitationPolling();
+    }, 1000);
+});
+
+// Stop polling when leaving the page
+window.addEventListener('beforeunload', function() {
+    stopInvitationPolling();
 });

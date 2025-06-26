@@ -276,30 +276,11 @@ public class GameController {
     @PostMapping(value = "/{gameId}/timeout", produces = "application/json")
     public ResponseEntity<GameDTO> handleTimeout(@PathVariable String gameId) {
         try {
-            log.info("Processing timeout for game: {}", gameId);
-            
+            // Log the timeout request
+            log.info("Processing timeout request for game: {}", gameId);
+
             // Handle the timeout using the service
             Game updatedGame = gameService.handleTimeout(gameId);
-            
-            // DECOMPRESS the board before sending to frontend
-            String decompressedBoard = CompressionUtil.safeDecompress(updatedGame.getBoard());
-            
-            // Create a message for WebSocket notification
-            String message = String.format(
-                "{\"type\":\"TIME_OUT\"," +
-                "\"message\":\"Player ran out of time\"," +
-                "\"gameId\":\"%s\"," +
-                "\"gameStatus\":\"TIME_OUT\"," +
-                "\"whitePlayerId\":\"%s\"," +
-                "\"blackPlayerId\":\"%s\"," +
-                "\"boardDTO\":%s}",
-                gameId,
-                updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
-                updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
-                objectMapper.writeValueAsString(decompressedBoard)
-            );
-
-            messagingTemplate.convertAndSend("/topic/game/" + gameId, message);
 
             // Return the updated game state
             GameDTO gameDTO = GameDTO.fromGame(updatedGame);
@@ -308,11 +289,47 @@ public class GameController {
                     .body(gameDTO);
 
         } catch (GameNotFoundException e) {
+            // Log the exception
             log.error("Game not found: {}", gameId, e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            // Return a more specific error response
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new GameDTO()); // Return empty game DTO for not found
         } catch (Exception e) {
-            log.error("Error handling timeout for game: {}", gameId, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            // Log the exception with stack trace
+            log.error("Error handling timeout: {}", e.getMessage(), e);
+            // Return an error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new GameDTO()); // Return empty game DTO for error
+        }
+    }
+
+    @PostMapping(value = "/{gameId}/start-timer", produces = "application/json")
+    public ResponseEntity<GameDTO> startGameTimer(@PathVariable String gameId) {
+        try {
+            // Log the timer start request
+            log.info("Starting timer for game: {}", gameId);
+
+            // Start the timer using the service
+            Game updatedGame = gameService.startGameTimer(gameId);
+
+            // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(updatedGame);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
+            return ResponseEntity.ok()
+                    .body(gameDTO);
+
+        } catch (GameNotFoundException e) {
+            // Log the exception
+            log.error("Game not found: {}", gameId, e);
+            // Return a more specific error response
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new GameDTO()); // Return empty game DTO for not found
+        } catch (Exception e) {
+            // Log the exception with stack trace
+            log.error("Error starting game timer: {}", e.getMessage(), e);
+            // Return an error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new GameDTO()); // Return empty game DTO for error
         }
     }
 

@@ -217,12 +217,31 @@ class ChessGame {
 
     // Update timer display
     updateTimerDisplay() {
-        if (!this.lastMoveAt || !this.whiteTimeLeftSeconds || !this.blackTimeLeftSeconds) {
+        // Don't update timer if game has ended (but allow CHECK status for timeout detection)
+        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
             return;
         }
 
-        // Don't update timer if game has ended (but allow CHECK status for timeout detection)
-        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
+        // If timer hasn't started yet, show full time for both players
+        if (!this.lastMoveAt || !this.whiteTimeLeftSeconds || !this.blackTimeLeftSeconds) {
+            // Show full time for both players when timer hasn't started
+            const timerElements = document.querySelectorAll('.player-timer');
+            if (timerElements.length >= 2 && this.timeControlMinutes) {
+                const fullTimeSeconds = this.timeControlMinutes * 60;
+                const opponentTimer = timerElements[0];
+                const currentPlayerTimer = timerElements[1];
+                
+                // Determine which timer shows which player based on current player's color
+                if (this.playerColor === 'WHITE') {
+                    // Current player is white, so opponent is black
+                    opponentTimer.textContent = this.formatTime(fullTimeSeconds);
+                    currentPlayerTimer.textContent = this.formatTime(fullTimeSeconds);
+                } else {
+                    // Current player is black, so opponent is white
+                    opponentTimer.textContent = this.formatTime(fullTimeSeconds);
+                    currentPlayerTimer.textContent = this.formatTime(fullTimeSeconds);
+                }
+            }
             return;
         }
 
@@ -323,6 +342,29 @@ class ChessGame {
             }
         } catch (error) {
             console.error('Error handling timeout:', error);
+        }
+    }
+
+    // Start the game timer when inviter is redirected to the game page
+    async startGameTimer() {
+        try {
+            console.log('Calling start-timer endpoint for game:', this.gameId);
+            const response = await fetch(`/api/games/${this.gameId}/start-timer`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                console.log('Timer started successfully');
+                // Fetch the updated game state to get the timer data
+                await this.fetchGame();
+            } else {
+                console.error('Failed to start timer');
+            }
+        } catch (error) {
+            console.error('Error starting game timer:', error);
         }
     }
 
@@ -529,6 +571,14 @@ class ChessGame {
         this.blackTimeLeftSeconds = gameData.blackTimeLeftSeconds;
         this.lastMoveAt = gameData.lastMoveAt;
         this.timeControlMinutes = gameData.timeControlMinutes;
+
+        // Check if timer needs to be started (when inviter is redirected to game page)
+        if ((this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK') && 
+            this.timeControlMinutes && 
+            !this.lastMoveAt) {
+            console.log('Timer not started yet, starting timer for game:', this.gameId);
+            await this.startGameTimer();
+        }
 
         // Start timer if game has started and timer is enabled
         if ((this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK') && this.timeControlMinutes) {

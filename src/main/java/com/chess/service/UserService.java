@@ -3,6 +3,7 @@ package com.chess.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +15,7 @@ import com.chess.exception.UserNotFoundException;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.User;
 import com.chess.repository.UserRepository;
+import com.chess.dto.rest.response.UserDTO;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -65,6 +67,25 @@ public class UserService implements UserDetailsService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
             .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    /**
+     * Search for users by username (for invitation system)
+     * @param query The username query to search for
+     * @param currentUsername The current user's username to exclude from results
+     * @return List of users matching the query
+     */
+    public List<UserDTO> searchUsersByUsername(String query, String currentUsername) {
+        // Use the repository method for better performance
+        List<User> users = userRepository.findByUsernameContainingIgnoreCaseAndUsernameNot(
+            query, 
+            currentUsername != null ? currentUsername : ""
+        );
+        
+        return users.stream()
+            .limit(10) // Limit to 10 results
+            .map(UserDTO::fromUser)
+            .collect(Collectors.toList());
     }
 
 }

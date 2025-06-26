@@ -782,168 +782,104 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
-    width: 90%;
-    max-width: 500px;
-    height: 400px;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-lg);
-    z-index: 1001;
+    background: linear-gradient(135deg, rgb(30, 29, 31), rgba(30, 29, 31));
+    border-radius: 16px;
+    border: 1px solid rgba(107, 70, 193, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    z-index: 10000;
     opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.3s ease;
+    max-width: 500px;
+    width: 90vw;
+    max-height: 80vh;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    animation: popupFadeIn 0.3s ease-out;
-}
-
-.game-creation-popup::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('/images/retrochess3.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    filter: brightness(0.6);
-    z-index: -1;
-}
-
-.game-creation-popup::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: -1;
 }
 
 .game-creation-popup.show {
     opacity: 1;
-    visibility: visible;
     transform: translate(-50%, -50%) scale(1);
 }
 
 .game-creation-popup .popup-content {
-    position: relative;
-    height: 100%;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .game-creation-popup .popup-header {
-    position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    min-height: 80px;
+    padding: 20px 24px 16px 24px;
+    border-bottom: 1px solid rgba(107, 70, 193, 0.1);
+    background: linear-gradient(135deg, rgba(42, 41, 43, 0.8), rgba(42, 41, 43, 0.6));
 }
 
 .game-creation-popup .popup-header h3 {
-    color: var(--text-color);
-    font-size: 1.5rem;
-    font-weight: 600;
+    color: #ffffff;
     margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
 .game-creation-popup .popup-body {
-    padding: var(--spacing-md);
+    padding: 24px;
     flex: 1;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-}
-
-.game-creation-popup .create-button-container {
-    display: flex;
-    justify-content: center;
-    margin: 0;
-    padding: 0;
-    margin-top: -var(--spacing-xs);
-}
-
-.game-creation-popup .create-button-container .btn-create {
-    padding: var(--spacing-sm) var(--spacing-md);
-    border: none;
-    border-radius: var(--border-radius-sm);
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all var(--transition-fast);
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-color) 100%);
-    color: white;
-    box-shadow: var(--shadow-sm);
-    min-width: 120px;
-}
-
-.game-creation-popup .create-button-container .btn-create:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
-
-.game-creation-popup .create-button-container .btn-create:active {
-    transform: translateY(0);
+    gap: 20px;
 }
 
 .game-creation-popup .form-group {
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0;
 }
 
 .game-creation-popup .form-group label {
     display: block;
-    margin-bottom: var(--spacing-xs);
-    color: var(--text-color);
+    color: #ffffff;
+    margin-bottom: 8px;
     font-weight: 500;
-    font-size: 0.95rem;
-}
-
-.game-creation-popup .form-group select {
-    width: 100%;
-    padding: var(--spacing-sm);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: var(--border-radius-sm);
-    background: rgba(0, 0, 0, 0.5);
-    color: var(--text-color);
     font-size: 1rem;
-    transition: all var(--transition-fast);
 }
 
-.game-creation-popup .form-group select:focus {
+.game-creation-popup select,
+.game-creation-popup input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(42, 41, 43, 0.8);
+    border: 1px solid rgba(107, 70, 193, 0.3);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.game-creation-popup select:focus,
+.game-creation-popup input:focus {
     outline: none;
-    border-color: var(--primary-light);
-    box-shadow: 0 0 0 2px rgba(159, 122, 234, 0.2);
+    border-color: rgba(107, 70, 193, 0.6);
+    box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.1);
 }
 
 .game-creation-popup .color-selection {
     display: flex;
-    gap: var(--spacing-sm);
+    gap: 16px;
     flex-wrap: wrap;
 }
 
 .game-creation-popup .color-option {
     display: flex;
     align-items: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-sm);
-    border: 2px solid transparent;
-    border-radius: var(--border-radius-sm);
+    gap: 8px;
     cursor: pointer;
-    transition: all var(--transition-fast);
-    background: rgba(0, 0, 0, 0.5);
-    flex: 1;
-    min-width: 80px;
-    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
 }
 
 .game-creation-popup .color-option:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(107, 70, 193, 0.1);
 }
 
 .game-creation-popup .color-option input[type="radio"] {
@@ -951,145 +887,425 @@ body {
 }
 
 .game-creation-popup .color-option input[type="radio"]:checked + .color-box {
-    transform: scale(1.2);
-    box-shadow: 0 0 10px rgba(159, 122, 234, 0.5);
-}
-
-.game-creation-popup .color-option input[type="radio"]:checked ~ span:last-child {
-    color: var(--primary-light);
-    font-weight: 600;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.5);
 }
 
 .game-creation-popup .color-box {
-    font-size: 1.5rem;
-    transition: all var(--transition-fast);
-    display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
 }
 
-.game-creation-popup .white-piece {
-    color: var(--color-white-piece);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+.game-creation-popup .color-box.white-piece {
+    background: #f0d9b5;
+    color: #b58863;
 }
 
-.game-creation-popup .black-piece {
-    color: var(--color-black-piece);
-    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+.game-creation-popup .color-box.black-piece {
+    background: #b58863;
+    color: #f0d9b5;
 }
 
-.game-creation-popup .random-piece {
-    color: var(--primary-light);
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+.game-creation-popup .color-box.random-piece {
+    background: linear-gradient(45deg, #f0d9b5, #b58863);
+    color: #ffffff;
+}
+
+.game-creation-popup .create-button-container {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(107, 70, 193, 0.1);
 }
 
 .game-creation-popup .btn-create {
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-color) 100%);
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #6b46c1, #553c9a);
     color: white;
-    box-shadow: var(--shadow-sm);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .game-creation-popup .btn-create:hover {
+    background: linear-gradient(135deg, #553c9a, #44337a);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
 }
 
-.game-creation-popup .btn-create:active {
-    transform: translateY(0);
+.game-creation-popup .btn-create:disabled {
+    background: #666;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
-/* Responsive design for game creation popup */
+.game-creation-popup .btn-create:disabled:hover {
+    background: #666;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive adjustments for mobile */
 @media (max-width: 768px) {
     .game-creation-popup {
-        width: 95%;
-        height: auto;
+        width: 95vw;
         max-height: 90vh;
-        /* Make the popup scrollable on mobile */
-        overflow-y: auto;
-    }
-    
-    .game-creation-popup .popup-content {
-        /* Ensure content can scroll if needed */
-        min-height: auto;
-        height: auto;
+        margin: 20px;
     }
     
     .game-creation-popup .popup-body {
-        /* Remove fixed height and allow content to flow */
-        height: auto;
-        min-height: auto;
-        /* Ensure proper spacing */
-        padding: var(--spacing-md);
-        /* Make sure the create button container is always visible */
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-md);
-    }
-    
-    .game-creation-popup .create-button-container {
-        /* Ensure the create button is always at the bottom and visible */
-        margin-top: var(--spacing-md);
-        margin-bottom: var(--spacing-sm);
-        /* Make button sticky to bottom */
-        position: sticky;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        padding: var(--spacing-sm);
-        border-radius: var(--border-radius-sm);
-        z-index: 10;
+        padding: 20px;
+        gap: 16px;
     }
     
     .game-creation-popup .color-selection {
-        flex-direction: column;
-    }
-    
-    .game-creation-popup .color-option {
-        flex: none;
-        width: 100%;
+        gap: 12px;
     }
     
     .game-creation-popup .btn-create {
-        width: 100%;
-        /* Make buttons more touch-friendly */
-        padding: var(--spacing-md);
-        font-size: 1.1rem;
+        padding: 14px 20px;
+        font-size: 1rem;
     }
 }
 
-/* Additional mobile styles for very small screens */
-@media (max-width: 480px) {
-    .game-creation-popup {
-        width: 98%;
-        max-height: 95vh;
-        margin: 10px;
+/* Add invitation system styles at the end of the file */
+
+/* Search container styles */
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #2c2c2e;
+    border: 1px solid rgba(107, 70, 193, 0.3);
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.search-result-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(107, 70, 193, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover,
+.search-result-item.selected {
+    background-color: rgba(107, 70, 193, 0.2);
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item .username {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.no-results,
+.search-error {
+    padding: 12px 16px;
+    color: #888;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Invitations section styles */
+.invitations-section {
+    margin-bottom: 20px;
+}
+
+.invitations-section h3 {
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.invitations-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.invitation-item {
+    background: linear-gradient(135deg, rgba(42, 41, 43, 0.8), rgba(42, 41, 43, 0.6));
+    border: 1px solid rgba(107, 70, 193, 0.2);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: all 0.3s ease;
+}
+
+.invitation-item:hover {
+    border-color: rgba(107, 70, 193, 0.4);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 70, 193, 0.1);
+}
+
+.invitation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.inviter-name {
+    color: #ffd700;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.invitation-time {
+    background: rgba(107, 70, 193, 0.3);
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.invitation-details {
+    margin-bottom: 12px;
+    color: #cccccc;
+    font-size: 0.95rem;
+}
+
+.invitation-text {
+    color: #cccccc;
+}
+
+.invitation-color {
+    color: #ffd700;
+    font-weight: 500;
+}
+
+.invitation-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-accept,
+.btn-decline {
+    flex: 1;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-accept {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+}
+
+.btn-accept:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-1px);
+}
+
+.btn-decline {
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    color: white;
+}
+
+.btn-decline:hover {
+    background: linear-gradient(135deg, #d32f2f, #b71c1c);
+    transform: translateY(-1px);
+}
+
+/* Divider styles */
+.divider {
+    text-align: center;
+    margin: 20px 0;
+    position: relative;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: rgba(107, 70, 193, 0.3);
+}
+
+.divider span {
+    background: #1e1d1f;
+    padding: 0 16px;
+    color: #888;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Loading and error states */
+.loading,
+.no-invitations,
+.error {
+    text-align: center;
+    padding: 20px;
+    color: #888;
+    font-style: italic;
+}
+
+.loading {
+    color: #ffd700;
+}
+
+.error {
+    color: #f44336;
+}
+
+/* Success popup styles */
+.success-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    max-width: 300px;
+}
+
+.success-popup.show {
+    transform: translateX(0);
+}
+
+.success-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.success-content i {
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.success-content p {
+    margin: 0;
+    flex: 1;
+    font-weight: 500;
+}
+
+.success-content button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.2s ease;
+}
+
+.success-content button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Update error popup styles to match success popup */
+.error-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #f44336, #d32f2f);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+    z-index: 10000;
+    transform: translateX(400px);
+    transition: transform 0.3s ease;
+    max-width: 300px;
+}
+
+.error-popup.show {
+    transform: translateX(0);
+}
+
+.error-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.error-content i {
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.error-content p {
+    margin: 0;
+    flex: 1;
+    font-weight: 500;
+}
+
+.error-content button {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background-color 0.2s ease;
+}
+
+.error-content button:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .invitation-actions {
+        flex-direction: column;
     }
     
-    .game-creation-popup .popup-header {
-        padding: var(--spacing-sm);
-        min-height: 60px;
+    .success-popup,
+    .error-popup {
+        left: 20px;
+        right: 20px;
+        max-width: none;
+        transform: translateY(-100px);
     }
     
-    .game-creation-popup .popup-header h3 {
-        font-size: 1.3rem;
-    }
-    
-    .game-creation-popup .popup-body {
-        padding: var(--spacing-sm);
-    }
-    
-    .game-creation-popup .form-group select {
-        /* Prevent zoom on iOS */
-        font-size: 16px;
-        padding: var(--spacing-md);
-    }
-    
-    .game-creation-popup .btn-create {
-        padding: var(--spacing-lg);
-        font-size: 1.2rem;
+    .success-popup.show,
+    .error-popup.show {
+        transform: translateY(0);
     }
 }

@@ -165,14 +165,8 @@ public class GameService {
             // Update game status to IN_PROGRESS
             game.setStatus(GameStatus.IN_PROGRESS.name());
             
-            // Initialize timer when game starts (both players have joined)
-            if (game.getTimeControlMinutes() != null) {
-                // Set initial time for both players (convert minutes to seconds)
-                game.setWhiteTimeLeftSeconds(game.getTimeControlMinutes() * 60);
-                game.setBlackTimeLeftSeconds(game.getTimeControlMinutes() * 60);
-                // Set the last move time to now
-                game.setLastMoveAt(LocalDateTime.now());
-            }
+            // Timer will be started when the inviter is redirected to the game page
+            // This ensures the white player has their full time from the moment they can see the board
             
             // Save and return the updated game
             return gameRepository.save(game);
@@ -411,5 +405,44 @@ public class GameService {
         
         // Save and return the updated game
         return gameRepository.save(game);
+    }
+
+    /**
+     * Start the timer for a game when the inviter is redirected to the game page
+     * This ensures the white player has their full time from the moment they can see the board
+     * @param gameId The ID of the game
+     * @return The updated game with timer started
+     */
+    @Transactional
+    public Game startGameTimer(String gameId) {
+        // Find the game
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Check if game is in progress
+        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name())) {
+            throw new IllegalStateException("Cannot start timer for game that is not in progress");
+        }
+        
+        // Check if timer is already started
+        if (game.getLastMoveAt() != null) {
+            logger.info("Timer already started for game: {}", gameId);
+            return game;
+        }
+        
+        // Initialize timer when inviter is redirected to game page
+        if (game.getTimeControlMinutes() != null) {
+            logger.info("Starting timer for game: {} when inviter is redirected", gameId);
+            // Set initial time for both players (convert minutes to seconds)
+            game.setWhiteTimeLeftSeconds(game.getTimeControlMinutes() * 60);
+            game.setBlackTimeLeftSeconds(game.getTimeControlMinutes() * 60);
+            // Set the last move time to now - timer starts ticking
+            game.setLastMoveAt(LocalDateTime.now());
+            
+            // Save and return the updated game
+            return gameRepository.save(game);
+        }
+        
+        return game;
     }
 }

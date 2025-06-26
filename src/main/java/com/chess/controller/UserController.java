@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import com.chess.model.entity.User;
 import com.chess.model.entity.Game;
 import com.chess.service.UserService;
@@ -88,6 +89,30 @@ public class UserController {
             Map<String, String> errorResponse = new HashMap<>();
             errorResponse.put("message", "Failed to create user: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+    
+    /**
+     * Search for users by username (for invitation system)
+     * @param q The username query to search for
+     * @param currentUser The current user's username to exclude from results
+     * @return List of users matching the query
+     */
+    @GetMapping(value = "/search", produces = "application/json")
+    public ResponseEntity<?> searchUsers(@RequestParam("q") String query, 
+                                       @RequestParam(value = "currentUser", required = false) String currentUser) {
+        try {
+            if (query == null || query.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Query parameter 'q' is required"));
+            }
+            
+            List<UserDTO> users = userService.searchUsersByUsername(query.trim(), currentUser);
+            return ResponseEntity.ok(users);
+            
+        } catch (Exception e) {
+            log.error("Error searching users: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("message", "Failed to search users"));
         }
     }
 }

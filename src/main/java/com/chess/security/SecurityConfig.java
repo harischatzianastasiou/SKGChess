@@ -90,6 +90,7 @@ public class SecurityConfig {
                     "/",
                     "/api/users/signup",
                     "/api/users/login",
+                    "/api/users/search",
                     "/login",
                     "/logout",
                     "/game/**",
@@ -99,6 +100,7 @@ public class SecurityConfig {
                     "/audio/**",
                     "/error",
                     "/api/games/**",
+                    "/api/invitations/**",
                     "/index",
                     "/about",
                     "/oauth2/**",
@@ -113,9 +115,11 @@ public class SecurityConfig {
                 .ignoringRequestMatchers(
                     "/api/users/signup",
                     "/api/users/login",
+                    "/api/users/search",
                     "/login",
                     "/logout",
                     "/api/games/**",
+                    "/api/invitations/**",
                     "/chess-websocket/**",
                     "/topic/**",
                     "/app/**"

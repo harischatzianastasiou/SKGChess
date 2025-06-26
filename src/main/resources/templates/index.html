@@ -281,17 +281,12 @@
             </button>
         </div>
         <div class="popup-body">
-            <div class="game-id-container">
-                <div class="game-id-box">
-                    <input type="text" id="gameIdInput" placeholder="Enter game ID" onkeypress="handleEnterKey(event)">
-                    <button class="join-btn" onclick="handleJoinGame()">
-                        <i class="fas fa-sign-in-alt"></i> Join
-                    </button>
+            <!-- Invitations Section -->
+            <div class="invitations-section">
+                <h3>Pending Invitations</h3>
+                <div id="invitationsContainer" class="invitations-container">
+                    <!-- Invitations will be loaded here -->
                 </div>
-            </div>
-            <div class="info-box">
-                <i class="fas fa-info-circle"></i>
-                <p>Ask your opponent for the game ID to join their game.</p>
             </div>
         </div>
     </div>
