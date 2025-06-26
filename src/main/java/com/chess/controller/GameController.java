@@ -2,6 +2,7 @@ package com.chess.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -66,8 +67,10 @@ public class GameController {
             );
 
             // Return the created game
+            GameDTO gameDTO = GameDTO.fromGame(game);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
             return ResponseEntity.ok()
-                .body(GameDTO.fromGame(game));
+                .body(gameDTO);
 
         } catch (Exception e) {
             // Log the exception with stack trace
@@ -100,8 +103,11 @@ public class GameController {
         try{
             // Get the game data from service
             Game game = gameService.getGameById(gameId);
+            // Create GameDTO and set server time for client-server time sync
+            GameDTO gameDTO = GameDTO.fromGame(game);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
             // Add the game data to the model so it's available in the template
-            return ResponseEntity.ok(GameDTO.fromGame(game));
+            return ResponseEntity.ok(gameDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
@@ -146,8 +152,10 @@ public class GameController {
             messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
 
             // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(game);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
             return ResponseEntity.ok()
-                    .body(GameDTO.fromGame(game));
+                    .body(gameDTO);
 
         } catch (UserAlreadyHasActiveGameException e) {
             // Log the exception
@@ -205,8 +213,10 @@ public class GameController {
             messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
 
             // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(updatedGame);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
             return ResponseEntity.ok()
-                    .body(GameDTO.fromGame(updatedGame));
+                    .body(gameDTO);
 
         } catch (GameNotFoundException e) {
             log.error("Game not found: {}", request.getGameId(), e);
@@ -269,8 +279,10 @@ public class GameController {
             messagingTemplate.convertAndSend("/topic/game/" + gameId, message);
 
             // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(updatedGame);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
             return ResponseEntity.ok()
-                    .body(GameDTO.fromGame(updatedGame));
+                    .body(gameDTO);
 
         } catch (GameNotFoundException e) {
             log.error("Game not found: {}", gameId, e);

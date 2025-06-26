@@ -22,6 +22,7 @@ class ChessGame {
         this.lastMoveAt = null;
         this.timeControlMinutes = null;
         this.timerInterval = null;
+        this.serverTimeOffset = 0; // Time offset between client and server (in milliseconds)
         
         // Position navigation properties
         this.isViewingMode = false; // Track if we're in viewing mode (browsing positions)
@@ -225,9 +226,11 @@ class ChessGame {
             return;
         }
 
+        // Use server-synchronized time for accurate calculations
         const now = new Date();
+        const serverAdjustedNow = new Date(now.getTime() + (this.serverTimeOffset || 0)); // Apply server time offset
         const lastMoveTime = new Date(this.lastMoveAt);
-        const elapsedSeconds = Math.floor((now - lastMoveTime) / 1000);
+        const elapsedSeconds = Math.floor((serverAdjustedNow - lastMoveTime) / 1000);
 
         // Calculate current time left for each player
         let whiteTimeLeft = this.whiteTimeLeftSeconds;
@@ -448,6 +451,15 @@ class ChessGame {
         // Get the response data
         const gameData = await response.json();
         console.log('Game data received:', gameData);
+        
+        // Sync client time with server time for accurate timer calculations
+        if (gameData.serverTime) {
+            // Calculate time offset between client and server (in milliseconds)
+            const serverTime = new Date(gameData.serverTime);
+            const clientTime = new Date();
+            this.serverTimeOffset = serverTime.getTime() - clientTime.getTime();
+            console.log('Server time sync - Server:', serverTime, 'Client:', clientTime, 'Offset (ms):', this.serverTimeOffset);
+        }
         
         // Check if the board data is directly in the response or nested
         if (gameData.board) {
