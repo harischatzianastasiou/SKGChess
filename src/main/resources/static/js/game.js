@@ -13,7 +13,7 @@ class ChessGame {
         this.gameStatus = null;
         this.boardOrientation = null;
         this.playerColor = null;
-        this.isPlayerTurn = null;
+        this.isPlayerTurn = false;
         this.lastMoveArrow = null;
         
         // Timer-related properties
@@ -22,6 +22,16 @@ class ChessGame {
         this.lastMoveAt = null;
         this.timeControlMinutes = null;
         this.timerInterval = null;
+        
+        // Position navigation properties
+        this.isViewingMode = false; // Track if we're in viewing mode (browsing positions)
+        this.currentPositionIndex = -1; // Current position index (-1 = latest position)
+        this.gamePositions = []; // Array of all game positions
+        this.latestPositionBoardDTO = null; // Store the latest position for comparison
+        
+        // Navigation button elements
+        this.prevPositionBtn = document.getElementById('prev-position-btn');
+        this.nextPositionBtn = document.getElementById('next-position-btn');
         
         this.pieceImages = {
             'WHITE_PAWN': '/images/pawnN.png',
@@ -132,6 +142,33 @@ class ChessGame {
                 console.error(`[Sound Debug] Error calling load() for ${type} sound:`, e);
             }
         });
+
+        // Game end popup tracking
+        this.gameEndPopupShown = false;
+        this.lastGameStatus = null;
+        
+        // Latest game state (for timer calculations when in viewing mode)
+        this.latestGameState = null;
+        
+        // UI elements
+        this.chatContainer = document.getElementById('chat-container');
+        
+        // Drag and drop state
+        this.isDragging = false;
+        this.draggedPiece = null;
+        this.dragImage = null;
+        
+        // Timer
+        this.timerInterval = null;
+        
+        // WebSocket
+        this.subscription = null;
+        
+        // Position navigation
+        this.latestPositionBoardDTO = null;
+        
+        // Initialize the game
+        this.initializeGame();
     }
     
     // Initialize the game asynchronously
@@ -145,6 +182,9 @@ class ChessGame {
         
         // Fetch initial game state
         await this.fetchGame();
+        
+        // Load game positions for analysis
+        await this.loadGamePositions();
 
         // Remove the redundant animation trigger for black player
         // The animation will now only show when receiving the GAME_STARTED websocket message
@@ -193,10 +233,11 @@ class ChessGame {
         let whiteTimeLeft = this.whiteTimeLeftSeconds;
         let blackTimeLeft = this.blackTimeLeftSeconds;
 
-        // Only decrease time for the player whose turn it is currently
-        if (this.boardDTO && this.boardDTO.currentPlayer) {
-            const currentPlayerAlliance = this.boardDTO.currentPlayer.alliance;
+        // Use latest game state for timer calculations (not historical position data)
+        const currentPlayerAlliance = this.latestGameState?.currentPlayer?.alliance || this.boardDTO?.currentPlayer?.alliance;
             
+        // Only decrease time for the player whose turn it is currently
+        if (currentPlayerAlliance) {
             if (currentPlayerAlliance === 'WHITE') {
                 // White's turn - decrease white's time
                 whiteTimeLeft = Math.max(0, this.whiteTimeLeftSeconds - elapsedSeconds);
@@ -238,8 +279,7 @@ class ChessGame {
         }
 
         // Check for timeout - only check the player whose turn it is
-        if (this.boardDTO && this.boardDTO.currentPlayer) {
-            const currentPlayerAlliance = this.boardDTO.currentPlayer.alliance;
+        if (currentPlayerAlliance) {
             if ((currentPlayerAlliance === 'WHITE' && whiteTimeLeft <= 0) || 
                 (currentPlayerAlliance === 'BLACK' && blackTimeLeft <= 0)) {
                 this.handleTimeout();
@@ -364,6 +404,9 @@ class ChessGame {
                 this.selectedSourceTile = null;
             }
         });
+        
+        // Setup position navigation event listeners
+        this.setupPositionNavigationListeners();
     }
 
     // Function to fetch user ID by username
@@ -439,6 +482,25 @@ class ChessGame {
         this.gameId = gameData.id;
         this.lastMoveData = gameData.lastMoveData;
 
+        // Store the latest game state for timer calculations (when in viewing mode)
+        this.latestGameState = {
+            currentPlayer: this.boardDTO.currentPlayer,
+            gameStatus: this.gameStatus,
+            lastMoveAt: this.lastMoveAt,
+            whiteTimeLeftSeconds: this.whiteTimeLeftSeconds,
+            blackTimeLeftSeconds: this.blackTimeLeftSeconds
+        };
+
+        // Reset game end popup flag if game status changes from end state to IN_PROGRESS (new game)
+        if (this.gameStatus === 'IN_PROGRESS' && this.lastGameStatus && 
+            (this.lastGameStatus === 'CHECKMATE' || this.lastGameStatus === 'DRAW' || this.lastGameStatus === 'RESIGNED'
+            || this.lastGameStatus === 'STALEMATE' || this.lastGameStatus === 'THREEFOLD_REPETITION'
+            || this.lastGameStatus === 'FIFTY_MOVE_RULE' || this.lastGameStatus === 'INSUFFICIENT_MATERIAL'
+            || this.lastGameStatus === 'MUTUAL_AGREEMENT' || this.lastGameStatus === 'TIME_OUT')) {
+            console.log('New game started - resetting game end popup flag');
+            this.gameEndPopupShown = false;
+        }
+
         // Set player color and board orientation
         if (gameData.whitePlayerId === this.userId) {
             this.playerColor = 'WHITE';
@@ -471,6 +533,11 @@ class ChessGame {
             this.isPlayerTurn = false;
         }
         this.updateBoard();
+        
+        // Reload game positions to update navigation buttons
+        if (!this.isViewingMode) {
+            await this.loadGamePositions();
+        }
     }
 
     connectWebSocket() {
@@ -666,6 +733,18 @@ class ChessGame {
             return;
         }
         
+        // Prevent moves if game is not in progress (ended)
+        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
+            console.log('Game is not in progress - moves are disabled');
+            return;
+        }
+        
+        // Prevent moves if in viewing mode (not at latest board)
+        if (this.isViewingMode) {
+            console.log('In viewing mode - moves are disabled');
+            return;
+        }
+        
         if (!this.isPlayerTurn) {
             console.log('Not your turn');
             return;
@@ -811,6 +890,19 @@ class ChessGame {
             console.log('Not your turn, ignoring...');
             return;
         }
+        
+        // Prevent dragging if game is not in progress (ended)
+        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
+            console.log('Game is not in progress - dragging is disabled');
+            return;
+        }
+        
+        // Prevent dragging if in viewing mode (browsing positions)
+        if (this.isViewingMode) {
+            console.log('In viewing mode - dragging is disabled');
+            return;
+        }
+        
         const piece = event.target.closest('.piece');
         if (!piece) return;
 
@@ -876,6 +968,12 @@ class ChessGame {
         // Prevent moves if game hasn't started
         if (this.gameStatus === 'WAITING_FOR_OPPONENT') {
             console.log('Game has not started yet');
+            return;
+        }
+        
+        // Prevent moves if game is not in progress (ended)
+        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
+            console.log('Game is not in progress - moves are disabled');
             return;
         }
         
@@ -1018,36 +1116,43 @@ class ChessGame {
             }
         });
 
-        // --- Frontend-only en passant highlight ---
+        // --- En passant highlight for the clicked pawn only ---
         if (this.lastMoveData) {
             try {
                 const lastMoveDataObj = JSON.parse(this.lastMoveData);
-                const lastMoveSource = lastMoveDataObj.sourceCoordinate;
                 const lastMoveTarget = lastMoveDataObj.targetCoordinate;
                 const lastMoveType = lastMoveDataObj.moveType;
                 if (lastMoveType === 'PAWN_JUMP') {
-                    // For each tile, check if a pawn can capture en passant
-                    this.boardDTO.tiles.forEach(sourceTileData => {
-                        if (sourceTileData.piece?.pieceSymbol === 'PAWN') {
-                            const pawn = sourceTileData.piece;
-                            const pawnCoord = sourceTileData.tileCoordinate;
-                            const direction = pawn.pieceAlliance === 'WHITE' ? -8 : 8;
-                            // The jumped pawn must be adjacent
-                            if (Math.abs(pawnCoord - lastMoveTarget) === 1) {
-                                // The en passant target is behind the jumped pawn
-                                const enPassantTarget = lastMoveTarget + direction;
-                                // Only highlight if the target is empty
+                    const tileData = this.boardDTO.tiles.find(t => t.tileCoordinate === position);
+                    if (tileData && tileData.piece && tileData.piece.pieceSymbol === 'PAWN') {
+                        const pawn = tileData.piece;
+                        const pawnCoord = tileData.tileCoordinate;
+                        const direction = pawn.pieceAlliance === 'WHITE' ? -8 : 8;
+                        const pawnRank = Math.floor(pawnCoord / 8);
+                        const jumpedPawnRank = Math.floor(lastMoveTarget / 8);
+                        // Check adjacency, same rank, and diagonal
+                        if (
+                            pawnRank === jumpedPawnRank &&
+                            (
+                                (pawnCoord === lastMoveTarget + 1 && pawnCoord % 8 !== 0) ||
+                                (pawnCoord === lastMoveTarget - 1 && pawnCoord % 8 !== 7)
+                            )
+                        ) {
+                            const enPassantTarget = lastMoveTarget + direction;
+                            if (
+                                Math.abs(enPassantTarget - pawnCoord) === 7 ||
+                                Math.abs(enPassantTarget - pawnCoord) === 9
+                            ) {
                                 const enPassantTile = this.boardDTO.tiles.find(t => t.tileCoordinate === enPassantTarget && !t.tileOccupied);
                                 if (enPassantTile) {
                                     const targetTile = this.board.querySelector(`.tile[data-position='${enPassantTarget}']`);
                                     if (targetTile) {
-                                        // Add a special highlight for en passant
                                         targetTile.classList.add('legal-move-en-passant');
                                     }
                                 }
                             }
                         }
-                    });
+                    }
                 }
             } catch (e) {
                 console.error('Error parsing last move data for en passant:', e);
@@ -1069,6 +1174,10 @@ class ChessGame {
     updateBoard() {        
         console.log('Updating board with:', this.boardDTO);
         
+        // Track game status changes for popup display
+        const gameStatusChanged = this.lastGameStatus !== this.gameStatus;
+        this.lastGameStatus = this.gameStatus;
+        
         // If game hasn't started, show waiting message
         if (this.gameStatus === 'WAITING_FOR_OPPONENT') {
             this.statusElement.textContent = 'Waiting for opponent to join...';
@@ -1077,6 +1186,8 @@ class ChessGame {
             return;
         }
         
+        // Only update game status and turn indicator if not in viewing mode
+        if (!this.isViewingMode) {
         // Update game status and turn indicator
         if (this.boardDTO.currentPlayer.alliance === this.playerColor) {
             this.statusElement.textContent = 'Your turn to move';
@@ -1086,14 +1197,19 @@ class ChessGame {
             this.statusElement.textContent = `Waiting for ${this.boardDTO.currentPlayer.alliance.toLowerCase()} to move`;
             this.statusElement.classList.remove('your-turn');
             this.isPlayerTurn = false;
+            }
         }
 
-        // Check for game end conditions
-        if (this.gameStatus === 'CHECKMATE' || this.gameStatus === 'DRAW' || this.gameStatus === 'RESIGNED'
+        // Check for game end conditions - show popup only once when status changes to end state
+        if ((this.gameStatus === 'CHECKMATE' || this.gameStatus === 'DRAW' || this.gameStatus === 'RESIGNED'
             || this.gameStatus === 'STALEMATE' || this.gameStatus === 'THREEFOLD_REPETITION'
             || this.gameStatus === 'FIFTY_MOVE_RULE' || this.gameStatus === 'INSUFFICIENT_MATERIAL'
-            || this.gameStatus === 'MUTUAL_AGREEMENT' || this.gameStatus === 'TIME_OUT'
+            || this.gameStatus === 'MUTUAL_AGREEMENT' || this.gameStatus === 'TIME_OUT')
+            && gameStatusChanged && !this.gameEndPopupShown
         ) {
+            // Mark that we've shown the popup for this game end
+            this.gameEndPopupShown = true;
+            
             // Stop the timer when game ends
             this.stopTimer();
             
@@ -1324,10 +1440,6 @@ class ChessGame {
         let existing = document.getElementById('game-end-popup');
         if (existing) existing.remove();
 
-        // Determine which player is the winner for styling
-        const isCurrentPlayerWinner = winner === currentPlayerUsername;
-        const isOpponentWinner = winner === opponentUsername;
-
         // Create popup
         const popup = document.createElement('div');
         popup.id = 'game-end-popup';
@@ -1336,12 +1448,12 @@ class ChessGame {
             <div class="popup-title">Game Over</div>
             <div class="popup-subtitle">${subtitle}</div>
             <div class="popup-players">
-                <div class="popup-player ${isCurrentPlayerWinner ? 'popup-winner' : ''}">
+                <div class="popup-player ${winner === currentPlayerUsername ? 'popup-winner' : ''}">
                     <div class="popup-color" style="background-color: ${currentPlayerColor};"></div>
                     <div class="popup-username">${currentPlayerUsername}</div>
                 </div>
                 <div class="popup-result-center">${result}</div>
-                <div class="popup-player ${isOpponentWinner ? 'popup-winner' : ''}">
+                <div class="popup-player ${winner === opponentUsername ? 'popup-winner' : ''}">
                     <div class="popup-color" style="background-color: ${opponentColor};"></div>
                     <div class="popup-username">${opponentUsername}</div>
                 </div>
@@ -1469,54 +1581,348 @@ class ChessGame {
 
     // Update the playSound method with better debugging
     playSound(moveType) {
-        console.log(`[Sound Debug] Attempting to play sound for move type: ${moveType}`);
-        const sound = this.sounds[moveType.toLowerCase()];
-        
-        if (!sound) {
-            console.error(`[Sound Debug] No sound found for move type: ${moveType}`);
+        if (this.sounds[moveType]) {
+            this.sounds[moveType].play().catch(e => {
+                console.error(`[Sound Debug] Error playing ${moveType} sound:`, e);
+            });
+        }
+    }
+    
+    // Position Navigation Methods
+    
+    /**
+     * Load all game positions for the current game
+     * This method fetches the complete move history from the server
+     */
+    async loadGamePositions() {
+        try {
+            console.log('Loading game positions for analysis...');
+            
+            // Fetch all game positions from the server
+            const response = await fetch(`/api/games/${this.gameId}/history`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (!response.ok) {
+                console.error('Failed to load game positions:', response.status);
             return;
         }
         
-        console.log(`[Sound Debug] Sound object state before playing:`, {
-            readyState: sound.readyState,
-            error: sound.error,
-            duration: sound.duration,
-            currentTime: sound.currentTime,
-            paused: sound.paused,
-            ended: sound.ended,
-            src: sound.src
-        });
-        
-        // Reset the sound to start
-        sound.currentTime = 0;
-        
-        // Try to play the sound
-        const playPromise = sound.play();
-        
-        if (playPromise !== undefined) {
-            playPromise
-                .then(() => {
-                    console.log(`[Sound Debug] Successfully started playing ${moveType} sound`);
-                })
-                .catch(error => {
-                    console.error(`[Sound Debug] Error playing ${moveType} sound:`, {
-                        error: error,
-                        errorCode: sound.error?.code,
-                        errorMessage: sound.error?.message,
-                        readyState: sound.readyState,
-                        src: sound.src
-                    });
-                    
-                    // Try to reload and play again
-                    console.log(`[Sound Debug] Attempting to reload and play ${moveType} sound`);
-                    try {
-                        sound.load();
-                        sound.play().catch(e => console.error(`[Sound Debug] Second attempt to play failed:`, e));
-                    } catch (e) {
-                        console.error(`[Sound Debug] Error during reload attempt:`, e);
-                    }
-                });
+            // Parse the response to get all positions
+            this.gamePositions = await response.json();
+            console.log(`Loaded ${this.gamePositions.length} game positions`);
+            
+            // Store the latest position for comparison
+            if (this.gamePositions.length > 0) {
+                this.latestPositionBoardDTO = this.gamePositions[this.gamePositions.length - 1].board;
+            }
+            
+            // Update navigation button states (this will also set viewing mode)
+            this.updateNavigationButtons();
+            
+            // Update viewing mode status
+            this.updateViewingModeStatus(null);
+            
+        } catch (error) {
+            console.error('Error loading game positions:', error);
         }
+    }
+    
+    /**
+     * Navigate to the previous position in the game history
+     * This method moves backward through the move history
+     */
+    async navigateToPreviousPosition() {
+        console.log(`Navigating to previous position. Current index: ${this.currentPositionIndex}, Total positions: ${this.gamePositions.length}`);
+        
+        // If we're at the latest position (index -1), go to the last position in history
+        if (this.currentPositionIndex === -1) {
+            if (this.gamePositions.length === 0) {
+                console.log('No positions available');
+                return;
+            }
+            this.currentPositionIndex = this.gamePositions.length - 1;
+            console.log(`Going from latest position to last position in history: ${this.currentPositionIndex}`);
+        } else if (this.currentPositionIndex <= 0) {
+            // If we're at the initial position, we can't go back further
+            console.log('Already at the initial position');
+            return;
+        } else {
+            // Move to the previous position
+            this.currentPositionIndex--;
+            console.log(`Moving to previous position: ${this.currentPositionIndex}`);
+        }
+        
+        // Load and display the position
+        await this.displayPosition(this.currentPositionIndex);
+        
+        // Update navigation button states
+        this.updateNavigationButtons();
+    }
+    
+    /**
+     * Navigate to the initial position (move 0)
+     * This method moves to the very beginning of the game
+     */
+    async navigateToInitialPosition() {
+        if (this.gamePositions.length === 0) {
+            console.log('No game positions available');
+            return;
+        }
+        
+        // Move to the initial position (index 0)
+        this.currentPositionIndex = 0;
+        console.log('Navigating to initial position');
+        
+        // Load and display the position
+        await this.displayPosition(this.currentPositionIndex);
+        
+        // Update navigation button states
+        this.updateNavigationButtons();
+    }
+    
+    /**
+     * Navigate to the next position in the game history
+     * This method moves forward through the move history
+     */
+    async navigateToNextPosition() {
+        console.log(`Navigating to next position. Current index: ${this.currentPositionIndex}, Total positions: ${this.gamePositions.length}`);
+        
+        // If we're at the latest position, we can't go forward further
+        if (this.currentPositionIndex === -1) {
+            console.log('Already at the latest position');
+            return;
+        }
+        
+        // If we're at the last position in history, go to the latest position
+        if (this.currentPositionIndex >= this.gamePositions.length - 1) {
+            console.log('Going from last position in history to latest position');
+            await this.returnToLatestPosition();
+            return;
+        }
+        
+        // Move to the next position
+        this.currentPositionIndex++;
+        console.log(`Moving to next position: ${this.currentPositionIndex}`);
+        
+        // Load and display the position
+        await this.displayPosition(this.currentPositionIndex);
+        
+        // Update navigation button states
+        this.updateNavigationButtons();
+    }
+    
+    /**
+     * Display a specific position on the board
+     * This method updates the board to show the position at the given index
+     * Note: This only updates the display - timer calculations use latestGameState
+     * @param {number} positionIndex - The index of the position to display
+     */
+    async displayPosition(positionIndex) {
+        console.log(`displayPosition called with index: ${positionIndex}`);
+        console.log(`Game positions array length: ${this.gamePositions.length}`);
+        console.log(`Game positions:`, this.gamePositions);
+        
+        // Validate position index
+        if (positionIndex < 0 || positionIndex >= this.gamePositions.length) {
+            console.error('Invalid position index:', positionIndex);
+            return;
+        }
+        
+        // Get the position data
+        const position = this.gamePositions[positionIndex];
+        console.log(`Displaying position ${positionIndex}:`, position);
+        console.log(`Position board data:`, position.board);
+        
+        // Update the board DTO with the position data (for display only)
+        // Timer calculations will use latestGameState, not this historical data
+        this.boardDTO = position.board;
+        
+        // Update the board display
+        this.updateBoard();
+        
+        // Update navigation buttons (this will also set viewing mode)
+        this.updateNavigationButtons();
+        
+        // Update the status to show we're viewing a position
+        this.updateViewingModeStatus(position);
+    }
+    
+    /**
+     * Return to the latest position (current game state)
+     * This method exits viewing mode and returns to the live game
+     */
+    async returnToLatestPosition() {
+        console.log('Returning to latest position');
+        
+        // Reset to latest position
+        this.currentPositionIndex = -1;
+        
+        // Fetch the current game state
+        await this.fetchGame();
+        
+        // Update navigation button states (this will also set viewing mode to false)
+        this.updateNavigationButtons();
+        
+        // Update the status to show we're back to the live game
+        this.updateViewingModeStatus(null);
+    }
+    
+    /**
+     * Update the navigation button states based on current position
+     * This method enables/disables the left and right arrow buttons
+     */
+    updateNavigationButtons() {
+        if (!this.prevPositionBtn || !this.nextPositionBtn) {
+            console.error('Navigation buttons not found');
+            return;
+        }
+        
+        console.log(`Updating navigation buttons - Current index: ${this.currentPositionIndex}, Total positions: ${this.gamePositions.length}`);
+        
+        // If no positions available, disable both buttons
+        if (this.gamePositions.length === 0) {
+            this.prevPositionBtn.disabled = true;
+            this.nextPositionBtn.disabled = true;
+            console.log('No positions available - both buttons disabled');
+            return;
+        }
+        
+        // Previous button: always clickable until we reach the first board (index 0)
+        // When at latest position (index -1), we can go back to the last position in history
+        const canGoBack = this.currentPositionIndex > 0 || this.currentPositionIndex === -1;
+        this.prevPositionBtn.disabled = !canGoBack;
+        
+        // Next button: clickable when we are in viewing mode (not at latest board)
+        // When at latest position (index -1), we can't go forward
+        const isAtLatestBoard = this.currentPositionIndex === -1;
+        const canGoForward = !isAtLatestBoard;
+        this.nextPositionBtn.disabled = !canGoForward;
+        
+        // Update viewing mode based on whether we're at the latest board
+        this.isViewingMode = !isAtLatestBoard;
+        
+        console.log(`Navigation buttons - Can go back: ${canGoBack}, Can go forward: ${canGoForward}, Is viewing: ${this.isViewingMode}`);
+        console.log(`Button states - Previous disabled: ${this.prevPositionBtn.disabled}, Next disabled: ${this.nextPositionBtn.disabled}`);
+    }
+    
+    /**
+     * Update the status display to show viewing mode information
+     * This method updates the status text when browsing positions
+     * @param {Object} position - The current position being viewed (null if not in viewing mode)
+     */
+    updateViewingModeStatus(position) {
+        // Find the viewing indicator element (create if it doesn't exist)
+        let viewingIndicator = document.querySelector('.viewing-mode-indicator');
+        if (!viewingIndicator) {
+            viewingIndicator = document.createElement('div');
+            viewingIndicator.className = 'viewing-mode-indicator';
+            viewingIndicator.textContent = 'VIEWING';
+            viewingIndicator.style.display = 'none';
+            
+            // Add it next to the timer in the current player info
+            const playerTimer = document.querySelector('.current-player-info .player-timer');
+            if (playerTimer) {
+                playerTimer.parentNode.insertBefore(viewingIndicator, playerTimer.nextSibling);
+            }
+        }
+        
+        if (this.isViewingMode && position) {
+            // Show viewing mode indicator
+            viewingIndicator.style.display = 'block';
+            
+            // Update status text
+            this.statusElement.textContent = `Viewing: ${position.moveNotation} (Move ${position.moveNumber})`;
+            this.statusElement.classList.add('viewing-mode');
+        } else {
+            // Hide viewing mode indicator
+            viewingIndicator.style.display = 'none';
+            
+            // Remove viewing mode status
+            this.statusElement.classList.remove('viewing-mode');
+            
+            // Status will be updated by the normal updateBoard method
+        }
+    }
+    
+    /**
+     * Check if the current position is the latest position
+     * This method compares the current board with the latest position
+     * @returns {boolean} True if we're viewing the latest position
+     */
+    isAtLatestPosition() {
+        return this.currentPositionIndex === -1;
+    }
+    
+    /**
+     * Setup event listeners for position navigation
+     * This method binds click handlers to the navigation buttons
+     */
+    setupPositionNavigationListeners() {
+        console.log('Setting up position navigation listeners...');
+        console.log('Previous button element:', this.prevPositionBtn);
+        console.log('Next button element:', this.nextPositionBtn);
+        
+        // Force enable buttons temporarily for testing
+        if (this.prevPositionBtn) {
+            this.prevPositionBtn.disabled = false;
+            console.log('Forced previous button enabled for testing');
+        }
+        if (this.nextPositionBtn) {
+            this.nextPositionBtn.disabled = false;
+            console.log('Forced next button enabled for testing');
+        }
+        
+        // Bind click handlers to navigation buttons
+        if (this.prevPositionBtn) {
+            console.log('Adding click listener to previous button');
+            this.prevPositionBtn.addEventListener('click', (e) => {
+                console.log('Previous button clicked!');
+                e.preventDefault();
+                this.navigateToPreviousPosition();
+            });
+        } else {
+            console.error('Previous button not found!');
+        }
+        
+        if (this.nextPositionBtn) {
+            console.log('Adding click listener to next button');
+            this.nextPositionBtn.addEventListener('click', (e) => {
+                console.log('Next button clicked!');
+                e.preventDefault();
+                this.navigateToNextPosition();
+            });
+        } else {
+            console.error('Next button not found!');
+        }
+        
+        // Add keyboard navigation support
+        document.addEventListener('keydown', (e) => {
+            // Only handle navigation keys if we're in viewing mode
+            if (!this.isViewingMode) return;
+            
+            switch (e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    if (!this.prevPositionBtn.disabled) {
+                        this.navigateToPreviousPosition();
+                    }
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    if (!this.nextPositionBtn.disabled) {
+                        this.navigateToNextPosition();
+                    }
+                    break;
+                case 'Escape':
+                    e.preventDefault();
+                    this.returnToLatestPosition();
+                    break;
+            }
+        });
     }
 }
 

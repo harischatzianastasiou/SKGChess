@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.chess.model.entity.User;
 import com.chess.model.entity.Game;
 import com.chess.service.UserService;
-import com.chess.service.RateLimiterService;
 import com.chess.dto.rest.request.CreateUserRequestDTO;
 import com.chess.dto.rest.response.GameDTO;
 import com.chess.dto.rest.response.UserDTO;
@@ -35,12 +34,10 @@ public class UserController {
     
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final RateLimiterService rateLimiterService;
 
-    public UserController(UserService userService, PasswordEncoder passwordEncoder, RateLimiterService rateLimiterService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.rateLimiterService = rateLimiterService;
     }
 
 //     Advantages of Using Username:
@@ -66,16 +63,6 @@ public class UserController {
 
     @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createUser(@RequestBody CreateUserRequestDTO requestDTO, HttpServletRequest httpRequest) {
-        // Get client IP address
-        String clientIp = httpRequest.getRemoteAddr();
-        
-        // Check rate limit
-        if (!rateLimiterService.isAllowed(clientIp)) {
-            log.warn("Rate limit exceeded for IP: {} during signup", clientIp);
-            Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Too many signup requests. Please try again later.");
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorResponse);
-        }
 
         try {
             // Create a new User entity from the DTO

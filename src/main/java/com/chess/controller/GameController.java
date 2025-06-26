@@ -27,8 +27,8 @@ import com.chess.exception.UserAlreadyHasActiveGameException;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.Game.GameStatus;
 import com.chess.service.GameService;
+import com.chess.util.CompressionUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.chess.service.RateLimiterService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -43,57 +43,36 @@ public class GameController {
     private final GameService gameService;
     private final SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper objectMapper;// to convert game object to json for websocket communication
-    private final RateLimiterService rateLimiterService;
 
-    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate, ObjectMapper objectMapper, RateLimiterService rateLimiterService) {
+    public GameController(GameService gameService, SimpMessagingTemplate messagingTemplate, ObjectMapper objectMapper) {
         this.gameService = gameService;
         this.messagingTemplate = messagingTemplate;
         this.objectMapper = objectMapper;
-        this.rateLimiterService = rateLimiterService;
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createGame(@RequestBody @Valid CreateGameRequestDTO request, 
                                       HttpServletRequest httpRequest) {
-        // Get client IP address
-        String clientIp = httpRequest.getRemoteAddr();
-        
-        // Check rate limit
-        if (!rateLimiterService.isAllowed(clientIp)) {
-            log.warn("Rate limit exceeded for IP: {}", clientIp);
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                .body(new ErrorResponseDTO("Too many requests. Please try again later."));
-        }
-
         try {
-            // Create game with parameters from the request
+
+            // Create the game
             Game game = gameService.createGame(
-                request.getUsername(),
-                request.getGameType(),
+                request.getUsername(), 
+                request.getGameType(), 
                 request.getTimeControlMinutes(),
                 request.getIsRated(),
                 request.getCustomRules(),
                 request.getPlayerColor()
             );
 
+            // Return the created game
             return ResponseEntity.ok()
                 .body(GameDTO.fromGame(game));
-        } catch (UserNotFoundException e) {
-            // Log the exception
-            log.error("User not found when creating game: {}", e.getMessage());
-            // Return a more specific error response
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponseDTO("User not found"));
-        } catch (UserAlreadyHasActiveGameException e) {
-            // Log the exception
-            log.error("User already has an active game: {}", e.getMessage());
-            // Return a more specific error response
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorResponseDTO("Please finish or forfeit your current game before creating a new one"));
+
         } catch (Exception e) {
             // Log the exception with stack trace
             log.error("Error creating game: {}", e.getMessage(), e);
-            // Return an error response with more details
+            // Return an error response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponseDTO("Internal server error"));
         }
@@ -141,6 +120,9 @@ public class GameController {
                 request.getUsername()
             );
 
+            // DECOMPRESS the board before sending to frontend
+            String decompressedBoard = CompressionUtil.safeDecompress(game.getBoard());
+
             // Create a message that includes both game status, board information, and player usernames
             String message = String.format(
                 "{\"type\":\"GAME_STARTED\"," +
@@ -157,7 +139,7 @@ public class GameController {
                 game.getWhitePlayer() != null ? game.getWhitePlayer().getUsername() : "",
                 game.getBlackPlayer() != null ? game.getBlackPlayer().getId() : "",
                 game.getBlackPlayer() != null ? game.getBlackPlayer().getUsername() : "",
-                objectMapper.writeValueAsString(game.getBoard())
+                objectMapper.writeValueAsString(decompressedBoard)
             );
 
             // Send the message to the game topic
@@ -202,6 +184,8 @@ public class GameController {
                 request.getTargetCoordinate()
             );
             
+            // DECOMPRESS the board before sending to frontend
+            String decompressedBoard = CompressionUtil.safeDecompress(updatedGame.getBoard());
 
             // Create a message that includes both game status and board information
             String message = String.format(
@@ -215,7 +199,7 @@ public class GameController {
             request.getGameId(),
             updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
             updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
-            objectMapper.writeValueAsString(updatedGame.getBoard())
+            objectMapper.writeValueAsString(decompressedBoard)
             );
 
             messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
@@ -264,6 +248,9 @@ public class GameController {
             // Handle the timeout using the service
             Game updatedGame = gameService.handleTimeout(gameId);
             
+            // DECOMPRESS the board before sending to frontend
+            String decompressedBoard = CompressionUtil.safeDecompress(updatedGame.getBoard());
+            
             // Create a message for WebSocket notification
             String message = String.format(
                 "{\"type\":\"TIME_OUT\"," +
@@ -276,7 +263,7 @@ public class GameController {
                 gameId,
                 updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
                 updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
-                objectMapper.writeValueAsString(updatedGame.getBoard())
+                objectMapper.writeValueAsString(decompressedBoard)
             );
 
             messagingTemplate.convertAndSend("/topic/game/" + gameId, message);
@@ -294,18 +281,15 @@ public class GameController {
         }
     }
 
-    
-    // @MessageMapping("/game/{gameId}/chat")
-    // @SendTo("/topic/game/{gameId}")
-    // public ChatDTO handleChat(ChatDTO chatDTO, SimpMessageHeaderAccessor headerAccessor) {
-    //     String sessionId = headerAccessor.getSessionId();
-    //     String userId = sessionManager.getUserIdFromSession(sessionId);
-        
-    //     if (sessionManager.isSessionActive(sessionId) && userId != null) {
-    //         chatDTO.setTimestamp(System.currentTimeMillis());
-    //         chatDTO.setSender(userId);
-    //         return chatDTO;
-    //     }
-    //     return null;
-    // }
+    private String getClientIpAddress(HttpServletRequest request) {
+        String xForwardedFor = request.getHeader("X-Forwarded-For");
+        if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
+            return xForwardedFor.split(",")[0];
+        }
+        String xRealIp = request.getHeader("X-Real-IP");
+        if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
+            return xRealIp;
+        }
+        return request.getRemoteAddr();
+    }
 }

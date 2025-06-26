@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.chess.core.board.IBoard;
 import com.chess.core.moves.Move;
 import com.chess.core.moves.capturing.CapturingMove;
+import com.chess.core.moves.noncapturing.PawnJumpMove;
 import com.chess.core.player.CurrentPlayer;
 import com.chess.core.player.Player;
 import com.chess.core.Alliance;
@@ -31,6 +32,8 @@ import com.chess.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.chess.util.CompressionUtil;
+
 @Service
 @Transactional
 public class GameService {
@@ -38,14 +41,17 @@ public class GameService {
     private final GameRepository gameRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final GamePositionService gamePositionService;
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     public GameService(GameRepository gameRepository,
                       UserRepository userRepository, 
-                      SimpMessagingTemplate messagingTemplate) {
+                      SimpMessagingTemplate messagingTemplate,
+                      GamePositionService gamePositionService) {
         this.gameRepository = gameRepository;
         this.userRepository = userRepository;
         this.messagingTemplate = messagingTemplate;
+        this.gamePositionService = gamePositionService;
     }
 
     @Transactional
@@ -100,7 +106,10 @@ public class GameService {
             if(game.getGameType().equals("standard")){
                 try {
                     IBoard board = IBoard.createStandardBoard();
-                    game.setBoard(board.serialize());
+                    // Compress the board data before storing it
+                    String serializedBoard = board.serialize();
+                    String compressedBoard = CompressionUtil.compress(serializedBoard);
+                    game.setBoard(compressedBoard);
                 } catch (Exception e) {
                     logger.error("Error creating standard board: {}", e.getMessage(), e);
                     throw new RuntimeException("Failed to create standard board: " + e.getMessage(), e);
@@ -229,8 +238,9 @@ public class GameService {
             throw new IllegalStateException("Cannot make moves until opponent joins");
         }
         
-        // Get current game state
-        IBoard currentBoard = IBoard.deserialize(game.getBoard(), game.getLastMoveData());
+        // Get current game state - DECOMPRESS the board before deserialization
+        String decompressedBoard = CompressionUtil.safeDecompress(game.getBoard());
+        IBoard currentBoard = IBoard.deserialize(decompressedBoard, game.getLastMoveData());
         
         // Find the move from legal moves
         logger.info("sourceCoordinate: {}", sourceCoordinate);
@@ -286,6 +296,8 @@ public class GameService {
             moveData.put("moveType", "CHECK");
         } else if(currentPlayer.isCheckmate()) {
             moveData.put("moveType", "CHECKMATE");
+        } else if(move instanceof PawnJumpMove) {
+            moveData.put("moveType", "PAWN_JUMP");
         } else {
             moveData.put("moveType", "NORMAL");
         }
@@ -322,12 +334,28 @@ public class GameService {
             logger.error("Failed to serialize move data", e);
         }
 
-        // Store the serialized new board        
-        game.setBoard(newBoard.serialize());
+        // Serialize and compress the new board to reduce storage costs
+        String serializedBoard = newBoard.serialize();
+        String compressedBoard = CompressionUtil.safeCompress(serializedBoard);
+        
+        // Log compression statistics for monitoring
+        logger.info("Board compression: {}", CompressionUtil.getCompressionStats(serializedBoard, compressedBoard));
+        
+        // Store the compressed board
+        game.setBoard(compressedBoard);
 
         // Increment move count each time a move is made
         game.setMoveCount(game.getMoveCount() + 1);
         game.setIsPlayerTurn(newBoard.getCurrentPlayer().getAlliance());
+        
+        // Store the position for move history viewing
+        try {
+            gamePositionService.storePosition(game, newBoard, move, game.getMoveCount());
+            logger.info("Stored position for move {} in game {}", game.getMoveCount(), gameId);
+        } catch (Exception e) {
+            logger.error("Failed to store position for move history", e);
+            // Don't fail the move if position storage fails
+        }
         
         // Save the game (which will cascade to save the position)
         return gameRepository.save(game);

@@ -98,16 +98,4 @@ public class Game implements Serializable {
         MUTUAL_AGREEMENT,
         TIME_OUT; // New status for when a player runs out of time
     }
-
-    public boolean isGameStarted() {
-        return status != GameStatus.WAITING_FOR_OPPONENT.name();
-    }
-
-    public void setGameStarted(boolean gameStarted) {
-        if (gameStarted) {
-            status = GameStatus.IN_PROGRESS.name();
-        } else {
-            status = GameStatus.WAITING_FOR_OPPONENT.name();
-        }
-    }
 } 
