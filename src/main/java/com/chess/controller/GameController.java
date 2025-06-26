@@ -72,6 +72,12 @@ public class GameController {
             return ResponseEntity.ok()
                 .body(gameDTO);
 
+        } catch (UserAlreadyHasActiveGameException e) {
+            // Log the exception
+            log.error("User already has an active game: {}", e.getMessage());
+            // Return a more specific error response
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO("You must finish your current game before playing a new one"));
         } catch (Exception e) {
             // Log the exception with stack trace
             log.error("Error creating game: {}", e.getMessage(), e);
