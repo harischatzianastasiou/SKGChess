@@ -90,7 +90,7 @@
             #login-modal .modal-container {
                 width: 90%;
                 max-width: 500px;
-                max-height: 90vh;
+                max-height: 95vh;
                 overflow: hidden;
                 position: relative;
                 transform: translateY(-20px) scale(0.95);
@@ -400,16 +400,17 @@
                 
                 #login-modal .modal-body {
                     padding: 1rem;
-                    /* Ensure the modal body is scrollable on mobile */
-                    max-height: 70vh;
+                    /* Increase height significantly to fit all content */
+                    max-height: 95vh;
                     overflow-y: auto;
                 }
                 
-                /* Make the modal container more mobile-friendly */
+                /* Make the modal container much larger on mobile */
                 #login-modal .modal-container {
                     width: 95%;
-                    max-height: 85vh;
-                    margin: 20px;
+                    max-height: 95vh;
+                    height: auto;
+                    margin: 10px;
                 }
                 
                 /* Ensure form elements are properly spaced on mobile */
@@ -440,12 +441,13 @@
             @media (max-width: 360px) {
                 #login-modal .modal-container {
                     width: 98%;
-                    margin: 10px;
+                    max-height: 98vh;
+                    margin: 5px;
                 }
                 
                 #login-modal .modal-body {
                     padding: 0.8rem;
-                    max-height: 75vh;
+                    max-height: 98vh;
                 }
                 
                 #login-modal .form-group input {
