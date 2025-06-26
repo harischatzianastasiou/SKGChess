@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         // Render game boards
         renderGameBoards();
+        
+        // Check for pending invitations and show notifications
+        checkForPendingInvitationsOnLoad();
     }
     
     // Check if we need to show a game popup
@@ -1632,7 +1635,12 @@ function handleInvitationNotification(notification) {
 
 // Function to show invitation received notification
 function showInvitationReceivedNotification(notification) {
-    const message = `${notification.inviterUsername} invited you to a ${notification.timeControlMinutes}-minute game!`;
+    const inviterName = notification.inviterUsername;
+    const timeControl = notification.timeControlMinutes;
+    const playerColor = notification.playerColor === 'white' ? 'black' : 
+                      notification.playerColor === 'black' ? 'white' : 'random';
+    
+    const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
     showSuccessPopup(message);
     
     // If join dialog is open, refresh invitations
@@ -1838,3 +1846,34 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('beforeunload', function() {
     stopInvitationPolling();
 });
+
+// Function to check for pending invitations and show notifications
+function checkForPendingInvitationsOnLoad() {
+    const usernameElement = document.querySelector('span[data-username="true"]');
+    if (!usernameElement) return;
+    
+    const username = usernameElement.textContent;
+    
+    // Fetch pending invitations
+    fetch(`/api/invitations/pending/${username}`)
+        .then(response => response.json())
+        .then(invitations => {
+            if (invitations && invitations.length > 0) {
+                // Show notification for each pending invitation with a delay
+                invitations.forEach((invitation, index) => {
+                    setTimeout(() => {
+                        const inviterName = invitation.inviterUsername;
+                        const timeControl = invitation.timeControlMinutes;
+                        const playerColor = invitation.playerColor === 'white' ? 'black' : 
+                                          invitation.playerColor === 'black' ? 'white' : 'random';
+                        
+                        const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
+                        showSuccessPopup(message);
+                    }, index * 2000); // 2 second delay between each notification
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error checking for pending invitations:', error);
+        });
+}
