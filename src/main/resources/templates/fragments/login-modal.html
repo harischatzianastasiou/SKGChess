@@ -501,6 +501,9 @@
                         openLoginModal();
                     });
                 });
+                
+                // Setup initial login form event listeners
+                setupModalEventListeners();
             });
 
             /**
@@ -793,9 +796,22 @@
                     event.preventDefault();
                     
                     // Get form data
-                    const username = usernameInput.value;
+                    const username = usernameInput.value.trim();
                     const password = passwordInput.value;
                     const remember = document.getElementById('modal-remember').checked;
+                    
+                    // Client-side validation
+                    if (!username) {
+                        showLoginError('Please enter your username or email');
+                        usernameInput.focus();
+                        return;
+                    }
+                    
+                    if (!password) {
+                        showLoginError('Please enter your password');
+                        passwordInput.focus();
+                        return;
+                    }
                     
                     // Submit form data using our new handler
                     submitLoginForm(username, password, remember);
@@ -880,6 +896,12 @@
             async function submitLoginForm(username, password, remember) {
                 clearLoginError(); // Clear any existing error message
                 
+                // Show loading state
+                const loginBtn = document.querySelector('.login-btn');
+                const originalText = loginBtn.textContent;
+                loginBtn.textContent = 'Logging in...';
+                loginBtn.disabled = true;
+                
                 // Create form data
                 const formData = new FormData();
                 formData.append('username', username);
@@ -912,6 +934,10 @@
                 } catch (error) {
                     console.error('Login error:', error);
                     showLoginError('An error occurred during login. Please try again.');
+                } finally {
+                    // Restore button state
+                    loginBtn.textContent = originalText;
+                    loginBtn.disabled = false;
                 }
             }
 
