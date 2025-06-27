@@ -1988,24 +1988,86 @@ body.authenticated::before {
     transform: translateX(0);
 }
 
+/* Enhanced real-time notification styles */
+.invitation-popup.real-time {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    border: 2px solid #8BC34A;
+    box-shadow: 0 12px 40px rgba(76, 175, 80, 0.4);
+}
+
+.invitation-popup.real-time.attention {
+    animation: attentionPulse 1s ease-in-out infinite;
+    transform: translateX(0) scale(1.05);
+}
+
+@keyframes attentionPulse {
+    0%, 100% {
+        box-shadow: 0 12px 40px rgba(76, 175, 80, 0.4);
+        border-color: #8BC34A;
+    }
+    50% {
+        box-shadow: 0 12px 40px rgba(76, 175, 80, 0.8), 0 0 20px rgba(139, 195, 74, 0.6);
+        border-color: #fff;
+    }
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.notification-header i {
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.real-time-badge {
+    background: #ff0000;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0.3;
+    }
+}
+
+.notification-message {
+    font-size: 1rem;
+    line-height: 1.4;
+    margin: 8px 0;
+    font-weight: 500;
+}
+
 .invitation-content {
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-}
-
-.invitation-content i {
-    font-size: 1.2rem;
-    color: rgba(255, 255, 255, 0.9);
-    margin-bottom: 4px;
-}
-
-.invitation-content p {
-    margin: 0;
-    font-size: 0.95rem;
-    line-height: 1.4;
-    font-weight: 500;
 }
 
 .invitation-actions {
@@ -2045,5 +2107,4 @@ body.authenticated::before {
 
 .btn-dismiss:hover {
     background: rgba(255, 255, 255, 0.2);
-    color: white;
 }

@@ -33,6 +33,8 @@ class ChessGame {
         // Navigation button elements
         this.prevPositionBtn = document.getElementById('prev-position-btn');
         this.nextPositionBtn = document.getElementById('next-position-btn');
+        this.initialPositionBtn = document.getElementById('initial-position-btn');
+        this.latestPositionBtn = document.getElementById('latest-position-btn');
         
         this.pieceImages = {
             'WHITE_PAWN': '/images/pawnN.png',
@@ -1772,18 +1774,20 @@ class ChessGame {
     /**
      * Navigate to the previous position in the game history
      * This method moves backward through the move history
+     * Note: Navigation excludes the last position - only shuffles through historical positions
      */
     async navigateToPreviousPosition() {
         console.log(`Navigating to previous position. Current index: ${this.currentPositionIndex}, Total positions: ${this.gamePositions.length}`);
         
-        // If we're at the latest position (index -1), go to the last position in history
+        // If we're at the latest position (index -1), go to the second-to-last historical position
         if (this.currentPositionIndex === -1) {
             if (this.gamePositions.length === 0) {
                 console.log('No positions available');
                 return;
             }
-            this.currentPositionIndex = this.gamePositions.length - 1;
-            console.log(`Going from latest position to last position in history: ${this.currentPositionIndex}`);
+            // Go to the second-to-last historical position (exclude the last position from shuffle cycle)
+            this.currentPositionIndex = this.gamePositions.length - 2;
+            console.log(`Going from latest position to second-to-last historical position: ${this.currentPositionIndex}`);
         } else if (this.currentPositionIndex <= 0) {
             // If we're at the initial position, we can't go back further
             console.log('Already at the initial position');
@@ -1825,6 +1829,7 @@ class ChessGame {
     /**
      * Navigate to the next position in the game history
      * This method moves forward through the move history
+     * Note: Navigation excludes the last position - only shuffles through historical positions
      */
     async navigateToNextPosition() {
         console.log(`Navigating to next position. Current index: ${this.currentPositionIndex}, Total positions: ${this.gamePositions.length}`);
@@ -1835,9 +1840,10 @@ class ChessGame {
             return;
         }
         
-        // If we're at the last position in history, go to the latest position
-        if (this.currentPositionIndex >= this.gamePositions.length - 1) {
-            console.log('Going from last position in history to latest position');
+        // If we're at the second-to-last historical position, go to the latest position (current playable state)
+        // This skips the last position in the array, excluding it from the shuffle cycle
+        if (this.currentPositionIndex >= this.gamePositions.length - 2) {
+            console.log('Going from second-to-last historical position to latest position (current playable state)');
             await this.returnToLatestPosition();
             return;
         }
@@ -1912,6 +1918,7 @@ class ChessGame {
     /**
      * Update the navigation button states based on current position
      * This method enables/disables the left and right arrow buttons
+     * Note: Navigation excludes the last position - only shuffles through historical positions
      */
     updateNavigationButtons() {
         if (!this.prevPositionBtn || !this.nextPositionBtn) {
@@ -1921,24 +1928,44 @@ class ChessGame {
         
         console.log(`Updating navigation buttons - Current index: ${this.currentPositionIndex}, Total positions: ${this.gamePositions.length}`);
         
-        // If no positions available, disable both buttons
+        // If no positions available, disable all navigation buttons
         if (this.gamePositions.length === 0) {
             this.prevPositionBtn.disabled = true;
             this.nextPositionBtn.disabled = true;
-            console.log('No positions available - both buttons disabled');
+            if (this.initialPositionBtn) this.initialPositionBtn.disabled = true;
+            if (this.latestPositionBtn) this.latestPositionBtn.disabled = true;
+            console.log('No positions available - all navigation buttons disabled');
             return;
         }
         
-        // Previous button: always clickable until we reach the first board (index 0)
-        // When at latest position (index -1), we can go back to the last position in history
+        // Previous button logic:
+        // - When at latest position (index -1): can go back to second-to-last historical position
+        // - When at any historical position: can go back to previous historical position
+        // - When at initial position (index 0): cannot go back further
         const canGoBack = this.currentPositionIndex > 0 || this.currentPositionIndex === -1;
         this.prevPositionBtn.disabled = !canGoBack;
         
-        // Next button: clickable when we are in viewing mode (not at latest board)
-        // When at latest position (index -1), we can't go forward
+        // Next button logic:
+        // - When at latest position (index -1): cannot go forward (already at current playable state)
+        // - When at any historical position: can go forward to next historical position
+        // - When at second-to-last historical position: can go forward to current playable state (skipping last position)
         const isAtLatestBoard = this.currentPositionIndex === -1;
         const canGoForward = !isAtLatestBoard;
         this.nextPositionBtn.disabled = !canGoForward;
+        
+        // Initial position button logic:
+        // - Always enabled if there are positions available
+        // - When at initial position: can be clicked but won't change anything
+        if (this.initialPositionBtn) {
+            this.initialPositionBtn.disabled = false;
+        }
+        
+        // Latest position button logic:
+        // - Always enabled if there are positions available
+        // - When at latest position: can be clicked but won't change anything
+        if (this.latestPositionBtn) {
+            this.latestPositionBtn.disabled = false;
+        }
         
         // Update viewing mode based on whether we're at the latest board
         this.isViewingMode = !isAtLatestBoard;
@@ -2003,6 +2030,8 @@ class ChessGame {
         console.log('Setting up position navigation listeners...');
         console.log('Previous button element:', this.prevPositionBtn);
         console.log('Next button element:', this.nextPositionBtn);
+        console.log('Initial position button element:', this.initialPositionBtn);
+        console.log('Latest position button element:', this.latestPositionBtn);
         
         // Force enable buttons temporarily for testing
         if (this.prevPositionBtn) {
@@ -2037,26 +2066,58 @@ class ChessGame {
             console.error('Next button not found!');
         }
         
-        // Add keyboard navigation support
+        // Bind click handlers to initial and latest position buttons
+        if (this.initialPositionBtn) {
+            console.log('Adding click listener to initial position button');
+            this.initialPositionBtn.addEventListener('click', (e) => {
+                console.log('Initial position button clicked!');
+                e.preventDefault();
+                this.navigateToInitialPosition();
+            });
+        } else {
+            console.error('Initial position button not found!');
+        }
+        
+        if (this.latestPositionBtn) {
+            console.log('Adding click listener to latest position button');
+            this.latestPositionBtn.addEventListener('click', (e) => {
+                console.log('Latest position button clicked!');
+                e.preventDefault();
+                this.returnToLatestPosition();
+            });
+        } else {
+            console.error('Latest position button not found!');
+        }
+        
+        // Add keyboard navigation support - works like clicking the buttons
         document.addEventListener('keydown', (e) => {
-            // Only handle navigation keys if we're in viewing mode
-            if (!this.isViewingMode) return;
-            
             switch (e.key) {
                 case 'ArrowLeft':
                     e.preventDefault();
-                    if (!this.prevPositionBtn.disabled) {
+                    // Only navigate if previous button is enabled
+                    if (this.prevPositionBtn && !this.prevPositionBtn.disabled) {
                         this.navigateToPreviousPosition();
                     }
                     break;
                 case 'ArrowRight':
                     e.preventDefault();
-                    if (!this.nextPositionBtn.disabled) {
+                    // Only navigate if next button is enabled
+                    if (this.nextPositionBtn && !this.nextPositionBtn.disabled) {
                         this.navigateToNextPosition();
                     }
                     break;
                 case 'Escape':
                     e.preventDefault();
+                    this.returnToLatestPosition();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    // Go to initial position
+                    this.navigateToInitialPosition();
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    // Go to latest position (current playable state)
                     this.returnToLatestPosition();
                     break;
             }

@@ -3,7 +3,70 @@
 let stompClient = null; // Initialize stompClient to manage WebSocket connection
 let reconnectAttempts = 0; // Counter for reconnection attempts
 const maxReconnectAttempts = 5; // Maximum number of reconnection attempts
-const username = document.querySelector('h1 span[sec\\:authentication="name"]')?.textContent || ''; // Get the username from the HTML
+
+// Function to get current username dynamically
+function getCurrentUsername() {
+    // Try multiple possible selectors for the username
+    const selectors = [
+        'span[data-username="true"]', // This is the correct one from the HTML
+        'h1 span[sec\\:authentication="name"]',
+        '.hero-content h1 span',
+        '[data-username]',
+        '.username'
+    ];
+    
+    for (const selector of selectors) {
+        const element = document.querySelector(selector);
+        if (element && element.textContent && element.textContent.trim()) {
+            console.log(`Found username using selector: ${selector}`, element.textContent.trim());
+            return element.textContent.trim();
+        }
+    }
+    
+    // If no username found, log what elements are available
+    console.log('No username found. Available elements:');
+    selectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        console.log(`Selector "${selector}":`, elements.length, 'elements found');
+        elements.forEach((el, index) => {
+            console.log(`  Element ${index}:`, el.textContent, el.outerHTML.substring(0, 100));
+        });
+    });
+    
+    // Also check if user is authenticated
+    console.log('Authentication status:', document.body.classList.contains('authenticated'));
+    console.log('Body classes:', document.body.className);
+    
+    return '';
+}
+
+// Function to wait for username to be available
+function waitForUsername(maxAttempts = 30, interval = 300) {
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        
+        const checkUsername = () => {
+            attempts++;
+            const username = getCurrentUsername();
+            
+            if (username) {
+                console.log('Username found:', username);
+                resolve(username);
+            } else if (attempts >= maxAttempts) {
+                console.error('Username not available after maximum attempts');
+                console.log('Final authentication check:', document.body.classList.contains('authenticated'));
+                console.log('All h1 elements:', document.querySelectorAll('h1'));
+                console.log('All span elements with data-username:', document.querySelectorAll('span[data-username]'));
+                reject(new Error('Username not available after maximum attempts'));
+            } else {
+                console.log(`Username not available yet, attempt ${attempts}/${maxAttempts}`);
+                setTimeout(checkUsername, interval);
+            }
+        };
+        
+        checkUsername();
+    });
+}
 
 // Connect when page loads
 // connect();
@@ -12,6 +75,11 @@ const username = document.querySelector('h1 span[sec\\:authentication="name"]')?
 document.addEventListener('DOMContentLoaded', function() {
     // If user is authenticated, check for pending actions
     if (document.body.classList.contains('authenticated')) {
+        // Connect to WebSocket for real-time notifications with a delay to ensure page is loaded
+        setTimeout(() => {
+            connect();
+        }, 1000);
+        
         // Only handle pending action if one exists
         const pendingAction = sessionStorage.getItem('pendingAction');
         if (pendingAction) {
@@ -22,6 +90,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Check for pending invitations and show notifications
         checkForPendingInvitationsOnLoad();
+        
+        // Start fallback polling for invitations (in case WebSocket fails)
+        startInvitationPolling();
     }
     
     // Check if we need to show a game popup
@@ -60,16 +131,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to connect to the WebSocket
 function connect() {
+    console.log('Attempting to connect to WebSocket...');
+    
+    // Check if user is authenticated
+    if (!document.body.classList.contains('authenticated')) {
+        console.log('User not authenticated, skipping WebSocket connection');
+        return;
+    }
+    
     const socket = new SockJS('/chess-websocket'); // Create a new SockJS connection
     stompClient = Stomp.over(socket); // Wrap the socket with Stomp
 
     stompClient.connect({}, 
         function(frame) {
-            console.log('Connected: ' + frame);
+            console.log('WebSocket connected successfully:', frame);
             reconnectAttempts = 0;
 
             // Fetch user ID and set up subscriptions
-            fetchUserIdByUsername(username)
+            waitForUsername()
+                .then(username => {
+                    console.log("Username available:", username);
+                    return fetchUserIdByUsername(username);
+                })
                 .then(userId => {
                     console.log("User ID for WebSocket:", userId);
                     
@@ -106,21 +189,36 @@ function connect() {
                         console.error('Error received:', message.body);
                         alert('Error: ' + message.body);
                     });
+                    
+                    console.log('WebSocket subscriptions set up successfully');
                 })
                 .catch(error => {
-                    console.error("Failed to fetch user ID:", error);
+                    console.error("Failed to fetch user ID for WebSocket:", error);
+                    console.log("WebSocket connection established but user notifications disabled");
+                    console.log("Reason:", error.message);
+                    
+                    // Show user-friendly message about limited functionality
+                    if (error.message.includes('not found in database')) {
+                        console.log("User not found in database - this might be a temporary issue");
+                    } else if (error.message.includes('not authenticated')) {
+                        console.log("User not properly authenticated");
+                    } else if (error.message.includes('Username not available')) {
+                        console.log("Username not available - authentication might still be processing");
+                        console.log("Will continue with polling fallback for invitations");
+                    } else {
+                        console.log("Unknown error occurred while fetching user ID");
+                    }
+                    
+                    // Don't disconnect the WebSocket, just log the error
+                    // The user can still use other features, just won't get real-time notifications
+                    // Polling will still work as a fallback
                 });
         },
         function(error) {
-            console.error('STOMP error:', error);
+            console.error('STOMP connection error:', error);
             handleDisconnect();
         }
     );
-
-    // socket.onclose = function() {
-    //     console.log('WebSocket connection closed'); // Log when the connection is closed
-    //     handleDisconnect(); // Handle disconnection
-    // };
 }
 
 // Track if share popup is open and game messages
@@ -610,24 +708,42 @@ function joinGame(gameId) {
 
 // Function to fetch user ID by username
 function fetchUserIdByUsername(username) {
+    console.log('Fetching user ID for username:', username);
+    
+    // Check if username is valid
+    if (!username || username.trim() === '') {
+        throw new Error('Username is empty or invalid');
+    }
+    
     return fetch(`/api/users/${username}`)
         .then(response => {
-            if (!response.ok) {
-                throw new Error('User not found');
+            console.log('User endpoint response status:', response.status);
+            
+            if (response.status === 404) {
+                throw new Error('User not found in database');
+            } else if (response.status === 401) {
+                throw new Error('User not authenticated');
+            } else if (response.status === 500) {
+                throw new Error('Server error occurred');
+            } else if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
+            
             return response.json();
         })
         .then(user => {
-            console.log("User data:", user);
-            if (!user || !user.userId) {
+            console.log("User data received:", user);
+            if (!user || !user.id) {
                 throw new Error('User ID not found in response');
             }
-            console.log("User ID:", user.userId);
-            return user.userId;
+            console.log("User ID extracted:", user.id);
+            return user.id;
         })
         .catch(error => {
             console.error("Error fetching user ID:", error);
-            return null;
+            console.log("Username that failed:", username);
+            console.log("Current authentication status:", document.body.classList.contains('authenticated'));
+            throw error;
         });
 }
 
@@ -1641,7 +1757,12 @@ function showInvitationReceivedNotification(notification) {
                       notification.playerColor === 'black' ? 'white' : 'random';
     
     const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
-    showInvitationNotification(message);
+    
+    // Play notification sound for real-time invitations
+    playNotificationSound();
+    
+    // Show enhanced notification for real-time invitations
+    showRealTimeInvitationNotification(message, notification.invitationId);
     
     // If join dialog is open, refresh invitations
     const joinDialog = document.getElementById('joinGameDialog');
@@ -1651,6 +1772,76 @@ function showInvitationReceivedNotification(notification) {
             loadPendingInvitations(usernameElement.textContent);
         }
     }
+}
+
+// Function to play notification sound
+function playNotificationSound() {
+    try {
+        const audio = new Audio('/audio/Check.wav');
+        audio.volume = 0.5; // Set volume to 50%
+        audio.play().catch(error => {
+            console.log('Could not play notification sound:', error);
+        });
+    } catch (error) {
+        console.log('Error playing notification sound:', error);
+    }
+}
+
+// Function to show enhanced real-time invitation notification
+function showRealTimeInvitationNotification(message, invitationId) {
+    // Remove any existing invitation popup
+    const existingPopup = document.querySelector('.invitation-popup');
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+    
+    // Create enhanced invitation popup with animation
+    const popup = document.createElement('div');
+    popup.className = 'invitation-popup real-time';
+    popup.innerHTML = `
+        <div class="invitation-content">
+            <div class="notification-header">
+                <i class="fas fa-chess animate-pulse"></i>
+                <span class="real-time-badge">LIVE</span>
+            </div>
+            <p class="notification-message">${message}</p>
+            <div class="invitation-actions">
+                <button class="btn-view-invitations" onclick="viewInvitations()">
+                    <i class="fas fa-eye"></i> View Invitations
+                </button>
+                <button class="btn-dismiss" onclick="this.parentElement.parentElement.parentElement.remove()">
+                    <i class="fas fa-times"></i> Dismiss
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Add to body
+    document.body.appendChild(popup);
+    
+    // Add entrance animation
+    setTimeout(() => {
+        popup.classList.add('show');
+        // Add attention-grabbing animation
+        popup.classList.add('attention');
+    }, 10);
+    
+    // Remove attention animation after 3 seconds
+    setTimeout(() => {
+        popup.classList.remove('attention');
+    }, 3000);
+    
+    // Auto-remove after 12 seconds (longer for real-time notifications)
+    setTimeout(() => {
+        if (popup.parentElement) {
+            popup.classList.remove('show');
+            setTimeout(() => {
+                if (popup.parentElement) {
+                    popup.remove();
+                }
+            }, 300);
+        }
+    }, 12000);
 }
 
 // Function to show invitation accepted notification
@@ -1716,16 +1907,13 @@ function deleteInvitation(invitationId) {
     console.log('Current URL:', window.location.href);
     console.log('Current pathname:', window.location.pathname);
     
-    fetch(`/api/invitations/${invitationId}`, {
+    fetch(`/api/invitations/delete/${invitationId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json'
         }
     })
     .then(response => {
-        console.log('Delete response status:', response.status);
-        console.log('Delete response ok:', response.ok);
-        
         if (response.ok) {
             console.log('✅ Successfully deleted invitation:', invitationId);
             return response.text();
@@ -1783,18 +1971,54 @@ function showInvitationExpiredNotification(notification) {
 
 // Add polling mechanism to check for accepted invitations
 let invitationPollingInterval = null;
+let lastInvitationCount = 0; // Track the number of invitations to detect new ones
 
 // Function to start polling for accepted invitations
 function startInvitationPolling() {
-    const usernameElement = document.querySelector('span[data-username="true"]');
-    if (!usernameElement) return;
+    const username = getCurrentUsername();
+    if (!username) {
+        console.log('No username available for polling, skipping...');
+        return;
+    }
     
-    const username = usernameElement.textContent;
-    
-    // Check every 2 seconds for accepted invitations
+    // Check every 5 seconds for new invitations and accepted invitations
     invitationPollingInterval = setInterval(() => {
+        checkForNewInvitations(username);
         checkForAcceptedInvitations(username);
-    }, 2000);
+    }, 5000);
+}
+
+// Function to check for new invitations (fallback for WebSocket)
+function checkForNewInvitations(username) {
+    fetch(`/api/invitations/pending/${username}`)
+        .then(response => response.json())
+        .then(invitations => {
+            const currentCount = invitations.length;
+            
+            // If we have more invitations than before, show notification for new ones
+            if (currentCount > lastInvitationCount && lastInvitationCount > 0) {
+                const newInvitations = invitations.slice(0, currentCount - lastInvitationCount);
+                newInvitations.forEach(invitation => {
+                    const inviterName = invitation.inviterUsername;
+                    const timeControl = invitation.timeControlMinutes;
+                    const playerColor = invitation.playerColor === 'white' ? 'black' : 
+                                      invitation.playerColor === 'black' ? 'white' : 'random';
+                    
+                    const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
+                    
+                    // Play notification sound for new invitations
+                    playNotificationSound();
+                    
+                    // Show notification for new invitation
+                    showRealTimeInvitationNotification(message, invitation.id);
+                });
+            }
+            
+            lastInvitationCount = currentCount;
+        })
+        .catch(error => {
+            console.error('Error checking for new invitations:', error);
+        });
 }
 
 // Function to check for accepted invitations
@@ -1834,30 +2058,21 @@ function stopInvitationPolling() {
     }
 }
 
-// Start polling when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    // Start polling after a short delay to ensure user is loaded
-    setTimeout(() => {
-        startInvitationPolling();
-    }, 1000);
-});
-
-// Stop polling when leaving the page
-window.addEventListener('beforeunload', function() {
-    stopInvitationPolling();
-});
-
 // Function to check for pending invitations and show notifications
 function checkForPendingInvitationsOnLoad() {
-    const usernameElement = document.querySelector('span[data-username="true"]');
-    if (!usernameElement) return;
-    
-    const username = usernameElement.textContent;
+    const username = getCurrentUsername();
+    if (!username) {
+        console.log('No username available for checking pending invitations, skipping...');
+        return;
+    }
     
     // Fetch pending invitations
     fetch(`/api/invitations/pending/${username}`)
         .then(response => response.json())
         .then(invitations => {
+            // Initialize the invitation count for polling
+            lastInvitationCount = invitations.length;
+            
             if (invitations && invitations.length > 0) {
                 // Show notification for each pending invitation with a delay
                 invitations.forEach((invitation, index) => {
@@ -1926,4 +2141,32 @@ function viewInvitations() {
     
     // Open the join game dialog
     showJoinGameDialog();
+}
+
+// Function to handle WebSocket disconnection and reconnection
+function handleDisconnect() {
+    console.log('WebSocket disconnected, attempting to reconnect...');
+    
+    if (stompClient) {
+        stompClient.disconnect();
+        stompClient = null;
+    }
+    
+    // Attempt to reconnect if we haven't exceeded max attempts
+    if (reconnectAttempts < maxReconnectAttempts) {
+        reconnectAttempts++;
+        console.log(`Reconnection attempt ${reconnectAttempts}/${maxReconnectAttempts}`);
+        
+        // Wait before attempting to reconnect (exponential backoff)
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts - 1), 10000);
+        setTimeout(() => {
+            if (document.body.classList.contains('authenticated')) {
+                connect();
+            }
+        }, delay);
+    } else {
+        console.error('Max reconnection attempts reached. WebSocket connection failed.');
+        // Show user-friendly error message
+        showErrorPopup('Connection lost. Please refresh the page to restore real-time notifications.');
+    }
 }

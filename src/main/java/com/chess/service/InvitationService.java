@@ -135,7 +135,7 @@ public class InvitationService {
     /**
      * Accept an invitation and create a game
      * @param invitation The invitation to accept
-     * @return The updated invitation
+     * @return The updated invitation (before deletion)
      */
     private Invitation acceptInvitation(Invitation invitation) {
         try {
@@ -162,18 +162,22 @@ public class InvitationService {
             game = gameService.joinGame(game.getId(), invitation.getInvitee().getUsername());
             log.info("Invitee joined successfully. Game status: {}", game.getStatus());
             
-            // Update invitation status
+            // Update invitation status and set game ID before deletion
             invitation.setStatus(Invitation.InvitationStatus.ACCEPTED);
             invitation.setGameId(game.getId());
-            invitation = invitationRepository.save(invitation);
-            log.info("Invitation status updated to ACCEPTED");
+            log.info("Invitation status updated to ACCEPTED with game ID: {}", game.getId());
             
             // Send WebSocket notification to both users
             log.info("Sending WebSocket notifications to both users...");
             sendGameCreatedNotification(invitation, game);
             log.info("WebSocket notifications sent successfully");
             
-            log.info("Invitation accepted and game created successfully: {}", game.getId());
+            // Delete the invitation immediately after acceptance
+            log.info("Deleting invitation immediately after acceptance: {}", invitation.getId());
+            invitationRepository.delete(invitation);
+            log.info("Invitation deleted successfully");
+            
+            log.info("Invitation accepted, game created, and invitation deleted successfully: {}", game.getId());
             
             return invitation;
             

@@ -1145,4 +1145,25 @@
 #draw-btn:hover {
     background: #3c3c3e;
     transform: translateY(-1px);
+}
+
+/* Initial and Latest position buttons - same styling as other nav buttons */
+.nav-btn-initial,
+.nav-btn-latest {
+    /* Use the same styling as other nav buttons - no special colors */
+}
+
+.nav-btn-initial:disabled,
+.nav-btn-latest:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43)) !important;
+    border-color: rgba(107, 70, 193, 0.1) !important;
+    color: var(--color-text) !important;
+}
+
+.nav-btn-initial:disabled:hover,
+.nav-btn-latest:disabled:hover {
+    transform: none;
+    box-shadow: none;
 } 
