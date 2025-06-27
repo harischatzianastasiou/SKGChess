@@ -1743,8 +1743,8 @@ class ChessGame {
             
             if (!response.ok) {
                 console.error('Failed to load game positions:', response.status);
-            return;
-        }
+                return;
+            }
         
             // Parse the response to get all positions
             this.gamePositions = await response.json();
@@ -1754,6 +1754,9 @@ class ChessGame {
             if (this.gamePositions.length > 0) {
                 this.latestPositionBoardDTO = this.gamePositions[this.gamePositions.length - 1].board;
             }
+            
+            // Update the moves list display with algebraic notation
+            this.updateMovesList();
             
             // Update navigation button states (this will also set viewing mode)
             this.updateNavigationButtons();
@@ -2058,6 +2061,114 @@ class ChessGame {
                     break;
             }
         });
+    }
+
+    /**
+     * Update the moves list display with algebraic notation
+     * This method populates the move history section with the current game's moves
+     */
+    updateMovesList() {
+        // Get the moves list container
+        const movesListContainer = document.getElementById('moves-list');
+        if (!movesListContainer) {
+            console.error('Moves list container not found');
+            return;
+        }
+        
+        // Clear the current moves list
+        movesListContainer.innerHTML = '';
+        
+        // If no game positions loaded, show empty state
+        if (!this.gamePositions || this.gamePositions.length === 0) {
+            movesListContainer.innerHTML = '<div class="no-moves">No moves yet</div>';
+            return;
+        }
+        
+        // Create moves display in pairs (White and Black moves together)
+        let movesHTML = '';
+        let moveNumber = 1;
+        let whiteMove = '';
+        let blackMove = '';
+        
+        // Loop through positions (skip the initial position at index 0)
+        for (let i = 1; i < this.gamePositions.length; i++) {
+            const position = this.gamePositions[i];
+            
+            // Only process positions that have move notation (actual moves, not initial position)
+            if (position.moveNotation) {
+                // Determine if this is a White or Black move based on position index
+                // First move (i=1) is White, second (i=2) is Black, third (i=3) is White, etc.
+                const isWhiteMove = (i % 2 === 1); // Odd indices (1, 3, 5...) are White moves
+                
+                if (isWhiteMove) {
+                    // This is a White move - store it and wait for Black's move
+                    whiteMove = position.moveNotation;
+                } else {
+                    // This is a Black move - now we have both moves, create the entry
+                    blackMove = position.moveNotation;
+                    
+                    movesHTML += `
+                        <div class="move-entry" data-move-number="${moveNumber}">
+                            <span class="move-number">${moveNumber}.</span>
+                            <span class="move-notation">${whiteMove} ${blackMove}</span>
+                        </div>
+                    `;
+                    moveNumber++;
+                    whiteMove = '';
+                    blackMove = '';
+                }
+            }
+        }
+        
+        // Handle the case where we have a White move but no Black move (game ended on White's move)
+        if (whiteMove && !blackMove) {
+            movesHTML += `
+                <div class="move-entry" data-move-number="${moveNumber}">
+                    <span class="move-number">${moveNumber}.</span>
+                    <span class="move-notation">${whiteMove}</span>
+                </div>
+            `;
+        }
+        
+        // Update the moves list
+        movesListContainer.innerHTML = movesHTML;
+        
+        // Add click handlers to move entries for navigation
+        this.setupMoveEntryClickHandlers();
+    }
+    
+    /**
+     * Setup click handlers for move entries to allow navigation
+     * Clicking on a move will navigate to that position
+     */
+    setupMoveEntryClickHandlers() {
+        const moveEntries = document.querySelectorAll('.move-entry');
+        moveEntries.forEach((entry, index) => {
+            entry.addEventListener('click', () => {
+                // Navigate to the position after this move pair is completed
+                // Each move pair contains 2 moves (White + Black), so we need to calculate the correct position index
+                // Move pair 1 (1.e4 e5) should navigate to position after both moves (index 2)
+                // Move pair 2 (2.Nf3 Nc6) should navigate to position after both moves (index 4)
+                // etc.
+                const positionIndex = (index + 1) * 2; // Convert move pair index to position index
+                this.navigateToPosition(positionIndex);
+            });
+        });
+    }
+    
+    /**
+     * Navigate to a specific position by index
+     * @param {number} positionIndex - The index of the position to navigate to
+     */
+    async navigateToPosition(positionIndex) {
+        if (positionIndex < 0 || positionIndex >= this.gamePositions.length) {
+            console.error('Invalid position index:', positionIndex);
+            return;
+        }
+        
+        this.currentPositionIndex = positionIndex;
+        await this.displayPosition(positionIndex);
+        this.updateNavigationButtons();
     }
 }
 

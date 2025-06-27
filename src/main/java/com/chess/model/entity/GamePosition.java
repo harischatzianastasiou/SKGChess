@@ -48,16 +48,21 @@ public class GamePosition {
     @Column(name = "S_MOVE_DATA", columnDefinition = "TEXT", nullable = true)
     private String moveData;
     
+    // Algebraic notation for the move (e.g., "e4", "Nf3", "O-O", etc.)
+    @Column(name = "S_MOVE_NOTATION", columnDefinition = "VARCHAR(20)", nullable = true)
+    private String moveNotation;
+    
     // Timestamp when this position was created
     @Column(name = "D_CREATED_AT", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
     
     // Constructor for creating a new game position
-    public GamePosition(Game game, int moveNumber, String boardState, String moveData) {
+    public GamePosition(Game game, int moveNumber, String boardState, String moveData, String moveNotation) {
         this.game = game;
         this.moveNumber = moveNumber;
         this.boardState = boardState;
         this.moveData = moveData;
+        this.moveNotation = moveNotation;
     }
     
     // Constructor for initial position (no move data)
@@ -66,5 +71,6 @@ public class GamePosition {
         this.moveNumber = 0; // Initial position
         this.boardState = boardState;
         this.moveData = null; // No move led to initial position
+        this.moveNotation = null; // No move notation for initial position
     }
 } 

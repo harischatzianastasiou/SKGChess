@@ -1000,6 +1000,49 @@
     flex: 1;
 }
 
+/* Move entry styles */
+.move-entry {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid transparent;
+}
+
+.move-entry:hover {
+    background: rgba(107, 70, 193, 0.1);
+    border-color: rgba(107, 70, 193, 0.3);
+    transform: translateY(-1px);
+}
+
+.move-entry:active {
+    transform: translateY(0);
+}
+
+.move-number {
+    color: #888;
+    font-weight: 500;
+    min-width: 20px;
+}
+
+.move-notation {
+    color: #e0e0e0;
+    font-weight: 400;
+    font-family: 'Courier New', monospace;
+}
+
+/* No moves state */
+.no-moves {
+    color: #888;
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}
+
 /* Responsive adjustments for the new layout */
 @media (max-width: 1024px) {
     .play-tab {

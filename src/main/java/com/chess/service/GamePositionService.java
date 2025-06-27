@@ -15,6 +15,7 @@ import com.chess.model.entity.Game;
 import com.chess.model.entity.GamePosition;
 import com.chess.repository.GamePositionRepository;
 import com.chess.util.CompressionUtil;
+import com.chess.util.ChessNotationUtil;
 
 /**
  * Service class for managing game positions and move history
@@ -42,6 +43,9 @@ public class GamePositionService {
         // Serialize the move data
         String moveData = Board.serializeMove(move);
         
+        // Generate algebraic notation for the move immediately
+        String moveNotation = ChessNotationUtil.toAlgebraicNotation(move);
+        
         // Compress the board state to reduce storage costs
         String compressedBoardState = CompressionUtil.safeCompress(boardState);
         
@@ -52,8 +56,8 @@ public class GamePositionService {
         logCompressionStats("Board State", boardState, compressedBoardState);
         logCompressionStats("Move Data", moveData, compressedMoveData);
         
-        // Create and save the new position with compressed data
-        GamePosition position = new GamePosition(game, moveNumber, compressedBoardState, compressedMoveData);
+        // Create and save the new position with compressed data and move notation
+        GamePosition position = new GamePosition(game, moveNumber, compressedBoardState, compressedMoveData, moveNotation);
         gamePositionRepository.save(position);
     }
     
@@ -73,8 +77,8 @@ public class GamePositionService {
         // Log compression statistics for monitoring
         logCompressionStats("Initial Board State", boardState, compressedBoardState);
         
-        // Create and save the initial position with compressed data
-        GamePosition position = new GamePosition(game, compressedBoardState);
+        // Create and save the initial position with compressed data and null move notation
+        GamePosition position = new GamePosition(game, 0, compressedBoardState, null, null);
         gamePositionRepository.save(position);
     }
     
@@ -141,23 +145,19 @@ public class GamePositionService {
     private GamePositionDTO convertToDTO(GamePosition position) {
         // Decompress the board state
         String decompressedBoardState = CompressionUtil.safeDecompress(position.getBoardState());
-        
-        // Decompress the move data
-        String decompressedMoveData = CompressionUtil.safeDecompress(position.getMoveData());
-        
+        // Decompress the move data (handle null for initial position)
+        String decompressedMoveData = position.getMoveData() != null ? 
+            CompressionUtil.safeDecompress(position.getMoveData()) : null;
         // Deserialize the board from decompressed data
         IBoard board = IBoard.deserialize(decompressedBoardState, decompressedMoveData);
-        
-        // Generate move notation (simplified - you can enhance this)
-        String moveNotation = generateMoveNotation(position);
-        
+        // Use the stored move notation directly
+        String moveNotation = position.getMoveNotation();
         // Determine player alliance based on move number
         String playerAlliance = null;
         if (position.getMoveNumber() > 0) {
             // Even move numbers are white's moves, odd are black's
             playerAlliance = (position.getMoveNumber() % 2 == 1) ? "WHITE" : "BLACK";
         }
-        
         return GamePositionDTO.builder()
             .id(position.getId())
             .moveNumber(position.getMoveNumber())
@@ -165,25 +165,9 @@ public class GamePositionService {
             .moveData(decompressedMoveData) // Use decompressed move data
             .createdAt(position.getCreatedAt())
             .gameId(position.getGame().getId())
-            .moveNotation(moveNotation)
+            .moveNotation(moveNotation) // Use stored move notation
             .playerAlliance(playerAlliance)
             .build();
-    }
-    
-    /**
-     * Generate move notation for display
-     * This is a simplified version - you can enhance it with proper chess notation
-     * @param position The position entity
-     * @return Move notation string
-     */
-    private String generateMoveNotation(GamePosition position) {
-        if (position.getMoveNumber() == 0) {
-            return "Initial Position";
-        }
-        
-        // For now, return a simple notation
-        // You can enhance this to parse the move data and generate proper chess notation
-        return "Move " + position.getMoveNumber();
     }
     
     /**

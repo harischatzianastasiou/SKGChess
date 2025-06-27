@@ -124,7 +124,9 @@ public class InvitationService {
         if ("accept".equalsIgnoreCase(action)) {
             return acceptInvitation(invitation);
         } else if ("decline".equalsIgnoreCase(action)) {
-            return declineInvitation(invitation);
+            declineInvitation(invitation);
+            // Return the original invitation for the response (it will be null in the database)
+            return invitation;
         } else {
             throw new IllegalArgumentException("Invalid action. Use 'accept' or 'decline'");
         }
@@ -184,18 +186,19 @@ public class InvitationService {
     /**
      * Decline an invitation
      * @param invitation The invitation to decline
-     * @return The updated invitation
+     * @return null since the invitation is deleted
      */
     private Invitation declineInvitation(Invitation invitation) {
-        invitation.setStatus(Invitation.InvitationStatus.DECLINED);
-        invitation = invitationRepository.save(invitation);
-        
-        // Send WebSocket notification to the inviter
+        // Send WebSocket notification to the inviter before deleting
         sendInvitationDeclinedNotification(invitation);
         
-        log.info("Invitation declined by {}", invitation.getInvitee().getUsername());
+        // Delete the invitation immediately instead of just marking it as declined
+        invitationRepository.delete(invitation);
         
-        return invitation;
+        log.info("Invitation declined and deleted by {}", invitation.getInvitee().getUsername());
+        
+        // Return null since the invitation no longer exists
+        return null;
     }
     
     /**

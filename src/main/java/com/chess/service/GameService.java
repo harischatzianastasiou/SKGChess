@@ -119,8 +119,23 @@ public class GameService {
                 throw new IllegalArgumentException("Unsupported game type: " + game.getGameType());
             }
             
-            // Save and return the game
-            return gameRepository.save(game);
+            // Save the game first to get an ID
+            game = gameRepository.save(game);
+            
+            // Store the initial position for move history (after game is saved)
+            if(game.getGameType().equals("standard")){
+                try {
+                    IBoard board = IBoard.createStandardBoard();
+                    gamePositionService.storeInitialPosition(game, board);
+                    logger.info("Stored initial position for game {}", game.getId());
+                } catch (Exception e) {
+                    logger.error("Error storing initial position: {}", e.getMessage(), e);
+                    // Don't fail the game creation if position storage fails
+                }
+            }
+            
+            // Return the game
+            return game;
         } catch (Exception e) {
             logger.error("Error creating game", e);
             throw e; // Re-throw the exception to be handled by the controller
