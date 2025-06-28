@@ -55,6 +55,14 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    /* Optimize for drag performance */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    /* Force hardware acceleration */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
 }
 
 /* Chess board styling */
@@ -91,6 +99,15 @@ body {
     box-shadow: 0 0 10px rgba(139, 69, 19, 0.3);
     padding: 0;
     gap: 0;
+    /* Enhanced performance optimizations */
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    /* Prevent layout thrashing during drag */
+    contain: layout style paint;
+    /* Optimize for drag operations */
+    will-change: auto;
+    /* Ensure precise hit testing */
+    pointer-events: auto;
 }
 
 /* Add rotation for black's perspective */
@@ -113,6 +130,11 @@ body {
     cursor: pointer;
     box-sizing: border-box;
     border-radius: 0;
+    /* Enhanced precision properties - removed conflicting transform */
+    will-change: auto;
+    /* Ensure precise hit testing */
+    pointer-events: auto;
+    /* Remove conflicting transform that causes rotation issues */
 }
 
 /* Create coordinate elements */
@@ -293,24 +315,36 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
+    cursor: grab;
+    transition: none;
     position: relative;
     z-index: 2;
-    /* Remove transitions and animations for ultra-fast performance */
-    transition: none;
-    animation: none;
-    /* Hardware acceleration */
-    will-change: transform;
-    backface-visibility: hidden;
-    perspective: 1000px;
+    /* Enhanced performance properties - removed conflicting transform */
+    will-change: auto;
+    /* Ensure crisp rendering */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    /* Prevent text selection during drag */
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.piece:active {
+    cursor: grabbing;
+    /* Enhanced active state for better feedback - removed conflicting transform */
+    transform: scale(1.05) !important;
+    transition: transform 0.1s ease;
+}
+
+/* Fix black perspective piece active state */
+.chess-board.black-perspective:not(.not-your-turn) .piece:active {
+    transform: rotate(180deg) scale(1.05) !important;
 }
 
 .piece:hover {
     /* Removed hover effect - no visual change when hovering over pieces */
-}
-
-.piece:active {
-    /* Remove animations for ultra-fast performance */
-    transform: none;
 }
 
 .piece.moving {
@@ -321,23 +355,32 @@ body {
 
 /* Ultra-fast dragging piece visuals */
 .dragging-piece {
-    position: fixed;
-    width: 10%;
-    height: 10%;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    pointer-events: none;
-    z-index: 1000;
-    /* Hardware acceleration for maximum speed */
-    transform: translate(-50%, -50%);
-    will-change: transform;
-    /* Remove all animations and transitions for speed */
-    transition: none;
-    animation: none;
-    /* Optimize rendering */
-    backface-visibility: hidden;
-    perspective: 1000px;
+    position: fixed !important;
+    width: 15% !important;
+    height: 15% !important;
+    background-size: contain !important;
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+    pointer-events: none !important;
+    z-index: 9999 !important;
+    /* Enhanced precision and performance */
+    transform: translate3d(0, 0, 0) !important;
+    will-change: transform !important;
+    backface-visibility: hidden !important;
+    perspective: 1000px !important;
+    /* Smooth dragging with sub-pixel precision */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    /* Prevent any interference */
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    /* Optimize for GPU acceleration */
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    /* Ensure crisp edges during drag */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 /* Enhance captured piece animation */
@@ -799,4 +842,21 @@ body {
     font-weight: 600;
     margin-bottom: 1px;
     font-size: 0.7rem;
+}
+
+/* Enhanced tile hover effects for better precision */
+.tile.dragover {
+    background: rgba(159, 122, 234, 0.2) !important;
+    border: 2px solid var(--color-accent) !important;
+    /* Combine transforms properly to avoid conflicts with black perspective */
+    transform: scale(1.02) !important;
+    transition: all 0.1s ease !important;
+    z-index: 10 !important;
+    /* Ensure smooth scaling */
+    will-change: transform, background, border !important;
+}
+
+/* Fix black perspective dragover to combine transforms properly */
+.chess-board.black-perspective .tile.dragover {
+    transform: rotate(180deg) scale(1.02) !important;
 }

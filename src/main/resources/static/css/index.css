@@ -1500,10 +1500,10 @@ body.authenticated::before {
 
 /* Game status styles */
 .game-status {
-    padding: 0.25rem 0.5rem;
+    padding: 0.2rem 0.4rem; /* Reduced padding */
     border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 500;
+    font-size: 0.75rem; /* Reduced from 0.8rem */
+    color: #fff; /* Make status text white for all-games list */
 }
 
 .status-in-progress {
@@ -1827,6 +1827,7 @@ body.authenticated::before {
     padding: 0.2rem 0.4rem; /* Reduced padding */
     border-radius: 4px;
     font-size: 0.75rem; /* Reduced from 0.8rem */
+    color: #fff; /* Make status text white for all-games list */
 }
 
 .all-game-board {

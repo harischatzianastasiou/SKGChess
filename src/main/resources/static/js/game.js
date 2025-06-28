@@ -303,7 +303,6 @@ class ChessGame {
     // Handle timeout
     async handleTimeout() {
         this.stopTimer();
-        
         try {
             const response = await fetch(`/api/games/${this.gameId}/timeout`, {
                 method: 'POST',
@@ -311,13 +310,30 @@ class ChessGame {
                     'Content-Type': 'application/json'
                 }
             });
-            
             if (response.ok) {
                 // Fetch the updated game state to get the new status and winner
                 await this.fetchGame();
-                
-                // Update the board to show the end game popup
                 this.updateBoard();
+                // Fallback: after a short delay, fetch again to guarantee sync
+                setTimeout(async () => {
+                    await this.fetchGame();
+                    this.updateBoard();
+                    // Force the endgame popup if the game is over
+                    if (
+                        this.gameStatus === 'TIME_OUT' ||
+                        this.gameStatus === 'CHECKMATE' ||
+                        this.gameStatus === 'DRAW' ||
+                        this.gameStatus === 'RESIGNED' ||
+                        this.gameStatus === 'STALEMATE' ||
+                        this.gameStatus === 'THREEFOLD_REPETITION' ||
+                        this.gameStatus === 'FIFTY_MOVE_RULE' ||
+                        this.gameStatus === 'INSUFFICIENT_MATERIAL' ||
+                        this.gameStatus === 'MUTUAL_AGREEMENT'
+                    ) {
+                        this.gameEndPopupShown = false; // Force popup to show
+                        this.updateBoard();
+                    }
+                }, 800);
             }
         } catch (error) {
             // Silent error handling for speed
@@ -851,19 +867,36 @@ class ChessGame {
         this.draggedPiece = piece;
         this.selectedSourceTile = position;
 
-        // Create drag image with ultra-fast performance
+        // Calculate drag offset for precise positioning
+        const pieceRect = piece.getBoundingClientRect();
+        this.dragOffsetX = event.clientX - pieceRect.left;
+        this.dragOffsetY = event.clientY - pieceRect.top;
+
+        // Create drag image with ultra-fast performance and precise positioning
         this.dragImage = document.createElement('div');
         this.dragImage.className = 'piece dragging-piece';
         this.dragImage.style.backgroundImage = piece.style.backgroundImage;
-        this.dragImage.style.transform = 'translate(-50%, -50%)'; // Pre-set transform for better performance
+        this.dragImage.style.width = '98%';
+        this.dragImage.style.height = '98%';
+        this.dragImage.style.position = 'fixed';
+        this.dragImage.style.zIndex = '9999';
+        this.dragImage.style.pointerEvents = 'none';
+        this.dragImage.style.transform = 'translate3d(0, 0, 0)'; // Force GPU acceleration
+        this.dragImage.style.willChange = 'transform';
+        this.dragImage.style.backfaceVisibility = 'hidden';
+        
+        // Set initial position with offset for precise centering
+        this.dragImage.style.left = (event.clientX - this.dragOffsetX) + 'px';
+        this.dragImage.style.top = (event.clientY - this.dragOffsetY) + 'px';
         document.body.appendChild(this.dragImage);
 
-        // Set initial position directly for maximum speed
-        this.dragImage.style.left = event.clientX + 'px';
-        this.dragImage.style.top = event.clientY + 'px';
+        // Hide original piece immediately and remove rotation for dragging
+        this.draggedPiece.style.opacity = '0';
+        if (this.board.classList.contains('black-perspective')) {
+            this.draggedPiece.style.transform = 'rotate(0deg)';
+        }
 
-        // Hide original piece with opacity transition
-        this.draggedPiece.style.opacity = '0.3';
+        // Show legal moves with optimized performance
 
         // Show legal moves with optimized performance
         this.clearLegalMoves();
@@ -879,15 +912,15 @@ class ChessGame {
         }
         if (!this.isDragging || !this.dragImage) return;
         
-        // Use requestAnimationFrame for ultra-smooth updates
-        requestAnimationFrame(() => {
-            // Ultra-fast position update - direct style manipulation
-            this.dragImage.style.left = event.clientX + 'px';
-            this.dragImage.style.top = event.clientY + 'px';
-        });
+        // Ultra-fast position update with precise offset calculation
+        const newX = event.clientX - this.dragOffsetX;
+        const newY = event.clientY - this.dragOffsetY;
         
-        // Optimized hover effect - only update if changed
-        const hoveredTile = document.elementFromPoint(event.clientX, event.clientY)?.closest('.tile');
+        // Use transform for better performance and precision
+        this.dragImage.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+        
+        // Optimized hover effect with precise tile detection
+        const hoveredTile = this.getTileAtPosition(event.clientX, event.clientY);
         if (hoveredTile !== this.lastHoveredTile) {
             // Remove previous hover
             if (this.lastHoveredTile) {
@@ -901,6 +934,22 @@ class ChessGame {
         }
         
         event.preventDefault();
+    }
+
+    // Helper method for precise tile detection
+    getTileAtPosition(clientX, clientY) {
+        // Use elementFromPoint for precise detection
+        const element = document.elementFromPoint(clientX, clientY);
+        if (!element) return null;
+        
+        // Find the closest tile element
+        const tile = element.closest('.tile');
+        if (!tile) return null;
+        
+        // Additional validation: ensure it's within the game board
+        if (!this.board.contains(tile)) return null;
+        
+        return tile;
     }
 
     async handleMouseUp(event) {
@@ -1069,10 +1118,14 @@ class ChessGame {
             this.statusElement.textContent = 'Your turn to move';
             this.statusElement.classList.add('your-turn');
             this.isPlayerTurn = true;
+            // Remove 'not-your-turn' class if it's your turn
+            this.board.classList.remove('not-your-turn');
         } else {
             this.statusElement.textContent = `Waiting for ${this.boardDTO.currentPlayer.alliance.toLowerCase()} to move`;
             this.statusElement.classList.remove('your-turn');
             this.isPlayerTurn = false;
+            // Add 'not-your-turn' class if it's not your turn
+            this.board.classList.add('not-your-turn');
             }
         }
 
@@ -1204,7 +1257,6 @@ class ChessGame {
             
             // Check if the board has tiles property
             if (!this.boardDTO.tiles || !Array.isArray(this.boardDTO.tiles)) {
-                console.error('Board data does not have tiles array. Board DTO:', JSON.stringify(this.boardDTO));
                 return;
             }
             
@@ -1261,7 +1313,6 @@ class ChessGame {
                 // Highlight the last move with move type information
                 this.highlightLastMove(lastMoveSourceCoordinate, lastMoveTargetCoordinate, lastMoveType);
             } catch (e) {
-                console.error('Error parsing lastMoveData:', e);
                 // Fallback: clear selections without highlighting
                 document.querySelector('.selected')?.classList.remove('selected');
                 this.clearLegalMoves();
@@ -1337,7 +1388,6 @@ class ChessGame {
             tile.piece.pieceAlliance === currentPlayerAlliance
         );
         
-        console.log('Found king tile:', kingTile);
         
         if (kingTile) {
             // Find the corresponding DOM tile and add the check highlighting class
@@ -1346,9 +1396,6 @@ class ChessGame {
             if (tileElement) {
                 tileElement.classList.add('king-in-check');
             }
-        } else {
-            console.error('Could not find king tile for alliance:', currentPlayerAlliance);
-            console.log('Available tiles:', this.boardDTO.tiles);
         }
     }
 
@@ -1695,7 +1742,6 @@ class ChessGame {
             this.nextPositionBtn.disabled = true;
             if (this.initialPositionBtn) this.initialPositionBtn.disabled = true;
             if (this.latestPositionBtn) this.latestPositionBtn.disabled = true;
-            console.log('No positions available - all navigation buttons disabled');
             return;
         }
         
@@ -1730,9 +1776,6 @@ class ChessGame {
         
         // Update viewing mode based on whether we're at the latest board
         this.isViewingMode = !isAtLatestBoard;
-        
-        console.log(`Navigation buttons - Can go back: ${canGoBack}, Can go forward: ${canGoForward}, Is viewing: ${this.isViewingMode}`);
-        console.log(`Button states - Previous disabled: ${this.prevPositionBtn.disabled}, Next disabled: ${this.nextPositionBtn.disabled}`);
     }
     
     /**
@@ -2050,6 +2093,12 @@ class ChessGame {
         const piece = sourceTile.querySelector('.piece');
         if (!piece) return;
         
+        // Remove any existing piece from target tile first (for captures)
+        const existingPiece = targetTile.querySelector('.piece');
+        if (existingPiece) {
+            existingPiece.remove(); // Remove the captured piece from DOM
+        }
+        
         // Move the piece visually to the target tile
         targetTile.appendChild(piece);
         
@@ -2058,7 +2107,7 @@ class ChessGame {
         const targetTileData = this.boardDTO.tiles.find(t => t.tileCoordinate === targetCoordinate);
         
         if (sourceTileData && targetTileData) {
-            // Move piece data
+            // Move piece data (this will replace any existing piece data)
             targetTileData.piece = sourceTileData.piece;
             targetTileData.tileOccupied = true;
             
@@ -2081,10 +2130,14 @@ class ChessGame {
                 this.statusElement.textContent = 'Your turn to move';
                 this.statusElement.classList.add('your-turn');
                 this.isPlayerTurn = true;
+                // Remove 'not-your-turn' class if it's your turn
+                this.board.classList.remove('not-your-turn');
             } else {
                 this.statusElement.textContent = `Waiting for ${this.boardDTO.currentPlayer.alliance.toLowerCase()} to move`;
                 this.statusElement.classList.remove('your-turn');
                 this.isPlayerTurn = false;
+                // Add 'not-your-turn' class if it's not your turn
+                this.board.classList.add('not-your-turn');
             }
         }
     }

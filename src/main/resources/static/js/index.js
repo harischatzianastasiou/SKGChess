@@ -18,24 +18,16 @@ function getCurrentUsername() {
     for (const selector of selectors) {
         const element = document.querySelector(selector);
         if (element && element.textContent && element.textContent.trim()) {
-            console.log(`Found username using selector: ${selector}`, element.textContent.trim());
             return element.textContent.trim();
         }
     }
     
     // If no username found, log what elements are available
-    console.log('No username found. Available elements:');
     selectors.forEach(selector => {
         const elements = document.querySelectorAll(selector);
-        console.log(`Selector "${selector}":`, elements.length, 'elements found');
         elements.forEach((el, index) => {
-            console.log(`  Element ${index}:`, el.textContent, el.outerHTML.substring(0, 100));
         });
     });
-    
-    // Also check if user is authenticated
-    console.log('Authentication status:', document.body.classList.contains('authenticated'));
-    console.log('Body classes:', document.body.className);
     
     return '';
 }
@@ -50,16 +42,11 @@ function waitForUsername(maxAttempts = 30, interval = 300) {
             const username = getCurrentUsername();
             
             if (username) {
-                console.log('Username found:', username);
                 resolve(username);
             } else if (attempts >= maxAttempts) {
-                console.error('Username not available after maximum attempts');
-                console.log('Final authentication check:', document.body.classList.contains('authenticated'));
-                console.log('All h1 elements:', document.querySelectorAll('h1'));
-                console.log('All span elements with data-username:', document.querySelectorAll('span[data-username]'));
+              
                 reject(new Error('Username not available after maximum attempts'));
             } else {
-                console.log(`Username not available yet, attempt ${attempts}/${maxAttempts}`);
                 setTimeout(checkUsername, interval);
             }
         };
@@ -131,11 +118,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Function to connect to the WebSocket
 function connect() {
-    console.log('Attempting to connect to WebSocket...');
+    
     
     // Check if user is authenticated
     if (!document.body.classList.contains('authenticated')) {
-        console.log('User not authenticated, skipping WebSocket connection');
+        
         return;
     }
     
@@ -144,30 +131,30 @@ function connect() {
 
     stompClient.connect({}, 
         function(frame) {
-            console.log('WebSocket connected successfully:', frame);
+            
             reconnectAttempts = 0;
 
             // Fetch user ID and set up subscriptions
             waitForUsername()
                 .then(username => {
-                    console.log("Username available:", username);
+                    
                     return fetchUserIdByUsername(username);
                 })
                 .then(userId => {
-                    console.log("User ID for WebSocket:", userId);
+                    
                     
                     // Subscribe to game creation notifications
                     stompClient.subscribe('/topic/newGame/' + userId, function(message) {
-                        console.log('Game created:', message.body); // Log the raw message
+                        
                         try {
                             // Parse the message body as JSON
                             const game = JSON.parse(message.body);
-                            console.log('Parsed game data:', game);
+                            
                             // Handle the game creation response
                             handleGameCreated(game);
                         } catch (error) {
-                            console.error('Error parsing game creation message:', error);
-                            console.log('Raw message body:', message.body);
+                            
+                            
                             // Fall back to the old message handling
                             handleGameMessage(message.body);
                         }
@@ -175,38 +162,38 @@ function connect() {
 
                     // Subscribe to invitation notifications
                     stompClient.subscribe('/topic/user/' + userId, function(message) {
-                        console.log('User notification received:', message.body);
+                        
                         try {
                             const notification = JSON.parse(message.body);
                             handleInvitationNotification(notification);
                         } catch (error) {
-                            console.error('Error parsing invitation notification:', error);
+                            
                         }
                     });
 
                     // Subscribe to errors
                     stompClient.subscribe('/user/queue/errors', function(message) {
-                        console.error('Error received:', message.body);
+                        
                         alert('Error: ' + message.body);
                     });
                     
-                    console.log('WebSocket subscriptions set up successfully');
+                    
                 })
                 .catch(error => {
-                    console.error("Failed to fetch user ID for WebSocket:", error);
-                    console.log("WebSocket connection established but user notifications disabled");
-                    console.log("Reason:", error.message);
+                    
+                    
+                    
                     
                     // Show user-friendly message about limited functionality
                     if (error.message.includes('not found in database')) {
-                        console.log("User not found in database - this might be a temporary issue");
+                        
                     } else if (error.message.includes('not authenticated')) {
-                        console.log("User not properly authenticated");
+                        
                     } else if (error.message.includes('Username not available')) {
-                        console.log("Username not available - authentication might still be processing");
-                        console.log("Will continue with polling fallback for invitations");
+                        
+                        
                     } else {
-                        console.log("Unknown error occurred while fetching user ID");
+                        
                     }
                     
                     // Don't disconnect the WebSocket, just log the error
@@ -215,7 +202,7 @@ function connect() {
                 });
         },
         function(error) {
-            console.error('STOMP connection error:', error);
+            
             handleDisconnect();
         }
     );
@@ -355,11 +342,11 @@ function closeSharePopup(gameId) {
         })
         .then(response => {
             if (!response.ok) {
-                console.error('Failed to delete game:', response.statusText);
+                
             }
         })
         .catch(error => {
-            console.error('Error deleting game:', error);
+            
         })
         .finally(() => {
             // Remove popup and overlay with animations
@@ -383,32 +370,32 @@ function subscribeToGameStart(gameId) {
     
     // Enable debug logging for STOMP
     stompClient.debug = function(str) {
-        console.log('STOMP: ' + str);
+        
     };
     
     stompClient.connect({}, 
         (frame) => {
-            console.log('Connected to WebSocket for game start:', frame);
+            
             
             stompClient.subscribe('/topic/game/' + gameId, (message) => {
                 try {
                     const data = JSON.parse(message.body);
                     
                     if (data.type === 'GAME_STARTED') {
-                        console.log('Game started, checking popup state');
+                        
                         if (isSharePopupOpen) {
                             // If popup is still open, redirect to game page
-                            console.log('Popup is open, redirecting to game page');
+                            
                             window.location.href = `/games/${gameId}`;
                         }
                     }
                 } catch (error) {
-                    console.error('Error parsing WebSocket message:', error);
+                    
                 }
             });
         },
         (error) => {
-            console.error('WebSocket connection error:', error);
+            
         }
     );
 }
@@ -443,7 +430,7 @@ function copyGameId(gameId) {
             button.classList.remove('success');
         }, 2000);
     }).catch(err => {
-        console.error('Failed to copy game ID:', err);
+        
         alert('Failed to copy game ID. Please try again.');
     });
 }
@@ -609,7 +596,7 @@ function createGameWithOptions() {
     }
     
     const username = usernameElement.textContent;
-    console.log("Username for matchmaking:", username);
+    
     
     // Create the request body according to CreateGameRequestDTO
     const requestBody = {
@@ -618,7 +605,7 @@ function createGameWithOptions() {
         playerColor: playerColor // Pass the selected color
     };
     
-    console.log("Calling game creation endpoint with request:", requestBody);
+    
     
     // Close popup first
     closeGameCreationPopup();
@@ -632,7 +619,7 @@ function createGameWithOptions() {
         body: JSON.stringify(requestBody)
     })
     .then(response => {
-        console.log("Game creation response status:", response.status);
+        
         if (!response.ok) {
             return response.json().then(errorData => {
                 showErrorPopup(errorData.message);
@@ -643,7 +630,7 @@ function createGameWithOptions() {
     })
     .then(data => {
         if (!data) return; // Return if we showed an error popup
-        console.log("Game created:", data);
+        
         if (!data || !data.id) {
             throw new Error('Game ID not found in response');
         }
@@ -651,7 +638,7 @@ function createGameWithOptions() {
         showShareGamePopup(data.id);
     })
     .catch(error => {
-        console.error("Error creating game:", error);
+        
         // Don't show another error popup here since we already showed one in the response handling
     });
 }
@@ -659,19 +646,19 @@ function createGameWithOptions() {
 function joinGame(gameId) {
     const usernameElement = document.querySelector('span[data-username="true"]');
     if (!usernameElement) {
-        console.error('Username element not found');
+        
         alert('Error: Could not find username. Please try logging in again.');
         return;
     }
     const username = usernameElement.textContent;
-    console.log("Username for matchmaking:", username);
+    
      // Create the request body according to CreateGameRequestDTO
      const requestBody = {
         username: username,
         gameId : gameId
     };
     
-    console.log("Calling join game endpoint with request:", requestBody);
+    
     // Call the join game endpoint
     fetch('/api/games/join', {
             method: 'POST',
@@ -681,7 +668,7 @@ function joinGame(gameId) {
             body: JSON.stringify(requestBody)
     })
     .then(response => {
-        console.log("Join game response status:", response.status);
+        
         if (!response.ok) {
             return response.json().then(errorData => {
                 showErrorPopup(errorData.message);
@@ -695,20 +682,20 @@ function joinGame(gameId) {
         if (!data.id) {
             throw new Error('Game ID not found in response');
         }
-        console.log("Joined game:", data);
+        
         
         // Redirect to the game page
         window.location.href = `/games/${data.id}`;
     })
     .catch(error => {
-        console.error("Error joining game:", error);
+        
         // Don't show another error popup here since we already showed one in the response handling
     });
 }
 
 // Function to fetch user ID by username
 function fetchUserIdByUsername(username) {
-    console.log('Fetching user ID for username:', username);
+    
     
     // Check if username is valid
     if (!username || username.trim() === '') {
@@ -717,7 +704,7 @@ function fetchUserIdByUsername(username) {
     
     return fetch(`/api/users/${username}`)
         .then(response => {
-            console.log('User endpoint response status:', response.status);
+            
             
             if (response.status === 404) {
                 throw new Error('User not found in database');
@@ -732,49 +719,49 @@ function fetchUserIdByUsername(username) {
             return response.json();
         })
         .then(user => {
-            console.log("User data received:", user);
+            
             if (!user || !user.id) {
                 throw new Error('User ID not found in response');
             }
-            console.log("User ID extracted:", user.id);
+            
             return user.id;
         })
         .catch(error => {
-            console.error("Error fetching user ID:", error);
-            console.log("Username that failed:", username);
-            console.log("Current authentication status:", document.body.classList.contains('authenticated'));
+            
+            
+            
             throw error;
         });
 }
 
 // Function to handle incoming game messages
 function handleGameMessage(message) {
-    console.log('Handling message:', message);
+    
     
     // If message is already a string, use it directly, otherwise stringify it
     const messageStr = typeof message === 'string' ? message : JSON.stringify(message);
     
-    console.log('Processing message:', messageStr);  // Debug log
+    
     
     try {
         // Try to parse as JSON first
         const jsonData = JSON.parse(messageStr);
-        console.log('Parsed JSON data:', jsonData);
+        
         
         if (jsonData && jsonData.id) {
-            console.log('Game created with ID:', jsonData.id);
+            
             alert('Game created successfully! Redirecting to game ' + jsonData.id);
             window.location.href = '/api/games/' + jsonData.id;
             return;
         }
     } catch (e) {
-        console.log('Not valid JSON, processing as text');
+        
     }
     
     // If not valid JSON or doesn't have expected format, process as text
     if (messageStr.includes('Game created:')) {
         const gameId = messageStr.split(':')[2].trim();  // Get the ID and trim whitespace
-        console.log('Game created with ID:', gameId);  // Debug log
+        
         alert('Game created successfully! Redirecting to game ' + gameId);
         window.location.href = '/game/' + gameId;
     } else {
@@ -784,16 +771,16 @@ function handleGameMessage(message) {
 
 // Function to handle game creation response
 function handleGameCreated(game) {
-    console.log('Game created response:', game);
+    
     
     // Check if game object is valid and has an ID
     if (game && game.id) {
-        console.log('Game created with ID:', game.id);
+        
         alert('Game created successfully! Redirecting to game ' + game.id);
         window.location.href = '/api/games/' + game.id;
     } else {
         // Handle error case
-        console.error('Invalid game data received:', game);
+        
         alert('Error creating game. Please try again.');
     }
 }
@@ -1140,9 +1127,9 @@ function monitorPerformance() {
             const navigationTiming = performance.getEntriesByType('navigation')[0];
             const paintTiming = performance.getEntriesByType('paint');
             
-            console.log('Page Load Time:', navigationTiming.loadEventEnd - navigationTiming.startTime);
-            console.log('First Paint:', paintTiming[0]?.startTime);
-            console.log('First Contentful Paint:', paintTiming[1]?.startTime);
+            
+            
+            
         }, 0);
     }
 }
@@ -1187,7 +1174,7 @@ function renderGameBoards() {
                 renderChessBoard(board, boardDTO, gameData);
             })
             .catch(error => {
-                console.error('Error fetching game data:', error);
+                
                 // Render an empty board if data fetch fails
                 renderChessBoard(board, { tiles: [] }, null);
             });
@@ -1285,7 +1272,7 @@ function showJoinGameDialog() {
         // Prevent body scrolling
         document.body.style.overflow = 'hidden';
     } else {
-        console.error('Join game dialog elements not found');
+        
     }
 }
 
@@ -1326,24 +1313,24 @@ function loadPendingInvitations(username) {
             }
         })
         .catch(error => {
-            console.error('Error loading invitations:', error);
+            
             invitationsContainer.innerHTML = '<div class="error">Error loading invitations</div>';
         });
 }
 
 // Function to respond to an invitation
 function respondToInvitation(invitationId, action) {
-    console.log('respondToInvitation called with:', { invitationId, action });
+    
     
     const usernameElement = document.querySelector('span[data-username="true"]');
     if (!usernameElement) {
-        console.error('No username element found');
+        
         showErrorPopup('User not found. Please try logging in again.');
         return;
     }
     
     const username = usernameElement.textContent;
-    console.log('Current username:', username);
+    
     
     const requestBody = {
         username: username,
@@ -1351,7 +1338,7 @@ function respondToInvitation(invitationId, action) {
         action: action
     };
     
-    console.log('Sending request body:', requestBody);
+    
     
     fetch('/api/invitations/respond', {
         method: 'POST',
@@ -1361,10 +1348,10 @@ function respondToInvitation(invitationId, action) {
         body: JSON.stringify(requestBody)
     })
     .then(response => {
-        console.log('Response status:', response.status);
+        
         if (!response.ok) {
             return response.json().then(errorData => {
-                console.error('Error response:', errorData);
+                
                 showErrorPopup(errorData.message);
                 throw new Error(errorData.message);
             });
@@ -1372,22 +1359,24 @@ function respondToInvitation(invitationId, action) {
         return response.json();
     })
     .then(data => {
-        console.log('Response data:', data);
+        
         if (action === 'accept') {
             showSuccessPopup('Invitation accepted! Redirecting to game...');
             
             // Redirect to game if gameId is provided (both users should be redirected)
             if (data.gameId) {
-                console.log('Redirecting to game:', data.gameId);
                 
-                // If this is the inviter, delete the invitation immediately
+                
+                // If this is the inviter, delete the invitation after 3 seconds
                 if (username === data.inviterUsername && invitationId) {
-                    console.log('Inviter is redirecting, deleting invitation:', invitationId);
-                    deleteInvitation(invitationId);
+                    
+                    setTimeout(() => {
+                        deleteInvitation(invitationId);
+                    }, 3000); // 3 second delay before deletion
                 }
                 
                 setTimeout(() => {
-                    console.log('Executing redirect to:', `/games/${data.gameId}`);
+                    
                     window.location.href = `/games/${data.gameId}`;
                 }, 2000);
             }
@@ -1398,7 +1387,7 @@ function respondToInvitation(invitationId, action) {
         }
     })
     .catch(error => {
-        console.error('Error responding to invitation:', error);
+        
     });
 }
 
@@ -1607,7 +1596,7 @@ function setupOpponentSearch() {
                 displaySearchResults(users);
             })
             .catch(error => {
-                console.error('Error searching users:', error);
+                
                 searchResults.innerHTML = '<div class="search-error">Error searching users</div>';
                 searchResults.style.display = 'block';
             });
@@ -1680,7 +1669,7 @@ function createInvitation() {
     const username = usernameElement.textContent;
     const opponentUsername = opponentSearch.value.trim();
     
-    console.log("Creating invitation from", username, "to", opponentUsername);
+    
     
     // Create the invitation request body
     const requestBody = {
@@ -1690,7 +1679,7 @@ function createInvitation() {
         playerColor: playerColor
     };
     
-    console.log("Calling invitation creation endpoint with request:", requestBody);
+    
     
     // Close popup first
     closeGameCreationPopup();
@@ -1704,7 +1693,7 @@ function createInvitation() {
         body: JSON.stringify(requestBody)
     })
     .then(response => {
-        console.log("Invitation creation response status:", response.status);
+        
         if (!response.ok) {
             return response.json().then(errorData => {
                 showErrorPopup(errorData.message);
@@ -1715,18 +1704,18 @@ function createInvitation() {
     })
     .then(data => {
         if (!data) return; // Return if we showed an error popup
-        console.log("Invitation created:", data);
+        
         showSuccessPopup(`Invitation sent to ${opponentUsername}! You will be redirected to the game page once they join.`);
     })
     .catch(error => {
-        console.error("Error creating invitation:", error);
+        
         // Don't show another error popup here since we already showed one in the response handling
     });
 }
 
 // Function to handle invitation notification
 function handleInvitationNotification(notification) {
-    console.log('Handling invitation notification:', notification);
+    
     
     switch (notification.type) {
         case 'INVITATION_RECEIVED':
@@ -1745,7 +1734,7 @@ function handleInvitationNotification(notification) {
             showInvitationExpiredNotification(notification);
             break;
         default:
-            console.log('Unknown notification type:', notification.type);
+            
     }
 }
 
@@ -1780,10 +1769,10 @@ function playNotificationSound() {
         const audio = new Audio('/audio/Check.wav');
         audio.volume = 0.5; // Set volume to 50%
         audio.play().catch(error => {
-            console.log('Could not play notification sound:', error);
+            
         });
     } catch (error) {
-        console.log('Error playing notification sound:', error);
+        
     }
 }
 
@@ -1846,19 +1835,19 @@ function showRealTimeInvitationNotification(message, invitationId) {
 
 // Function to show invitation accepted notification
 function showInvitationAcceptedNotification(notification) {
-    console.log('showInvitationAcceptedNotification called with:', notification);
+    
     
     // Get current user's username
     const usernameElement = document.querySelector('span[data-username="true"]');
     const currentUsername = usernameElement ? usernameElement.textContent : '';
     
-    console.log('Current username:', currentUsername);
-    console.log('Inviter username:', notification.inviterUsername);
-    console.log('Invitee username:', notification.inviteeUsername);
+    
+    
+    
     
     // Check if user is still authenticated
     if (!currentUsername) {
-        console.error('No current username found - user might be logged out');
+        
         showErrorPopup('You appear to be logged out. Please refresh the page and try again.');
         return;
     }
@@ -1868,44 +1857,46 @@ function showInvitationAcceptedNotification(notification) {
     if (currentUsername === notification.inviterUsername) {
         // Current user is the inviter
         message = `${notification.inviteeUsername} accepted your invitation!`;
-        console.log('Current user is the inviter');
+        
     } else if (currentUsername === notification.inviteeUsername) {
         // Current user is the invitee
         message = `You accepted ${notification.inviterUsername}'s invitation!`;
-        console.log('Current user is the invitee');
+        
     } else {
         // Fallback message
         message = `Invitation accepted! Game is ready.`;
-        console.log('Current user is neither inviter nor invitee');
+        
     }
     
     showSuccessPopup(message);
     
     // Redirect to game if gameId is provided (both users should be redirected)
     if (notification.gameId) {
-        console.log('Redirecting to game:', notification.gameId);
         
-        // If this is the inviter, delete the invitation immediately
+        
+        // If this is the inviter, delete the invitation after 3 seconds
         if (currentUsername === notification.inviterUsername && notification.invitationId) {
-            console.log('Inviter is redirecting, deleting invitation:', notification.invitationId);
-            deleteInvitation(notification.invitationId);
+            
+            setTimeout(() => {
+                deleteInvitation(notification.invitationId);
+            }, 3000); // 3 second delay before deletion
         }
         
         setTimeout(() => {
-            console.log('Executing redirect to:', `/games/${notification.gameId}`);
+            
             window.location.href = `/games/${notification.gameId}`;
         }, 2000);
     } else {
-        console.error('No gameId provided in notification');
+        
     }
 }
 
 // Function to delete an accepted invitation
 function deleteInvitation(invitationId) {
-    console.log('=== DELETE INVITATION DEBUG ===');
-    console.log('Attempting to delete invitation:', invitationId);
-    console.log('Current URL:', window.location.href);
-    console.log('Current pathname:', window.location.pathname);
+    
+    
+    
+    
     
     fetch(`/api/invitations/delete/${invitationId}`, {
         method: 'DELETE',
@@ -1915,21 +1906,21 @@ function deleteInvitation(invitationId) {
     })
     .then(response => {
         if (response.ok) {
-            console.log('✅ Successfully deleted invitation:', invitationId);
+            
             return response.text();
         } else {
-            console.error('❌ Failed to delete invitation:', invitationId, 'Status:', response.status);
+            
             return response.text().then(text => {
-                console.error('Error response body:', text);
+                
                 throw new Error(`HTTP ${response.status}: ${text}`);
             });
         }
     })
     .then(responseText => {
-        console.log('Delete response body:', responseText);
+        
     })
     .catch(error => {
-        console.error('❌ Error deleting invitation:', invitationId, error);
+        
     });
 }
 
@@ -1977,7 +1968,7 @@ let lastInvitationCount = 0; // Track the number of invitations to detect new on
 function startInvitationPolling() {
     const username = getCurrentUsername();
     if (!username) {
-        console.log('No username available for polling, skipping...');
+        
         return;
     }
     
@@ -2017,7 +2008,6 @@ function checkForNewInvitations(username) {
             lastInvitationCount = currentCount;
         })
         .catch(error => {
-            console.error('Error checking for new invitations:', error);
         });
 }
 
@@ -2032,21 +2022,20 @@ function checkForAcceptedInvitations(username) {
             );
             
             if (acceptedInvitation) {
-                console.log('Found accepted invitation, redirecting inviter to game:', acceptedInvitation.gameId);
                 showSuccessPopup('Your invitation was accepted! Redirecting to game...');
                 
-                // Delete the invitation immediately since inviter is redirecting
-                console.log('Inviter is redirecting, deleting invitation:', acceptedInvitation.id);
-                deleteInvitation(acceptedInvitation.id);
+                // Delete the invitation after 3 seconds
+                setTimeout(() => {
+                    deleteInvitation(acceptedInvitation.id);
+                }, 3000); // 3 second delay before deletion
                 
                 setTimeout(() => {
                     window.location.href = `/games/${acceptedInvitation.gameId}`;
-                }, 1500);
+                }, 2000);
                 stopInvitationPolling();
             }
         })
         .catch(error => {
-            console.error('Error checking for accepted invitations:', error);
         });
 }
 
@@ -2062,7 +2051,6 @@ function stopInvitationPolling() {
 function checkForPendingInvitationsOnLoad() {
     const username = getCurrentUsername();
     if (!username) {
-        console.log('No username available for checking pending invitations, skipping...');
         return;
     }
     
@@ -2089,7 +2077,6 @@ function checkForPendingInvitationsOnLoad() {
             }
         })
         .catch(error => {
-            console.error('Error checking for pending invitations:', error);
         });
 }
 
@@ -2145,7 +2132,6 @@ function viewInvitations() {
 
 // Function to handle WebSocket disconnection and reconnection
 function handleDisconnect() {
-    console.log('WebSocket disconnected, attempting to reconnect...');
     
     if (stompClient) {
         stompClient.disconnect();
@@ -2155,7 +2141,6 @@ function handleDisconnect() {
     // Attempt to reconnect if we haven't exceeded max attempts
     if (reconnectAttempts < maxReconnectAttempts) {
         reconnectAttempts++;
-        console.log(`Reconnection attempt ${reconnectAttempts}/${maxReconnectAttempts}`);
         
         // Wait before attempting to reconnect (exponential backoff)
         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts - 1), 10000);
@@ -2165,7 +2150,6 @@ function handleDisconnect() {
             }
         }, delay);
     } else {
-        console.error('Max reconnection attempts reached. WebSocket connection failed.');
         // Show user-friendly error message
         showErrorPopup('Connection lost. Please refresh the page to restore real-time notifications.');
     }

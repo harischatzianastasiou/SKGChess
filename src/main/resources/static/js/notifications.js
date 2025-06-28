@@ -1,8 +1,5 @@
-console.log('Notifications.js loaded');
-
 // Function to show notifications
 function showNotification(message, type = 'info') {
-    console.log('Showing notification:', message, type);
     // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -54,12 +51,10 @@ function handleSignOut() {
 
 // Check for URL parameters on page load
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Checking URL parameters');
     const urlParams = new URLSearchParams(window.location.search);
     
     // Check for logout parameter
     if (urlParams.has('logout')) {
-        console.log('Logout parameter found');
         showNotification('You have been successfully logged out', 'success');
         // Clean up the URL
         window.history.replaceState({}, document.title, window.location.pathname);
