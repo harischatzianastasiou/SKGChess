@@ -496,6 +496,16 @@ class ChessGame {
         this.boardDTO.whitePlayerAvatar = gameData.whitePlayerAvatar;
         this.boardDTO.blackPlayerAvatar = gameData.blackPlayerAvatar;
         
+        // Add player IDs to boardDTO for winner determination
+        this.boardDTO.whitePlayerId = gameData.whitePlayerId;
+        this.boardDTO.blackPlayerId = gameData.blackPlayerId;
+        
+        // Store winner information from database
+        if (gameData.winnerId) {
+            this.winnerId = gameData.winnerId;
+            console.log('Received winnerId from database:', gameData.winnerId);
+        }
+        
         this.gameStatus = gameData.status;
         this.gameId = gameData.id;
         this.lastMoveData = gameData.lastMoveData;
@@ -631,6 +641,17 @@ class ChessGame {
                                     this.isPlayerTurn = false;
                                 }
                             } else if (moveData.type === 'MOVE_MADE') {
+                                // Debug: Log the full message
+                                console.log('Full MOVE_MADE WebSocket message:', moveData);
+                                
+                                // Store winner ID if provided in the message
+                                if (moveData.winnerId) {
+                                    this.winnerId = moveData.winnerId;
+                                    console.log('Received winnerId from MOVE_MADE:', moveData.winnerId);
+                                } else {
+                                    console.log('No winnerId in MOVE_MADE message');
+                                }
+                                
                                 await this.fetchGame();
                                 
                                 // Timer is automatically restarted by fetchGame() after server sync
@@ -667,6 +688,17 @@ class ChessGame {
                                     this.statusElement.textContent = this.gameStatus;
                                 }
                             } else if (moveData.type === 'TIME_OUT') {
+                                // Debug: Log the full message
+                                console.log('Full TIME_OUT WebSocket message:', moveData);
+                                
+                                // Store winner ID if provided in the message
+                                if (moveData.winnerId) {
+                                    this.winnerId = moveData.winnerId;
+                                    console.log('Received winnerId from TIME_OUT:', moveData.winnerId);
+                                } else {
+                                    console.log('No winnerId in TIME_OUT message');
+                                }
+                                
                                 this.stopTimer();
                                 this.timeoutDetected = true; // Set flag to disable interactions
                                 await this.fetchGame();
@@ -1179,8 +1211,22 @@ class ChessGame {
             let winner, result;
 
             if (this.gameStatus === 'TIME_OUT') {
-                // Use the winner information from the game data
-                if (this.winnerUsername) {
+                // Use the winner information from the WebSocket message or game data
+                if (this.winnerId) {
+                    // Use winnerId to determine winner username
+                    if (this.winnerId === this.boardDTO.whitePlayerId) {
+                        winner = this.boardDTO.whitePlayerUsername;
+                    } else if (this.winnerId === this.boardDTO.blackPlayerId) {
+                        winner = this.boardDTO.blackPlayerUsername;
+                    } else {
+                        // Fallback logic if winnerId doesn't match known players
+                        if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                            winner = this.boardDTO.blackPlayerUsername;
+                        } else {
+                            winner = this.boardDTO.whitePlayerUsername;
+                        }
+                    }
+                } else if (this.winnerUsername) {
                     winner = this.winnerUsername;
                 } else {
                     // Fallback logic if winner is not set
@@ -1193,24 +1239,62 @@ class ChessGame {
                     }
                 }
             } else if (this.gameStatus === 'CHECKMATE') {
-                // For checkmate, determine winner based on current player
-                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
-                    // White's turn but checkmate, so black won
-                    winner = this.boardDTO.blackPlayerUsername;
+                // Use the winner information from the WebSocket message or determine based on current player
+                if (this.winnerId) {
+                    // Use winnerId to determine winner username
+                    if (this.winnerId === this.boardDTO.whitePlayerId) {
+                        winner = this.boardDTO.whitePlayerUsername;
+                    } else if (this.winnerId === this.boardDTO.blackPlayerId) {
+                        winner = this.boardDTO.blackPlayerUsername;
+                    } else {
+                        // Fallback logic if winnerId doesn't match known players
+                        if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                            // White's turn but checkmate, so black won
+                            winner = this.boardDTO.blackPlayerUsername;
+                        } else {
+                            // Black's turn but checkmate, so white won
+                            winner = this.boardDTO.whitePlayerUsername;
+                        }
+                    }
                 } else {
-                    // Black's turn but checkmate, so white won
-                    winner = this.boardDTO.whitePlayerUsername;
+                    // Fallback logic if winnerId is not available
+                    if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                        // White's turn but checkmate, so black won
+                        winner = this.boardDTO.blackPlayerUsername;
+                    } else {
+                        // Black's turn but checkmate, so white won
+                        winner = this.boardDTO.whitePlayerUsername;
+                    }
                 }
             } else if (this.gameStatus === 'DRAW') {
                 winner = 'Draw';
             } else if (this.gameStatus === 'RESIGNED') {
-                // For resignation, the current player resigned, so opponent wins
-                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
-                    // White resigned, so black won
-                    winner = this.boardDTO.blackPlayerUsername;
+                // Use the winner information from the WebSocket message or determine based on current player
+                if (this.winnerId) {
+                    // Use winnerId to determine winner username
+                    if (this.winnerId === this.boardDTO.whitePlayerId) {
+                        winner = this.boardDTO.whitePlayerUsername;
+                    } else if (this.winnerId === this.boardDTO.blackPlayerId) {
+                        winner = this.boardDTO.blackPlayerUsername;
+                    } else {
+                        // Fallback logic if winnerId doesn't match known players
+                        if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                            // White resigned, so black won
+                            winner = this.boardDTO.blackPlayerUsername;
+                        } else {
+                            // Black resigned, so white won
+                            winner = this.boardDTO.whitePlayerUsername;
+                        }
+                    }
                 } else {
-                    // Black resigned, so white won
-                    winner = this.boardDTO.whitePlayerUsername;
+                    // Fallback logic if winnerId is not available
+                    if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                        // White resigned, so black won
+                        winner = this.boardDTO.blackPlayerUsername;
+                    } else {
+                        // Black resigned, so white won
+                        winner = this.boardDTO.whitePlayerUsername;
+                    }
                 }
             } else if(this.gameStatus === 'STALEMATE') {
                 this.statusElement.textContent = 'Draw by stalemate!';
@@ -1250,6 +1334,111 @@ class ChessGame {
             const currentPlayerColor = (this.playerColor === 'WHITE') ? 'white' : 'black';
             const opponentColor = (this.playerColor === 'WHITE') ? 'black' : 'white';
 
+            // Create personalized title and subtitle based on winnerId
+            let popupTitle, popupSubtitle;
+            
+            // Debug logging
+            console.log('Debug popup logic:', {
+                winnerId: this.winnerId,
+                userId: this.userId,
+                winner: winner,
+                gameStatus: this.gameStatus,
+                whitePlayerId: this.boardDTO.whitePlayerId,
+                blackPlayerId: this.boardDTO.blackPlayerId,
+                boardDTO: this.boardDTO // Log the full boardDTO to see what's available
+            });
+            
+            if (this.winnerId && winner !== 'Draw') {
+                // We have a winner ID and it's not a draw
+                if (this.winnerId === this.userId) {
+                    // Current player won
+                    popupTitle = 'You won';
+                } else {
+                    // Opponent won - show their color
+                    // Determine winner color by comparing winnerId with player IDs
+                    let winnerColor;
+                    if (this.winnerId === this.boardDTO.whitePlayerId) {
+                        winnerColor = 'White';
+                    } else if (this.winnerId === this.boardDTO.blackPlayerId) {
+                        winnerColor = 'Black';
+                    } else {
+                        // Fallback: determine based on current player's perspective
+                        // If current player is White and opponent won, opponent is Black
+                        // If current player is Black and opponent won, opponent is White
+                        winnerColor = (this.playerColor === 'WHITE') ? 'Black' : 'White';
+                    }
+                    popupTitle = `${winnerColor} wins`;
+                }
+                
+                // Create subtitle based on game type
+                switch (this.gameStatus) {
+                    case 'CHECKMATE':
+                        popupSubtitle = 'by checkmate';
+                        break;
+                    case 'TIME_OUT':
+                        popupSubtitle = 'by timeout';
+                        break;
+                    case 'RESIGNED':
+                        popupSubtitle = 'by resignation';
+                        break;
+                    case 'STALEMATE':
+                        popupSubtitle = 'by stalemate';
+                        break;
+                    case 'THREEFOLD_REPETITION':
+                        popupSubtitle = 'by threefold repetition';
+                        break;
+                    case 'FIFTY_MOVE_RULE':
+                        popupSubtitle = 'by fifty move rule';
+                        break;
+                    case 'INSUFFICIENT_MATERIAL':
+                        popupSubtitle = 'by insufficient material';
+                        break;
+                    case 'MUTUAL_AGREEMENT':
+                        popupSubtitle = 'by mutual agreement';
+                        break;
+                    default:
+                        popupSubtitle = 'by game end';
+                }
+            } else {
+                // Draw game or no winner ID
+                if (winner === 'Draw') {
+                    // Handle different types of draws
+                    switch (this.gameStatus) {
+                        case 'STALEMATE':
+                            popupTitle = 'Draw by stalemate';
+                            popupSubtitle = '';
+                            break;
+                        case 'THREEFOLD_REPETITION':
+                            popupTitle = 'Draw by threefold repetition';
+                            popupSubtitle = '';
+                            break;
+                        case 'FIFTY_MOVE_RULE':
+                            popupTitle = 'Draw by fifty move rule';
+                            popupSubtitle = '';
+                            break;
+                        case 'INSUFFICIENT_MATERIAL':
+                            popupTitle = 'Draw by insufficient material';
+                            popupSubtitle = '';
+                            break;
+                        case 'MUTUAL_AGREEMENT':
+                            popupTitle = 'Draw by mutual agreement';
+                            popupSubtitle = '';
+                            break;
+                        case 'DRAW':
+                            popupTitle = 'Draw';
+                            popupSubtitle = '';
+                            break;
+                        default:
+                            popupTitle = 'Game Over';
+                            popupSubtitle = this.gameStatus === 'TIME_OUT' ? 'by timeout' : 'by checkmate';
+                    }
+                } else {
+                    // No winner ID but not a draw - fallback
+                    popupTitle = 'Game Over';
+                    popupSubtitle = this.gameStatus === 'TIME_OUT' ? 'by timeout' : 'by checkmate';
+                }
+            }
+
             this.showGameEndPopup(
                 winner,
                 result,
@@ -1257,7 +1446,8 @@ class ChessGame {
                 currentPlayerColor,     // Current player's color
                 opponentUsername,       // Always opponent on right
                 opponentColor,          // Opponent's color
-                this.gameStatus === 'TIME_OUT' ? 'by timeout' : 'by checkmate'
+                popupTitle,             // Personalized title
+                popupSubtitle           // Personalized subtitle
             );
         }
         
@@ -1393,7 +1583,7 @@ class ChessGame {
      */
     // Removed clearKingCheckHighlight function
 
-    showGameEndPopup(winner, result, currentPlayerUsername, currentPlayerColor, opponentUsername, opponentColor, subtitle) {
+    showGameEndPopup(winner, result, currentPlayerUsername, currentPlayerColor, opponentUsername, opponentColor, title, subtitle) {
         // Remove existing popup if any
         let existing = document.getElementById('game-end-popup');
         if (existing) existing.remove();
@@ -1403,7 +1593,7 @@ class ChessGame {
         popup.id = 'game-end-popup';
         popup.innerHTML = `
             <button class="popup-close" id="close-game-end-popup" title="Close">&#10005;</button>
-            <div class="popup-title">Game Over</div>
+            <div class="popup-title">${title}</div>
             <div class="popup-subtitle">${subtitle}</div>
             <div class="popup-players">
                 <div class="popup-player ${winner === currentPlayerUsername ? 'popup-winner' : ''}">

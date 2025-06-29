@@ -347,6 +347,14 @@ public class GameService {
         // Update game status based on board state
         if (currentPlayer.isCheckmate()) {
             game.setStatus(com.chess.model.entity.Game.GameStatus.CHECKMATE.name());
+            // Set the winner - the player who delivered checkmate (opposite of current player)
+            if (currentPlayer.getAlliance() == Alliance.WHITE) {
+                // White is in checkmate, so Black wins (the player who delivered checkmate)
+                game.setWinner(game.getBlackPlayer());
+            } else {
+                // Black is in checkmate, so White wins (the player who delivered checkmate)
+                game.setWinner(game.getWhitePlayer());
+            }
         } else if(currentPlayer.isDraw() == GameStatus.DRAW) {
             game.setStatus(com.chess.model.entity.Game.GameStatus.DRAW.name());
         } else if(currentPlayer.isDraw() == GameStatus.STALEMATE) {

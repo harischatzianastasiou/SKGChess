@@ -217,18 +217,29 @@ public class GameController {
             }
 
             // Create a message that includes both game status, board information, and move type for sound effects
+            String whitePlayerId = updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "";
+            String blackPlayerId = updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "";
+            String winnerId = updatedGame.getWinner() != null ? updatedGame.getWinner().getId() : "";
+            
+            // Debug logging
+            log.info("WebSocket message debug - WhitePlayer: {}, BlackPlayer: {}, Winner: {}, GameStatus: {}", 
+                whitePlayerId, blackPlayerId, winnerId, updatedGame.getStatus());
+            
             String message = String.format(
             "{\"type\":\"MOVE_MADE\"," +
             "\"message\":\"Game is now in progress\"," +
             "\"gameId\":\"%s\"," +
-            "\"gameStatus\":\"IN_PROGRESS\"," +
+            "\"gameStatus\":\"%s\"," +
             "\"whitePlayerId\":\"%s\"," +
             "\"blackPlayerId\":\"%s\"," +
+            "\"winnerId\":\"%s\"," +
             "\"moveType\":\"%s\"," +
             "\"boardDTO\":%s}",
             request.getGameId(),
-            updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
-            updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+            updatedGame.getStatus(),
+            whitePlayerId,
+            blackPlayerId,
+            winnerId,
             moveType,
             objectMapper.writeValueAsString(decompressedBoard)
             );
