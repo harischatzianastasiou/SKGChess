@@ -2090,6 +2090,12 @@ class ChessGame {
         const piece = sourceTile.querySelector('.piece');
         if (!piece) return;
         
+        // Remove any existing piece from target tile (capture)
+        const existingPiece = targetTile.querySelector('.piece');
+        if (existingPiece) {
+            existingPiece.style.opacity = '0'; // Make captured piece invisible (faster than DOM removal)
+        }
+        
         // Move the piece visually to the target tile
         targetTile.appendChild(piece);
         
