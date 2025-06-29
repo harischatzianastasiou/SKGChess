@@ -208,9 +208,10 @@ public class GameService {
         // Use the existing method with the user's ID
         List<Game> userGames = gameRepository.findByWhitePlayerIdOrBlackPlayerId(user.getId(), user.getId());
         
-        // Filter to only include games with IN_PROGRESS status
+        // Filter to only include games with IN_PROGRESS or CHECK status
         return userGames.stream()
-            .filter(game -> game.getStatus().equals(GameStatus.IN_PROGRESS.name()))
+            .filter(game -> game.getStatus().equals(GameStatus.IN_PROGRESS.name()) || 
+                           game.getStatus().equals(GameStatus.CHECK.name()))
             .collect(Collectors.toList());
     }
 
@@ -443,9 +444,10 @@ public class GameService {
         Game game = gameRepository.findById(gameId)
             .orElseThrow(() -> new GameNotFoundException(gameId));
         
-        // Check if game is in progress
-        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name())) {
-            throw new IllegalStateException("Cannot start timer for game that is not in progress");
+        // Check if game is in progress or in check
+        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name()) && 
+            !game.getStatus().equals(GameStatus.CHECK.name())) {
+            throw new IllegalStateException("Cannot start timer for game that is not in progress or in check");
         }
         
         // Check if timer is already started

@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByUsernameWithLock(@Param("username") String username);
 
     // Check if user has any active games
-    @Query("SELECT COUNT(g) > 0 FROM Game g WHERE (g.whitePlayer.id = :userId OR g.blackPlayer.id = :userId) AND g.status = 'IN_PROGRESS'")
+    @Query("SELECT COUNT(g) > 0 FROM Game g WHERE (g.whitePlayer.id = :userId OR g.blackPlayer.id = :userId) AND (g.status = 'IN_PROGRESS' OR g.status = 'CHECK')")
     boolean existsActiveGameForUser(@Param("userId") String userId);
     
     /**

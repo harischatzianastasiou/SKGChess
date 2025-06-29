@@ -1092,8 +1092,7 @@ class ChessGame {
             tile.classList.remove('legal-move-non-capture', 'legal-move-capture', 'legal-move-en-passant');
         });
         
-        // Also clear king check highlighting when clearing legal moves
-        this.clearKingCheckHighlight();
+        // Removed king check highlighting when clearing legal moves
     }
 
     hasPiece(tile) {
@@ -1281,14 +1280,6 @@ class ChessGame {
             }
         });
 
-        // Highlight king in check with orange color
-        if (this.gameStatus === 'CHECK') {
-            this.highlightKingInCheck();
-        } else {
-            // Clear king check highlighting if not in check
-            this.clearKingCheckHighlight();
-        }
-
         // Check if lastMoveData exists before trying to use it
         if (this.lastMoveData) {
             try {
@@ -1366,45 +1357,19 @@ class ChessGame {
         }
 
         if(moveType === 'CHECK') {
-            this.highlightKingInCheck();
+            // Removed king in check highlighting
         }
     }
 
     /**
      * Highlights the king's square with orange color when the king is in check
      */
-    highlightKingInCheck() {
-        // Clear any existing king check highlighting first
-        this.clearKingCheckHighlight();
-        
-        // Find the king of the current player (the one in check)
-        const currentPlayerAlliance = this.boardDTO.currentPlayer.alliance;
-        
-        const kingTile = this.boardDTO.tiles.find(tile => 
-            tile.tileOccupied && 
-            tile.piece.pieceSymbol === 'KING' && 
-            tile.piece.pieceAlliance === currentPlayerAlliance
-        );
-                
-        if (kingTile) {
-            // Find the corresponding DOM tile and add the check highlighting class
-            const tileElement = this.board.querySelector(`.tile[data-position='${kingTile.tileCoordinate}']`);
-            
-            if (tileElement) {
-                tileElement.classList.add('king-in-check');
-            }
-        }
-    }
+    // Removed highlightKingInCheck function
 
     /**
      * Clears the king check highlighting
      */
-    clearKingCheckHighlight() {
-        // Remove king check highlighting from all tiles
-        document.querySelectorAll('.tile.king-in-check').forEach(tile => {
-            tile.classList.remove('king-in-check');
-        });
-    }
+    // Removed clearKingCheckHighlight function
 
     showGameEndPopup(winner, result, currentPlayerUsername, currentPlayerColor, opponentUsername, opponentColor, subtitle) {
         // Remove existing popup if any
