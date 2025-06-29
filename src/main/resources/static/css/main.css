@@ -792,7 +792,7 @@ body {
     max-width: 500px;
     width: 90vw;
     max-height: 80vh;
-    overflow: visible !important;
+    overflow: visible !important; /* Allow dropdowns to extend beyond popup */
 }
 
 .game-creation-popup.show {
@@ -825,14 +825,17 @@ body {
 .game-creation-popup .popup-body {
     padding: 24px;
     flex: 1;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    overflow: visible; /* Allow dropdowns to extend beyond the body */
 }
 
 .game-creation-popup .form-group {
-    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow: visible; /* Allow dropdowns to extend beyond form group */
 }
 
 .game-creation-popup .form-group label {
@@ -853,6 +856,138 @@ body {
     color: #ffffff;
     font-size: 1rem;
     transition: border-color 0.3s ease;
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+    position: relative;
+    width: 100%;
+}
+
+.dropdown-trigger {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(42, 41, 43, 0.8);
+    border: 1px solid rgba(107, 70, 193, 0.3);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.3s ease;
+}
+
+.dropdown-trigger:hover {
+    border-color: rgba(107, 70, 193, 0.5);
+}
+
+.dropdown-trigger.active {
+    border-color: rgba(107, 70, 193, 0.6);
+    box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.1);
+}
+
+.dropdown-trigger:focus {
+    outline: none;
+    border-color: rgba(107, 70, 193, 0.6);
+    box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.1);
+}
+
+.dropdown-trigger i {
+    transition: transform 0.3s ease;
+}
+
+.dropdown-trigger.active i {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%; /* Always appear below the trigger */
+    left: 0;
+    right: 0;
+    background: rgba(42, 41, 43, 0.95);
+    border: 1px solid rgba(107, 70, 193, 0.3);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    margin-top: 4px;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-group {
+    border-bottom: 1px solid rgba(107, 70, 193, 0.1);
+}
+
+.dropdown-group:last-child {
+    border-bottom: none;
+}
+
+.dropdown-group-label {
+    padding: 8px 16px;
+    background: rgba(42, 41, 43, 0.9);
+    color: #a3a3a3;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.dropdown-option {
+    padding: 10px 16px;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-left: 3px solid transparent;
+}
+
+.dropdown-option:hover {
+    background: rgba(107, 70, 193, 0.2);
+    border-left-color: rgba(107, 70, 193, 0.5);
+}
+
+.dropdown-option.selected {
+    background: rgba(107, 70, 193, 0.3);
+    border-left-color: rgba(107, 70, 193, 0.8);
+}
+
+/* Ensure dropdown appears downwards */
+.game-creation-popup select {
+    /* Force dropdown to open downwards */
+    direction: ltr; /* Left-to-right direction */
+    writing-mode: horizontal-tb; /* Horizontal top-to-bottom writing mode */
+    transform-origin: top left; /* Set transform origin to top-left */
+    position: relative; /* Ensure proper positioning context */
+    /* Force dropdown to open downwards */
+    size: auto; /* Allow natural size */
+    max-height: none; /* Remove height restrictions */
+}
+
+/* Force the dropdown list to appear below the select */
+.game-creation-popup select:focus {
+    /* Ensure dropdown opens downwards when focused */
+    transform: none; /* Remove any transforms that might affect positioning */
+}
+
+/* Additional styles to ensure proper dropdown behavior */
+.game-creation-popup select option {
+    background: rgba(42, 41, 43, 0.95);
+    color: #ffffff;
+    padding: 8px 12px;
+}
+
+.game-creation-popup select optgroup {
+    background: rgba(42, 41, 43, 0.9);
+    color: #a3a3a3;
+    font-weight: 600;
+    padding: 8px 12px;
 }
 
 .game-creation-popup select:focus,

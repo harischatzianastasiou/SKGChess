@@ -470,31 +470,40 @@ function showGameCreationPopup() {
                     </div>
                     <div class="form-group">
                         <label for="timeControl">Time Control:</label>
-                        <select id="timeControl" required>
-                            <option value="">Select time control</option>
-                            <optgroup label="Bullet">
-                                <option value="1|0">1 min</option>
-                                <option value="1|1">1 | 1</option>
-                                <option value="2|1">2 | 1</option>
-                                <option value="0.5|0">30 sec</option>
-                                <option value="0.33|1">20 sec | 1</option>
-                            </optgroup>
-                            <optgroup label="Blitz">
-                                <option value="3|0">3 min</option>
-                                <option value="3|2">3 | 2</option>
-                                <option value="5|0">5 min</option>
-                                <option value="5|5">5 | 5</option>
-                                <option value="5|2">5 | 2</option>
-                            </optgroup>
-                            <optgroup label="Rapid">
-                                <option value="10|0">10 min</option>
-                                <option value="10|5">10 | 5</option>
-                                <option value="15|10">15 | 10</option>
-                                <option value="20|0">20 min</option>
-                                <option value="30|0">30 min</option>
-                                <option value="60|0">60 min</option>
-                            </optgroup>
-                        </select>
+                        <div class="custom-dropdown" id="timeControlDropdown">
+                            <div class="dropdown-trigger" id="timeControlTrigger">
+                                <span class="dropdown-text">Select time control</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="dropdown-menu" id="timeControlMenu">
+                                <div class="dropdown-group">
+                                    <div class="dropdown-group-label">Bullet</div>
+                                    <div class="dropdown-option" data-value="1|0">1 min</div>
+                                    <div class="dropdown-option" data-value="1|1">1 | 1</div>
+                                    <div class="dropdown-option" data-value="2|1">2 | 1</div>
+                                    <div class="dropdown-option" data-value="0.5|0">30 sec</div>
+                                    <div class="dropdown-option" data-value="0.33|1">20 sec | 1</div>
+                                </div>
+                                <div class="dropdown-group">
+                                    <div class="dropdown-group-label">Blitz</div>
+                                    <div class="dropdown-option" data-value="3|0">3 min</div>
+                                    <div class="dropdown-option" data-value="3|2">3 | 2</div>
+                                    <div class="dropdown-option" data-value="5|0">5 min</div>
+                                    <div class="dropdown-option" data-value="5|5">5 | 5</div>
+                                    <div class="dropdown-option" data-value="5|2">5 | 2</div>
+                                </div>
+                                <div class="dropdown-group">
+                                    <div class="dropdown-group-label">Rapid</div>
+                                    <div class="dropdown-option" data-value="10|0">10 min</div>
+                                    <div class="dropdown-option" data-value="10|5">10 | 5</div>
+                                    <div class="dropdown-option" data-value="15|10">15 | 10</div>
+                                    <div class="dropdown-option" data-value="20|0">20 min</div>
+                                    <div class="dropdown-option" data-value="30|0">30 min</div>
+                                    <div class="dropdown-option" data-value="60|0">60 min</div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="timeControl" required>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Your Color:</label>
@@ -574,6 +583,11 @@ function showGameCreationPopup() {
     
     // Add search functionality
     setupOpponentSearch();
+    
+    // Setup custom dropdown functionality
+    setTimeout(() => {
+        setupCustomDropdown();
+    }, 150);
 }
 
 // Function to close game creation popup
@@ -1688,8 +1702,8 @@ function setupOpponentSearch() {
         selectedOpponent = username;
         searchInput.value = username;
         searchResults.style.display = 'none';
-        createBtn.disabled = false;
-        createBtn.textContent = `Send Invitation to ${username}`;
+        // Use the new form validation function
+        checkFormValidity();
     }
 }
 
@@ -2196,5 +2210,90 @@ function handleDisconnect() {
     } else {
         // Show user-friendly error message
         showErrorPopup('Connection lost. Please refresh the page to restore real-time notifications.');
+    }
+}
+
+// Function to setup custom dropdown
+function setupCustomDropdown() {
+    const trigger = document.getElementById('timeControlTrigger');
+    const menu = document.getElementById('timeControlMenu');
+    const hiddenInput = document.getElementById('timeControl');
+    const dropdownText = trigger.querySelector('.dropdown-text');
+    
+    if (!trigger || !menu || !hiddenInput) return;
+    
+    // Toggle dropdown on trigger click
+    trigger.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Toggle active state
+        trigger.classList.toggle('active');
+        menu.classList.toggle('show');
+    });
+    
+    // Handle option selection
+    menu.addEventListener('click', function(e) {
+        const option = e.target.closest('.dropdown-option');
+        if (!option) return;
+        
+        const value = option.dataset.value;
+        const text = option.textContent;
+        
+        // Update hidden input value
+        hiddenInput.value = value;
+        
+        // Update display text
+        dropdownText.textContent = text;
+        
+        // Update visual selection
+        menu.querySelectorAll('.dropdown-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        option.classList.add('selected');
+        
+        // Close dropdown
+        trigger.classList.remove('active');
+        menu.classList.remove('show');
+        
+        // Enable create button if opponent is selected
+        checkFormValidity();
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+            trigger.classList.remove('active');
+            menu.classList.remove('show');
+        }
+    });
+    
+    // Close dropdown on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            trigger.classList.remove('active');
+            menu.classList.remove('show');
+        }
+    });
+}
+
+// Function to check form validity and enable/disable create button
+function checkFormValidity() {
+    const opponentSearch = document.getElementById('opponentSearch');
+    const timeControl = document.getElementById('timeControl');
+    const createBtn = document.getElementById('createInvitationBtn');
+    
+    if (!opponentSearch || !timeControl || !createBtn) return;
+    
+    const opponentSelected = opponentSearch.value.trim() !== '';
+    const timeControlSelected = timeControl.value.trim() !== '';
+    
+    createBtn.disabled = !(opponentSelected && timeControlSelected);
+    
+    // Update button text based on opponent selection
+    if (opponentSelected) {
+        createBtn.textContent = `Send Invitation to ${opponentSearch.value.trim()}`;
+    } else {
+        createBtn.textContent = 'Send Invitation';
     }
 }

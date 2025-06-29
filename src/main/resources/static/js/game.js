@@ -86,6 +86,13 @@ class ChessGame {
         this.chatInput = document.getElementById('chat-input');
         this.sendMessageBtn = document.getElementById('send-message');
         
+        // Initialize enlarged chat modal elements
+        this.chatModal = document.getElementById('chatModal');
+        this.chatModalMessages = document.getElementById('chat-modal-messages');
+        this.chatModalInput = document.getElementById('chat-modal-input');
+        this.chatModalSendBtn = document.getElementById('chat-modal-send');
+        this.chatModalCloseBtn = document.getElementById('chatModalClose');
+        
         // Bind chat event handlers
         this.chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -93,7 +100,51 @@ class ChessGame {
                 this.sendChatMessage();
             }
         });
-        this.sendMessageBtn.addEventListener('click', () => this.sendChatMessage());
+        this.sendMessageBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent modal from opening
+            this.sendChatMessage();
+        });
+        
+        // Prevent chat input from triggering modal
+        this.chatInput.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent modal from opening
+        });
+        
+        // Bind enlarged chat modal event handlers
+        this.chatModalInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                this.sendChatMessageFromModal();
+            }
+        });
+        this.chatModalSendBtn.addEventListener('click', () => this.sendChatMessageFromModal());
+        
+        // Chat modal open/close handlers
+        this.chatModalCloseBtn.addEventListener('click', () => this.closeChatModal());
+        this.chatModal.addEventListener('click', (e) => {
+            if (e.target === this.chatModal) {
+                this.closeChatModal();
+            }
+        });
+        
+        // Make chat section clickable to open modal
+        const chatSection = document.querySelector('.game-chat-section');
+        if (chatSection) {
+            chatSection.addEventListener('click', (e) => {
+                // Don't open modal if clicking on input or button
+                if (e.target.closest('.chat-input') || e.target.closest('input') || e.target.closest('button')) {
+                    return;
+                }
+                this.openChatModal();
+            });
+        }
+        
+        // Close modal on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.chatModal.classList.contains('show')) {
+                this.closeChatModal();
+            }
+        });
         
         // Initialize the game asynchronously
         this.initializeGame();
@@ -748,6 +799,7 @@ class ChessGame {
     }
     
     displayChatMessage(chatMessage) {
+        // Create message element for small chat
         const messageDiv = document.createElement('div');
         messageDiv.className = 'chat-message';
         
@@ -768,8 +820,33 @@ class ChessGame {
         messageDiv.appendChild(contentDiv);
         messageDiv.appendChild(timestampDiv);
         
+        // Add to small chat
         this.chatMessages.appendChild(messageDiv);
         this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        
+        // Create message element for enlarged chat modal
+        const modalMessageDiv = document.createElement('div');
+        modalMessageDiv.className = 'chat-modal-message';
+        
+        const modalSenderDiv = document.createElement('div');
+        modalSenderDiv.className = 'sender';
+        modalSenderDiv.textContent = chatMessage.sender;
+        
+        const modalContentDiv = document.createElement('div');
+        modalContentDiv.className = 'content';
+        modalContentDiv.textContent = chatMessage.message;
+        
+        const modalTimestampDiv = document.createElement('div');
+        modalTimestampDiv.className = 'timestamp';
+        modalTimestampDiv.textContent = date.toLocaleTimeString();
+        
+        modalMessageDiv.appendChild(modalSenderDiv);
+        modalMessageDiv.appendChild(modalContentDiv);
+        modalMessageDiv.appendChild(modalTimestampDiv);
+        
+        // Add to enlarged chat modal
+        this.chatModalMessages.appendChild(modalMessageDiv);
+        this.chatModalMessages.scrollTop = this.chatModalMessages.scrollHeight;
     }
 
     async handleTileClick(event) {
@@ -2317,6 +2394,78 @@ class ChessGame {
                 this.isPlayerTurn = false;
             }
         }
+    }
+
+    // Chat Modal Methods
+    openChatModal() {
+        // Sync existing messages from small chat to modal
+        this.syncChatMessages();
+        
+        // Show the modal
+        this.chatModal.classList.add('show');
+        
+        // Focus on the input field
+        setTimeout(() => {
+            this.chatModalInput.focus();
+        }, 100);
+    }
+    
+    syncChatMessages() {
+        // Clear existing modal messages
+        this.chatModalMessages.innerHTML = '';
+        
+        // Copy all messages from small chat to modal
+        const smallChatMessages = this.chatMessages.querySelectorAll('.chat-message');
+        smallChatMessages.forEach(smallMessage => {
+            const modalMessageDiv = document.createElement('div');
+            modalMessageDiv.className = 'chat-modal-message';
+            
+            // Clone the content from small message
+            const sender = smallMessage.querySelector('.sender')?.textContent || '';
+            const content = smallMessage.querySelector('.content')?.textContent || '';
+            const timestamp = smallMessage.querySelector('.timestamp')?.textContent || '';
+            
+            const modalSenderDiv = document.createElement('div');
+            modalSenderDiv.className = 'sender';
+            modalSenderDiv.textContent = sender;
+            
+            const modalContentDiv = document.createElement('div');
+            modalContentDiv.className = 'content';
+            modalContentDiv.textContent = content;
+            
+            const modalTimestampDiv = document.createElement('div');
+            modalTimestampDiv.className = 'timestamp';
+            modalTimestampDiv.textContent = timestamp;
+            
+            modalMessageDiv.appendChild(modalSenderDiv);
+            modalMessageDiv.appendChild(modalContentDiv);
+            modalMessageDiv.appendChild(modalTimestampDiv);
+            
+            this.chatModalMessages.appendChild(modalMessageDiv);
+        });
+        
+        // Scroll to bottom
+        this.chatModalMessages.scrollTop = this.chatModalMessages.scrollHeight;
+    }
+
+    closeChatModal() {
+        this.chatModal.classList.remove('show');
+    }
+
+    sendChatMessageFromModal() {
+        const message = this.chatModalInput.value.trim();
+        if (!message || !this.stompClient || !this.stompClient.connected) return;
+        
+        const chatMessage = {
+            gameId: this.gameId,
+            message: message,
+            sender: this.username,
+            timestamp: Date.now()
+        };
+        
+        this.stompClient.send('/app/chat/' + this.gameId, {}, JSON.stringify(chatMessage));
+        this.chatModalInput.value = '';
+        this.closeChatModal();
     }
 }
 
