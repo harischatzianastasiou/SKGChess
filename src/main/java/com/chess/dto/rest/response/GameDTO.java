@@ -57,6 +57,9 @@ public class GameDTO {
     // The current server time when the response is generated
     private LocalDateTime serverTime; // Used for client-server time sync
     
+    // Increment seconds
+    private Integer incrementSeconds;
+    
     /**
      * Convert a Game entity to a GameDTO
      * Automatically decompresses board data for frontend consumption
@@ -85,6 +88,7 @@ public class GameDTO {
                 .blackTimeLeftSeconds(game.getBlackTimeLeftSeconds())
                 .lastMoveAt(game.getLastMoveAt())
                 .timeControlMinutes(game.getTimeControlMinutes())
+                .incrementSeconds(game.getIncrementSeconds())
                 // .serverTime is NOT set here; it will be set in the controller for accurate response time
                 .build();
     }

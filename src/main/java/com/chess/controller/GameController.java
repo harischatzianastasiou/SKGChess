@@ -62,6 +62,7 @@ public class GameController {
                 request.getUsername(), 
                 request.getGameType(), 
                 request.getTimeControlMinutes(),
+                request.getIncrementSeconds(),
                 request.getIsRated(),
                 request.getCustomRules(),
                 request.getPlayerColor()

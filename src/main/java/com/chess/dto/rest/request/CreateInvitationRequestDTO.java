@@ -28,6 +28,9 @@ public class CreateInvitationRequestDTO {
     @Max(value = 60, message = "Time control must be at most 60 minutes")
     private Integer timeControlMinutes;
     
+    // Optional field for increment (seconds per move)
+    private Integer incrementSeconds;
+    
     // Optional field for player color preference
     private String playerColor; // "white", "black", or "random"
 } 

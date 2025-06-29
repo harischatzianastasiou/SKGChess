@@ -47,12 +47,13 @@ public class InvitationService {
      * @param inviterUsername Username of the person sending the invitation
      * @param opponentUsername Username of the person to invite
      * @param timeControlMinutes Time control for the game
+     * @param incrementSeconds Increment seconds for the game
      * @param playerColor Color preference
      * @return The created invitation
      */
     @Transactional
     public Invitation createInvitation(String inviterUsername, String opponentUsername, 
-                                     Integer timeControlMinutes, String playerColor) {
+                                     Integer timeControlMinutes, Integer incrementSeconds, String playerColor) {
         // Find the inviter (person sending the invitation)
         User inviter = userRepository.findByUsername(inviterUsername)
             .orElseThrow(() -> new UserNotFoundException(inviterUsername));
@@ -80,7 +81,7 @@ public class InvitationService {
         }
         
         // Create the invitation
-        Invitation invitation = new Invitation(inviter, invitee, timeControlMinutes, playerColor);
+        Invitation invitation = new Invitation(inviter, invitee, timeControlMinutes, incrementSeconds, playerColor);
         invitation = invitationRepository.save(invitation);
         
         // Send WebSocket notification to the invitee
@@ -151,6 +152,7 @@ public class InvitationService {
                 invitation.getInviter().getUsername(),
                 "standard",
                 invitation.getTimeControlMinutes(),
+                invitation.getIncrementSeconds(),
                 false,
                 null,
                 invitation.getPlayerColor()

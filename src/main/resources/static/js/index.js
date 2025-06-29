@@ -450,7 +450,7 @@ function newGame() {
 
 // Function to show game creation popup
 function showGameCreationPopup() {
-    // Create popup HTML with opponent search
+    // Create popup HTML with new time control dropdown
     const popupHTML = `
         <div id="gameCreationPopup" class="game-creation-popup">
             <div class="popup-content">
@@ -468,19 +468,34 @@ function showGameCreationPopup() {
                             <div id="searchResults" class="search-results"></div>
                         </div>
                     </div>
-                    
                     <div class="form-group">
-                        <label for="timeControl">Time Control (minutes):</label>
+                        <label for="timeControl">Time Control:</label>
                         <select id="timeControl" required>
                             <option value="">Select time control</option>
-                            <option value="1">1 minute (Blitz)</option>
-                            <option value="3">3 minutes (Blitz)</option>
-                            <option value="5">5 minutes (Blitz)</option>
-                            <option value="10" selected>10 minutes (Rapid)</option>
-                            <option value="15">15 minutes (Rapid)</option>
+                            <optgroup label="Bullet">
+                                <option value="1|0">1 min</option>
+                                <option value="1|1">1 | 1</option>
+                                <option value="2|1">2 | 1</option>
+                                <option value="0.5|0">30 sec</option>
+                                <option value="0.33|1">20 sec | 1</option>
+                            </optgroup>
+                            <optgroup label="Blitz">
+                                <option value="3|0">3 min</option>
+                                <option value="3|2">3 | 2</option>
+                                <option value="5|0">5 min</option>
+                                <option value="5|5">5 | 5</option>
+                                <option value="5|2">5 | 2</option>
+                            </optgroup>
+                            <optgroup label="Rapid">
+                                <option value="10|0">10 min</option>
+                                <option value="10|5">10 | 5</option>
+                                <option value="15|10">15 | 10</option>
+                                <option value="20|0">20 min</option>
+                                <option value="30|0">30 min</option>
+                                <option value="60|0">60 min</option>
+                            </optgroup>
                         </select>
                     </div>
-                    
                     <div class="form-group">
                         <label>Your Color:</label>
                         <div class="color-selection">
@@ -501,7 +516,6 @@ function showGameCreationPopup() {
                             </label>
                         </div>
                     </div>
-                    
                     <div class="create-button-container">
                         <button class="btn-create" onclick="createInvitation()" id="createInvitationBtn" disabled>Send Invitation</button>
                     </div>
@@ -579,37 +593,33 @@ function closeGameCreationPopup() {
 // Function to create game with selected options
 function createGameWithOptions() {
     // Get form values
-    const timeControl = document.getElementById('timeControl').value;
+    const timeControlValue = document.getElementById('timeControl').value; // e.g., "3|2"
     const playerColor = document.querySelector('input[name="playerColor"]:checked').value;
-    
     // Validate form
-    if (!timeControl) {
+    if (!timeControlValue) {
         showErrorPopup('Please select a time control');
         return;
     }
-    
+    // Parse minutes and increment
+    let [minutes, increment] = timeControlValue.split('|');
+    minutes = parseFloat(minutes); // Handles "0.5" for 30 sec, etc.
+    increment = parseInt(increment); // Increment in seconds
     // Get username
     const usernameElement = document.querySelector('span[data-username="true"]');
     if (!usernameElement) {
         showErrorPopup('User not found. Please try logging in again.');
         return;
     }
-    
     const username = usernameElement.textContent;
-    
-    
     // Create the request body according to CreateGameRequestDTO
     const requestBody = {
         username: username,
-        timeControlMinutes: parseInt(timeControl), // Convert string to integer
+        timeControlMinutes: minutes, // Pass minutes
+        incrementSeconds: increment, // Pass increment
         playerColor: playerColor // Pass the selected color
     };
-    
-    
-    
     // Close popup first
     closeGameCreationPopup();
-    
     // Call the create game endpoint with the request body
     fetch('/api/games', {
         method: 'POST',
@@ -619,7 +629,6 @@ function createGameWithOptions() {
         body: JSON.stringify(requestBody)
     })
     .then(response => {
-        
         if (!response.ok) {
             return response.json().then(errorData => {
                 showErrorPopup(errorData.message);
@@ -630,7 +639,6 @@ function createGameWithOptions() {
     })
     .then(data => {
         if (!data) return; // Return if we showed an error popup
-        
         if (!data || !data.id) {
             throw new Error('Game ID not found in response');
         }
@@ -638,7 +646,6 @@ function createGameWithOptions() {
         showShareGamePopup(data.id);
     })
     .catch(error => {
-        
         // Don't show another error popup here since we already showed one in the response handling
     });
 }
@@ -1690,45 +1697,39 @@ function setupOpponentSearch() {
 function createInvitation() {
     // Get form values
     const opponentSearch = document.getElementById('opponentSearch');
-    const timeControl = document.getElementById('timeControl').value;
+    const timeControlValue = document.getElementById('timeControl').value; // e.g., "3|2"
     const playerColor = document.querySelector('input[name="playerColor"]:checked').value;
-    
     // Validate form
     if (!opponentSearch || !opponentSearch.value.trim()) {
         showErrorPopup('Please select an opponent');
         return;
     }
-    
-    if (!timeControl) {
+    if (!timeControlValue) {
         showErrorPopup('Please select a time control');
         return;
     }
-    
+    // Parse minutes and increment
+    let [minutes, increment] = timeControlValue.split('|');
+    minutes = parseFloat(minutes); // Handles "0.5" for 30 sec, etc.
+    increment = parseInt(increment); // Increment in seconds
     // Get username
     const usernameElement = document.querySelector('span[data-username="true"]');
     if (!usernameElement) {
         showErrorPopup('User not found. Please try logging in again.');
         return;
     }
-    
     const username = usernameElement.textContent;
     const opponentUsername = opponentSearch.value.trim();
-    
-    
-    
     // Create the invitation request body
     const requestBody = {
         username: username,
         opponentUsername: opponentUsername,
-        timeControlMinutes: parseInt(timeControl),
-        playerColor: playerColor
+        timeControlMinutes: minutes, // Pass minutes
+        incrementSeconds: increment, // Pass increment
+        playerColor: playerColor // Pass the selected color
     };
-    
-    
-    
     // Close popup first
     closeGameCreationPopup();
-    
     // Call the create invitation endpoint
     fetch('/api/invitations/create', {
         method: 'POST',
@@ -1738,7 +1739,6 @@ function createInvitation() {
         body: JSON.stringify(requestBody)
     })
     .then(response => {
-        
         if (!response.ok) {
             return response.json().then(errorData => {
                 showErrorPopup(errorData.message);
@@ -1749,16 +1749,13 @@ function createInvitation() {
     })
     .then(data => {
         if (!data) return; // Return if we showed an error popup
-        
         showSuccessPopup(`Invitation sent to ${opponentUsername}! You will be redirected to the game page once they join.`);
     })
     .catch(error => {
-        
         // Don't show another error popup here since we already showed one in the response handling
     });
 }
 
-// Function to handle invitation notification
 function handleInvitationNotification(notification) {
     
     
@@ -1782,6 +1779,7 @@ function handleInvitationNotification(notification) {
             
     }
 }
+
 
 // Function to show invitation received notification
 function showInvitationReceivedNotification(notification) {
@@ -2124,6 +2122,7 @@ function checkForPendingInvitationsOnLoad() {
         .catch(error => {
         });
 }
+
 
 // Function to show clickable invitation notification
 function showInvitationNotification(message) {

@@ -51,6 +51,7 @@ public class InvitationController {
                 request.getUsername(),
                 request.getOpponentUsername(),
                 request.getTimeControlMinutes(),
+                request.getIncrementSeconds(),
                 request.getPlayerColor()
             );
             

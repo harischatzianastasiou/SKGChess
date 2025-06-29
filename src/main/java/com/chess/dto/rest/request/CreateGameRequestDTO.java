@@ -29,4 +29,7 @@ public class CreateGameRequestDTO {
     private String customRules;
 
     private String playerColor;
+
+    // Optional field for increment (seconds per move)
+    private Integer incrementSeconds;
 }

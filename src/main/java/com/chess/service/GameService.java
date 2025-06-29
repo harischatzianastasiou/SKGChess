@@ -55,7 +55,7 @@ public class GameService {
     }
 
     @Transactional
-    public Game createGame(String username, String gameType, Integer timeControlMinutes, Boolean isRated, String customRules, String playerColor) {
+    public Game createGame(String username, String gameType, Integer timeControlMinutes, Integer incrementSeconds, Boolean isRated, String customRules, String playerColor) {
         try {
             // Validate username
             if (username == null || username.trim().isEmpty()) {
@@ -98,6 +98,7 @@ public class GameService {
             }
             game.setGameType(Optional.ofNullable(gameType).orElse("standard"));
             game.setTimeControlMinutes(Optional.ofNullable(timeControlMinutes).orElse(10));
+            game.setIncrementSeconds(incrementSeconds);
             game.setStatus(GameStatus.WAITING_FOR_OPPONENT.name());
             game.setCreatedAt(LocalDateTime.now());
             game.setIsPlayerTurn(com.chess.core.Alliance.WHITE);
@@ -298,15 +299,34 @@ public class GameService {
             timeUsedSeconds = timeDiffMillis / 1000.0; // Convert to decimal seconds
         }
 
+        // Determine if the move ends the game (checkmate, draw, etc.)
+        boolean gameEndedAfterMove = false;
+        if (currentPlayer.isCheckmate() || 
+            currentPlayer.isDraw() == GameStatus.DRAW ||
+            currentPlayer.isDraw() == GameStatus.STALEMATE ||
+            currentPlayer.isDraw() == GameStatus.THREEFOLD_REPETITION ||
+            currentPlayer.isDraw() == GameStatus.FIFTY_MOVE_RULE ||
+            currentPlayer.isDraw() == GameStatus.INSUFFICIENT_MATERIAL) {
+            gameEndedAfterMove = true;
+        }
         // Update timer for the player who just moved
         if (game.getTimeControlMinutes() != null) {
             Alliance playerAlliance = move.getPieceToMove().getPieceAlliance();
+            Integer increment = game.getIncrementSeconds();
             if (playerAlliance == Alliance.WHITE) {
-                double newTime = game.getWhiteTimeLeftSeconds() - timeUsedSeconds; // Use double arithmetic
-                game.setWhiteTimeLeftSeconds(Math.max(0.0, newTime)); // Ensure non-negative
+                double newTime = game.getWhiteTimeLeftSeconds() - timeUsedSeconds;
+                // Add increment if set and game not ended
+                if (increment != null && increment > 0 && !gameEndedAfterMove) {
+                    newTime += increment;
+                }
+                game.setWhiteTimeLeftSeconds(Math.max(0.0, newTime));
             } else {
-                double newTime = game.getBlackTimeLeftSeconds() - timeUsedSeconds; // Use double arithmetic
-                game.setBlackTimeLeftSeconds(Math.max(0.0, newTime)); // Ensure non-negative
+                double newTime = game.getBlackTimeLeftSeconds() - timeUsedSeconds;
+                // Add increment if set and game not ended
+                if (increment != null && increment > 0 && !gameEndedAfterMove) {
+                    newTime += increment;
+                }
+                game.setBlackTimeLeftSeconds(Math.max(0.0, newTime));
             }
             // Update last move time
             game.setLastMoveAt(LocalDateTime.now());

@@ -84,6 +84,9 @@ public class Game implements Serializable {
     @Column(name = "D_LAST_MOVE_AT", nullable = true)
     private LocalDateTime lastMoveAt; // When the last move was made (for timer calculations)
 
+    @Column(name = "N_INCREMENTSECONDS", nullable = true)
+    private Integer incrementSeconds; // Increment per move in seconds
+
     public enum GameStatus {
         WAITING_FOR_OPPONENT,
         IN_PROGRESS,

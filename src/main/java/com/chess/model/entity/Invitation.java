@@ -61,6 +61,9 @@ public class Invitation implements Serializable {
     @Column(name = "S_GAME_ID", nullable = true)
     private String gameId; // Game ID if invitation was accepted and game was created
 
+    @Column(name = "N_INCREMENTSECONDS", nullable = true)
+    private Integer incrementSeconds; // Increment per move in seconds
+
     public enum InvitationStatus {
         PENDING,    // Invitation is waiting for response
         ACCEPTED,   // Invitation was accepted and game was created
@@ -70,10 +73,11 @@ public class Invitation implements Serializable {
     }
 
     // Constructor to set expiration time (24 hours from creation)
-    public Invitation(User inviter, User invitee, Integer timeControlMinutes, String playerColor) {
+    public Invitation(User inviter, User invitee, Integer timeControlMinutes, Integer incrementSeconds, String playerColor) {
         this.inviter = inviter;
         this.invitee = invitee;
         this.timeControlMinutes = timeControlMinutes;
+        this.incrementSeconds = incrementSeconds;
         this.playerColor = playerColor;
         this.createdAt = LocalDateTime.now();
         this.expiresAt = LocalDateTime.now().plusHours(24); // Expires in 24 hours
