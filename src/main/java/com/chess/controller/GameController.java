@@ -282,6 +282,24 @@ public class GameController {
             // Handle the timeout using the service
             Game updatedGame = gameService.handleTimeout(gameId);
 
+            // Send WebSocket notification to both players about the timeout
+            String message = String.format(
+                "{\"type\":\"TIME_OUT\"," +
+                "\"message\":\"Game ended by timeout\"," +
+                "\"gameId\":\"%s\"," +
+                "\"gameStatus\":\"TIME_OUT\"," +
+                "\"whitePlayerId\":\"%s\"," +
+                "\"blackPlayerId\":\"%s\"," +
+                "\"winnerId\":\"%s\"}",
+                gameId,
+                updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
+                updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+                updatedGame.getWinner() != null ? updatedGame.getWinner().getId() : ""
+            );
+
+            // Send the timeout message to both players via WebSocket
+            messagingTemplate.convertAndSend("/topic/game/" + gameId, message);
+
             // Return the updated game state
             GameDTO gameDTO = GameDTO.fromGame(updatedGame);
             gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync

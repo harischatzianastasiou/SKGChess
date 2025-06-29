@@ -257,6 +257,19 @@ public class GameService {
             throw new IllegalStateException("Cannot make moves until opponent joins");
         }
         
+        // Check if game has ended (prevent moves after game end)
+        if (game.getStatus().equals(GameStatus.TIME_OUT.name()) ||
+            game.getStatus().equals(GameStatus.CHECKMATE.name()) ||
+            game.getStatus().equals(GameStatus.DRAW.name()) ||
+            game.getStatus().equals(GameStatus.RESIGNED.name()) ||
+            game.getStatus().equals(GameStatus.STALEMATE.name()) ||
+            game.getStatus().equals(GameStatus.THREEFOLD_REPETITION.name()) ||
+            game.getStatus().equals(GameStatus.FIFTY_MOVE_RULE.name()) ||
+            game.getStatus().equals(GameStatus.INSUFFICIENT_MATERIAL.name()) ||
+            game.getStatus().equals(GameStatus.MUTUAL_AGREEMENT.name())) {
+            throw new IllegalStateException("Cannot make moves in a game that has ended");
+        }
+        
         // Get current game state - DECOMPRESS the board before deserialization
         String decompressedBoard = CompressionUtil.safeDecompress(game.getBoard());
         IBoard currentBoard = IBoard.deserialize(decompressedBoard, game.getLastMoveData());
@@ -277,21 +290,23 @@ public class GameService {
         CurrentPlayer currentPlayer = (CurrentPlayer) newBoard.getCurrentPlayer();
 
         // Calculate time used for this move (if timer is enabled)
-        int timeUsedSeconds = 0;
+        double timeUsedSeconds = 0.0; // Changed to double for decimal precision
         if (game.getLastMoveAt() != null) {
             LocalDateTime now = LocalDateTime.now();
-            timeUsedSeconds = (int) java.time.Duration.between(game.getLastMoveAt(), now).getSeconds();
+            // Calculate time difference in milliseconds and convert to seconds with decimal precision
+            long timeDiffMillis = java.time.Duration.between(game.getLastMoveAt(), now).toMillis();
+            timeUsedSeconds = timeDiffMillis / 1000.0; // Convert to decimal seconds
         }
 
         // Update timer for the player who just moved
         if (game.getTimeControlMinutes() != null) {
             Alliance playerAlliance = move.getPieceToMove().getPieceAlliance();
             if (playerAlliance == Alliance.WHITE) {
-                int newTime = game.getWhiteTimeLeftSeconds() - timeUsedSeconds;
-                game.setWhiteTimeLeftSeconds(Math.max(0, newTime));
+                double newTime = game.getWhiteTimeLeftSeconds() - timeUsedSeconds; // Use double arithmetic
+                game.setWhiteTimeLeftSeconds(Math.max(0.0, newTime)); // Ensure non-negative
             } else {
-                int newTime = game.getBlackTimeLeftSeconds() - timeUsedSeconds;
-                game.setBlackTimeLeftSeconds(Math.max(0, newTime));
+                double newTime = game.getBlackTimeLeftSeconds() - timeUsedSeconds; // Use double arithmetic
+                game.setBlackTimeLeftSeconds(Math.max(0.0, newTime)); // Ensure non-negative
             }
             // Update last move time
             game.setLastMoveAt(LocalDateTime.now());
@@ -459,9 +474,9 @@ public class GameService {
         // Initialize timer when inviter is redirected to game page
         if (game.getTimeControlMinutes() != null) {
             logger.info("Starting timer for game: {} when inviter is redirected", gameId);
-            // Set initial time for both players (convert minutes to seconds)
-            game.setWhiteTimeLeftSeconds(game.getTimeControlMinutes() * 60);
-            game.setBlackTimeLeftSeconds(game.getTimeControlMinutes() * 60);
+            // Set initial time for both players (convert minutes to seconds with decimal precision)
+            game.setWhiteTimeLeftSeconds(game.getTimeControlMinutes() * 60.0); // Use decimal precision
+            game.setBlackTimeLeftSeconds(game.getTimeControlMinutes() * 60.0); // Use decimal precision
             // Set the last move time to now - timer starts ticking
             game.setLastMoveAt(LocalDateTime.now());
             

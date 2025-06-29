@@ -23,6 +23,8 @@ class ChessGame {
         this.timeControlMinutes = null;
         this.timerInterval = null;
         this.serverTimeOffset = 0; // Time offset between client and server (in milliseconds)
+        this.timeoutDetected = false; // Flag to track if timeout has been detected
+        this.isUpdatingFromServer = false; // Flag to prevent timer updates during server sync
         
         // Position navigation properties
         this.isViewingMode = false; // Track if we're in viewing mode (browsing positions)
@@ -181,13 +183,19 @@ class ChessGame {
             return;
         }
         
+        // Don't start if timer is already running
         if (this.timerInterval) {
-            clearInterval(this.timerInterval);
+            return;
+        }
+        
+        // Don't start if we're updating from server
+        if (this.isUpdatingFromServer) {
+            return;
         }
         
         this.timerInterval = setInterval(() => {
             this.updateTimerDisplay();
-        }, 1000); // Update every second
+        }, 10); // Update every 10ms for smooth millisecond display
     }
 
     // Stop the timer
@@ -204,27 +212,14 @@ class ChessGame {
         if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
             return;
         }
-
-        // If timer hasn't started yet, show full time for both players
+        
+        // Don't update timer if we're currently syncing with server
+        if (this.isUpdatingFromServer) {
+            return;
+        }
+        
+        // Don't update if we don't have valid timer data from server
         if (!this.lastMoveAt || !this.whiteTimeLeftSeconds || !this.blackTimeLeftSeconds) {
-            // Show full time for both players when timer hasn't started
-            const timerElements = document.querySelectorAll('.player-timer');
-            if (timerElements.length >= 2 && this.timeControlMinutes) {
-                const fullTimeSeconds = this.timeControlMinutes * 60;
-                const opponentTimer = timerElements[0];
-                const currentPlayerTimer = timerElements[1];
-                
-                // Determine which timer shows which player based on current player's color
-                if (this.playerColor === 'WHITE') {
-                    // Current player is white, so opponent is black
-                    opponentTimer.textContent = this.formatTime(fullTimeSeconds);
-                    currentPlayerTimer.textContent = this.formatTime(fullTimeSeconds);
-                } else {
-                    // Current player is black, so opponent is white
-                    opponentTimer.textContent = this.formatTime(fullTimeSeconds);
-                    currentPlayerTimer.textContent = this.formatTime(fullTimeSeconds);
-                }
-            }
             return;
         }
 
@@ -232,7 +227,7 @@ class ChessGame {
         const now = new Date();
         const serverAdjustedNow = new Date(now.getTime() + (this.serverTimeOffset || 0)); // Apply server time offset
         const lastMoveTime = new Date(this.lastMoveAt);
-        const elapsedSeconds = Math.floor((serverAdjustedNow - lastMoveTime) / 1000);
+        const elapsedSeconds = (serverAdjustedNow - lastMoveTime) / 1000; // Use decimal seconds for millisecond precision
 
         // Calculate current time left for each player
         let whiteTimeLeft = this.whiteTimeLeftSeconds;
@@ -266,38 +261,40 @@ class ChessGame {
             // Determine which timer shows which player based on current player's color
             if (this.playerColor === 'WHITE') {
                 // Current player is white, so opponent is black
-                opponentTimer.textContent = this.formatTime(blackTimeLeft);
-                currentPlayerTimer.textContent = this.formatTime(whiteTimeLeft);
+                opponentTimer.innerHTML = this.formatTime(blackTimeLeft);
+                currentPlayerTimer.innerHTML = this.formatTime(whiteTimeLeft);
                 
                 // Add low time warning
-                opponentTimer.className = blackTimeLeft <= 10 ? 'player-timer low-time' : 'player-timer';
-                currentPlayerTimer.className = whiteTimeLeft <= 10 ? 'player-timer low-time' : 'player-timer';
+                opponentTimer.className = blackTimeLeft <= 10.0 ? 'player-timer low-time' : 'player-timer';
+                currentPlayerTimer.className = whiteTimeLeft <= 10.0 ? 'player-timer low-time' : 'player-timer';
             } else {
                 // Current player is black, so opponent is white
-                opponentTimer.textContent = this.formatTime(whiteTimeLeft);
-                currentPlayerTimer.textContent = this.formatTime(blackTimeLeft);
+                opponentTimer.innerHTML = this.formatTime(whiteTimeLeft);
+                currentPlayerTimer.innerHTML = this.formatTime(blackTimeLeft);
                 
                 // Add low time warning
-                opponentTimer.className = whiteTimeLeft <= 10 ? 'player-timer low-time' : 'player-timer';
-                currentPlayerTimer.className = blackTimeLeft <= 10 ? 'player-timer low-time' : 'player-timer';
+                opponentTimer.className = whiteTimeLeft <= 10.0 ? 'player-timer low-time' : 'player-timer';
+                currentPlayerTimer.className = blackTimeLeft <= 10.0 ? 'player-timer low-time' : 'player-timer';
             }
         }
 
         // Check for timeout - only check the player whose turn it is
         // Allow timeout detection even when game is in CHECK status
         if (currentPlayerAlliance) {
-            if ((currentPlayerAlliance === 'WHITE' && whiteTimeLeft <= 0) || 
-                (currentPlayerAlliance === 'BLACK' && blackTimeLeft <= 0)) {
+            if ((currentPlayerAlliance === 'WHITE' && whiteTimeLeft <= 0.001) || 
+                (currentPlayerAlliance === 'BLACK' && blackTimeLeft <= 0.001)) {
+                this.timeoutDetected = true; // Set flag to immediately disable interactions
                 this.handleTimeout();
             }
         }
     }
 
-    // Format time as MM:SS
+    // Format time as MM:SS.mm (with 2-digit milliseconds)
     formatTime(seconds) {
         const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+        const remainingSeconds = Math.floor(seconds % 60);
+        const milliseconds = Math.floor((seconds % 1) * 100); // Get 2 digits (centiseconds)
+        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}<span class="milliseconds">.${milliseconds.toString().padStart(2, '0')}</span>`;
     }
 
     // Handle timeout
@@ -448,6 +445,10 @@ class ChessGame {
     }
 
     async fetchGame() {
+        // Stop timer during server sync to prevent conflicts
+        this.stopTimer();
+        this.isUpdatingFromServer = true; // Prevent timer updates during server sync
+        
         const response = await fetch(`/api/games/${this.gameId}`, {
             method: 'GET',
             headers: {
@@ -457,6 +458,7 @@ class ChessGame {
         
         if (!response.ok) {
             const errorText = await response.text();
+            this.isUpdatingFromServer = false; // Clear flag on error
             throw new Error('Fetching game failed');
         }
         
@@ -514,6 +516,7 @@ class ChessGame {
             || this.lastGameStatus === 'FIFTY_MOVE_RULE' || this.lastGameStatus === 'INSUFFICIENT_MATERIAL'
             || this.lastGameStatus === 'MUTUAL_AGREEMENT' || this.lastGameStatus === 'TIME_OUT')) {
             this.gameEndPopupShown = false;
+            this.timeoutDetected = false; // Reset timeout flag for new game
         }
 
         // Set player color and board orientation
@@ -559,6 +562,14 @@ class ChessGame {
         // Reload game positions to update navigation buttons
         if (!this.isViewingMode) {
             await this.loadGamePositions();
+        }
+        
+        // Clear server sync flag and restart timer if game is active
+        this.isUpdatingFromServer = false;
+        
+        // Restart timer if game is in progress and timer is enabled
+        if ((this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK') && this.timeControlMinutes) {
+            this.startTimer();
         }
     }
 
@@ -609,10 +620,7 @@ class ChessGame {
                                 // Fetch and update the game state
                                 await this.fetchGame();
                                 
-                                // Start timer if game has started and timer is enabled
-                                if ((this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK') && this.timeControlMinutes) {
-                                    this.startTimer();
-                                }
+                                // Timer is automatically started by fetchGame() if game is active
                                 
                                 // Update the status based on player color
                                 if (this.playerColor === 'WHITE') {
@@ -625,11 +633,7 @@ class ChessGame {
                             } else if (moveData.type === 'MOVE_MADE') {
                                 await this.fetchGame();
                                 
-                                // Timer data is already updated from fetchGame() call above
-                                // Just restart timer with the updated data
-                                if (this.timeControlMinutes && (this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK')) {
-                                    this.startTimer();
-                                }
+                                // Timer is automatically restarted by fetchGame() after server sync
                                 
                                 // Map move types to sound types
                                 const moveTypeToSound = {
@@ -664,6 +668,7 @@ class ChessGame {
                                 }
                             } else if (moveData.type === 'TIME_OUT') {
                                 this.stopTimer();
+                                this.timeoutDetected = true; // Set flag to disable interactions
                                 await this.fetchGame();
                                 
                                 // Update game status and show end game popup if it's timeout
@@ -736,6 +741,11 @@ class ChessGame {
     }
 
     async handleTileClick(event) {
+        // Prevent moves if timeout has been detected
+        if (this.timeoutDetected) {
+            return;
+        }
+        
         // Prevent moves if game hasn't started
         if (this.gameStatus === 'WAITING_FOR_OPPONENT') {
             return;
@@ -821,6 +831,11 @@ class ChessGame {
     }
 
     handleMouseDown(event) {
+        // Prevent dragging if timeout has been detected
+        if (this.timeoutDetected) {
+            return;
+        }
+        
         if(!this.isPlayerTurn) {
             return; // Early return for speed
         }
@@ -882,6 +897,11 @@ class ChessGame {
     }
 
     handleMouseMove(event) {
+        // Prevent mouse movement if timeout has been detected
+        if (this.timeoutDetected) {
+            return;
+        }
+        
         if(!this.isPlayerTurn) {
             return; // Early return for speed
         }
@@ -1139,8 +1159,10 @@ class ChessGame {
             // Stop the timer when game ends
             this.stopTimer();
             
-            // Update timer display to show final times
-            this.updateTimerDisplay();
+            // Update timer display to show final times (only if not updating from server)
+            if (!this.isUpdatingFromServer) {
+                this.updateTimerDisplay();
+            }
             
             // Add visual indicator that timer has stopped
             const timerElements = document.querySelectorAll('.player-timer');
@@ -1982,6 +2004,10 @@ class ChessGame {
         // Store original board state for potential rollback
         const originalBoardDTO = JSON.parse(JSON.stringify(this.boardDTO));
         
+        // Stop timer updates during client-side move to prevent showing old values
+        this.stopTimer();
+        this.isUpdatingFromServer = true;
+        
         // Immediately update the board visually for instant feedback
         this.performClientSideMove(sourceCoordinate, targetCoordinate);
         
@@ -2037,6 +2063,9 @@ class ChessGame {
             this.boardDTO = originalBoardDTO;
             this.updateBoard();
         }
+        
+        // Allow timer updates to resume (WebSocket will handle the actual timer restart)
+        this.isUpdatingFromServer = false;
     }
     
     /**

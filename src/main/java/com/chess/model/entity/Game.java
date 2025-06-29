@@ -76,10 +76,10 @@ public class Game implements Serializable {
 
     // Timer-related fields
     @Column(name = "N_WHITE_TIME_LEFT_SECONDS", nullable = true)
-    private Integer whiteTimeLeftSeconds; // White player's remaining time in seconds
+    private Double whiteTimeLeftSeconds; // White player's remaining time in seconds (with decimal precision)
 
     @Column(name = "N_BLACK_TIME_LEFT_SECONDS", nullable = true)
-    private Integer blackTimeLeftSeconds; // Black player's remaining time in seconds
+    private Double blackTimeLeftSeconds; // Black player's remaining time in seconds (with decimal precision)
 
     @Column(name = "D_LAST_MOVE_AT", nullable = true)
     private LocalDateTime lastMoveAt; // When the last move was made (for timer calculations)

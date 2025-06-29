@@ -49,8 +49,8 @@ public class GameDTO {
     private Alliance isPlayerTurn;
     
     // Timer-related fields
-    private Integer whiteTimeLeftSeconds;
-    private Integer blackTimeLeftSeconds;
+    private Double whiteTimeLeftSeconds;
+    private Double blackTimeLeftSeconds;
     private LocalDateTime lastMoveAt;
     private Integer timeControlMinutes;
     

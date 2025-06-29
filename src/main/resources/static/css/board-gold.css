@@ -643,6 +643,14 @@ body {
     overflow: hidden;
 }
 
+/* Style for milliseconds to make them less distracting */
+.player-timer .milliseconds {
+    font-size: 0.7rem; /* Smaller font size */
+    color: #666666; /* Muted color */
+    font-weight: 400; /* Less bold */
+    opacity: 0.7; /* Reduced opacity */
+}
+
 .player-timer::before {
     content: '';
     position: absolute;
