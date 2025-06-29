@@ -1320,26 +1320,42 @@ function loadPendingInvitations(username) {
 
 // Function to respond to an invitation
 function respondToInvitation(invitationId, action) {
-    
-    
+    // Get the username from the page
     const usernameElement = document.querySelector('span[data-username="true"]');
     if (!usernameElement) {
-        
+        // Show error if username not found
         showErrorPopup('User not found. Please try logging in again.');
         return;
     }
     
     const username = usernameElement.textContent;
     
-    
+    // Prepare the request body
     const requestBody = {
         username: username,
         invitationId: invitationId,
         action: action
     };
     
+    // Immediately remove the invitation from the UI to prevent double-clicking
+    if (action === 'accept') {
+        const invitationElement = document.querySelector(`[data-invitation-id="${invitationId}"]`);
+        if (invitationElement) {
+            // Disable the buttons to prevent further interaction
+            const buttons = invitationElement.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.disabled = true;
+                button.style.opacity = '0.5';
+                button.style.cursor = 'not-allowed';
+            });
+            
+            // Add a visual indicator that the invitation is being processed
+            invitationElement.style.opacity = '0.7';
+            invitationElement.style.pointerEvents = 'none';
+        }
+    }
     
-    
+    // Send the request to the server
     fetch('/api/invitations/respond', {
         method: 'POST',
         headers: {
@@ -1348,9 +1364,21 @@ function respondToInvitation(invitationId, action) {
         body: JSON.stringify(requestBody)
     })
     .then(response => {
-        
+        // Handle error responses
         if (!response.ok) {
             return response.json().then(errorData => {
+                // Re-enable the buttons if there was an error
+                const invitationElement = document.querySelector(`[data-invitation-id="${invitationId}"]`);
+                if (invitationElement) {
+                    const buttons = invitationElement.querySelectorAll('button');
+                    buttons.forEach(button => {
+                        button.disabled = false;
+                        button.style.opacity = '1';
+                        button.style.cursor = 'pointer';
+                    });
+                    invitationElement.style.opacity = '1';
+                    invitationElement.style.pointerEvents = 'auto';
+                }
                 
                 showErrorPopup(errorData.message);
                 throw new Error(errorData.message);
@@ -1359,35 +1387,52 @@ function respondToInvitation(invitationId, action) {
         return response.json();
     })
     .then(data => {
-        
+        // Handle successful response
         if (action === 'accept') {
             showSuccessPopup('Invitation accepted! Redirecting to game...');
             
+            // Remove the invitation from the UI immediately
+            const invitationElement = document.querySelector(`[data-invitation-id="${invitationId}"]`);
+            if (invitationElement) {
+                invitationElement.remove();
+            }
+            
+            // Check if there are no more invitations and show appropriate message
+            const invitationsContainer = document.getElementById('invitationsContainer');
+            if (invitationsContainer && invitationsContainer.children.length === 0) {
+                invitationsContainer.innerHTML = '<div class="no-invitations">No pending invitations</div>';
+            }
+            
             // Redirect to game if gameId is provided (both users should be redirected)
             if (data.gameId) {
-                
-                
                 // If this is the inviter, delete the invitation after 3 seconds
                 if (username === data.inviterUsername && invitationId) {
-                    
                     setTimeout(() => {
                         deleteInvitation(invitationId);
                     }, 3000); // 3 second delay before deletion
                 }
                 
                 setTimeout(() => {
-                    
                     window.location.href = `/games/${data.gameId}`;
                 }, 2000);
             }
         } else {
             showSuccessPopup('Invitation declined');
-            // Reload invitations to remove the declined one
-            loadPendingInvitations(username);
+            // Remove the declined invitation from the UI immediately
+            const invitationElement = document.querySelector(`[data-invitation-id="${invitationId}"]`);
+            if (invitationElement) {
+                invitationElement.remove();
+            }
+            
+            // Check if there are no more invitations and show appropriate message
+            const invitationsContainer = document.getElementById('invitationsContainer');
+            if (invitationsContainer && invitationsContainer.children.length === 0) {
+                invitationsContainer.innerHTML = '<div class="no-invitations">No pending invitations</div>';
+            }
         }
     })
     .catch(error => {
-        
+        // Error handling is already done in the response.ok check above
     });
 }
 
