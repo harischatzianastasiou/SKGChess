@@ -303,6 +303,7 @@ class ChessGame {
     // Handle timeout
     async handleTimeout() {
         this.stopTimer();
+        
         try {
             const response = await fetch(`/api/games/${this.gameId}/timeout`, {
                 method: 'POST',
@@ -310,30 +311,13 @@ class ChessGame {
                     'Content-Type': 'application/json'
                 }
             });
+            
             if (response.ok) {
                 // Fetch the updated game state to get the new status and winner
                 await this.fetchGame();
+                
+                // Update the board to show the end game popup
                 this.updateBoard();
-                // Fallback: after a short delay, fetch again to guarantee sync
-                setTimeout(async () => {
-                    await this.fetchGame();
-                    this.updateBoard();
-                    // Force the endgame popup if the game is over
-                    if (
-                        this.gameStatus === 'TIME_OUT' ||
-                        this.gameStatus === 'CHECKMATE' ||
-                        this.gameStatus === 'DRAW' ||
-                        this.gameStatus === 'RESIGNED' ||
-                        this.gameStatus === 'STALEMATE' ||
-                        this.gameStatus === 'THREEFOLD_REPETITION' ||
-                        this.gameStatus === 'FIFTY_MOVE_RULE' ||
-                        this.gameStatus === 'INSUFFICIENT_MATERIAL' ||
-                        this.gameStatus === 'MUTUAL_AGREEMENT'
-                    ) {
-                        this.gameEndPopupShown = false; // Force popup to show
-                        this.updateBoard();
-                    }
-                }, 800);
             }
         } catch (error) {
             // Silent error handling for speed
@@ -863,45 +847,36 @@ class ChessGame {
         const pieceData = tileData.piece;
         if (pieceData.pieceAlliance !== this.boardDTO.currentPlayer.alliance) return;
 
+        // Enhanced visual feedback for drag start
         this.isDragging = true;
         this.draggedPiece = piece;
         this.selectedSourceTile = position;
 
-        // Calculate drag offset for precise positioning
-        const pieceRect = piece.getBoundingClientRect();
-        this.dragOffsetX = event.clientX - pieceRect.left;
-        this.dragOffsetY = event.clientY - pieceRect.top;
-
-        // Create drag image with ultra-fast performance and precise positioning
+        // Create drag image with enhanced visual feedback
         this.dragImage = document.createElement('div');
         this.dragImage.className = 'piece dragging-piece';
         this.dragImage.style.backgroundImage = piece.style.backgroundImage;
-        this.dragImage.style.width = '98%';
-        this.dragImage.style.height = '98%';
-        this.dragImage.style.position = 'fixed';
-        this.dragImage.style.zIndex = '9999';
-        this.dragImage.style.pointerEvents = 'none';
-        this.dragImage.style.transform = 'translate3d(0, 0, 0)'; // Force GPU acceleration
-        this.dragImage.style.willChange = 'transform';
-        this.dragImage.style.backfaceVisibility = 'hidden';
-        
-        // Set initial position with offset for precise centering
-        this.dragImage.style.left = (event.clientX - this.dragOffsetX) + 'px';
-        this.dragImage.style.top = (event.clientY - this.dragOffsetY) + 'px';
+        this.dragImage.style.transform = 'translate(-50%, -50%)'; // Keep original size
+        this.dragImage.style.filter = 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3))'; // Add shadow for depth
         document.body.appendChild(this.dragImage);
 
-        // Hide original piece immediately and remove rotation for dragging
-        this.draggedPiece.style.opacity = '0';
-        if (this.board.classList.contains('black-perspective')) {
-            this.draggedPiece.style.transform = 'rotate(0deg)';
-        }
+        // Set initial position directly for maximum speed
+        const offsetX = 10; // Small offset for better visual feedback
+        const offsetY = 10;
+        this.dragImage.style.left = (event.clientX + offsetX) + 'px';
+        this.dragImage.style.top = (event.clientY + offsetY) + 'px';
 
-        // Show legal moves with optimized performance
+        // Enhanced original piece feedback - more visible but clearly indicates it's being dragged
+        this.draggedPiece.style.opacity = '0.4';
+        this.draggedPiece.style.transform = 'scale(0.9)'; // Slightly smaller to show it's being moved
 
-        // Show legal moves with optimized performance
+        // Show legal moves with optimized performance and enhanced visual feedback
         this.clearLegalMoves();
         tile.classList.add('selected');
         this.showLegalMoves(position);
+
+        // Add immediate hover feedback for the source tile
+        tile.classList.add('dragover', 'dragover-valid');
 
         event.preventDefault();
     }
@@ -912,44 +887,67 @@ class ChessGame {
         }
         if (!this.isDragging || !this.dragImage) return;
         
-        // Ultra-fast position update with precise offset calculation
-        const newX = event.clientX - this.dragOffsetX;
-        const newY = event.clientY - this.dragOffsetY;
+        // Use requestAnimationFrame for ultra-smooth updates
+        requestAnimationFrame(() => {
+            // Ultra-fast position update with slight offset for better feel
+            const offsetX = 10; // Small offset for better visual feedback
+            const offsetY = 10;
+            this.dragImage.style.left = (event.clientX + offsetX) + 'px';
+            this.dragImage.style.top = (event.clientY + offsetY) + 'px';
+        });
         
-        // Use transform for better performance and precision
-        this.dragImage.style.transform = `translate3d(${newX}px, ${newY}px, 0)`;
+        // Enhanced hover effect with better tile detection
+        const hoveredElement = document.elementFromPoint(event.clientX, event.clientY);
+        const hoveredTile = hoveredElement?.closest('.tile');
         
-        // Optimized hover effect with precise tile detection
-        const hoveredTile = this.getTileAtPosition(event.clientX, event.clientY);
+        // Only update if the hovered tile has changed for better performance
         if (hoveredTile !== this.lastHoveredTile) {
-            // Remove previous hover
+            // Remove previous hover effects
             if (this.lastHoveredTile) {
-                this.lastHoveredTile.classList.remove('dragover');
+                this.lastHoveredTile.classList.remove('dragover', 'dragover-valid', 'dragover-invalid');
             }
-            // Add new hover
+            
+            // Add new hover effects with enhanced visual feedback
             if (hoveredTile) {
-                hoveredTile.classList.add('dragover');
+                const targetPosition = parseInt(hoveredTile.dataset.position);
+                const sourcePosition = this.selectedSourceTile;
+                
+                // Check if this is a valid move by looking at legal moves
+                const isValidMove = this.isValidMove(sourcePosition, targetPosition);
+                
+                if (isValidMove) {
+                    // Add valid move hover effect - piece will land here
+                    hoveredTile.classList.add('dragover', 'dragover-valid');
+                } else if (sourcePosition !== targetPosition) {
+                    // Add invalid move hover effect - piece cannot land here
+                    hoveredTile.classList.add('dragover', 'dragover-invalid');
+                }
             }
+            
             this.lastHoveredTile = hoveredTile;
         }
         
         event.preventDefault();
     }
 
-    // Helper method for precise tile detection
-    getTileAtPosition(clientX, clientY) {
-        // Use elementFromPoint for precise detection
-        const element = document.elementFromPoint(clientX, clientY);
-        if (!element) return null;
+    // Helper method to check if a move is valid
+    isValidMove(sourcePosition, targetPosition) {
+        // Early return if same position
+        if (sourcePosition === targetPosition) {
+            return false;
+        }
         
-        // Find the closest tile element
-        const tile = element.closest('.tile');
-        if (!tile) return null;
+        // Check if boardDTO and currentPlayer exist
+        if (!this.boardDTO || !this.boardDTO.currentPlayer || !this.boardDTO.currentPlayer.moves) {
+            return false;
+        }
         
-        // Additional validation: ensure it's within the game board
-        if (!this.board.contains(tile)) return null;
-        
-        return tile;
+        // Check if this move exists in the legal moves array
+        const moves = this.boardDTO.currentPlayer.moves;
+        return moves.some(move => 
+            move.sourceCoordinate === sourcePosition && 
+            move.targetCoordinate === targetPosition
+        );
     }
 
     async handleMouseUp(event) {
@@ -968,9 +966,9 @@ class ChessGame {
         }
         if (!this.isDragging) return;
 
-        // Remove any remaining dragover effects
-        document.querySelectorAll('.tile.dragover').forEach(tile => {
-            tile.classList.remove('dragover');
+        // Remove any remaining dragover effects with enhanced cleanup
+        document.querySelectorAll('.tile.dragover, .tile.dragover-valid, .tile.dragover-invalid').forEach(tile => {
+            tile.classList.remove('dragover', 'dragover-valid', 'dragover-invalid');
         });
 
         // If right click, just cancel the drag
@@ -978,6 +976,7 @@ class ChessGame {
             // Cleanup
             if (this.draggedPiece) {
                 this.draggedPiece.style.opacity = '1';
+                this.draggedPiece.style.transform = 'scale(1)'; // Reset scale
             }
             if (this.dragImage) {
                 this.dragImage.remove();
@@ -986,6 +985,7 @@ class ChessGame {
             this.draggedPiece = null;
             this.dragImage = null;
             this.selectedSourceTile = null;
+            this.lastHoveredTile = null; // Reset hover tracking
             this.clearLegalMoves();
             document.querySelector('.selected')?.classList.remove('selected');
             return;
@@ -1003,6 +1003,7 @@ class ChessGame {
         // Cleanup
         if (this.draggedPiece) {
             this.draggedPiece.style.opacity = '1';
+            this.draggedPiece.style.transform = 'scale(1)'; // Reset scale
         }
         if (this.dragImage) {
             this.dragImage.remove();
@@ -1010,6 +1011,7 @@ class ChessGame {
         this.isDragging = false;
         this.draggedPiece = null;
         this.dragImage = null;
+        this.lastHoveredTile = null; // Reset hover tracking
     }
 
     showLegalMoves(position) {
@@ -1118,14 +1120,10 @@ class ChessGame {
             this.statusElement.textContent = 'Your turn to move';
             this.statusElement.classList.add('your-turn');
             this.isPlayerTurn = true;
-            // Remove 'not-your-turn' class if it's your turn
-            this.board.classList.remove('not-your-turn');
         } else {
             this.statusElement.textContent = `Waiting for ${this.boardDTO.currentPlayer.alliance.toLowerCase()} to move`;
             this.statusElement.classList.remove('your-turn');
             this.isPlayerTurn = false;
-            // Add 'not-your-turn' class if it's not your turn
-            this.board.classList.add('not-your-turn');
             }
         }
 
@@ -1157,115 +1155,79 @@ class ChessGame {
             const blackPlayerAvatar = this.boardDTO.blackPlayerAvatar || '/images/default-avatar.png';
             const whitePlayerUsername = this.boardDTO.whitePlayerUsername;
             const blackPlayerUsername = this.boardDTO.blackPlayerUsername;
-            let winner, result, mainTitle, subtitle;
+            let winner, result;
 
-            // Determine winner, main title, and subtitle based on game status
-            // This logic handles all possible game end conditions and determines:
-            // 1. Who won (winner variable - username or 'Draw')
-            // 2. What to display as the main title (mainTitle variable - 'Black Wins', 'White Wins', or 'Draw')
-            // 3. How the game ended (subtitle variable - 'By checkmate', 'By timeout', etc.)
             if (this.gameStatus === 'TIME_OUT') {
-                // Timeout occurs when a player runs out of time during their turn
-                // The player whose turn it is when they run out of time loses
-                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
-                    // White ran out of time, so Black wins
-                    winner = this.boardDTO.blackPlayerUsername; // Set winner to Black's username
-                    mainTitle = 'Black Wins'; // Display "Black Wins" as main title
-                    subtitle = 'By timeout'; // Show "By timeout" as subtitle
+                // Use the winner information from the game data
+                if (this.winnerUsername) {
+                    winner = this.winnerUsername;
                 } else {
-                    // Black ran out of time, so White wins
-                    winner = this.boardDTO.whitePlayerUsername; // Set winner to White's username
-                    mainTitle = 'White Wins'; // Display "White Wins" as main title
-                    subtitle = 'By timeout'; // Show "By timeout" as subtitle
+                    // Fallback logic if winner is not set
+                    if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                        // White ran out of time, so black wins
+                        winner = this.boardDTO.blackPlayerUsername;
+                    } else {
+                        // Black ran out of time, so white wins
+                        winner = this.boardDTO.whitePlayerUsername;
+                    }
                 }
             } else if (this.gameStatus === 'CHECKMATE') {
-                // Checkmate occurs when a king is in check and no legal move can escape it
-                // The player whose turn it is when checkmate occurs loses (they can't make a legal move)
+                // For checkmate, determine winner based on current player
                 if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
-                    // White's turn but checkmate, so Black won (White can't escape check)
-                    winner = this.boardDTO.blackPlayerUsername; // Set winner to Black's username
-                    mainTitle = 'Black Wins'; // Display "Black Wins" as main title
-                    subtitle = 'By checkmate'; // Show "By checkmate" as subtitle
+                    // White's turn but checkmate, so black won
+                    winner = this.boardDTO.blackPlayerUsername;
                 } else {
-                    // Black's turn but checkmate, so White won (Black can't escape check)
-                    winner = this.boardDTO.whitePlayerUsername; // Set winner to White's username
-                    mainTitle = 'White Wins'; // Display "White Wins" as main title
-                    subtitle = 'By checkmate'; // Show "By checkmate" as subtitle
-                }
-            } else if (this.gameStatus === 'RESIGNED') {
-                // Resignation occurs when a player voluntarily gives up
-                // The player who resigned loses, their opponent wins
-                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
-                    // White resigned, so Black won
-                    winner = this.boardDTO.blackPlayerUsername; // Set winner to Black's username
-                    mainTitle = 'Black Wins'; // Display "Black Wins" as main title
-                    subtitle = 'By resignation'; // Show "By resignation" as subtitle
-                } else {
-                    // Black resigned, so White won
-                    winner = this.boardDTO.whitePlayerUsername; // Set winner to White's username
-                    mainTitle = 'White Wins'; // Display "White Wins" as main title
-                    subtitle = 'By resignation'; // Show "By resignation" as subtitle
+                    // Black's turn but checkmate, so white won
+                    winner = this.boardDTO.whitePlayerUsername;
                 }
             } else if (this.gameStatus === 'DRAW') {
-                // Draw by agreement - both players agreed to a draw
-                winner = 'Draw'; // No winner, it's a draw
-                mainTitle = 'Draw'; // Display "Draw" as main title
-                subtitle = 'By agreement'; // Show "By agreement" as subtitle
-            } else if (this.gameStatus === 'STALEMATE') {
-                // Stalemate occurs when a player has no legal moves but their king is not in check
-                winner = 'Draw'; // No winner, it's a draw
-                mainTitle = 'Draw'; // Display "Draw" as main title
-                subtitle = 'By stalemate'; // Show "By stalemate" as subtitle
-            } else if (this.gameStatus === 'THREEFOLD_REPETITION') {
-                // Threefold repetition occurs when the same position occurs three times
-                winner = 'Draw'; // No winner, it's a draw
-                mainTitle = 'Draw'; // Display "Draw" as main title
-                subtitle = 'By threefold repetition'; // Show "By threefold repetition" as subtitle
-            } else if (this.gameStatus === 'FIFTY_MOVE_RULE') {
-                // Fifty move rule: if 50 consecutive moves are made without capture or pawn move
-                winner = 'Draw'; // No winner, it's a draw
-                mainTitle = 'Draw'; // Display "Draw" as main title
-                subtitle = 'By fifty move rule'; // Show "By fifty move rule" as subtitle
-            } else if (this.gameStatus === 'INSUFFICIENT_MATERIAL') {
-                // Insufficient material: neither player has enough pieces to checkmate
-                winner = 'Draw'; // No winner, it's a draw
-                mainTitle = 'Draw'; // Display "Draw" as main title
-                subtitle = 'By insufficient material'; // Show "By insufficient material" as subtitle
-            } else if (this.gameStatus === 'MUTUAL_AGREEMENT') {
-                // Mutual agreement: both players agreed to a draw
-                winner = 'Draw'; // No winner, it's a draw
-                mainTitle = 'Draw'; // Display "Draw" as main title
-                subtitle = 'By mutual agreement'; // Show "By mutual agreement" as subtitle
-            } else {
-                // Fallback for unknown game status (shouldn't normally occur)
-                winner = 'Unknown'; // Unknown winner
-                mainTitle = 'Game Over'; // Display "Game Over" as main title
-                subtitle = 'Unknown reason'; // Show "Unknown reason" as subtitle
+                winner = 'Draw';
+            } else if (this.gameStatus === 'RESIGNED') {
+                // For resignation, the current player resigned, so opponent wins
+                if (this.boardDTO.currentPlayer.alliance === 'WHITE') {
+                    // White resigned, so black won
+                    winner = this.boardDTO.blackPlayerUsername;
+                } else {
+                    // Black resigned, so white won
+                    winner = this.boardDTO.whitePlayerUsername;
+                }
+            } else if(this.gameStatus === 'STALEMATE') {
+                this.statusElement.textContent = 'Draw by stalemate!';
+                winner = 'Draw';
+            } else if(this.gameStatus === 'THREEFOLD_REPETITION') {
+                this.statusElement.textContent = 'Draw by threefold repetition!';
+                winner = 'Draw';
+            } else if(this.gameStatus === 'FIFTY_MOVE_RULE') {
+                this.statusElement.textContent = 'Draw by fifty move rule!';
+                winner = 'Draw';
+            } else if(this.gameStatus === 'INSUFFICIENT_MATERIAL') {
+                this.statusElement.textContent = 'Draw by insufficient material!';
+                winner = 'Draw';
+            } else if(this.gameStatus === 'MUTUAL_AGREEMENT') {
+                this.statusElement.textContent = 'Draw by mutual agreement!';
+                winner = 'Draw';
             }
 
-            // Determine the chess notation result (1-0, 0-1, or Draw)
-            // This is used for chess notation and display purposes
+            // Determine result based on winner vs current player
             if (winner === 'Draw') {
-                result = 'Draw'; // Draw games are simply marked as "Draw"
+                result = 'Draw';
             } else {
-                // For wins, determine if the current player won or lost
                 // Check if winner's alliance matches current player's alliance
-                const winnerAlliance = (winner === this.boardDTO.whitePlayerUsername) ? 'WHITE' : 'BLACK'; // Determine winner's color
-                const currentPlayerAlliance = this.playerColor; // Get current player's color
+                const winnerAlliance = (winner === this.boardDTO.whitePlayerUsername) ? 'WHITE' : 'BLACK';
+                const currentPlayerAlliance = this.playerColor;
                 
                 if (winnerAlliance === currentPlayerAlliance) {
-                    result = '1-0'; // Current player won (1-0 means White wins, but we show it for current player)
+                    result = '1-0'; // Current player won
                 } else {
-                    result = '0-1'; // Opponent won (0-1 means Black wins, but we show it for opponent)
+                    result = '0-1'; // Opponent won
                 }
             }
 
-            // Set up player display information for the popup
-            // Always show current player on left, opponent on right for consistency
-            const currentPlayerUsername = (this.playerColor === 'WHITE') ? this.boardDTO.whitePlayerUsername : this.boardDTO.blackPlayerUsername; // Get current player's username
-            const opponentUsername = (this.playerColor === 'WHITE') ? this.boardDTO.blackPlayerUsername : this.boardDTO.whitePlayerUsername; // Get opponent's username
-            const currentPlayerColor = (this.playerColor === 'WHITE') ? 'white' : 'black'; // Get current player's color for display
-            const opponentColor = (this.playerColor === 'WHITE') ? 'black' : 'white'; // Get opponent's color for display
+            // Always show current player on left, opponent on right
+            const currentPlayerUsername = (this.playerColor === 'WHITE') ? this.boardDTO.whitePlayerUsername : this.boardDTO.blackPlayerUsername;
+            const opponentUsername = (this.playerColor === 'WHITE') ? this.boardDTO.blackPlayerUsername : this.boardDTO.whitePlayerUsername;
+            const currentPlayerColor = (this.playerColor === 'WHITE') ? 'white' : 'black';
+            const opponentColor = (this.playerColor === 'WHITE') ? 'black' : 'white';
 
             this.showGameEndPopup(
                 winner,
@@ -1274,8 +1236,7 @@ class ChessGame {
                 currentPlayerColor,     // Current player's color
                 opponentUsername,       // Always opponent on right
                 opponentColor,          // Opponent's color
-                mainTitle,              // Main title (Black Wins/White Wins/Draw)
-                subtitle                // Subtitle (By checkmate, By timeout, etc.)
+                this.gameStatus === 'TIME_OUT' ? 'by timeout' : 'by checkmate'
             );
         }
         
@@ -1424,8 +1385,7 @@ class ChessGame {
             tile.piece.pieceSymbol === 'KING' && 
             tile.piece.pieceAlliance === currentPlayerAlliance
         );
-        
-        
+                
         if (kingTile) {
             // Find the corresponding DOM tile and add the check highlighting class
             const tileElement = this.board.querySelector(`.tile[data-position='${kingTile.tileCoordinate}']`);
@@ -1446,30 +1406,17 @@ class ChessGame {
         });
     }
 
-    /**
-     * Shows a popup when the game ends displaying the result and players
-     * @param {string} winner - The username of the winner or 'Draw' if it's a draw
-     * @param {string} result - The chess notation result (1-0, 0-1, or Draw)
-     * @param {string} currentPlayerUsername - The current player's username
-     * @param {string} currentPlayerColor - The current player's color ('white' or 'black')
-     * @param {string} opponentUsername - The opponent's username
-     * @param {string} opponentColor - The opponent's color ('white' or 'black')
-     * @param {string} mainTitle - The main title to display (e.g., 'Black Wins', 'White Wins', 'Draw')
-     * @param {string} subtitle - The subtitle explaining how the game ended (e.g., 'By checkmate', 'By timeout')
-     */
-    showGameEndPopup(winner, result, currentPlayerUsername, currentPlayerColor, opponentUsername, opponentColor, mainTitle, subtitle) {
-        // Remove any existing game end popup to avoid duplicates
+    showGameEndPopup(winner, result, currentPlayerUsername, currentPlayerColor, opponentUsername, opponentColor, subtitle) {
+        // Remove existing popup if any
         let existing = document.getElementById('game-end-popup');
         if (existing) existing.remove();
 
-        // Create the popup container element
+        // Create popup
         const popup = document.createElement('div');
-        popup.id = 'game-end-popup'; // Set unique ID for easy reference
-        
-        // Create the popup HTML structure with all the game end information
+        popup.id = 'game-end-popup';
         popup.innerHTML = `
             <button class="popup-close" id="close-game-end-popup" title="Close">&#10005;</button>
-            <div class="popup-title">${mainTitle}</div>
+            <div class="popup-title">Game Over</div>
             <div class="popup-subtitle">${subtitle}</div>
             <div class="popup-players">
                 <div class="popup-player ${winner === currentPlayerUsername ? 'popup-winner' : ''}">
@@ -1483,16 +1430,12 @@ class ChessGame {
                 </div>
             </div>
         `;
-        
-        // Add the popup to the document body so it appears on top of everything
         document.body.appendChild(popup);
 
-        // Set up the close button functionality
-        // When clicked, it removes the popup from the DOM
+        // Close button
         document.getElementById('close-game-end-popup').onclick = () => popup.remove();
 
-        // Add CSS styles for the popup if they haven't been added yet
-        // This ensures the popup looks good and is properly positioned
+        // Add styles if not present
         if (!document.getElementById('game-end-popup-style')) {
             const style = document.createElement('style');
             style.id = 'game-end-popup-style';
@@ -2147,12 +2090,6 @@ class ChessGame {
         const piece = sourceTile.querySelector('.piece');
         if (!piece) return;
         
-        // Remove any existing piece from target tile first (for captures)
-        const existingPiece = targetTile.querySelector('.piece');
-        if (existingPiece) {
-            existingPiece.remove(); // Remove the captured piece from DOM
-        }
-        
         // Move the piece visually to the target tile
         targetTile.appendChild(piece);
         
@@ -2161,7 +2098,7 @@ class ChessGame {
         const targetTileData = this.boardDTO.tiles.find(t => t.tileCoordinate === targetCoordinate);
         
         if (sourceTileData && targetTileData) {
-            // Move piece data (this will replace any existing piece data)
+            // Move piece data
             targetTileData.piece = sourceTileData.piece;
             targetTileData.tileOccupied = true;
             
@@ -2184,14 +2121,10 @@ class ChessGame {
                 this.statusElement.textContent = 'Your turn to move';
                 this.statusElement.classList.add('your-turn');
                 this.isPlayerTurn = true;
-                // Remove 'not-your-turn' class if it's your turn
-                this.board.classList.remove('not-your-turn');
             } else {
                 this.statusElement.textContent = `Waiting for ${this.boardDTO.currentPlayer.alliance.toLowerCase()} to move`;
                 this.statusElement.classList.remove('your-turn');
                 this.isPlayerTurn = false;
-                // Add 'not-your-turn' class if it's not your turn
-                this.board.classList.add('not-your-turn');
             }
         }
     }
