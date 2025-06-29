@@ -194,7 +194,7 @@
                                     <div class="game-row-container">
                                         <div class="game-row game-row-header">
                                             <span>Players</span>
-                                            <span>Status</span>
+                                            <span>Result</span>
                                             <span class="game-moves">Moves</span>
                                             <span>Date</span>
                                         </div>
@@ -207,7 +207,34 @@
                                                 <span> vs </span>
                                                 <span th:text="${game.blackPlayerUsername}"></span>
                                             </span>
-                                            <span class="game-status" th:classappend="${game.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${game.status}"></span>
+                                            <span class="game-result">
+                                                <!-- Check if game is completed -->
+                                                <span th:if="${game.status != 'IN_PROGRESS'}">
+                                                    <!-- Check if there's a winner (not a draw) -->
+                                                    <span th:if="${game.winnerId != null}">
+                                                        <!-- Determine if current user is the winner -->
+                                                        <span th:if="${game.winnerId == userId}">
+                                                            <!-- Current user won - show 1-0 or 0-1, then green + square -->
+                                                            <span th:text="${game.winnerId == game.whitePlayerId ? '1-0' : '0-1'}"></span>
+                                                            <span class="result-square win">+</span>
+                                                        </span>
+                                                        <span th:unless="${game.winnerId == userId}">
+                                                            <!-- Current user lost - show 1-0 or 0-1, then red - square -->
+                                                            <span th:text="${game.winnerId == game.whitePlayerId ? '1-0' : '0-1'}"></span>
+                                                            <span class="result-square loss">-</span>
+                                                        </span>
+                                                    </span>
+                                                    <!-- Game ended in draw -->
+                                                    <span th:unless="${game.winnerId != null}">
+                                                        <span>½-½</span>
+                                                        <span class="result-square draw">=</span>
+                                                    </span>
+                                                </span>
+                                                <!-- Game still in progress -->
+                                                <span th:unless="${game.status != 'IN_PROGRESS'}" class="status-in-progress">
+                                                    <span th:text="${game.status}"></span>
+                                                </span>
+                                            </span>
                                             <span class="game-moves" th:text="${game.moveCount}"></span>
                                             <span th:text="${#temporals.format(game.createdAt, 'yyyy-MM-dd')}"></span>
                                         </div>
