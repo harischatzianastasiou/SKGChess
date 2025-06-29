@@ -120,29 +120,27 @@ class ChessGame {
         this.chatModalSendBtn.addEventListener('click', () => this.sendChatMessageFromModal());
         
         // Chat modal open/close handlers
-        this.chatModalCloseBtn.addEventListener('click', () => this.closeChatModal());
-        this.chatModal.addEventListener('click', (e) => {
-            if (e.target === this.chatModal) {
-                this.closeChatModal();
-            }
+        this.chatModalCloseBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent event bubbling
+            this.toggleChatModal();
         });
         
-        // Make chat section clickable to open modal
+        // Make chat section clickable to toggle modal
         const chatSection = document.querySelector('.game-chat-section');
         if (chatSection) {
             chatSection.addEventListener('click', (e) => {
-                // Don't open modal if clicking on input or button
+                // Don't toggle modal if clicking on input or button
                 if (e.target.closest('.chat-input') || e.target.closest('input') || e.target.closest('button')) {
                     return;
                 }
-                this.openChatModal();
+                this.toggleChatModal();
             });
         }
         
         // Close modal on escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.chatModal.classList.contains('show')) {
-                this.closeChatModal();
+                this.toggleChatModal();
             }
         });
         
@@ -2397,17 +2395,31 @@ class ChessGame {
     }
 
     // Chat Modal Methods
-    openChatModal() {
-        // Sync existing messages from small chat to modal
-        this.syncChatMessages();
+    toggleChatModal() {
+        const isExpanding = !this.chatModal.classList.contains('show');
+        const chatSection = document.querySelector('.game-chat-section');
         
-        // Show the modal
-        this.chatModal.classList.add('show');
+        if (isExpanding) {
+            // Sync existing messages from small chat to modal when expanding
+            this.syncChatMessages();
+            
+            // Focus on the input field after a short delay
+            setTimeout(() => {
+                this.chatModalInput.focus();
+            }, 100);
+            
+            // Update tooltip to show "Click to shrink"
+            if (chatSection) {
+                chatSection.style.setProperty('--tooltip-text', '"Click to shrink"');
+            }
+        } else {
+            // Update tooltip to show "Click to enlarge"
+            if (chatSection) {
+                chatSection.style.setProperty('--tooltip-text', '"Click to enlarge"');
+            }
+        }
         
-        // Focus on the input field
-        setTimeout(() => {
-            this.chatModalInput.focus();
-        }, 100);
+        this.chatModal.classList.toggle('show');
     }
     
     syncChatMessages() {
@@ -2448,10 +2460,6 @@ class ChessGame {
         this.chatModalMessages.scrollTop = this.chatModalMessages.scrollHeight;
     }
 
-    closeChatModal() {
-        this.chatModal.classList.remove('show');
-    }
-
     sendChatMessageFromModal() {
         const message = this.chatModalInput.value.trim();
         if (!message || !this.stompClient || !this.stompClient.connected) return;
@@ -2465,7 +2473,7 @@ class ChessGame {
         
         this.stompClient.send('/app/chat/' + this.gameId, {}, JSON.stringify(chatMessage));
         this.chatModalInput.value = '';
-        this.closeChatModal();
+        // Don't close the modal - let user continue chatting
     }
 }
 
