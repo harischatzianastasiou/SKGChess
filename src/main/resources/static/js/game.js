@@ -2051,7 +2051,7 @@ class ChessGame {
 
             // Determine result based on winner vs current player
             if (winner === 'Draw') {
-                result = 'Draw';
+                result = '½-½'; // Use chess notation for draw instead of "Draw" to avoid redundancy
             } else {
                 // Check if winner's alliance matches current player's alliance
                 const winnerAlliance = (winner === this.boardDTO.whitePlayerUsername) ? 'WHITE' : 'BLACK';
@@ -2138,35 +2138,31 @@ class ChessGame {
             } else {
                 // Draw game or no winner ID
                 if (winner === 'Draw') {
-                    // Handle different types of draws
+                    // Handle different types of draws - use consistent format like wins
+                    popupTitle = 'Draw'; // Always show "Draw" as title
+                    
+                    // Create subtitle based on draw reason
                     switch (this.gameStatus) {
                         case 'STALEMATE':
-                            popupTitle = 'Draw by stalemate';
-                            popupSubtitle = '';
+                            popupSubtitle = 'by stalemate';
                             break;
                         case 'THREEFOLD_REPETITION':
-                            popupTitle = 'Draw by threefold repetition';
-                            popupSubtitle = '';
+                            popupSubtitle = 'by threefold repetition';
                             break;
                         case 'FIFTY_MOVE_RULE':
-                            popupTitle = 'Draw by fifty move rule';
-                            popupSubtitle = '';
+                            popupSubtitle = 'by fifty move rule';
                             break;
                         case 'INSUFFICIENT_MATERIAL':
-                            popupTitle = 'Draw by insufficient material';
-                            popupSubtitle = '';
+                            popupSubtitle = 'by insufficient material';
                             break;
                         case 'MUTUAL_AGREEMENT':
-                            popupTitle = 'Draw by mutual agreement';
-                            popupSubtitle = '';
+                            popupSubtitle = 'by mutual agreement';
                             break;
                         case 'DRAW':
-                            popupTitle = 'Draw';
-                            popupSubtitle = '';
+                            popupSubtitle = 'by agreement';
                             break;
                         default:
-                            popupTitle = 'Game Over';
-                            popupSubtitle = this.gameStatus === 'TIME_OUT' ? 'by timeout' : 'by checkmate';
+                            popupSubtitle = 'by game end';
                     }
                 } else {
                     // No winner ID but not a draw - fallback
