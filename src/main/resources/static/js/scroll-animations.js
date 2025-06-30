@@ -180,6 +180,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return window.innerWidth > 1000;
     }
     
+    // Function to detect if user is using a touchpad
+    function isTouchpad(event) {
+        // Simple and reliable touchpad detection
+        const isSmallDelta = Math.abs(event.deltaY) < 40;
+        const isDeltaMode = event.deltaMode === 0;
+        
+        // Touchpad typically has small deltaY and deltaMode 0
+        return isSmallDelta && isDeltaMode;
+    }
+    
     // Handle wheel events for element-by-element scrolling
     function wheelHandler(event) {
         // Check global scroll lock flag first - if any popup/dropdown is open, disable section scrolling
@@ -194,6 +204,12 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         if (!isSectionScrollEnabled()) return; // Only enable on large screens
+        
+        // Disable section-based scrolling for touchpad users
+        if (isTouchpad(event)) {
+            return;
+        }
+        
         // Check if newspaper overlay is active
         const newspaperOverlay = document.getElementById('newspaperOverlay');
         if (newspaperOverlay && newspaperOverlay.style.display === 'block') {
