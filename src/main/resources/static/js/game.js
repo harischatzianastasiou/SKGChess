@@ -147,6 +147,9 @@ class ChessGame {
         // Initialize the game asynchronously
         this.initializeGame();
         
+        // Initialize mobile keyboard handling
+        this.handleMobileKeyboard();
+        
         // Add sound effects
         this.sounds = {
             move: new Audio('/audio/Move.wav'),
@@ -3285,18 +3288,164 @@ class ChessGame {
 
     sendChatMessageFromModal() {
         const message = this.chatModalInput.value.trim();
-        if (!message || !this.stompClient || !this.stompClient.connected) return;
-        
-        const chatMessage = {
-            gameId: this.gameId,
-            message: message,
-            sender: this.username,
-            timestamp: Date.now()
+        if (message) {
+            this.sendChatMessage(message);
+            this.chatModalInput.value = '';
+        }
+    }
+    
+    // Mobile keyboard handling for popups
+    handleMobileKeyboard() {
+        // Add body class when popup is open to prevent scrolling
+        this.addPopupOpenClass = function() {
+            document.body.classList.add('popup-open');
         };
         
-        this.stompClient.send('/app/chat/' + this.gameId, {}, JSON.stringify(chatMessage));
-        this.chatModalInput.value = '';
-        // Don't close the modal - let user continue chatting
+        // Remove body class when popup is closed
+        this.removePopupOpenClass = function() {
+            document.body.classList.remove('popup-open');
+        };
+        
+        // Handle viewport height changes (keyboard open/close)
+        this.handleViewportChange = function() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        };
+        
+        // Initialize viewport height
+        this.handleViewportChange();
+        
+        // Listen for viewport changes
+        window.addEventListener('resize', this.handleViewportChange.bind(this));
+        window.addEventListener('orientationchange', this.handleViewportChange.bind(this));
+        
+        // Handle input focus to scroll into view
+        this.handleInputFocus = function(event) {
+            const input = event.target;
+            const popup = input.closest('.chat-modal, .game-creation-popup, .join-game-popup');
+            
+            if (popup && window.innerWidth <= 768) {
+                // Small delay to ensure keyboard is open
+                setTimeout(() => {
+                    input.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'center',
+                        inline: 'nearest'
+                    });
+                }, 300);
+            }
+        };
+        
+        // Add focus listeners to all inputs in popups
+        document.addEventListener('focusin', (event) => {
+            if (event.target.matches('input, textarea, select')) {
+                this.handleInputFocus(event);
+            }
+        });
+        
+        // Handle popup open events
+        this.handlePopupOpen = function(popupElement) {
+            this.addPopupOpenClass();
+            
+            // Focus management for mobile
+            if (window.innerWidth <= 768) {
+                // Find first input in popup
+                const firstInput = popupElement.querySelector('input, textarea, select');
+                if (firstInput) {
+                    // Small delay to ensure popup is fully rendered
+                    setTimeout(() => {
+                        firstInput.focus();
+                    }, 100);
+                }
+            }
+        };
+        
+        // Handle popup close events
+        this.handlePopupClose = function() {
+            this.removePopupOpenClass();
+            
+            // Restore focus to previous element or body
+            if (document.activeElement && document.activeElement.blur) {
+                document.activeElement.blur();
+            }
+        };
+        
+        // Override chat modal toggle to include keyboard handling
+        const originalToggleChatModal = this.toggleChatModal.bind(this);
+        this.toggleChatModal = function() {
+            if (this.chatModal.classList.contains('show')) {
+                // Closing modal
+                originalToggleChatModal();
+                this.handlePopupClose();
+            } else {
+                // Opening modal
+                originalToggleChatModal();
+                this.handlePopupOpen(this.chatModal);
+            }
+        };
+        
+        // Handle game creation popup
+        const createGameBtn = document.getElementById('createGameBtn');
+        if (createGameBtn) {
+            createGameBtn.addEventListener('click', () => {
+                setTimeout(() => {
+                    const popup = document.querySelector('.game-creation-popup');
+                    if (popup) {
+                        this.handlePopupOpen(popup);
+                    }
+                }, 100);
+            });
+        }
+        
+        // Handle join game popup
+        const joinGameBtn = document.getElementById('joinGameBtn');
+        if (joinGameBtn) {
+            joinGameBtn.addEventListener('click', () => {
+                setTimeout(() => {
+                    const popup = document.getElementById('joinGameDialog');
+                    if (popup) {
+                        this.handlePopupOpen(popup);
+                    }
+                }, 100);
+            });
+        }
+        
+        // Handle popup close buttons
+        document.addEventListener('click', (event) => {
+            if (event.target.matches('.chat-modal-close, .close-btn, .btn-cancel')) {
+                this.handlePopupClose();
+            }
+        });
+        
+        // Handle escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                const openPopup = document.querySelector('.chat-modal.show, .game-creation-popup.show, .join-game-popup.show');
+                if (openPopup) {
+                    this.handlePopupClose();
+                }
+            }
+        });
+        
+        // Prevent zoom on input focus (iOS)
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                if (window.innerWidth <= 768) {
+                    // Prevent zoom by setting font-size to 16px or larger
+                    const currentFontSize = window.getComputedStyle(this).fontSize;
+                    const fontSizeNum = parseFloat(currentFontSize);
+                    if (fontSizeNum < 16) {
+                        this.style.fontSize = '16px';
+                    }
+                }
+            });
+            
+            input.addEventListener('blur', function() {
+                // Restore original font size
+                this.style.fontSize = '';
+            });
+        });
     }
 }
 
