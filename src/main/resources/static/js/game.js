@@ -2361,11 +2361,12 @@ class ChessGame {
         // New Game button
         document.getElementById('new-game-btn').onclick = () => this.handleNewGame();
 
-        // Add styles if not present
-        if (!document.getElementById('game-end-popup-style')) {
-            const style = document.createElement('style');
-            style.id = 'game-end-popup-style';
-            style.innerHTML = `
+        // Add styles: always remove old style and add new one for latest mobile support
+        const oldStyle = document.getElementById('game-end-popup-style');
+        if (oldStyle) oldStyle.remove();
+        const style = document.createElement('style');
+        style.id = 'game-end-popup-style';
+        style.innerHTML = `
             #game-end-popup {
                 position: fixed;
                 top: 50%; left: 50%;
@@ -2510,20 +2511,118 @@ class ChessGame {
                 0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
                 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
             }
-            
+            /* --- MOBILE STYLES --- */
             @media (max-width: 768px) {
+                #game-end-popup {
+                    width: 95vw;
+                    max-width: 95vw;
+                    max-height: 85dvh;
+                    margin: 0;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%) scale(0.92);
+                    border-radius: 12px;
+                    overflow: hidden;
+                    position: fixed;
+                    padding: 1.1rem 0.7rem 1rem 0.7rem;
+                    min-width: unset;
+                }
+                #game-end-popup .popup-close {
+                    width: 1.7rem;
+                    height: 1.7rem;
+                    font-size: 1.1rem;
+                    top: 0.5rem;
+                    right: 0.5rem;
+                }
+                #game-end-popup .popup-title {
+                    font-size: 1.3rem;
+                    margin-bottom: 0.1rem;
+                    letter-spacing: 0.3px;
+                }
+                #game-end-popup .popup-subtitle {
+                    font-size: 0.95rem;
+                    margin-bottom: 0.7rem;
+                }
+                #game-end-popup .popup-players {
+                    gap: 1rem;
+                    margin-top: 0.7rem;
+                    margin-bottom: 1rem;
+                    flex-wrap: wrap;
+                    justify-content: center;
+                }
+                #game-end-popup .popup-player {
+                    min-width: 55px;
+                }
+                #game-end-popup .popup-color {
+                    width: 15px;
+                    height: 15px;
+                    margin-bottom: 0.2rem;
+                }
+                #game-end-popup .popup-username {
+                    font-size: 0.85rem;
+                    margin-top: 0.05rem;
+                }
+                #game-end-popup .popup-result-center {
+                    font-size: 1.1rem;
+                    margin: 0 0.5rem;
+                }
                 #game-end-popup .popup-actions {
                     flex-direction: column;
-                    gap: 0.8rem;
+                    gap: 0.5rem;
+                    margin-top: 0.7rem;
                 }
                 #game-end-popup .popup-action-btn {
                     width: 100%;
-                    padding: 14px 20px;
+                    padding: 10px 10px;
+                    font-size: 0.85rem;
+                    min-width: unset;
                 }
             }
-            `;
-            document.head.appendChild(style);
-        }
+            @media (max-width: 480px) {
+                #game-end-popup {
+                    width: 99vw;
+                    max-height: 75vh;
+                    border-radius: 7px;
+                    padding: 0.7rem 0.3rem 0.7rem 0.3rem;
+                }
+                #game-end-popup .popup-title {
+                    font-size: 1.05rem;
+                }
+                #game-end-popup .popup-subtitle {
+                    font-size: 0.8rem;
+                    margin-bottom: 0.5rem;
+                }
+                #game-end-popup .popup-players {
+                    gap: 0.5rem;
+                    margin-top: 0.5rem;
+                    margin-bottom: 0.7rem;
+                }
+                #game-end-popup .popup-player {
+                    min-width: 40px;
+                }
+                #game-end-popup .popup-color {
+                    width: 12px;
+                    height: 12px;
+                    margin-bottom: 0.1rem;
+                }
+                #game-end-popup .popup-username {
+                    font-size: 0.7rem;
+                }
+                #game-end-popup .popup-result-center {
+                    font-size: 0.9rem;
+                    margin: 0 0.3rem;
+                }
+                #game-end-popup .popup-actions {
+                    gap: 0.3rem;
+                    margin-top: 0.5rem;
+                }
+                #game-end-popup .popup-action-btn {
+                    padding: 8px 6px;
+                    font-size: 0.75rem;
+                }
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     // Update the playSound method with better debugging

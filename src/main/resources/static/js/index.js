@@ -567,13 +567,30 @@ function showGameCreationPopup() {
         if (popup) {
             popup.classList.add('show');
             
-            // On mobile, scroll to bottom to ensure create button is visible
+            // Enhanced mobile handling
             if (window.innerWidth <= 768) {
+                // Ensure popup is properly centered and visible on mobile
                 setTimeout(() => {
+                    // Scroll to top of popup body to show the form fields first
                     const popupBody = popup.querySelector('.popup-body');
                     if (popupBody) {
-                        popupBody.scrollTop = popupBody.scrollHeight;
+                        popupBody.scrollTop = 0;
                     }
+                    
+                    // Focus on the search input after a short delay
+                    setTimeout(() => {
+                        const opponentSearch = document.getElementById('opponentSearch');
+                        if (opponentSearch) {
+                            opponentSearch.focus();
+                            // On mobile, scroll the input into view if needed
+                            if (opponentSearch.scrollIntoView) {
+                                opponentSearch.scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'center' 
+                                });
+                            }
+                        }
+                    }, 100);
                 }, 200);
             }
         }
@@ -1328,13 +1345,51 @@ function showJoinGameDialog() {
         dialog.classList.add('active');
         overlay.classList.add('active');
         
+        // Enhanced mobile handling
+        if (window.innerWidth <= 768) {
+            // Ensure dialog is properly centered and visible on mobile
+            setTimeout(() => {
+                // Scroll to top of dialog body to show content first
+                const dialogBody = dialog.querySelector('.popup-body');
+                if (dialogBody) {
+                    dialogBody.scrollTop = 0;
+                }
+                
+                // Focus on the first interactive element if available
+                setTimeout(() => {
+                    const firstButton = dialog.querySelector('.btn-accept, .btn-decline');
+                    if (firstButton) {
+                        firstButton.focus();
+                    }
+                }, 100);
+            }, 200);
+        }
+        
         // Load pending invitations
         loadPendingInvitations(username);
         
         // Prevent body scrolling
         document.body.style.overflow = 'hidden';
-    } else {
         
+        // Add escape key listener for mobile
+        const handleEscape = (e) => {
+            if (e.key === 'Escape') {
+                closeJoinGameDialog();
+                document.removeEventListener('keydown', handleEscape);
+            }
+        };
+        document.addEventListener('keydown', handleEscape);
+        
+        // Add click outside to close (for overlay)
+        const handleOutsideClick = (e) => {
+            if (e.target === overlay) {
+                closeJoinGameDialog();
+                overlay.removeEventListener('click', handleOutsideClick);
+            }
+        };
+        overlay.addEventListener('click', handleOutsideClick);
+    } else {
+        console.error('Join game dialog or overlay not found');
     }
 }
 
@@ -1510,6 +1565,24 @@ function closeJoinGameDialog() {
         
         // Restore body scrolling
         document.body.style.overflow = '';
+        
+        // Enhanced mobile cleanup
+        if (window.innerWidth <= 768) {
+            // Ensure proper cleanup on mobile
+            setTimeout(() => {
+                // Reset any scroll positions
+                const dialogBody = dialog.querySelector('.popup-body');
+                if (dialogBody) {
+                    dialogBody.scrollTop = 0;
+                }
+                
+                // Clear any focus states
+                const focusedElement = dialog.querySelector(':focus');
+                if (focusedElement) {
+                    focusedElement.blur();
+                }
+            }, 100);
+        }
     }
 }
 
@@ -2263,6 +2336,9 @@ function setupCustomDropdown() {
     
     if (!trigger || !menu || !hiddenInput) return;
 
+    // Enhanced mobile handling for dropdown
+    const isMobile = window.innerWidth <= 768;
+    
     // Prevent page scroll when scrolling inside the time control dropdown menu, but allow page scroll at the edges
     menu.addEventListener('wheel', function(e) {
       // Only if scrollable
@@ -2285,18 +2361,44 @@ function setupCustomDropdown() {
       }
     }, { passive: false });
     
+    // Add touch event handling for mobile
+    if (isMobile) {
+        let startY = 0;
+        let startScrollTop = 0;
+        
+        menu.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].clientY;
+            startScrollTop = menu.scrollTop;
+        }, { passive: true });
+        
+        menu.addEventListener('touchmove', function(e) {
+            const deltaY = startY - e.touches[0].clientY;
+            menu.scrollTop = startScrollTop + deltaY;
+            
+            // Prevent page scroll when scrolling within dropdown
+            if (menu.scrollHeight > menu.clientHeight) {
+                e.stopPropagation();
+            }
+        }, { passive: false });
+    }
+    
     // Helper to disable/enable all page scroll
     function setPageScrollDisabled(disabled) {
       document.body.style.overflow = disabled ? 'hidden' : '';
       document.documentElement.style.overflow = disabled ? 'hidden' : '';
       if (disabled) {
         window.addEventListener('wheel', blockScroll, { passive: false });
-        window.addEventListener('touchmove', blockScroll, { passive: false });
+        if (isMobile) {
+          window.addEventListener('touchmove', blockScroll, { passive: false });
+        }
       } else {
         window.removeEventListener('wheel', blockScroll, { passive: false });
-        window.removeEventListener('touchmove', blockScroll, { passive: false });
+        if (isMobile) {
+          window.removeEventListener('touchmove', blockScroll, { passive: false });
+        }
       }
     }
+    
     function blockScroll(e) {
       e.preventDefault();
     }
@@ -2308,6 +2410,22 @@ function setupCustomDropdown() {
         const isOpen = !menu.classList.contains('show');
         trigger.classList.toggle('active');
         menu.classList.toggle('show');
+        
+        // On mobile, ensure dropdown is properly positioned
+        if (isMobile && isOpen) {
+            setTimeout(() => {
+                // Ensure dropdown is visible within viewport
+                const rect = menu.getBoundingClientRect();
+                const viewportHeight = window.innerHeight;
+                
+                if (rect.bottom > viewportHeight) {
+                    // Adjust position if dropdown goes below viewport
+                    const overflow = rect.bottom - viewportHeight;
+                    menu.style.maxHeight = `${200 - overflow}px`;
+                }
+            }, 10);
+        }
+        
         setPageScrollDisabled(isOpen);
     });
 
@@ -2371,17 +2489,18 @@ function setupCustomDropdown() {
       }
     }
 
-    function setPageScrollDisabled(disabled) {
-      document.body.style.overflow = disabled ? 'hidden' : '';
-      document.documentElement.style.overflow = disabled ? 'hidden' : '';
-      if (disabled) {
-        window.addEventListener('wheel', blockScrollIfDropdown, { passive: false });
-        window.addEventListener('touchmove', blockScrollIfDropdown, { passive: false });
-      } else {
-        window.removeEventListener('wheel', blockScrollIfDropdown, { passive: false });
-        window.removeEventListener('touchmove', blockScrollIfDropdown, { passive: false });
-      }
-    }
+    // Remove duplicate function definition
+    // function setPageScrollDisabled(disabled) {
+    //   document.body.style.overflow = disabled ? 'hidden' : '';
+    //   document.documentElement.style.overflow = disabled ? 'hidden' : '';
+    //   if (disabled) {
+    //     window.addEventListener('wheel', blockScrollIfDropdown, { passive: false });
+    //     window.addEventListener('touchmove', blockScrollIfDropdown, { passive: false });
+    //   } else {
+    //     window.removeEventListener('wheel', blockScrollIfDropdown, { passive: false });
+    //     window.removeEventListener('touchmove', blockScrollIfDropdown, { passive: false });
+    //   }
+    // }
 }
 
 // Function to check form validity and enable/disable create button

@@ -1205,7 +1205,7 @@
 
 /* Enlarged Chat Modal */
 .chat-modal {
-    position: absolute;
+    position: absolute; /* Keep absolute positioning for desktop */
     top: 0;
     left: 0;
     width: 100%;
@@ -1341,8 +1341,8 @@
 .chat-modal-input {
     display: flex;
     gap: 8px;
-    align-items: center;
-    padding: 12px;
+    align-items: flex-start; /* Move elements to the top of the container */
+    padding: 10px 12px; /* Reduce top/bottom padding to move everything up */
     background: rgba(42, 41, 43, 0.6);
     border-radius: 10px;
     border: 1px solid rgba(107, 70, 193, 0.2);
@@ -1351,7 +1351,7 @@
 
 .chat-modal-input input {
     flex: 1;
-    padding: 10px 14px;
+    padding: 6px 14px; /* Reduce top/bottom padding to move text up */
     border-radius: 8px;
     border: 1px solid rgba(107, 70, 193, 0.3);
     background: rgba(0, 0, 0, 0.3);
@@ -1359,6 +1359,7 @@
     font-size: 0.9rem;
     transition: border-color 0.3s ease;
     min-width: 0; /* Allow input to shrink */
+    margin-top: 1px; /* Fine-tune vertical position */
 }
 
 .chat-modal-input input:focus {
@@ -1368,7 +1369,7 @@
 }
 
 .chat-modal-input button {
-    padding: 10px 12px;
+    padding: 6px 12px; /* Reduce top/bottom padding to move button up */
     border: none;
     border-radius: 8px;
     background: linear-gradient(135deg, #6b46c1, #553c9a);
@@ -1382,6 +1383,7 @@
     white-space: nowrap;
     flex-shrink: 0; /* Prevent button from shrinking */
     min-width: fit-content;
+    margin-top: 1px; /* Fine-tune vertical position to match input */
 }
 
 .chat-modal-input button:hover {
@@ -1424,43 +1426,155 @@
 
 /* Responsive design for chat modal */
 @media (max-width: 768px) {
+    .chat-modal {
+        /* Change from absolute to fixed positioning for proper mobile centering */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 95vw; /* Use viewport width for better mobile sizing */
+        height: 90vh; /* Use viewport height for better mobile sizing */
+        max-width: 400px; /* Set maximum width for larger screens */
+        max-height: 600px; /* Set maximum height for larger screens */
+        margin: 0; /* Remove any default margins */
+        border-radius: 12px; /* Keep border radius for rounded corners */
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); /* Enhanced shadow for better visibility */
+    }
+    
     .chat-modal-content {
-        width: 95%;
-        height: 90%;
-        max-height: none;
+        width: 100%; /* Use full width of the modal */
+        height: 100%; /* Use full height of the modal */
+        max-height: none; /* Remove max-height constraint */
+        border-radius: 12px; /* Match parent border radius */
+        overflow: hidden; /* Ensure content doesn't overflow */
     }
     
     .chat-modal-header {
-        padding: 16px 20px;
+        padding: 12px 16px; /* Reduce padding for mobile */
+        border-radius: 12px 12px 0 0; /* Round top corners */
     }
     
     .chat-modal-header h3 {
-        font-size: 1.2rem;
+        font-size: 1.1rem; /* Slightly smaller font for mobile */
     }
     
     .chat-modal-body {
-        padding: 16px;
+        padding: 12px; /* Reduce padding for mobile */
+        border-radius: 0 0 12px 12px; /* Round bottom corners */
     }
     
     .chat-modal-message {
-        padding: 10px 14px;
-        font-size: 0.9rem;
+        padding: 8px 12px; /* Reduce padding for mobile */
+        font-size: 0.85rem; /* Smaller font for mobile */
+        margin-bottom: 6px; /* Add some spacing between messages */
     }
     
     .chat-modal-input {
-        padding: 12px;
-        gap: 6px;
+        padding: 10px; /* Reduce padding for mobile */
+        gap: 6px; /* Reduce gap between input and button */
+        border-radius: 0 0 12px 12px; /* Round bottom corners */
     }
     
     .chat-modal-input input {
-        padding: 10px 14px;
-        font-size: 0.9rem;
+        padding: 8px 12px; /* Reduce padding for mobile */
+        font-size: 0.85rem; /* Smaller font for mobile */
+        border-radius: 6px; /* Smaller border radius */
     }
     
     .chat-modal-input button {
-        padding: 10px 12px;
-        font-size: 0.85rem;
+        padding: 8px 10px; /* Reduce padding for mobile */
+        font-size: 0.8rem; /* Smaller font for mobile */
         min-width: 44px; /* Ensure touch target size */
+        border-radius: 6px; /* Smaller border radius */
+    }
+}
+
+/* Additional mobile styles for very small screens */
+@media (max-width: 480px) {
+    .chat-modal {
+        width: 98vw; /* Use almost full viewport width */
+        height: 95vh; /* Use almost full viewport height */
+        max-width: none; /* Remove max-width constraint */
+        max-height: none; /* Remove max-height constraint */
+        border-radius: 8px; /* Smaller border radius for very small screens */
+    }
+    
+    .chat-modal-content {
+        border-radius: 8px; /* Match parent border radius */
+    }
+    
+    .chat-modal-header {
+        padding: 10px 12px; /* Further reduce padding */
+        border-radius: 8px 8px 0 0; /* Match parent border radius */
+    }
+    
+    .chat-modal-header h3 {
+        font-size: 1rem; /* Even smaller font */
+    }
+    
+    .chat-modal-body {
+        padding: 10px; /* Further reduce padding */
+        border-radius: 0 0 8px 8px; /* Match parent border radius */
+    }
+    
+    .chat-modal-message {
+        padding: 6px 10px; /* Further reduce padding */
+        font-size: 0.8rem; /* Even smaller font */
+    }
+    
+    .chat-modal-input {
+        padding: 8px; /* Further reduce padding */
+        border-radius: 0 0 8px 8px; /* Match parent border radius */
+    }
+    
+    .chat-modal-input input {
+        padding: 6px 10px; /* Further reduce padding */
+        font-size: 0.8rem; /* Even smaller font */
+    }
+    
+    .chat-modal-input button {
+        padding: 6px 8px; /* Further reduce padding */
+        font-size: 0.75rem; /* Even smaller font */
+        min-width: 40px; /* Slightly smaller touch target */
+    }
+}
+
+/* Landscape orientation adjustments for mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .chat-modal {
+        height: 85vh; /* Use less height in landscape mode */
+        max-height: 500px; /* Set maximum height for landscape */
+    }
+    
+    .chat-modal-header {
+        padding: 8px 12px; /* Reduce header padding in landscape */
+    }
+    
+    .chat-modal-header h3 {
+        font-size: 1rem; /* Smaller font in landscape */
+    }
+    
+    .chat-modal-body {
+        padding: 8px; /* Reduce body padding in landscape */
+    }
+    
+    .chat-modal-message {
+        padding: 6px 10px; /* Reduce message padding in landscape */
+        font-size: 0.8rem; /* Smaller font in landscape */
+    }
+    
+    .chat-modal-input {
+        padding: 6px; /* Reduce input padding in landscape */
+    }
+    
+    .chat-modal-input input {
+        padding: 6px 10px; /* Reduce input padding in landscape */
+        font-size: 0.8rem; /* Smaller font in landscape */
+    }
+    
+    .chat-modal-input button {
+        padding: 6px 8px; /* Reduce button padding in landscape */
+        font-size: 0.75rem; /* Smaller font in landscape */
     }
 }
 
@@ -1857,4 +1971,375 @@
         width: 100%;
         padding: 14px 24px;
     }
+}
+
+/* Mobile responsive styles for position navigation */
+@media (max-width: 768px) {
+    .position-navigation {
+        gap: 4px; /* Reduce gap between buttons on mobile */
+        margin-left: 8px; /* Reduce left margin */
+    }
+    
+    .nav-btn {
+        width: 28px; /* Smaller buttons for mobile */
+        height: 28px;
+        font-size: 0.8rem; /* Smaller font size */
+        border-radius: 4px; /* Smaller border radius */
+    }
+    
+    /* Adjust player card to accommodate smaller navigation */
+    .player-card {
+        padding: 8px 10px; /* Reduce padding to fit navigation */
+        min-height: 50px; /* Ensure minimum height for touch targets */
+    }
+    
+    .player-details h3 {
+        font-size: 0.9rem; /* Smaller player name */
+        margin-right: 8px; /* Add some space before navigation */
+    }
+    
+    .player-timer {
+        font-size: 0.9rem; /* Smaller timer text */
+        padding: 2px 6px; /* Reduce padding */
+    }
+}
+
+@media (max-width: 480px) {
+    .position-navigation {
+        gap: 2px; /* Even smaller gap for very small screens */
+        margin-left: 6px; /* Even smaller left margin */
+    }
+    
+    .nav-btn {
+        width: 24px; /* Even smaller buttons */
+        height: 24px;
+        font-size: 0.7rem; /* Even smaller font size */
+        border-radius: 3px; /* Smaller border radius */
+    }
+    
+    .player-card {
+        padding: 6px 8px; /* Even smaller padding */
+        min-height: 45px; /* Smaller minimum height */
+    }
+    
+    .player-details h3 {
+        font-size: 0.8rem; /* Even smaller player name */
+        margin-right: 6px; /* Smaller margin */
+    }
+    
+    .player-timer {
+        font-size: 0.8rem; /* Even smaller timer text */
+        padding: 1px 4px; /* Even smaller padding */
+    }
+    
+    /* Ensure the player card doesn't overflow on very small screens */
+    .current-player-info {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden; /* Prevent horizontal overflow */
+    }
+    
+    .player-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* Handle landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .position-navigation {
+        gap: 3px; /* Slightly larger gap in landscape */
+    }
+    
+    .nav-btn {
+        width: 26px; /* Slightly larger in landscape */
+        height: 26px;
+    }
+    
+    .player-card {
+        min-height: 40px; /* Smaller height in landscape */
+        padding: 6px 8px;
+    }
+}
+
+/* Ensure navigation buttons are always accessible */
+@media (max-width: 360px) {
+    .position-navigation {
+        gap: 1px; /* Minimal gap for very small screens */
+        margin-left: 4px;
+    }
+    
+    .nav-btn {
+        width: 22px; /* Very small but still touchable */
+        height: 22px;
+        font-size: 0.65rem;
+        border-radius: 2px;
+    }
+    
+    .player-card {
+        padding: 4px 6px;
+        min-height: 40px;
+    }
+    
+    .player-details h3 {
+        font-size: 0.75rem;
+        margin-right: 4px;
+    }
+    
+    .player-timer {
+        font-size: 0.75rem;
+        padding: 1px 3px;
+    }
+    
+    /* Ensure the layout works on extremely small screens */
+    .player-card {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* Left align to save space */
+        flex-wrap: nowrap;
+    }
+    
+    .player-details {
+        flex-shrink: 1;
+        min-width: 0;
+    }
+}
+
+/* Mobile responsive styles for viewing mode indicator */
+@media (max-width: 768px) {
+    .viewing-mode-indicator {
+        font-size: 0.6rem; /* Smaller font size for mobile */
+        padding: 1px 4px; /* Reduce padding */
+        border-radius: 8px; /* Smaller border radius */
+        margin-left: 6px; /* Reduce margin */
+        white-space: nowrap; /* Prevent text wrapping */
+    }
+    
+    /* Adjust position navigation when viewing mode is active */
+    .position-navigation {
+        gap: 3px; /* Further reduce gap when viewing mode is present */
+        margin-left: 6px; /* Reduce left margin */
+    }
+    
+    .nav-btn {
+        width: 26px; /* Slightly smaller buttons when viewing mode is present */
+        height: 26px;
+        font-size: 0.75rem;
+    }
+    
+    /* Ensure player card can accommodate both viewing mode and navigation */
+    .player-card {
+        padding: 6px 8px; /* Reduce padding further */
+        min-height: 48px; /* Ensure minimum height */
+        flex-wrap: wrap; /* Allow wrapping if needed */
+        gap: 4px; /* Add gap between wrapped elements */
+    }
+    
+    .player-details h3 {
+        font-size: 0.85rem; /* Smaller player name */
+        margin-right: 6px; /* Reduce margin */
+        flex-shrink: 1; /* Allow shrinking */
+    }
+    
+    .player-timer {
+        font-size: 0.85rem; /* Smaller timer text */
+        padding: 1px 4px; /* Reduce padding */
+        flex-shrink: 1; /* Allow shrinking */
+    }
+}
+
+@media (max-width: 480px) {
+    .viewing-mode-indicator {
+        font-size: 0.55rem; /* Even smaller font size */
+        padding: 1px 3px; /* Even smaller padding */
+        border-radius: 6px; /* Smaller border radius */
+        margin-left: 4px; /* Even smaller margin */
+    }
+    
+    .position-navigation {
+        gap: 1px; /* Minimal gap */
+        margin-left: 4px; /* Minimal margin */
+    }
+    
+    .nav-btn {
+        width: 22px; /* Even smaller buttons */
+        height: 22px;
+        font-size: 0.65rem;
+    }
+    
+    .player-card {
+        padding: 4px 6px; /* Minimal padding */
+        min-height: 42px; /* Smaller minimum height */
+        gap: 2px; /* Smaller gap */
+    }
+    
+    .player-details h3 {
+        font-size: 0.75rem; /* Even smaller player name */
+        margin-right: 4px; /* Minimal margin */
+    }
+    
+    .player-timer {
+        font-size: 0.75rem; /* Even smaller timer text */
+        padding: 1px 3px; /* Minimal padding */
+    }
+    
+    /* Ensure proper layout on very small screens */
+    .current-player-info {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+    }
+    
+    .player-card {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: space-between; /* Better space distribution */
+        flex-wrap: nowrap; /* Prevent wrapping on very small screens */
+    }
+    
+    /* Stack elements vertically if needed on very small screens */
+    .player-details {
+        display: flex;
+        align-items: center;
+        flex-shrink: 1;
+        min-width: 0; /* Allow shrinking */
+    }
+    
+    .player-details h3 {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 80px; /* Limit width to prevent overflow */
+    }
+}
+
+/* Handle landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .viewing-mode-indicator {
+        font-size: 0.6rem;
+        padding: 1px 4px;
+        margin-left: 5px;
+    }
+    
+    .position-navigation {
+        gap: 2px;
+        margin-left: 5px;
+    }
+    
+    .nav-btn {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .player-card {
+        min-height: 38px; /* Smaller height in landscape */
+        padding: 4px 6px;
+    }
+}
+
+/* Ensure navigation buttons are always accessible */
+@media (max-width: 360px) {
+    .viewing-mode-indicator {
+        font-size: 0.5rem; /* Very small font size */
+        padding: 1px 2px; /* Minimal padding */
+        border-radius: 4px;
+        margin-left: 3px; /* Minimal margin */
+    }
+    
+    .position-navigation {
+        gap: 1px; /* Minimal gap */
+        margin-left: 3px; /* Minimal margin */
+    }
+    
+    .nav-btn {
+        width: 20px; /* Very small but still touchable */
+        height: 20px;
+        font-size: 0.6rem;
+        border-radius: 2px;
+    }
+    
+    .player-card {
+        padding: 3px 4px; /* Minimal padding */
+        min-height: 36px; /* Very small minimum height */
+        gap: 1px; /* Minimal gap */
+    }
+    
+    .player-details h3 {
+        font-size: 0.7rem; /* Very small player name */
+        margin-right: 3px; /* Minimal margin */
+        max-width: 60px; /* Very limited width */
+    }
+    
+    .player-timer {
+        font-size: 0.7rem; /* Very small timer text */
+        padding: 1px 2px; /* Minimal padding */
+    }
+    
+    /* Ensure the layout works on extremely small screens */
+    .player-card {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start; /* Left align to save space */
+        flex-wrap: nowrap;
+    }
+    
+    .player-details {
+        flex-shrink: 1;
+        min-width: 0;
+    }
+} 
+
+/* Enlarged Chat Modal - More specific selectors for better override */
+.chat-modal .chat-modal-input {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start !important; /* Force alignment to top */
+    padding: 8px 12px !important; /* Reduce padding and force override */
+    background: rgba(42, 41, 43, 0.6);
+    border-radius: 10px;
+    border: 1px solid rgba(107, 70, 193, 0.2);
+    flex-shrink: 0;
+}
+
+.chat-modal .chat-modal-input input {
+    flex: 1;
+    padding: 4px 14px !important; /* Reduce top/bottom padding significantly */
+    border-radius: 8px;
+    border: 1px solid rgba(107, 70, 193, 0.3);
+    background: rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    font-size: 0.9rem;
+    transition: border-color 0.3s ease;
+    min-width: 0; /* Allow input to shrink */
+    margin-top: 0 !important; /* Remove any top margin */
+    line-height: 1.2; /* Reduce line height for more compact appearance */
+}
+
+.chat-modal .chat-modal-input input:focus {
+    outline: none;
+    border-color: rgba(107, 70, 193, 0.6);
+    box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.1);
+}
+
+.chat-modal .chat-modal-input button {
+    padding: 4px 12px !important; /* Reduce top/bottom padding significantly */
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #6b46c1, #553c9a);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent button from shrinking */
+    min-width: fit-content;
+    margin-top: 0 !important; /* Remove any top margin */
+    line-height: 1; /* Reduce line height for more compact appearance */
 } 

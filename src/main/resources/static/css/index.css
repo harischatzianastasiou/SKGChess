@@ -617,27 +617,221 @@
     color: #f44336;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments for mobile */
 @media (max-width: 768px) {
     .share-game-popup,
     .join-game-popup {
-        width: 95%;
-        max-height: 90vh;
-        margin: 20px;
+        /* Fix centering and sizing for mobile */
+        width: 95vw;
+        max-width: 95vw; /* Ensure it doesn't exceed viewport width */
+        max-height: 85dvh; /* Use dynamic viewport height for better mobile keyboard handling */
+        margin: 0; /* Remove margin that was causing centering issues */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.95); /* Slightly smaller scale for mobile */
+        border-radius: 12px; /* Smaller border radius for mobile */
+        overflow: hidden; /* Prevent content from spilling out */
+        position: fixed;
+        min-height: auto; /* Remove fixed min-height for mobile */
     }
     
+    .share-game-popup.show,
+    .join-game-popup.active {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    
+    /* Improve popup header for mobile */
+    .popup-header {
+        padding: 16px 20px 12px 20px; /* Reduce padding for mobile */
+        min-height: 60px; /* Reduce minimum height */
+        flex-shrink: 0; /* Prevent header from shrinking */
+    }
+    
+    .popup-header-logo {
+        height: 40px; /* Smaller logo for mobile */
+        width: auto;
+    }
+    
+    .popup-header .close-btn {
+        font-size: 1.2rem; /* Smaller close button */
+        padding: 6px; /* Reduce padding */
+        min-height: 44px; /* Ensure minimum touch target size */
+        min-width: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Improve popup body for mobile */
     .popup-body {
-        padding: var(--spacing-sm);
-        gap: var(--spacing-sm);
+        padding: 16px 20px; /* Reduce padding for mobile */
+        gap: 12px; /* Reduce gap between elements */
+        flex: 1;
+        overflow-y: auto; /* Enable scrolling within the popup body */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        max-height: calc(85dvh - 80px); /* Account for header height */
     }
     
+    /* Improve invitations section for mobile */
+    .invitations-section {
+        margin-bottom: 12px; /* Reduce margin */
+    }
+    
+    .invitations-section h3 {
+        font-size: 1.2rem; /* Smaller font size for mobile */
+        margin-bottom: 12px; /* Reduce margin */
+    }
+    
+    .invitations-container {
+        max-height: 250px; /* Limit height for mobile */
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        padding: 12px; /* Reduce padding */
+        border-radius: 8px; /* Smaller border radius */
+    }
+    
+    /* Improve invitation items for mobile */
+    .invitation-item {
+        padding: 12px; /* Reduce padding */
+        margin-bottom: 8px; /* Reduce margin */
+        border-radius: 8px; /* Smaller border radius */
+    }
+    
+    .invitation-header {
+        margin-bottom: 6px; /* Reduce margin */
+    }
+    
+    .inviter-name {
+        font-size: 0.95rem; /* Smaller font size */
+    }
+    
+    .invitation-time {
+        padding: 3px 6px; /* Reduce padding */
+        font-size: 0.75rem; /* Smaller font size */
+    }
+    
+    .invitation-details {
+        margin-bottom: 8px; /* Reduce margin */
+        font-size: 0.85rem; /* Smaller font size */
+    }
+    
+    /* Improve invitation actions for mobile */
     .invitation-actions {
-        flex-direction: column;
+        flex-direction: column; /* Stack buttons vertically on mobile */
+        gap: 8px; /* Reduce gap */
     }
     
     .btn-accept,
     .btn-decline {
-        padding: 10px 12px;
+        padding: 12px 16px; /* Increase padding for better touch targets */
+        font-size: 0.9rem; /* Smaller font size */
+        min-height: 44px; /* Ensure minimum touch target size */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px; /* Reduce gap between icon and text */
+    }
+    
+    /* Adjust for very small viewport heights (when keyboard is open) */
+    @media (max-height: 500px) {
+        .share-game-popup,
+        .join-game-popup {
+            max-height: 90dvh;
+            top: 5dvh;
+            transform: translate(-50%, 0) scale(0.95);
+        }
+        
+        .share-game-popup.show,
+        .join-game-popup.active {
+            transform: translate(-50%, 0) scale(1);
+        }
+        
+        .popup-body {
+            max-height: calc(90dvh - 60px);
+            padding: 12px 16px;
+            gap: 8px;
+        }
+        
+        .popup-header {
+            padding: 8px 16px 6px 16px;
+        }
+        
+        .invitations-container {
+            max-height: 200px;
+        }
+    }
+}
+
+/* Additional fixes for very small screens */
+@media (max-width: 480px) {
+    .share-game-popup,
+    .join-game-popup {
+        width: 98vw; /* Use almost full width on very small screens */
+        max-height: 80dvh; /* Further reduce height */
+        border-radius: 8px;
+    }
+    
+    .popup-header {
+        padding: 12px 16px 8px 16px;
+        min-height: 50px;
+    }
+    
+    .popup-header-logo {
+        height: 35px; /* Even smaller logo */
+    }
+    
+    .popup-header .close-btn {
+        font-size: 1.1rem;
+        padding: 4px;
+    }
+    
+    .popup-body {
+        padding: 12px 16px;
+        gap: 10px;
+    }
+    
+    .invitations-section h3 {
+        font-size: 1.1rem;
+    }
+    
+    .invitations-container {
+        padding: 10px;
+        max-height: 220px;
+    }
+    
+    .invitation-item {
+        padding: 10px;
+        margin-bottom: 6px;
+    }
+    
+    .inviter-name {
+        font-size: 0.9rem;
+    }
+    
+    .invitation-details {
+        font-size: 0.8rem;
+    }
+    
+    .btn-accept,
+    .btn-decline {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+    }
+}
+
+/* Fix for landscape orientation on mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+    .share-game-popup,
+    .join-game-popup {
+        max-height: 75vh; /* Reduce height further in landscape */
+    }
+    
+    .popup-body {
+        max-height: calc(75vh - 60px);
+    }
+    
+    .invitations-container {
+        max-height: 180px;
     }
 }
 
@@ -809,6 +1003,31 @@ body.authenticated::before {
     text-align: center; /* Center the text */
 }
 
+/* Mobile responsive styles for welcome username */
+@media (max-width: 768px) {
+    .authenticated-hero .hero-content h1 {
+        font-size: 2rem; /* Much smaller on tablets */
+        padding: 0.4rem 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .authenticated-hero .hero-content h1 {
+        font-size: 1.5rem; /* Even smaller on mobile phones */
+        padding: 0.3rem 0.6rem;
+        margin-bottom: 0.6rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .authenticated-hero .hero-content h1 {
+        font-size: 1.2rem; /* Very small on very small screens */
+        padding: 0.2rem 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
 .authenticated-hero .hero-content p {
     font-size: 1.3rem; /* Reduced from 1.5rem to 1.3rem */
     color: var(--text-secondary);
@@ -818,6 +1037,31 @@ body.authenticated::before {
     display: block; /* Change from inline-block to block */
     width: auto; /* Allow width to be determined by content */
     text-align: center; /* Center the text */
+}
+
+/* Mobile responsive styles for welcome description */
+@media (max-width: 768px) {
+    .authenticated-hero .hero-content p {
+        font-size: 1rem; /* Smaller on tablets */
+        padding: 0.4rem 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .authenticated-hero .hero-content p {
+        font-size: 0.9rem; /* Even smaller on mobile phones */
+        padding: 0.3rem 0.6rem;
+        margin-bottom: 1.2rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .authenticated-hero .hero-content p {
+        font-size: 0.8rem; /* Very small on very small screens */
+        padding: 0.2rem 0.5rem;
+        margin-bottom: 1rem;
+    }
 }
 
 /* Welcome Quote Styles */
@@ -2140,3 +2384,46 @@ body.authenticated::before {
 .result-square.win { background: #28a745; }
 .result-square.loss { background: #dc3545; }
 .result-square.draw { background: #6c757d; }
+
+/* Join Game Overlay */
+.join-game-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.join-game-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Mobile improvements for join game overlay */
+@media (max-width: 768px) {
+    .join-game-overlay {
+        /* Ensure overlay covers the full viewport on mobile */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.8); /* Slightly darker on mobile for better contrast */
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+    
+    /* Ensure overlay works with dynamic viewport height */
+    @supports (height: 100dvh) {
+        .join-game-overlay {
+            height: 100dvh;
+        }
+    }
+}
