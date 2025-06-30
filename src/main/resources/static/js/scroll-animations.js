@@ -182,6 +182,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Handle wheel events for element-by-element scrolling
     function wheelHandler(event) {
+        // Check global scroll lock flag first - if any popup/dropdown is open, disable section scrolling
+        if (window.__scrollLockActive) {
+            return;
+        }
+        
+        // Disable section-based scrolling if game creation popup or dropdown is open
+        const gamePopup = document.getElementById('gameCreationPopup');
+        const timeControlMenu = document.getElementById('timeControlMenu');
+        if ((gamePopup && gamePopup.classList.contains('show')) || (timeControlMenu && timeControlMenu.classList.contains('show'))) {
+            return;
+        }
         if (!isSectionScrollEnabled()) return; // Only enable on large screens
         // Check if newspaper overlay is active
         const newspaperOverlay = document.getElementById('newspaperOverlay');
@@ -191,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Check if the event originated from a scrollable container
-        const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features');
+        const scrollableParent = event.target.closest('.scrollable-content, .scrollable-features, .dropdown-menu, .game-creation-popup');
         if (scrollableParent) {
             // Allow natural scrolling within scrollable containers
             return;
@@ -289,6 +300,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let touchStartY = 0;
     
     function touchMoveHandler(event) {
+        // Check global scroll lock flag first - if any popup/dropdown is open, disable section scrolling
+        if (window.__scrollLockActive) {
+            return;
+        }
+        
         // First check if section scroll is enabled
         if (!isSectionScrollEnabled()) {
             return; // Exit early if on mobile screen
@@ -347,6 +363,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add keyboard navigation for accessibility
     function keydownHandler(event) {
+        // Check global scroll lock flag first - if any popup/dropdown is open, disable section scrolling
+        if (window.__scrollLockActive) {
+            return;
+        }
+        
         if (!isSectionScrollEnabled()) return; // Only enable on large screens
         // Special handling for quick-actions and features sections
         if (isInSpecialSection()) {

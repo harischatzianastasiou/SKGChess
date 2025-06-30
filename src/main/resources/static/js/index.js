@@ -1,8 +1,22 @@
 // This file contains JavaScript for matchmaking functionality
 
+// Global scroll lock flag to synchronize with scroll-animations.js
+window.__scrollLockActive = false;
+
 let stompClient = null; // Initialize stompClient to manage WebSocket connection
 let reconnectAttempts = 0; // Counter for reconnection attempts
 const maxReconnectAttempts = 5; // Maximum number of reconnection attempts
+
+// Add this at the top or near other global helpers
+window._blockScrollHandler = function(e) { e.preventDefault(); };
+
+function fullyRestoreScroll() {
+    window.removeEventListener('wheel', window._blockScrollHandler, { passive: false });
+    window.removeEventListener('touchmove', window._blockScrollHandler, { passive: false });
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    window.__scrollLockActive = false;
+}
 
 // Function to get current username dynamically
 function getCurrentUsername() {
@@ -588,19 +602,23 @@ function showGameCreationPopup() {
     setTimeout(() => {
         setupCustomDropdown();
     }, 150);
+
+    // Disable page scroll except inside the popup
+    const gamePopup = document.getElementById('gameCreationPopup');
+    setPageScrollDisabledExcept(gamePopup, true);
 }
 
 // Function to close game creation popup
 function closeGameCreationPopup() {
-    const popup = document.getElementById('gameCreationPopup');
-    if (popup) {
-        // Remove show class for smooth animation
-        popup.classList.remove('show');
-        
-        // Wait for animation to complete before removing
+    const gamePopup = document.getElementById('gameCreationPopup');
+    if (gamePopup) {
+        gamePopup.classList.remove('show');
         setTimeout(() => {
-            popup.remove();
+            gamePopup.remove();
+            fullyRestoreScroll();
         }, 300);
+    } else {
+        fullyRestoreScroll();
     }
 }
 
@@ -937,6 +955,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle wheel events for smooth scrolling
     function wheelHandler(e) {
+        // Disable section-based scrolling if game creation popup or dropdown is open
+        const gamePopup = document.getElementById('gameCreationPopup');
+        const timeControlMenu = document.getElementById('timeControlMenu');
+        if ((gamePopup && gamePopup.classList.contains('show')) || (timeControlMenu && timeControlMenu.classList.contains('show'))) {
+            return;
+        }
         // Exit early if on mobile
         if (isMobileScreen()) return;
 
@@ -1039,6 +1063,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle keyboard navigation
     function keydownHandler(e) {
+        // Disable section-based scrolling if game creation popup or dropdown is open
+        const gamePopup = document.getElementById('gameCreationPopup');
+        const timeControlMenu = document.getElementById('timeControlMenu');
+        if ((gamePopup && gamePopup.classList.contains('show')) || (timeControlMenu && timeControlMenu.classList.contains('show'))) {
+            return;
+        }
         // Exit early if on mobile
         if (isMobileScreen()) return;
         
@@ -2221,15 +2251,71 @@ function setupCustomDropdown() {
     const dropdownText = trigger.querySelector('.dropdown-text');
     
     if (!trigger || !menu || !hiddenInput) return;
+
+    // Prevent page scroll when scrolling inside the time control dropdown menu, but allow page scroll at the edges
+    menu.addEventListener('wheel', function(e) {
+      // Only if scrollable
+      if (menu.scrollHeight > menu.clientHeight) {
+        const delta = e.deltaY * 0.2; // Reduce scroll speed for smoothness
+        const up = delta < 0;
+        const down = delta > 0;
+        const atTop = menu.scrollTop === 0;
+        const atBottom = Math.abs(menu.scrollTop + menu.clientHeight - menu.scrollHeight) < 1;
+
+        // If scrolling up at top, or down at bottom, let it bubble (page scroll)
+        if ((up && atTop) || (down && atBottom)) {
+          return;
+        }
+        // Otherwise, prevent page scroll
+        e.stopPropagation();
+        e.preventDefault();
+        // Manually scroll the menu with reduced speed
+        menu.scrollTop += delta;
+      }
+    }, { passive: false });
     
+    // Helper to disable/enable all page scroll
+    function setPageScrollDisabled(disabled) {
+      document.body.style.overflow = disabled ? 'hidden' : '';
+      document.documentElement.style.overflow = disabled ? 'hidden' : '';
+      if (disabled) {
+        window.addEventListener('wheel', blockScroll, { passive: false });
+        window.addEventListener('touchmove', blockScroll, { passive: false });
+      } else {
+        window.removeEventListener('wheel', blockScroll, { passive: false });
+        window.removeEventListener('touchmove', blockScroll, { passive: false });
+      }
+    }
+    function blockScroll(e) {
+      e.preventDefault();
+    }
+
     // Toggle dropdown on trigger click
     trigger.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        
-        // Toggle active state
+        const isOpen = !menu.classList.contains('show');
         trigger.classList.toggle('active');
         menu.classList.toggle('show');
+        setPageScrollDisabled(isOpen);
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!trigger.contains(e.target) && !menu.contains(e.target)) {
+            trigger.classList.remove('active');
+            menu.classList.remove('show');
+            setPageScrollDisabled(false);
+        }
+    });
+
+    // Close dropdown on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            trigger.classList.remove('active');
+            menu.classList.remove('show');
+            setPageScrollDisabled(false);
+        }
     });
     
     // Handle option selection
@@ -2259,22 +2345,32 @@ function setupCustomDropdown() {
         // Enable create button if opponent is selected
         checkFormValidity();
     });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!trigger.contains(e.target) && !menu.contains(e.target)) {
-            trigger.classList.remove('active');
-            menu.classList.remove('show');
-        }
+
+    let dropdownHovering = false;
+    menu.addEventListener('mouseenter', function() {
+      dropdownHovering = true;
     });
-    
-    // Close dropdown on escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            trigger.classList.remove('active');
-            menu.classList.remove('show');
-        }
+    menu.addEventListener('mouseleave', function() {
+      dropdownHovering = false;
     });
+
+    function blockScrollIfDropdown(e) {
+      if (menu.classList.contains('show') && dropdownHovering) {
+        e.preventDefault();
+      }
+    }
+
+    function setPageScrollDisabled(disabled) {
+      document.body.style.overflow = disabled ? 'hidden' : '';
+      document.documentElement.style.overflow = disabled ? 'hidden' : '';
+      if (disabled) {
+        window.addEventListener('wheel', blockScrollIfDropdown, { passive: false });
+        window.addEventListener('touchmove', blockScrollIfDropdown, { passive: false });
+      } else {
+        window.removeEventListener('wheel', blockScrollIfDropdown, { passive: false });
+        window.removeEventListener('touchmove', blockScrollIfDropdown, { passive: false });
+      }
+    }
 }
 
 // Function to check form validity and enable/disable create button
@@ -2296,4 +2392,41 @@ function checkFormValidity() {
     } else {
         createBtn.textContent = 'Send Invitation';
     }
+}
+
+// Prevent page scroll when scrolling inside the time control dropdown menu
+// Wait for DOM content to be loaded
+window.addEventListener('DOMContentLoaded', function() {
+    // Get the dropdown menu element by its ID
+    const dropdownMenu = document.getElementById('timeControlMenu');
+    if (!dropdownMenu) return; // Exit if not found
+
+    // Add wheel event listener to prevent scroll propagation
+    dropdownMenu.addEventListener('wheel', function(e) {
+        // Check if the dropdown can scroll further
+        const atTop = dropdownMenu.scrollTop === 0;
+        const atBottom = dropdownMenu.scrollHeight - dropdownMenu.scrollTop === dropdownMenu.clientHeight;
+
+        // If at the top and scrolling up, or at the bottom and scrolling down, let the event bubble
+        if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) {
+            return;
+        }
+        // Otherwise, prevent the event from bubbling up to the page
+        e.stopPropagation();
+        // Prevent default scroll behavior on the page
+        e.preventDefault();
+    }, { passive: false });
+});
+
+// Helper to disable/enable all page scroll except inside a given element
+function setPageScrollDisabledExcept(container, disabled) {
+  window.__scrollLockActive = disabled;
+  document.body.style.overflow = disabled ? 'hidden' : '';
+  document.documentElement.style.overflow = disabled ? 'hidden' : '';
+  window.removeEventListener('wheel', window._blockScrollHandler, { passive: false });
+  window.removeEventListener('touchmove', window._blockScrollHandler, { passive: false });
+  if (disabled) {
+    window.addEventListener('wheel', window._blockScrollHandler, { passive: false });
+    window.addEventListener('touchmove', window._blockScrollHandler, { passive: false });
+  }
 }
