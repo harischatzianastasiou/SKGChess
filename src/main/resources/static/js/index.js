@@ -120,6 +120,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Check if we need to open the game creation popup
+    const shouldOpenGameCreationPopup = sessionStorage.getItem('openGameCreationPopup');
+    if (shouldOpenGameCreationPopup) {
+        // Clear the flag
+        sessionStorage.removeItem('openGameCreationPopup');
+        // Show the game creation popup after a short delay to ensure page is fully loaded
+        setTimeout(() => {
+            showGameCreationPopup();
+        }, 500);
+    }
+
     document.querySelectorAll('.clickable-row').forEach(function(row) {
         row.addEventListener('click', function() {
             var gameId = this.getAttribute('data-game-id');

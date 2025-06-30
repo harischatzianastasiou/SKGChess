@@ -650,4 +650,147 @@ public class GameService {
         // Save and return the updated game
         return gameRepository.save(game);
     }
+
+    /**
+     * Offer a rematch to the opponent
+     * @param gameId The ID of the game to offer rematch in
+     * @param username The username of the player offering the rematch
+     * @return The updated game with rematch offer status
+     */
+    @Transactional
+    public Game offerRematch(String gameId, String username) {
+        // Find the game
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Find the user offering the rematch
+        User offeringUser = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
+        
+        // Check if game has ended (only allow rematch offers after game ends)
+        if (game.getStatus().equals(GameStatus.IN_PROGRESS.name()) || 
+            game.getStatus().equals(GameStatus.CHECK.name())) {
+            throw new IllegalStateException("Cannot offer rematch while game is still in progress");
+        }
+        
+        // Verify the user is actually a player in this game
+        if (!offeringUser.getId().equals(game.getWhitePlayer().getId()) && 
+            !offeringUser.getId().equals(game.getBlackPlayer().getId())) {
+            throw new IllegalStateException("Only players in the game can offer rematches");
+        }
+        
+        // Check if the offering user has an active game
+        List<Game> offeringUserActiveGames = getActiveGamesByUsername(offeringUser.getUsername());
+        if (!offeringUserActiveGames.isEmpty()) {
+            throw new IllegalStateException("Cannot offer rematch while you have an active game");
+        }
+        
+        // Check if the opponent has an active game
+        String opponentUsername = offeringUser.getId().equals(game.getWhitePlayer().getId()) 
+            ? game.getBlackPlayer().getUsername() 
+            : game.getWhitePlayer().getUsername();
+        List<Game> opponentActiveGames = getActiveGamesByUsername(opponentUsername);
+        if (!opponentActiveGames.isEmpty()) {
+            throw new IllegalStateException("Cannot offer rematch while your opponent has an active game");
+        }
+        
+        // Don't change the game status - just return the current game state
+        // The WebSocket will handle the rematch offer communication
+        return game;
+    }
+
+    /**
+     * Respond to a rematch offer (accept or decline)
+     * @param gameId The ID of the game to respond to rematch offer in
+     * @param username The username of the player responding to the rematch offer
+     * @param action "accept" or "decline"
+     * @return The updated game or new game if accepted
+     */
+    @Transactional
+    public Game respondToRematchOffer(String gameId, String username, String action) {
+        // Find the game
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Find the user responding to the rematch offer
+        User respondingUser = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
+        
+        // Check if game has ended (only allow rematch responses after game ends)
+        if (game.getStatus().equals(GameStatus.IN_PROGRESS.name()) || 
+            game.getStatus().equals(GameStatus.CHECK.name())) {
+            throw new IllegalStateException("Cannot respond to rematch offer while game is still in progress");
+        }
+        
+        // Verify the user is actually a player in this game
+        if (!respondingUser.getId().equals(game.getWhitePlayer().getId()) && 
+            !respondingUser.getId().equals(game.getBlackPlayer().getId())) {
+            throw new IllegalStateException("Only players in the game can respond to rematch offers");
+        }
+        
+        if ("accept".equalsIgnoreCase(action)) {
+            // Check if the responding user has an active game
+            List<Game> respondingUserActiveGames = getActiveGamesByUsername(respondingUser.getUsername());
+            if (!respondingUserActiveGames.isEmpty()) {
+                throw new IllegalStateException("Cannot accept rematch while you have an active game");
+            }
+            
+            // Check if the opponent has an active game
+            String opponentUsername = respondingUser.getId().equals(game.getWhitePlayer().getId()) 
+                ? game.getBlackPlayer().getUsername() 
+                : game.getWhitePlayer().getUsername();
+            List<Game> opponentActiveGames = getActiveGamesByUsername(opponentUsername);
+            if (!opponentActiveGames.isEmpty()) {
+                throw new IllegalStateException("Cannot accept rematch while your opponent has an active game");
+            }
+            
+            // Accept the rematch offer - create a new game with the same players and settings
+            String whitePlayerUsername = game.getWhitePlayer().getUsername();
+            String blackPlayerUsername = game.getBlackPlayer().getUsername();
+            
+            // Create new game manually to ensure both players are set correctly
+            Game newGame = new Game();
+            
+            // Set both players explicitly
+            User whitePlayer = userRepository.findByUsername(whitePlayerUsername)
+                .orElseThrow(() -> new UserNotFoundException(whitePlayerUsername));
+            User blackPlayer = userRepository.findByUsername(blackPlayerUsername)
+                .orElseThrow(() -> new UserNotFoundException(blackPlayerUsername));
+            
+            newGame.setWhitePlayer(whitePlayer);
+            newGame.setBlackPlayer(blackPlayer);
+            
+            // Copy game settings from the original game
+            newGame.setGameType(game.getGameType());
+            newGame.setTimeControlMinutes(game.getTimeControlMinutes());
+            newGame.setIncrementSeconds(game.getIncrementSeconds());
+            newGame.setStatus(GameStatus.IN_PROGRESS.name());
+            newGame.setCreatedAt(LocalDateTime.now());
+            newGame.setIsPlayerTurn(com.chess.core.Alliance.WHITE);
+            
+            // Create the board
+            if(newGame.getGameType().equals("standard")){
+                try {
+                    IBoard board = IBoard.createStandardBoard();
+                    // Compress the board data before storing it
+                    String serializedBoard = board.serialize();
+                    String compressedBoard = CompressionUtil.compress(serializedBoard);
+                    newGame.setBoard(compressedBoard);
+                } catch (Exception e) {
+                    logger.error("Error creating standard board for rematch: {}", e.getMessage(), e);
+                    throw new RuntimeException("Failed to create standard board for rematch: " + e.getMessage(), e);
+                }
+            }
+            
+            // Save and return the new game
+            return gameRepository.save(newGame);
+            
+        } else if ("decline".equalsIgnoreCase(action)) {
+            // Decline the rematch offer - keep game in current status
+            // No status change needed
+            return game;
+        } else {
+            throw new IllegalArgumentException("Invalid action. Use 'accept' or 'decline'");
+        }
+    }
 }

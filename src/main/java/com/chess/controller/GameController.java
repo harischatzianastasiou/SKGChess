@@ -22,6 +22,8 @@ import com.chess.dto.rest.request.MakeMoveRequestDTO;
 import com.chess.dto.rest.request.ResignGameRequestDTO;
 import com.chess.dto.rest.request.OfferDrawRequestDTO;
 import com.chess.dto.rest.request.RespondToDrawRequestDTO;
+import com.chess.dto.rest.request.OfferRematchRequestDTO;
+import com.chess.dto.rest.request.RespondToRematchRequestDTO;
 import com.chess.dto.rest.response.ErrorResponseDTO;
 import com.chess.dto.rest.response.GameDTO;
 import com.chess.exception.GameNotFoundException;
@@ -558,6 +560,140 @@ public class GameController {
             log.error("Error responding to draw offer: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponseDTO("Failed to respond to draw offer"));
+        }
+    }
+
+    /**
+     * Offer a rematch to the opponent
+     * @param request The rematch offer request containing game ID and username
+     * @return The updated game state
+     */
+    @PostMapping(value = "/offer-rematch", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> offerRematch(@RequestBody @Valid OfferRematchRequestDTO request) {
+        try {
+            // Log the rematch offer request
+            log.info("Processing rematch offer request for game {} by user {}", 
+                request.getGameId(), request.getUsername());
+
+            // Offer the rematch using the service
+            Game updatedGame = gameService.offerRematch(
+                request.getGameId(), 
+                request.getUsername()
+            );
+
+            // Send WebSocket notification to both players about the rematch offer
+            String message = String.format(
+                "{\"type\":\"REMATCH_OFFERED\"," +
+                "\"message\":\"Rematch offer made\"," +
+                "\"gameId\":\"%s\"," +
+                "\"gameStatus\":\"%s\"," +
+                "\"whitePlayerId\":\"%s\"," +
+                "\"blackPlayerId\":\"%s\"," +
+                "\"offeringPlayerUsername\":\"%s\"}",
+                request.getGameId(),
+                updatedGame.getStatus(),
+                updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
+                updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+                request.getUsername()
+            );
+
+            // Send the rematch offer message to both players via WebSocket
+            messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
+
+            // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(updatedGame);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
+            return ResponseEntity.ok()
+                    .body(gameDTO);
+
+        } catch (GameNotFoundException e) {
+            log.error("Game not found: {}", request.getGameId(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("Game not found"));
+        } catch (UserNotFoundException e) {
+            log.error("User not found: {}", request.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("User not found"));
+        } catch (IllegalStateException e) {
+            log.error("Invalid rematch offer request: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error offering rematch: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponseDTO("Failed to offer rematch"));
+        }
+    }
+
+    /**
+     * Respond to a rematch offer (accept or decline)
+     * @param request The rematch response request containing game ID, username, and action
+     * @return The updated game state or new game if accepted
+     */
+    @PostMapping(value = "/respond-rematch", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> respondToRematchOffer(@RequestBody @Valid RespondToRematchRequestDTO request) {
+        try {
+            // Log the rematch response request
+            log.info("Processing rematch response for game {} by user {} with action: {}", 
+                request.getGameId(), request.getUsername(), request.getAction());
+
+            // Respond to the rematch offer using the service
+            Game updatedGame = gameService.respondToRematchOffer(
+                request.getGameId(), 
+                request.getUsername(),
+                request.getAction()
+            );
+
+            // Send WebSocket notification to both players about the rematch response
+            String message = String.format(
+                "{\"type\":\"REMATCH_RESPONSE\"," +
+                "\"message\":\"Rematch offer %s\"," +
+                "\"gameId\":\"%s\"," +
+                "\"gameStatus\":\"%s\"," +
+                "\"whitePlayerId\":\"%s\"," +
+                "\"blackPlayerId\":\"%s\"," +
+                "\"newGameId\":\"%s\"," +
+                "\"respondingPlayerUsername\":\"%s\"," +
+                "\"action\":\"%s\"}",
+                request.getAction(),
+                request.getGameId(),
+                updatedGame.getStatus(),
+                updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
+                updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+                updatedGame.getId(),
+                request.getUsername(),
+                request.getAction()
+            );
+
+            // Send the rematch response message to both players via WebSocket
+            messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
+
+            // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(updatedGame);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
+            return ResponseEntity.ok()
+                    .body(gameDTO);
+
+        } catch (GameNotFoundException e) {
+            log.error("Game not found: {}", request.getGameId(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("Game not found"));
+        } catch (UserNotFoundException e) {
+            log.error("User not found: {}", request.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("User not found"));
+        } catch (IllegalStateException e) {
+            log.error("Invalid rematch response request: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid action in rematch response: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error responding to rematch offer: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponseDTO("Failed to respond to rematch offer"));
         }
     }
 

@@ -727,6 +727,210 @@ class ChessGame {
     }
 
     /**
+     * Handle offer rematch button click
+     * Sends rematch offer request to the opponent
+     */
+    async handleOfferRematch() {
+        try {
+            // Prepare the request body
+            const requestBody = {
+                gameId: this.gameId,
+                username: this.username
+            };
+            
+            // Send the rematch offer request to the server
+            const response = await fetch('/api/games/offer-rematch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                // Close game end popup even on error
+                const gameEndPopup = document.getElementById('game-end-popup');
+                if (gameEndPopup) {
+                    gameEndPopup.remove();
+                }
+                this.showErrorPopup(errorData.message || 'Failed to offer rematch');
+                return;
+            }
+            
+            // Rematch offer sent successfully - close game end popup first
+            const gameEndPopup = document.getElementById('game-end-popup');
+            if (gameEndPopup) {
+                gameEndPopup.remove();
+            }
+            
+            // Rematch offer sent successfully - the WebSocket will handle the response
+            console.log('Rematch offer sent successfully');
+            
+            // Show success feedback to user (not as error popup)
+            this.showSuccessMessage('Rematch offer sent to your opponent');
+            
+        } catch (error) {
+            console.error('Error offering rematch:', error);
+            this.showErrorPopup('Failed to offer rematch. Please try again.');
+        }
+    }
+
+    /**
+     * Handle new game button click
+     * Redirects to the index page to create a new game
+     */
+    handleNewGame() {
+        // Close the game end popup
+        const gameEndPopup = document.getElementById('game-end-popup');
+        if (gameEndPopup) {
+            gameEndPopup.remove();
+        }
+        
+        // Store a flag in sessionStorage to open game creation popup on index page
+        sessionStorage.setItem('openGameCreationPopup', 'true');
+        
+        // Redirect to index page
+        window.location.href = '/index';
+    }
+
+    /**
+     * Handle rematch offer from opponent
+     * Shows dialog to accept or decline the rematch offer
+     * @param {string} offeringPlayerUsername The username of the player who offered the rematch
+     */
+    async handleRematchOffer(offeringPlayerUsername) {
+        // Show dialog to accept or decline the rematch offer
+        const action = await this.showRematchOfferDialog(offeringPlayerUsername);
+        
+        if (action) {
+            await this.respondToRematchOffer(action);
+        }
+    }
+
+    /**
+     * Show dialog for responding to rematch offer
+     * @param {string} offeringPlayerUsername The username of the player who offered the rematch
+     * @returns {string|null} 'accept', 'decline', or null if cancelled
+     */
+    showRematchOfferDialog(offeringPlayerUsername) {
+        return new Promise((resolve) => {
+            // Create the dialog element
+            const dialog = document.createElement('div');
+            dialog.className = 'rematch-offer-dialog';
+            dialog.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 100000;
+                backdrop-filter: blur(20px);
+            `;
+            dialog.innerHTML = `
+                <div class="rematch-offer-content" style="
+                    background: rgba(40, 30, 60, 0.97);
+                    color: #fff;
+                    padding: 2rem;
+                    border-radius: 12px;
+                    text-align: center;
+                    border: 2px solid var(--color-accent, #ffd700);
+                    backdrop-filter: blur(6px);
+                ">
+                    <h3 style="margin-bottom: 1rem; color: #ffd700;">Rematch Offer</h3>
+                    <p style="margin-bottom: 1.5rem;">${offeringPlayerUsername} has offered a rematch.</p>
+                    <div class="rematch-offer-buttons" style="display: flex; gap: 1rem; justify-content: center;">
+                        <button class="btn-accept-rematch" style="
+                            padding: 10px 20px;
+                            background: linear-gradient(135deg, #28a745, #20c997);
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Accept Rematch</button>
+                        <button class="btn-decline-rematch" style="
+                            padding: 10px 20px;
+                            background: linear-gradient(135deg, #dc3545, #c82333);
+                            color: white;
+                            border: none;
+                            border-radius: 6px;
+                            cursor: pointer;
+                            font-weight: 600;
+                        ">Decline Rematch</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners
+            const acceptBtn = dialog.querySelector('.btn-accept-rematch');
+            const declineBtn = dialog.querySelector('.btn-decline-rematch');
+            
+            acceptBtn.addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve('accept');
+            });
+            
+            declineBtn.addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve('decline');
+            });
+            
+            // Add to page
+            document.body.appendChild(dialog);
+            
+            // Auto-remove after 30 seconds if no response
+            setTimeout(() => {
+                if (document.body.contains(dialog)) {
+                    document.body.removeChild(dialog);
+                    resolve(null);
+                }
+            }, 30000);
+        });
+    }
+
+    /**
+     * Send response to rematch offer
+     * @param {string} action 'accept' or 'decline'
+     */
+    async respondToRematchOffer(action) {
+        try {
+            // Prepare the request body
+            const requestBody = {
+                gameId: this.gameId,
+                username: this.username,
+                action: action
+            };
+            
+            // Send the rematch response request to the server
+            const response = await fetch('/api/games/respond-rematch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                this.showErrorPopup(errorData.message || 'Failed to respond to rematch offer');
+                return;
+            }
+            
+            // Rematch response sent successfully - the WebSocket will handle the game state update
+            console.log('Rematch response sent successfully:', action);
+            
+        } catch (error) {
+            console.error('Error responding to rematch offer:', error);
+            this.showErrorPopup('Failed to respond to rematch offer. Please try again.');
+        }
+    }
+
+    /**
      * Show confirmation dialog
      * @param {string} title The dialog title
      * @param {string} message The dialog message
@@ -793,6 +997,39 @@ class ChessGame {
         
         // Add to page
         document.body.appendChild(popup);
+    }
+
+    /**
+     * Show success message
+     * @param {string} message The success message to display
+     */
+    showSuccessMessage(message) {
+        // Create the popup element
+        const popup = document.createElement('div');
+        popup.className = 'success-popup';
+        popup.innerHTML = `
+            <div class="success-content">
+                <h3>Success</h3>
+                <p>${message}</p>
+                <button class="btn-ok">OK</button>
+            </div>
+        `;
+        
+        // Add event listener
+        const okBtn = popup.querySelector('.btn-ok');
+        okBtn.addEventListener('click', () => {
+            document.body.removeChild(popup);
+        });
+        
+        // Add to page
+        document.body.appendChild(popup);
+        
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+            if (document.body.contains(popup)) {
+                document.body.removeChild(popup);
+            }
+        }, 3000);
     }
 
     // Function to fetch user ID by username
@@ -1145,6 +1382,39 @@ class ChessGame {
                                         
                                         this.statusElement.textContent = isCurrentPlayerTurn ? 'Your turn' : 'Opponent\'s turn';
                                     }
+                                }
+                            } else if (moveData.type === 'REMATCH_OFFERED') {  // ← Now at correct level
+                                // Debug: Log the full message
+                                console.log('Full REMATCH_OFFERED WebSocket message:', moveData);
+                                
+                                // Check if this player is the one who should respond to the rematch offer
+                                // (i.e., not the one who offered it)
+                                if (moveData.offeringPlayerUsername !== this.username) {
+                                    // Show rematch offer dialog to the opponent
+                                    this.handleRematchOffer(moveData.offeringPlayerUsername);
+                                }
+         
+                            } else if (moveData.type === 'REMATCH_RESPONSE') {  // ← Now at correct level
+                                // Debug: Log the full message
+                                console.log('Full REMATCH_RESPONSE WebSocket message:', moveData);
+                                
+                                // Handle the rematch response
+                                if (moveData.action === 'accept') {
+                                    // Rematch was accepted - close game end popup first
+                                    const gameEndPopup = document.getElementById('game-end-popup');
+                                    if (gameEndPopup) {
+                                        gameEndPopup.remove();
+                                    }
+                                    
+                                    // Redirect to new game
+                                    if (moveData.newGameId) {
+                                        this.showSuccessMessage('Rematch accepted! Redirecting to new game...');
+                                        setTimeout(() => {
+                                            window.location.href = `/games/${moveData.newGameId}`;
+                                        }, 2000);
+                                    }
+                                } else if (moveData.action === 'decline') {
+                                    // Rematch was declined - no message shown
                                 }
                             }
                         } catch (error) {
@@ -2069,11 +2339,27 @@ class ChessGame {
                     <div class="popup-username">${opponentUsername}</div>
                 </div>
             </div>
+            <div class="popup-actions">
+                <button id="offer-rematch-btn" class="popup-action-btn btn-rematch">
+                    <i class="fas fa-redo"></i>
+                    Offer Rematch
+                </button>
+                <button id="new-game-btn" class="popup-action-btn btn-new-game">
+                    <i class="fas fa-plus"></i>
+                    New Game
+                </button>
+            </div>
         `;
         document.body.appendChild(popup);
 
         // Close button
         document.getElementById('close-game-end-popup').onclick = () => popup.remove();
+
+        // Offer Rematch button
+        document.getElementById('offer-rematch-btn').onclick = () => this.handleOfferRematch();
+
+        // New Game button
+        document.getElementById('new-game-btn').onclick = () => this.handleNewGame();
 
         // Add styles if not present
         if (!document.getElementById('game-end-popup-style')) {
@@ -2134,6 +2420,7 @@ class ChessGame {
                 justify-content: center;
                 gap: 2.2rem;
                 margin-top: 1.2rem;
+                margin-bottom: 2rem;
             }
             #game-end-popup .popup-player {
                 display: flex;
@@ -2181,9 +2468,58 @@ class ChessGame {
                 margin: 0 1.2rem;
                 align-self: center;
             }
+            #game-end-popup .popup-actions {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                margin-top: 1.5rem;
+            }
+            #game-end-popup .popup-action-btn {
+                padding: 12px 20px;
+                border: none;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                min-width: 140px;
+                justify-content: center;
+            }
+            #game-end-popup .btn-rematch {
+                background: linear-gradient(135deg, #28a745, #20c997);
+                color: white;
+            }
+            #game-end-popup .btn-rematch:hover {
+                background: linear-gradient(135deg, #20c997, #17a2b8);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            }
+            #game-end-popup .btn-new-game {
+                background: linear-gradient(135deg, #6b46c1, #553c9a);
+                color: white;
+            }
+            #game-end-popup .btn-new-game:hover {
+                background: linear-gradient(135deg, #553c9a, #44337a);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+            }
             @keyframes popupAppear {
                 0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }
                 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            }
+            
+            @media (max-width: 768px) {
+                #game-end-popup .popup-actions {
+                    flex-direction: column;
+                    gap: 0.8rem;
+                }
+                #game-end-popup .popup-action-btn {
+                    width: 100%;
+                    padding: 14px 20px;
+                }
             }
             `;
             document.head.appendChild(style);
