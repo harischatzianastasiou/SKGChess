@@ -514,4 +514,140 @@ public class GameService {
         
         return game;
     }
+
+    /**
+     * Resign a game - the player who resigns loses, the opponent wins
+     * @param gameId The ID of the game to resign from
+     * @param username The username of the player resigning
+     * @return The updated game with resigned status
+     */
+    @Transactional
+    public Game resignGame(String gameId, String username) {
+        // Find the game
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Find the resigning user
+        User resigningUser = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
+        
+        // Check if game is in progress or in check (allow resign in both cases)
+        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name()) && 
+            !game.getStatus().equals(GameStatus.CHECK.name())) {
+            throw new IllegalStateException("Cannot resign from a game that is not in progress or in check");
+        }
+        
+        // Verify the user is actually a player in this game
+        if (!resigningUser.getId().equals(game.getWhitePlayer().getId()) && 
+            !resigningUser.getId().equals(game.getBlackPlayer().getId())) {
+            throw new IllegalStateException("Only players in the game can resign");
+        }
+        
+        // Allow resigning regardless of turn (removed the turn check)
+        
+        // Set the winner to the opponent of the resigning player
+        if (resigningUser.getId().equals(game.getWhitePlayer().getId())) {
+            // White resigned, so Black wins
+            game.setWinner(game.getBlackPlayer());
+        } else {
+            // Black resigned, so White wins
+            game.setWinner(game.getWhitePlayer());
+        }
+        
+        // Set game status to RESIGNED
+        game.setStatus(GameStatus.RESIGNED.name());
+        
+        // Save and return the updated game
+        return gameRepository.save(game);
+    }
+
+    /**
+     * Offer a draw to the opponent
+     * @param gameId The ID of the game to offer draw in
+     * @param username The username of the player offering the draw
+     * @return The updated game with draw offer status
+     */
+    @Transactional
+    public Game offerDraw(String gameId, String username) {
+        // Find the game
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Find the user offering the draw
+        User offeringUser = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
+        
+        // Check if game is in progress or in check (allow draw offer in both cases)
+        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name()) && 
+            !game.getStatus().equals(GameStatus.CHECK.name())) {
+            throw new IllegalStateException("Cannot offer draw in a game that is not in progress or in check");
+        }
+        
+        // Verify the user is actually a player in this game
+        if (!offeringUser.getId().equals(game.getWhitePlayer().getId()) && 
+            !offeringUser.getId().equals(game.getBlackPlayer().getId())) {
+            throw new IllegalStateException("Only players in the game can offer draws");
+        }
+        
+        // Check if it's the offering player's turn (they can only offer draw on their turn)
+        Alliance currentPlayerAlliance = game.getIsPlayerTurn();
+        boolean isOfferingPlayerTurn = (currentPlayerAlliance == Alliance.WHITE && 
+                                       offeringUser.getId().equals(game.getWhitePlayer().getId())) ||
+                                      (currentPlayerAlliance == Alliance.BLACK && 
+                                       offeringUser.getId().equals(game.getBlackPlayer().getId()));
+        
+        if (!isOfferingPlayerTurn) {
+            throw new IllegalStateException("You can only offer a draw on your turn");
+        }
+        
+        // Don't change the game status - just return the current game state
+        // The WebSocket will handle the draw offer communication
+        return game;
+    }
+
+    /**
+     * Respond to a draw offer (accept or decline)
+     * @param gameId The ID of the game to respond to draw offer in
+     * @param username The username of the player responding to the draw offer
+     * @param action "accept" or "decline"
+     * @return The updated game
+     */
+    @Transactional
+    public Game respondToDrawOffer(String gameId, String username, String action) {
+        // Find the game
+        Game game = gameRepository.findById(gameId)
+            .orElseThrow(() -> new GameNotFoundException(gameId));
+        
+        // Find the user responding to the draw offer
+        User respondingUser = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException(username));
+        
+        // Check if game is in progress or in check (allow draw response in both cases)
+        if (!game.getStatus().equals(GameStatus.IN_PROGRESS.name()) && 
+            !game.getStatus().equals(GameStatus.CHECK.name())) {
+            throw new IllegalStateException("Cannot respond to draw offer in a game that is not in progress or in check");
+        }
+        
+        // Verify the user is actually a player in this game
+        if (!respondingUser.getId().equals(game.getWhitePlayer().getId()) && 
+            !respondingUser.getId().equals(game.getBlackPlayer().getId())) {
+            throw new IllegalStateException("Only players in the game can respond to draw offers");
+        }
+        
+        // Allow responding to draw offers regardless of turn
+        // (removed the turn check that was here before)
+        
+        if ("accept".equalsIgnoreCase(action)) {
+            // Accept the draw offer - set game status to MUTUAL_AGREEMENT
+            game.setStatus(GameStatus.MUTUAL_AGREEMENT.name());
+        } else if ("decline".equalsIgnoreCase(action)) {
+            // Decline the draw offer - keep game in current status (IN_PROGRESS or CHECK)
+            // No status change needed
+        } else {
+            throw new IllegalArgumentException("Invalid action. Use 'accept' or 'decline'");
+        }
+        
+        // Save and return the updated game
+        return gameRepository.save(game);
+    }
 }

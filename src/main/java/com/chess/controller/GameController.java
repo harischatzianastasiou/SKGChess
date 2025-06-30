@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chess.dto.rest.request.CreateGameRequestDTO;
 import com.chess.dto.rest.request.JoinGameRequestDTO;
 import com.chess.dto.rest.request.MakeMoveRequestDTO;
+import com.chess.dto.rest.request.ResignGameRequestDTO;
+import com.chess.dto.rest.request.OfferDrawRequestDTO;
+import com.chess.dto.rest.request.RespondToDrawRequestDTO;
 import com.chess.dto.rest.response.ErrorResponseDTO;
 import com.chess.dto.rest.response.GameDTO;
 import com.chess.exception.GameNotFoundException;
@@ -360,6 +363,201 @@ public class GameController {
             // Return an error response
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new GameDTO()); // Return empty game DTO for error
+        }
+    }
+
+    /**
+     * Resign a game - the player who resigns loses, the opponent wins
+     * @param request The resign request containing game ID and username
+     * @return The updated game state
+     */
+    @PostMapping(value = "/resign", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> resignGame(@RequestBody @Valid ResignGameRequestDTO request) {
+        try {
+            // Log the resign request
+            log.info("Processing resign request for game {} by user {}", 
+                request.getGameId(), request.getUsername());
+
+            // Resign the game using the service
+            Game updatedGame = gameService.resignGame(
+                request.getGameId(), 
+                request.getUsername()
+            );
+
+            // Send WebSocket notification to both players about the resignation
+            String message = String.format(
+                "{\"type\":\"GAME_RESIGNED\"," +
+                "\"message\":\"Game ended by resignation\"," +
+                "\"gameId\":\"%s\"," +
+                "\"gameStatus\":\"RESIGNED\"," +
+                "\"whitePlayerId\":\"%s\"," +
+                "\"blackPlayerId\":\"%s\"," +
+                "\"winnerId\":\"%s\"}",
+                request.getGameId(),
+                updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
+                updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+                updatedGame.getWinner() != null ? updatedGame.getWinner().getId() : ""
+            );
+
+            // Send the resignation message to both players via WebSocket
+            messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
+
+            // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(updatedGame);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
+            return ResponseEntity.ok()
+                    .body(gameDTO);
+
+        } catch (GameNotFoundException e) {
+            log.error("Game not found: {}", request.getGameId(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("Game not found"));
+        } catch (UserNotFoundException e) {
+            log.error("User not found: {}", request.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("User not found"));
+        } catch (IllegalStateException e) {
+            log.error("Invalid resign request: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error resigning game: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponseDTO("Failed to resign game"));
+        }
+    }
+
+    /**
+     * Offer a draw to the opponent
+     * @param request The draw offer request containing game ID and username
+     * @return The updated game state
+     */
+    @PostMapping(value = "/offer-draw", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> offerDraw(@RequestBody @Valid OfferDrawRequestDTO request) {
+        try {
+            // Log the draw offer request
+            log.info("Processing draw offer request for game {} by user {}", 
+                request.getGameId(), request.getUsername());
+
+            // Offer the draw using the service
+            Game updatedGame = gameService.offerDraw(
+                request.getGameId(), 
+                request.getUsername()
+            );
+
+            // Send WebSocket notification to both players about the draw offer
+            String message = String.format(
+                "{\"type\":\"DRAW_OFFERED\"," +
+                "\"message\":\"Draw offer made\"," +
+                "\"gameId\":\"%s\"," +
+                "\"gameStatus\":\"%s\"," +
+                "\"whitePlayerId\":\"%s\"," +
+                "\"blackPlayerId\":\"%s\"," +
+                "\"offeringPlayerUsername\":\"%s\"}",
+                request.getGameId(),
+                updatedGame.getStatus(), // Use current game status instead of "DRAW_OFFERED"
+                updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
+                updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+                request.getUsername()
+            );
+
+            // Send the draw offer message to both players via WebSocket
+            messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
+
+            // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(updatedGame);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
+            return ResponseEntity.ok()
+                    .body(gameDTO);
+
+        } catch (GameNotFoundException e) {
+            log.error("Game not found: {}", request.getGameId(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("Game not found"));
+        } catch (UserNotFoundException e) {
+            log.error("User not found: {}", request.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("User not found"));
+        } catch (IllegalStateException e) {
+            log.error("Invalid draw offer request: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error offering draw: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponseDTO("Failed to offer draw"));
+        }
+    }
+
+    /**
+     * Respond to a draw offer (accept or decline)
+     * @param request The draw response request containing game ID, username, and action
+     * @return The updated game state
+     */
+    @PostMapping(value = "/respond-draw", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> respondToDrawOffer(@RequestBody @Valid RespondToDrawRequestDTO request) {
+        try {
+            // Log the draw response request
+            log.info("Processing draw response for game {} by user {} with action: {}", 
+                request.getGameId(), request.getUsername(), request.getAction());
+
+            // Respond to the draw offer using the service
+            Game updatedGame = gameService.respondToDrawOffer(
+                request.getGameId(), 
+                request.getUsername(),
+                request.getAction()
+            );
+
+            // Send WebSocket notification to both players about the draw response
+            String message = String.format(
+                "{\"type\":\"DRAW_RESPONSE\"," +
+                "\"message\":\"Draw offer %s\"," +
+                "\"gameId\":\"%s\"," +
+                "\"gameStatus\":\"%s\"," +
+                "\"whitePlayerId\":\"%s\"," +
+                "\"blackPlayerId\":\"%s\"," +
+                "\"winnerId\":\"%s\"," +
+                "\"respondingPlayerUsername\":\"%s\"," +
+                "\"action\":\"%s\"}",
+                request.getAction(),
+                request.getGameId(),
+                updatedGame.getStatus(),
+                updatedGame.getWhitePlayer() != null ? updatedGame.getWhitePlayer().getId() : "",
+                updatedGame.getBlackPlayer() != null ? updatedGame.getBlackPlayer().getId() : "",
+                updatedGame.getWinner() != null ? updatedGame.getWinner().getId() : "",
+                request.getUsername(),
+                request.getAction()
+            );
+
+            // Send the draw response message to both players via WebSocket
+            messagingTemplate.convertAndSend("/topic/game/" + request.getGameId(), message);
+
+            // Return the updated game state
+            GameDTO gameDTO = GameDTO.fromGame(updatedGame);
+            gameDTO.setServerTime(LocalDateTime.now()); // Set current server time for client sync
+            return ResponseEntity.ok()
+                    .body(gameDTO);
+
+        } catch (GameNotFoundException e) {
+            log.error("Game not found: {}", request.getGameId(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("Game not found"));
+        } catch (UserNotFoundException e) {
+            log.error("User not found: {}", request.getUsername(), e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO("User not found"));
+        } catch (IllegalStateException e) {
+            log.error("Invalid draw response request: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid action in draw response: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error responding to draw offer: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ErrorResponseDTO("Failed to respond to draw offer"));
         }
     }
 

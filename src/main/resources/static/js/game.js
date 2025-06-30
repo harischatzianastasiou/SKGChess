@@ -474,6 +474,325 @@ class ChessGame {
         
         // Setup position navigation event listeners
         this.setupPositionNavigationListeners();
+        
+        // Setup resign and draw button event listeners
+        this.setupGameControlListeners();
+    }
+
+    /**
+     * Setup event listeners for game control buttons (resign, draw)
+     * This method adds click handlers for the resign and draw buttons
+     */
+    setupGameControlListeners() {
+        // Get the resign and draw buttons
+        const resignBtn = document.getElementById('resign-btn');
+        const drawBtn = document.getElementById('draw-btn');
+        
+        // Add click event listener for resign button
+        if (resignBtn) {
+            resignBtn.addEventListener('click', () => this.handleResignClick());
+        }
+        
+        // Add click event listener for draw button
+        if (drawBtn) {
+            drawBtn.addEventListener('click', () => this.handleDrawClick());
+        }
+    }
+
+    /**
+     * Handle resign button click
+     * Shows confirmation dialog and sends resign request if confirmed
+     */
+    async handleResignClick() {
+        // Check if game is in progress
+        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
+            this.showErrorPopup('You can only resign when the game is in progress');
+            return;
+        }
+        
+        // Allow resigning regardless of turn (removed the turn check)
+        
+        // Show confirmation dialog
+        const confirmed = await this.showConfirmationDialog(
+            'Resign Game',
+            'Are you sure you want to resign? This will end the game and your opponent will win.',
+            'Resign',
+            'Cancel'
+        );
+        
+        if (confirmed) {
+            await this.resignGame();
+        }
+    }
+
+    /**
+     * Handle draw button click
+     * Sends draw offer request to the opponent
+     */
+    async handleDrawClick() {
+        // Check if game is in progress
+        if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
+            this.showErrorPopup('You can only offer a draw when the game is in progress');
+            return;
+        }
+        
+        // Check if it's the player's turn (they can only offer draw on their turn)
+        if (!this.isPlayerTurn) {
+            this.showErrorPopup('You can only offer a draw on your turn');
+            return;
+        }
+        
+        // Show confirmation dialog
+        const confirmed = await this.showConfirmationDialog(
+            'Offer Draw',
+            'Are you sure you want to offer a draw to your opponent?',
+            'Offer Draw',
+            'Cancel'
+        );
+        
+        if (confirmed) {
+            await this.offerDraw();
+        }
+    }
+
+    /**
+     * Send resign request to the server
+     * This method makes an API call to resign the current game
+     */
+    async resignGame() {
+        try {
+            // Prepare the request body
+            const requestBody = {
+                gameId: this.gameId,
+                username: this.username
+            };
+            
+            // Send the resign request to the server
+            const response = await fetch('/api/games/resign', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                this.showErrorPopup(errorData.message || 'Failed to resign game');
+                return;
+            }
+            
+            // Game resigned successfully - the WebSocket will handle the game state update
+            console.log('Game resigned successfully');
+            
+        } catch (error) {
+            console.error('Error resigning game:', error);
+            this.showErrorPopup('Failed to resign game. Please try again.');
+        }
+    }
+
+    /**
+     * Send draw offer request to the server
+     * This method makes an API call to offer a draw to the opponent
+     */
+    async offerDraw() {
+        try {
+            // Prepare the request body
+            const requestBody = {
+                gameId: this.gameId,
+                username: this.username
+            };
+            
+            // Send the draw offer request to the server
+            const response = await fetch('/api/games/offer-draw', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                this.showErrorPopup(errorData.message || 'Failed to offer draw');
+                return;
+            }
+            
+            // Draw offer sent successfully - the WebSocket will handle the response
+            console.log('Draw offer sent successfully');
+            
+        } catch (error) {
+            console.error('Error offering draw:', error);
+            this.showErrorPopup('Failed to offer draw. Please try again.');
+        }
+    }
+
+    /**
+     * Handle draw offer from opponent
+     * Shows dialog to accept or decline the draw offer
+     * @param {string} offeringPlayerUsername The username of the player who offered the draw
+     */
+    async handleDrawOffer(offeringPlayerUsername) {
+        // Show dialog to accept or decline the draw offer
+        const action = await this.showDrawOfferDialog(offeringPlayerUsername);
+        
+        if (action) {
+            await this.respondToDrawOffer(action);
+        }
+    }
+
+    /**
+     * Show dialog for responding to draw offer
+     * @param {string} offeringPlayerUsername The username of the player who offered the draw
+     * @returns {string|null} 'accept', 'decline', or null if cancelled
+     */
+    showDrawOfferDialog(offeringPlayerUsername) {
+        return new Promise((resolve) => {
+            // Create the dialog element
+            const dialog = document.createElement('div');
+            dialog.className = 'draw-offer-dialog';
+            dialog.innerHTML = `
+                <div class="draw-offer-content">
+                    <h3>Draw Offer</h3>
+                    <p>${offeringPlayerUsername} has offered a draw.</p>
+                    <div class="draw-offer-buttons">
+                        <button class="btn-accept-draw">Accept Draw</button>
+                        <button class="btn-decline-draw">Decline Draw</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners
+            const acceptBtn = dialog.querySelector('.btn-accept-draw');
+            const declineBtn = dialog.querySelector('.btn-decline-draw');
+            
+            acceptBtn.addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve('accept');
+            });
+            
+            declineBtn.addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve('decline');
+            });
+            
+            // Add to page
+            document.body.appendChild(dialog);
+            
+            // Auto-remove after 15 seconds if no response (shorter time since game continues normally)
+            setTimeout(() => {
+                if (document.body.contains(dialog)) {
+                    document.body.removeChild(dialog);
+                    resolve(null);
+                }
+            }, 15000);
+        });
+    }
+
+    /**
+     * Send response to draw offer
+     * @param {string} action 'accept' or 'decline'
+     */
+    async respondToDrawOffer(action) {
+        try {
+            // Prepare the request body
+            const requestBody = {
+                gameId: this.gameId,
+                username: this.username,
+                action: action
+            };
+            
+            // Send the draw response request to the server
+            const response = await fetch('/api/games/respond-draw', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            if (!response.ok) {
+                const errorData = await response.json();
+                this.showErrorPopup(errorData.message || 'Failed to respond to draw offer');
+                return;
+            }
+            
+            // Draw response sent successfully - the WebSocket will handle the game state update
+            console.log('Draw response sent successfully:', action);
+            
+        } catch (error) {
+            console.error('Error responding to draw offer:', error);
+            this.showErrorPopup('Failed to respond to draw offer. Please try again.');
+        }
+    }
+
+    /**
+     * Show confirmation dialog
+     * @param {string} title The dialog title
+     * @param {string} message The dialog message
+     * @param {string} confirmText The confirm button text
+     * @param {string} cancelText The cancel button text
+     * @returns {Promise<boolean>} True if confirmed, false if cancelled
+     */
+    showConfirmationDialog(title, message, confirmText, cancelText) {
+        return new Promise((resolve) => {
+            // Create the dialog element
+            const dialog = document.createElement('div');
+            dialog.className = 'confirmation-dialog';
+            dialog.innerHTML = `
+                <div class="confirmation-content">
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <div class="confirmation-buttons">
+                        <button class="btn-confirm">${confirmText}</button>
+                        <button class="btn-cancel">${cancelText}</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners
+            const confirmBtn = dialog.querySelector('.btn-confirm');
+            const cancelBtn = dialog.querySelector('.btn-cancel');
+            
+            confirmBtn.addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve(true);
+            });
+            
+            cancelBtn.addEventListener('click', () => {
+                document.body.removeChild(dialog);
+                resolve(false);
+            });
+            
+            // Add to page
+            document.body.appendChild(dialog);
+        });
+    }
+
+    /**
+     * Show error popup
+     * @param {string} message The error message to display
+     */
+    showErrorPopup(message) {
+        // Create the popup element
+        const popup = document.createElement('div');
+        popup.className = 'error-popup';
+        popup.innerHTML = `
+            <div class="error-content">
+                <h3>Error</h3>
+                <p>${message}</p>
+                <button class="btn-ok">OK</button>
+            </div>
+        `;
+        
+        // Add event listener
+        const okBtn = popup.querySelector('.btn-ok');
+        okBtn.addEventListener('click', () => {
+            document.body.removeChild(popup);
+        });
+        
+        // Add to page
+        document.body.appendChild(popup);
     }
 
     // Function to fetch user ID by username
@@ -757,6 +1076,75 @@ class ChessGame {
                                     this.statusElement.textContent = 'Game over by timeout!';
                                     // The updateBoard method will handle showing the end game popup
                                     this.updateBoard();
+                                }
+                            } else if (moveData.type === 'GAME_RESIGNED') {
+                                // Debug: Log the full message
+                                console.log('Full GAME_RESIGNED WebSocket message:', moveData);
+                                
+                                // Store winner ID if provided in the message
+                                if (moveData.winnerId) {
+                                    this.winnerId = moveData.winnerId;
+                                    console.log('Received winnerId from GAME_RESIGNED:', moveData.winnerId);
+                                } else {
+                                    console.log('No winnerId in GAME_RESIGNED message');
+                                }
+                                
+                                this.stopTimer();
+                                await this.fetchGame();
+                                
+                                // Update game status and show end game popup
+                                if (this.gameStatus === 'RESIGNED') {
+                                    this.statusElement.textContent = 'Game over by resignation!';
+                                    // The updateBoard method will handle showing the end game popup
+                                    this.updateBoard();
+                                }
+                            } else if (moveData.type === 'DRAW_OFFERED') {
+                                // Debug: Log the full message
+                                console.log('Full DRAW_OFFERED WebSocket message:', moveData);
+                                
+                                // Check if this player is the one who should respond to the draw offer
+                                // (i.e., not the one who offered it)
+                                if (moveData.offeringPlayerUsername !== this.username) {
+                                    // Show draw offer dialog to the opponent
+                                    this.handleDrawOffer(moveData.offeringPlayerUsername);
+                                }
+                                
+                                // Don't change the status - keep the current game status
+                                // The game continues normally while draw offer is pending
+                            } else if (moveData.type === 'DRAW_RESPONSE') {
+                                // Debug: Log the full message
+                                console.log('Full DRAW_RESPONSE WebSocket message:', moveData);
+                                
+                                // Store winner ID if provided in the message (for accepted draws)
+                                if (moveData.winnerId) {
+                                    this.winnerId = moveData.winnerId;
+                                    console.log('Received winnerId from DRAW_RESPONSE:', moveData.winnerId);
+                                }
+                                
+                                // Handle the draw response
+                                if (moveData.action === 'accept') {
+                                    // Draw was accepted
+                                    this.stopTimer();
+                                    await this.fetchGame();
+                                    
+                                    if (this.gameStatus === 'MUTUAL_AGREEMENT') {
+                                        this.statusElement.textContent = 'Game ended in draw by mutual agreement!';
+                                        // The updateBoard method will handle showing the end game popup
+                                        this.updateBoard();
+                                    }
+                                } else if (moveData.action === 'decline') {
+                                    // Draw was declined - just fetch the current game state
+                                    await this.fetchGame();
+                                    
+                                    // Update status based on current game state
+                                    if (this.gameStatus === 'IN_PROGRESS' || this.gameStatus === 'CHECK') {
+                                        // Check if it's the current player's turn
+                                        const isCurrentPlayerTurn = 
+                                            (this.playerColor === 'WHITE' && this.boardDTO.currentPlayer.alliance === 'WHITE') ||
+                                            (this.playerColor === 'BLACK' && this.boardDTO.currentPlayer.alliance === 'BLACK');
+                                        
+                                        this.statusElement.textContent = isCurrentPlayerTurn ? 'Your turn' : 'Opponent\'s turn';
+                                    }
                                 }
                             }
                         } catch (error) {
