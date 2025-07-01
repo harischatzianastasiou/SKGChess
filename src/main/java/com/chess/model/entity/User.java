@@ -56,6 +56,9 @@ public class User implements Serializable {
     @Column(name = "D_LASTLOGIN")
     private LocalDateTime lastLogin = LocalDateTime.now();
 
+    @Column(name = "N_USERNAMECHANGESLEFT", nullable = false)
+    private int usernameChangesLeft = 3;
+
     //Won't be called for updates (that would use @PreUpdate instead)
     @PrePersist//Called by JPA/Hibernate automatically//This annotation is used to specify that the method should be called when the entity is persisted to the database. It captures the exact database insertion time.
     protected void onCreate() {

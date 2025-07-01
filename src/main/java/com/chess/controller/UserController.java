@@ -17,9 +17,11 @@ import com.chess.model.entity.User;
 import com.chess.model.entity.Game;
 import com.chess.service.UserService;
 import com.chess.dto.rest.request.CreateUserRequestDTO;
+import com.chess.dto.rest.request.ChangeUsernameRequestDTO;
 import com.chess.dto.rest.response.GameDTO;
 import com.chess.dto.rest.response.UserDTO;
 import com.chess.exception.UserNotFoundException;
+import com.chess.exception.NewUsernameInvalidException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -113,6 +115,23 @@ public class UserController {
             log.error("Error searching users: {}", e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Failed to search users"));
+        }
+    }
+
+    @PostMapping(value = "/change-username", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<?> changeUsername(@RequestBody ChangeUsernameRequestDTO requestDTO, HttpServletRequest httpRequest) {
+        try {
+            User user = userService.changeUsername(requestDTO.getUsername(), requestDTO.getNewUsername());
+            return ResponseEntity.ok(UserDTO.fromUser(user));
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", "User not found"));
+        } catch (NewUsernameInvalidException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("message", "The new username is not valid. Please choose another."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("message", "Failed to change username: " + e.getMessage()));
         }
     }
 }

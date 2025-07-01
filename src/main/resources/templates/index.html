@@ -143,7 +143,43 @@
                 
                 <div class="hero-content" sec:authorize="isAuthenticated()">
                     <div class="welcome-icon"></div>
-                    <h1>Welcome, <span sec:authentication="name" data-username="true"></span>!</h1>
+                    <h1>Welcome, 
+                        <span id="username-display" sec:authentication="name" data-username="true" th:attr="data-changes-left=${user.usernameChangesLeft}"></span>
+                        <!-- Edit icon (pen), shown on hover -->
+                        <span id="edit-username-btn" style="cursor:pointer; margin-left:8px; display:inline-block; font-size:0.5em; vertical-align:middle;" title="Edit Username">
+                            <!-- Smaller pen icon -->
+                            <i class="fas fa-pen"></i>
+                        </span>
+                    </h1>
+                    
+                    <!-- Username Change Modal (hidden by default) - moved outside h1 for proper stacking -->
+                    <div id="username-modal" class="game-creation-popup" style="display:none; z-index:10001;">
+                        <div class="popup-content">
+                            <div class="popup-header">
+                                <h3>Change Username</h3>
+                                <button class="close-btn" id="close-username-modal" tabindex="0"><i class="fas fa-times"></i></button>
+                            </div>
+                            <div class="popup-body">
+                                <div class="form-group">
+                                    <label for="username-input-modal">New Username</label>
+                                    <input type="text" id="username-input-modal" maxlength="50" autocomplete="off" />
+                                    <span id="username-error-message-modal" style="color:red; display:none;"></span>
+                                </div>
+                                <div class="form-actions" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+                                    <div id="username-info-message" style="color:#a9a9ff; background:rgba(60,60,80,0.25); border-radius:5px; padding:8px 12px; font-size:0.95em; margin-bottom:8px; text-align:center; border:1px solid #6c63ff;">
+                                        <i class="fas fa-info-circle" style="color:#6c63ff; margin-right:6px;"></i>
+                                        You will be prompted to relogin after changing the username.
+                                    </div>
+                                    <div style="display:flex; gap:12px;">
+                                        <button id="save-username-btn-modal" class="btn btn-create">Save</button>
+                                        <button id="cancel-username-btn-modal" class="btn btn-cancel">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Overlay for modal - moved outside h1 for proper stacking -->
+                    <div id="username-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:10000;"></div>
                     
                     <!-- Quote styling for authenticated users -->
                     <div class="welcome-quote">
@@ -403,6 +439,168 @@
             url.searchParams.delete('error');
             window.history.replaceState({}, '', '/');
         }
+
+        // Username change modal logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get elements for username editing
+            const usernameDisplay = document.getElementById('username-display');
+            const editBtn = document.getElementById('edit-username-btn');
+            const usernameModal = document.getElementById('username-modal');
+            const usernameModalOverlay = document.getElementById('username-modal-overlay');
+            const usernameInputModal = document.getElementById('username-input-modal');
+            const saveBtnModal = document.getElementById('save-username-btn-modal');
+            const cancelBtnModal = document.getElementById('cancel-username-btn-modal');
+            const closeModalBtn = document.getElementById('close-username-modal');
+            const errorMsgModal = document.getElementById('username-error-message-modal');
+
+            // Get the number of username changes left from the data attribute
+            let usernameChangesLeft = parseInt(usernameDisplay.getAttribute('data-changes-left'), 10);
+
+            function updateEditButtonState() {
+                // Always show the edit button; do not hide it or show a message span
+                editBtn.style.display = 'inline-block';
+                const msg = document.getElementById('username-limit-message');
+                if (msg) msg.remove();
+            }
+            updateEditButtonState();
+
+            // Show modal when pen is clicked
+            editBtn.onclick = function() {
+                if (usernameChangesLeft <= 0) {
+                    // Show a popup message if the user has reached the maximum number of username changes
+                    showUsernameLimitPopup();
+                    return;
+                }
+                usernameModal.style.display = 'block';
+                usernameModal.classList.add('show');
+                usernameModalOverlay.style.display = 'block';
+                usernameInputModal.value = usernameDisplay.textContent.trim();
+                usernameInputModal.focus();
+                if (errorMsgModal) errorMsgModal.style.display = 'none';
+                document.body.classList.add('popup-open');
+            };
+
+            // Function to show the username limit popup
+            function showUsernameLimitPopup() {
+                // Remove any existing popup and overlay
+                let popup = document.getElementById('username-limit-popup');
+                if (popup) popup.remove();
+                let overlay = document.getElementById('username-limit-popup-overlay');
+                if (overlay) overlay.remove();
+
+                // Create overlay
+                overlay = document.createElement('div');
+                overlay.id = 'username-limit-popup-overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100vw';
+                overlay.style.height = '100vh';
+                overlay.style.background = 'rgba(0,0,0,0.5)';
+                overlay.style.zIndex = '19999';
+                overlay.onclick = function() {
+                    if (popup) popup.remove();
+                    overlay.remove();
+                };
+                document.body.appendChild(overlay);
+
+                // Create popup
+                popup = document.createElement('div');
+                popup.id = 'username-limit-popup';
+                popup.className = 'game-creation-popup show'; // Ensure popup is visible
+                popup.style.display = 'block';
+                popup.style.zIndex = '20000';
+                popup.innerHTML = `
+                    <div class="popup-content">
+                        <div class="popup-header">
+                            <h3 style="margin:0;">Notice</h3>
+                            <button class="close-btn" id="close-username-limit-popup" tabindex="0" style="float:right;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="popup-body" style="margin-top:12px;">
+                            <div style="display:flex;align-items:center;gap:12px;">
+                                <i class="fas fa-exclamation-triangle" style="color:#e74c3c;font-size:1.5em;"></i>
+                                <span style="font-size:1.1em;">You have reached the maximum number of username changes.</span>
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top:16px;">
+                            <button id="close-username-limit-popup-btn" class="btn btn-create">Close</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(popup);
+
+                // Close logic
+                document.getElementById('close-username-limit-popup').onclick = function() {
+                    popup.remove();
+                    overlay.remove();
+                };
+                document.getElementById('close-username-limit-popup-btn').onclick = function() {
+                    popup.remove();
+                    overlay.remove();
+                };
+            }
+
+            // Hide modal function
+            function hideUsernameModal() {
+                usernameModal.style.display = 'none';
+                usernameModal.classList.remove('show');
+                usernameModalOverlay.style.display = 'none';
+                if (errorMsgModal) errorMsgModal.style.display = 'none';
+                document.body.classList.remove('popup-open');
+            }
+            // Hide modal on cancel or close
+            cancelBtnModal.onclick = hideUsernameModal;
+            closeModalBtn.onclick = hideUsernameModal;
+            usernameModalOverlay.onclick = hideUsernameModal;
+            // Hide modal on Escape key
+            document.addEventListener('keydown', function(event) {
+                if ((event.key === 'Escape' || event.keyCode === 27) && usernameModal.style.display === 'block') {
+                    hideUsernameModal();
+                }
+            });
+            // Save username from modal
+            saveBtnModal.onclick = function() {
+                const newUsername = usernameInputModal.value.trim();
+                if (!newUsername) return;
+                saveBtnModal.disabled = true;
+                if (errorMsgModal) errorMsgModal.style.display = 'none';
+                fetch('/api/users/change-username', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: usernameDisplay.textContent.trim(), newUsername: newUsername })
+                })
+                .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                .then(({ status, body }) => {
+                    if (status === 200 && body && body.username) {
+                        usernameDisplay.textContent = body.username;
+                        usernameChangesLeft = body.usernameChangesLeft;
+                        usernameDisplay.setAttribute('data-changes-left', usernameChangesLeft);
+                        // Log the user out and redirect to login page after username change for session consistency
+                        fetch('/logout', { method: 'POST' })
+                          .then(() => window.location.href = '/?logout=true');
+                        // Optionally, you can show a message or delay before redirecting
+                        // hideUsernameModal();
+                        // updateEditButtonState();
+                    } else {
+                        if (errorMsgModal) {
+                            errorMsgModal.textContent = body && body.message ? body.message : 'Failed to change username.';
+                            errorMsgModal.style.display = 'block';
+                        }
+                    }
+                })
+                .catch(error => {
+                    if (errorMsgModal) {
+                        errorMsgModal.textContent = 'Error changing username: ' + error;
+                        errorMsgModal.style.display = 'block';
+                    }
+                })
+                .finally(() => {
+                    saveBtnModal.disabled = false;
+                });
+            };
+        });
     </script>
 </body>
 </html> 

@@ -34,6 +34,8 @@ public class UserDTO {
     private LocalDateTime createdAt;
     private LocalDateTime lastLogin;
     
+    private int usernameChangesLeft;
+    
     /**
      * Convert a User entity to a UserDTO
      * @param user The User entity to convert
@@ -46,6 +48,7 @@ public class UserDTO {
                 .email(user.getEmail())
                 .createdAt(user.getCreatedAt())
                 .lastLogin(user.getLastLogin())
+                .usernameChangesLeft(user.getUsernameChangesLeft())
                 .build();
     }
 }

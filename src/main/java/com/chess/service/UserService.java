@@ -12,10 +12,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import com.chess.exception.UserNotFoundException;
-import com.chess.model.entity.Game;
 import com.chess.model.entity.User;
 import com.chess.repository.UserRepository;
 import com.chess.dto.rest.response.UserDTO;
+import com.chess.exception.NewUsernameInvalidException;
+import com.chess.exception.UsernameChangesLeftException;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -24,6 +25,7 @@ public class UserService implements UserDetailsService {
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+        
     }
 
     @Override
@@ -88,4 +90,19 @@ public class UserService implements UserDetailsService {
             .collect(Collectors.toList());
     }
 
+    public User changeUsername(String username, String newUsername) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (user.getUsernameChangesLeft() <= 0) {
+            throw new UsernameChangesLeftException("You have reached the maximum number of username changes.");
+        }
+        if (newUsername.equals(username) || newUsername.isEmpty() || newUsername.isBlank()) {
+            throw new NewUsernameInvalidException("New username cannot be the same as the current username or empty");
+        }
+
+        user.setUsername(newUsername);
+        user.setUsernameChangesLeft(user.getUsernameChangesLeft() - 1);
+        return userRepository.save(user);
+    }
 }

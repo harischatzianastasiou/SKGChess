@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import com.chess.dto.rest.response.GameDTO;
+import com.chess.dto.rest.response.UserDTO;
 import com.chess.model.entity.Game;
 import com.chess.model.entity.Game.GameStatus;
 import com.chess.model.entity.User;
@@ -98,6 +99,7 @@ public class MainController {
                 model.addAttribute("lastGame", lastGameDTO);
                 model.addAttribute("numOfUserGames", numOfUserGames);
                 model.addAttribute("userId", currentUser.getId());
+                model.addAttribute("user", UserDTO.fromUser(currentUser));
                 
             } catch (Exception e) {
                 // Log the error but don't let it crash the page
@@ -142,6 +144,7 @@ public class MainController {
                 model.addAttribute("lastGame", lastGameDTO);
                 model.addAttribute("numOfUserGames", numOfUserGames);
                 model.addAttribute("userId", currentUser.getId());
+                model.addAttribute("user", UserDTO.fromUser(currentUser));
             } catch (Exception e) {
                 // Log the error but don't let it crash the page
                 System.err.println("Error loading all games: " + e.getMessage());
