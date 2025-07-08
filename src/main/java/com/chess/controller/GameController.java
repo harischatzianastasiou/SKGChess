@@ -44,7 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestController
 @RequestMapping("/api/games")
-@CrossOrigin(origins = {"https://skgchess.com", "https://www.skgchess.com", "https://skgchess.fly.dev", "http://localhost:8080"}, maxAge = 3600)
+@CrossOrigin(origins = {"https://toskaki.gr", "https://www.toskaki.gr", "https://skaki.online", "https://www.skaki.online", "https://toskaki.fly.dev", "http://localhost:8080"}, maxAge = 3600)
 public class GameController {
     
     private final GameService gameService;

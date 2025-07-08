@@ -34,9 +34,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/chess-websocket")
                 .setAllowedOriginPatterns(
                     "http://localhost:[*]",
-                    "https://skgchess.fly.dev",
-                    "https://skgchess.com",
-                    "https://www.skgchess.com"
+                            "https://toskaki.fly.dev",
+        "https://toskaki.gr",
+        "https://www.toskaki.gr",
+        "https://skaki.online",
+        "https://www.skaki.online"
                 )
                 .withSockJS()
                 .setClientLibraryUrl("https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js")

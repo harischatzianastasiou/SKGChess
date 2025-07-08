@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 @Controller
-@CrossOrigin(origins = {"https://skgchess.com", "https://www.skgchess.com", "https://skgchess.fly.dev", "http://localhost:8080"}, maxAge = 3600)
+@CrossOrigin(origins = {"https://toskaki.gr", "https://www.toskaki.gr", "https://skaki.online", "https://www.skaki.online", "https://toskaki.fly.dev", "http://localhost:8080"}, maxAge = 3600)
 public class MainController {
 
     private final GameService gameService;
