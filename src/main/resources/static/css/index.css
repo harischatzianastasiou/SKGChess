@@ -2620,16 +2620,31 @@ body:not(.authenticated) .video-bg-container {
 
 @media (max-width: 768px) {
     .welcome-main .cta-btn {
-        margin-bottom: 80px;
-        margin-top: 0.7rem !important; /* Reduced from 5vh to 0.7rem to move CTA button much higher */
+        margin-bottom: max(40px, env(safe-area-inset-bottom, 0)) !important; /* Always visible above browser bar and safe area */
+        position: relative;
+        z-index: 10;
     }
-    .authenticated-hero .username-row {
-        margin-top: 5vh !important; /* Reduced from 10vh to 5vh to move username higher */
+    .welcome-main {
+        overflow: visible !important;
     }
 }
 
 @media (max-width: 768px) {
     .welcome-icon {
         z-index: 10000 !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-icon {
+        margin-bottom: 0.2rem !important; /* Minimize gap below logo */
+    }
+    .welcome-main h1 {
+        margin-top: 0 !important; /* No gap above heading */
+        margin-bottom: 0.7rem !important; /* Small gap below heading */
+    }
+    .authenticated-hero .username-row {
+        margin-top: 0 !important; /* No gap above username */
+        margin-bottom: 0.7rem !important; /* Small gap below username */
     }
 }
