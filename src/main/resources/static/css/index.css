@@ -1897,7 +1897,7 @@ body.authenticated::before {
     }
 
     .welcome-quote {
-        margin: 1.5rem 0;
+        margin: 0.5rem 0; /* Reduced from 1.5rem to 0.5rem to move quote higher */
         font-size: 0.9rem;
         padding: 0 1rem;
     }
@@ -2035,6 +2035,7 @@ body.authenticated::before {
     .welcome-quote {
         font-size: 0.9rem;      /* or even 0.8rem for extra small */
         padding: 0 0.5rem;
+        margin: 0.3rem 0; /* Reduced margin to move quote higher on very small screens */
     }
     .welcome-quote .quote-text {
         font-size: 1em;         /* Ensures it doesn't get too large */
@@ -2616,12 +2617,15 @@ body:not(.authenticated) .video-bg-container {
 @media (max-width: 768px) {
     .welcome-main .cta-btn {
         margin-bottom: 80px;
+        margin-top: 5vh; /* Reduced from 10vh to 5vh to move CTA button higher */
     }
     .authenticated-hero .username-row {
-        margin-top: 18vh !important;
+        margin-top: 10vh !important;
     }
-    .authenticated-hero .scroll-indicator {
-        margin-top: 18vh !important;
-        margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .welcome-icon {
+        z-index: 10000 !important;
     }
 }
