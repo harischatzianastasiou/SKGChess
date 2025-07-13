@@ -2517,15 +2517,15 @@ body:not(.authenticated) .video-bg-container {
 
 @media (max-width: 768px) {
     .welcome-icon {
-        margin-top: 300px !important; /* Move logo even further down on mobile */
+        margin-top: 80px !important; /* Reduced from 300px to 80px to move logo much higher */
         margin-bottom: 0px !important; /* Bring logo and quote as close as possible on mobile */
     }
 }
 
 @media (max-width: 768px) {
     .welcome-icon {
-        width: 280px !important;
-        height: 280px !important;
+        width: 320px !important; /* Increased from 280px to 320px */
+        height: 320px !important; /* Increased from 280px to 320px */
     }
 }
 
@@ -2621,10 +2621,10 @@ body:not(.authenticated) .video-bg-container {
 @media (max-width: 768px) {
     .welcome-main .cta-btn {
         margin-bottom: 80px;
-        margin-top: 5vh; /* Reduced from 10vh to 5vh to move CTA button higher */
+        margin-top: 0.7rem !important; /* Reduced from 5vh to 0.7rem to move CTA button much higher */
     }
     .authenticated-hero .username-row {
-        margin-top: 10vh !important;
+        margin-top: 5vh !important; /* Reduced from 10vh to 5vh to move username higher */
     }
 }
 
