@@ -2571,12 +2571,16 @@ body:not(.authenticated) .video-bg-container {
         padding: 0 1rem;
         box-sizing: border-box;
     }
-    .spacer {
-        flex: 1;
-        width: 100%;
+    .welcome-main .spacer {
+        display: none !important; /* Remove spacer so elements move up */
     }
-    .cta-btn {
-        margin-bottom: 32px;
+    .welcome-main h1 {
+        margin-top: 1.2rem !important; /* Small gap below logo */
+        margin-bottom: 0.7rem !important; /* Small gap below heading */
+    }
+    .welcome-main .cta-btn {
+        margin-top: 0.7rem !important; /* Small gap below heading */
+        margin-bottom: 40px !important; /* Still keep above browser bar */
     }
 }
 
