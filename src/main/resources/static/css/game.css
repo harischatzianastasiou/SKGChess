@@ -630,8 +630,8 @@
     width: 100%; /* Ensure full width */
     margin-bottom: 20px; /* Remove any bottom margin */
     background: 
-        linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), /* dark overlay */
-        url('/images/retrochess2.jpg'); 
+        linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), /* dark overlay */
+        url('/images/retrochess3.jpg'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -2440,4 +2440,11 @@
     min-width: fit-content;
     margin-top: 0 !important; /* Remove any top margin */
     line-height: 1; /* Reduce line height for more compact appearance */
-} 
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color : #fff;
+}

@@ -10,15 +10,27 @@
     justify-content: center;
     min-height: 100vh;
     padding: 4vw 2vw;
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess41.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)), url('/images/bnwthess.jpg');
     background-size: contain;
-    background-position: center top;
+    background-position: right;
     background-repeat: repeat;
     border-radius: 2vw;
     margin-bottom: 2vw;
     position: relative;
     overflow: hidden;
-    animation: backgroundTravel 30s infinite alternate ease-in-out; /* Added animation */
+    animation: backgroundTravel 15s infinite alternate ease-in-out; /* Animation enabled for mobile */
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* For screens wider than 768px (not mobile) */
+@media (min-width: 768px) {
+    .hero-section {
+        background-size: cover;         /* Cover the whole screen */
+        background-position: right;    /* Center the image */
+        background-repeat: no-repeat;   /* No repeat */
+        /* animation: none;  Removed to enable animation on all screens */
+    }
 }
 
 /* ==========================================================================
@@ -181,29 +193,33 @@
 }
 
 .main-button.get-started {
-    background-color:  #425007; /* Your orange/coral color from the example */
-    color: white;
-    border: none;
-    box-shadow: 0 4px 15px rgba(226, 125, 96, 0.3);
-}
-
-.main-button.get-started:hover {
-    background-color: #849d14;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(226, 125, 96, 0.4);
-}
-
-.main-button.about {
-    background-color: #553c9a;
-    color: #333;
-    border: 2px solid #333;
+    background: linear-gradient(90deg, #849d14 0%, #232526 100%);
+    color: #fff;
+    font-weight: 600;
+    border: 2px solid #333; border-radius: 8px;
+    box-shadow: 0 2px 12px 0 rgba(108,99,255,0.13);
+    transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, color 0.2s;
     z-index: 3000;
 }
 
+.main-button.get-started:hover {
+    background: linear-gradient(90deg, #232526 0%, #849d14 100%);
+    box-shadow: 0 4px 24px 0 rgba(108,99,255,0.18);
+}
+
+.main-button.about {
+    background: linear-gradient(90deg, #553c9a 0%, #232526 100%);
+    color: #fff;
+    font-weight: 600;
+    border: 2px solid #333; border-radius: 8px;
+    box-shadow: 0 2px 12px 0 rgba(108,99,255,0.13);
+    transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, color 0.2s;
+    z-index: 3000;
+}
+    
 .main-button.about:hover {
-    color: #ffffff;
-    background-color: #2d1f2e;
-    transform: translateY(-2px);
+    background: linear-gradient(90deg, #232526 0%, #553c9a 100%);
+    box-shadow: 0 4px 24px 0 rgba(108,99,255,0.18);
 }
 
 .dual-morph-btn {
@@ -426,7 +442,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: url('/images/retrochess3.jpg');
+    background-image: url('/images/background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -941,9 +957,9 @@ body.authenticated::before {
     left: 0;
     width: 100%;
     height: 100vh;
-    background-image: url('/images/bnwthess.jpg');
+    background-image: url('/images/bnwthess.png');
     background-size: cover;
-    background-position: center;
+    background-position: right;
     background-repeat: no-repeat;
     opacity: 1;
     z-index: -1;
@@ -1933,7 +1949,7 @@ body.authenticated::before {
     margin: 0;
     min-width: 60px;
     min-height: 60px;
-    background-image: url('/images/knight.png');
+    background-image: url('/images/toskaki4.png');
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
@@ -2036,7 +2052,7 @@ body.authenticated::before {
     .hero-section {
         background-size: cover;
         background-repeat: no-repeat;
-        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/retrochess2.jpg');
+        background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/images/bnwthess.png');
         animation: backgroundTravel 50s infinite alternate ease-in-out; /* Added animation */
     }
 }
@@ -2425,5 +2441,121 @@ body.authenticated::before {
         .join-game-overlay {
             height: 100dvh;
         }
+    }
+}
+
+.cta-btn {
+    background: #b4c23d;
+    color: #fff;
+    padding: 1rem 2.5rem;
+    border-radius: 2rem;
+    font-size: 1.2rem;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.2s;
+    box-shadow: 2 2px 8px #0006;
+    border: 1px solid #000; /* Solid black border */
+  }
+  
+  .cta-btn:hover {
+    background: #8a9a2d;
+  }
+
+  .logo {
+    font-size: 2rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+  }
+
+  nav a, .menu-btn {
+    color: #fff;
+    margin-left: 2rem;
+    text-decoration: none;
+    font-size: 1.1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+/* Fade-in-up animation for logo, heading, and quote */
+.animated-fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.animated-fade-in-up[style*="animation-delay"] {
+    animation-delay: var(--animation-delay, 0s);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body:not(.authenticated) .video-overlay,
+body:not(.authenticated) .video-bg-container,
+body:not(.authenticated) .home-container {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+}
+body:not(.authenticated) .video-bg-container {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    filter: none !important;
+    /* Do not set background to transparent here so the image remains visible */
+}
+
+@media (max-width: 768px) {
+    .welcome-icon {
+        margin-top: 300px !important; /* Move logo even further down on mobile */
+        margin-bottom: 0px !important; /* Bring logo and quote as close as possible on mobile */
+    }
+}
+
+@media (max-width: 768px) {
+    .welcome-icon {
+        width: 280px !important;
+        height: 280px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .authenticated-hero .hero-content h1 {
+        font-size: 2.8rem !important;
+        color: #fff !important;
+        -webkit-text-fill-color: #fff !important;
+        background: none !important;
+        -webkit-background-clip: unset !important;
+        text-shadow: none;
+        background-color: unset;
+        border-radius: unset;
+        display: block;
+        width: 100%;
+        text-align: center;
+        animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        padding: 0;
+        margin-bottom: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .authenticated-hero .welcome-icon {
+        margin-top: 40px !important; /* Move logo higher on mobile when authenticated */
+        margin-bottom: 490px !important; /* Greatly increase gap below logo on mobile when authenticated */
+    }
+}
+
+@media (max-width: 480px) {
+    .authenticated-hero .welcome-icon {
+        margin-top: 100px !important; /* Move logo further down on very small screens when authenticated */
     }
 }

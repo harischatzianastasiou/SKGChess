@@ -92,6 +92,13 @@ body {
         radial-gradient(circle at 90% 80%, rgba(231, 76, 60, 0.05) 0%, transparent 20%);
 }
 
+body:not(.authenticated) .hero-section {
+    background: none !important;
+}
+body:not(.authenticated) .hero-section::before {
+    background: none !important;
+}
+
 /* Header Styles */
 .header {
     position: fixed;
@@ -140,6 +147,7 @@ body {
     height: 100%;
 }
 
+
 .header-auth > div {
     display: flex;
     align-items: center;
@@ -165,7 +173,7 @@ body {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/images/retrochess2.png');
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/images/bnwthess.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
