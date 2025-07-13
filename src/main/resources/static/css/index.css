@@ -1949,10 +1949,23 @@ body.authenticated::before {
     margin: 0;
     min-width: 60px;
     min-height: 60px;
-    background-image: url('/images/toskaki4.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
+    /* Remove background-image approach for better browser compatibility */
+    /* background-image: url('/images/toskaki4.png'); */
+    /* background-size: contain; */
+    /* background-position: center; */
+    /* background-repeat: no-repeat; */
+    display: flex; /* Add flex display to center the img */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+}
+
+/* Add styles for the img element inside welcome-icon */
+.welcome-icon img {
+    width: 100%; /* Take full width of container */
+    height: 100%; /* Take full height of container */
+    object-fit: contain; /* Maintain aspect ratio */
+    max-width: 100%; /* Ensure it doesn't overflow */
+    max-height: 100%; /* Ensure it doesn't overflow */
 }
 
 .think-chess-text {
