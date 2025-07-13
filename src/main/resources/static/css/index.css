@@ -2570,6 +2570,7 @@ body:not(.authenticated) .video-bg-container {
         justify-content: flex-start;
         padding: 0 1rem;
         box-sizing: border-box;
+        overflow: visible !important; /* Ensure Chrome doesn't hide content */
     }
     .welcome-main .spacer {
         display: none !important; /* Remove spacer so elements move up */
@@ -2580,7 +2581,10 @@ body:not(.authenticated) .video-bg-container {
     }
     .welcome-main .cta-btn {
         margin-top: 0.7rem !important; /* Small gap below heading */
-        margin-bottom: 40px !important; /* Still keep above browser bar */
+        margin-bottom: 60px !important; /* Fixed margin that works in all browsers */
+        position: relative;
+        z-index: 10;
+        min-height: 44px; /* Ensure minimum touch target size */
     }
 }
 
