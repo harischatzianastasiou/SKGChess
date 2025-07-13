@@ -56,6 +56,30 @@
         .header.header-shadow {
             z-index: 3001 !important; /* Ensure header is always above overlay */
         }
+        .menu-btn {
+            min-width: 48px;
+            width: 48px;
+            height: 48px;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin-left: 1rem;
+        }
+        @media (min-width: 769px) {
+            .menu-btn {
+                min-width: 38px;
+                width: 38px;
+                height: 38px;
+                font-size: 1.7rem;
+            }
+        }
+        .header-auth nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
         @media (max-width: 768px) {
             .header-auth nav > a {
                 display: none !important;
@@ -336,10 +360,11 @@
                 <div class="video-overlay"></div>
             </div>
             <!-- Main content area -->
-            <main>
+            <main class="welcome-main">
                 <div class="welcome-icon"></div>
                 <!-- Main heading / welcome quote -->
                 <h1 class="animated-fade-in-up" style="animation-delay: 0.4s;">H ελληνική πλατφόρμα για το σκάκι.</h1>
+                <div class="spacer"></div>
                 <!-- Call-to-action button triggers login modal -->
                 <button class="cta-btn animated-fade-in-up" onclick="openLoginModal(); return false;">Γίνε Μέλος</button>
             </main>
@@ -365,6 +390,7 @@
                     <div class="welcome-icon"></div>
                     <!-- In the authenticated hero heading, replace the username and pencil with a flex row -->
                     <h1 class="username-row">Welcome, <span id="username-display" sec:authentication="name" data-username="true" th:attr="data-changes-left=${user.usernameChangesLeft}"></span><span id="edit-username-btn" style="cursor:pointer; margin-left:8px; display:inline-block; font-size:0.5em; vertical-align:middle;" title="Edit Username"><i class="fas fa-pen"></i></span></h1>
+                    <div class="spacer"></div>
                     <!-- Overlay for modal - moved outside h1 for proper stacking -->
                     <div id="username-modal" class="game-creation-popup" style="display:none; z-index:10001;">
                         <div class="popup-content">

@@ -2559,3 +2559,47 @@ body:not(.authenticated) .video-bg-container {
         margin-top: 100px !important; /* Move logo further down on very small screens when authenticated */
     }
 }
+
+@media (max-width: 768px) {
+    .welcome-main {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0 1rem;
+        box-sizing: border-box;
+    }
+    .spacer {
+        flex: 1;
+        width: 100%;
+    }
+    .cta-btn {
+        margin-bottom: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .authenticated-hero .hero-content {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0 1rem;
+        box-sizing: border-box;
+    }
+    .authenticated-hero .spacer {
+        flex: 1;
+        width: 100%;
+    }
+    .scroll-indicator {
+        margin-bottom: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .video-bg-container {
+        background-attachment: scroll !important;
+    }
+}
