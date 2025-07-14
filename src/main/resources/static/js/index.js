@@ -139,6 +139,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    const header = document.querySelector('.header');
+    if (!header) return;
+    window.addEventListener('scroll', function() {
+        if (window.scrollY > 10) {
+            header.classList.add('scroll');
+        } else {
+            header.classList.remove('scroll');
+        }
+    });
 });
 
 // Function to connect to the WebSocket

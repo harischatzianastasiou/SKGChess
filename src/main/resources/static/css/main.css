@@ -119,6 +119,10 @@ body:not(.authenticated) .hero-section::before {
     align-items: center;
     z-index: 10;
     transition: background-color var(--transition-normal);
+    background: transparent !important; /* Transparent header */
+    box-shadow: none !important;        /* No shadow */
+    transition: background 0.3s, box-shadow 0.3s;
+    border: none;
 }
 
 /* Logo Styles */
@@ -189,10 +193,7 @@ body:not(.authenticated) .hero-section::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.3) 100%);
-    z-index: 1;
 }
-
 .hero-content {
     max-width: 900px;
     position: relative;
