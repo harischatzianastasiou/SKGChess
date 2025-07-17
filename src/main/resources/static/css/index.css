@@ -1943,19 +1943,14 @@ body.authenticated::before {
 }
 
 .welcome-icon {
-    width: clamp(90px, 18vw, 250px); /* Responsive: min 90px, max 250px, scales with viewport */
-    height: clamp(90px, 18vw, 250px);
+    width: clamp(90px, 18vw, 350px); /* Responsive: min 90px, max 300px, scales with viewport */
+    height: clamp(90px, 18vw, 350px);
     margin: 0;
     min-width: 60px;
     min-height: 60px;
-    /* Remove background-image approach for better browser compatibility */
-    /* background-image: url('/images/toskaki4.png'); */
-    /* background-size: contain; */
-    /* background-position: center; */
-    /* background-repeat: no-repeat; */
-    display: flex; /* Add flex display to center the img */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Add styles for the img element inside welcome-icon */
@@ -2680,18 +2675,35 @@ body.authenticated .header {
 }
 
 @media (max-width: 768px) {
-  .header {
-    background: transparent !important; /* Always transparent on mobile by default */
-    box-shadow: none !important;        /* No shadow */
+  body.authenticated .header {
+    background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43)) !important; /* Always black for authenticated users on mobile */
+    box-shadow: none !important;
     border: none;
     transition: background 0.3s, box-shadow 0.3s;
-    backdrop-filter: none !important;   /* No blur by default */
-    -webkit-backdrop-filter: none !important; /* No blur by default for Safari */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  
+  body.authenticated .header.scroll {
+    background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43)) !important; /* Keep black when scrolled for authenticated users on mobile */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    transition: background 0.3s, box-shadow 0.3s;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .header {
+    background: transparent !important; /* Unauthenticated: transparent by default */
+    box-shadow: none !important;
+    border: none;
+    transition: background 0.3s, box-shadow 0.3s;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
   .header.scroll {
-    background: rgba(30, 30, 30, 0.75) !important; /* Slightly visible background on mobile when scrolled */
-    backdrop-filter: blur(8px);                    /* Blur only when scrolled */
-    -webkit-backdrop-filter: blur(8px);            /* Blur for Safari when scrolled */
+    background: rgba(30, 30, 30, 0.75) !important; /* Unauthenticated: blurred when scrolled */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     box-shadow: 0 2px 8px rgba(0,0,0,0.10);
     border-bottom: 1px solid rgba(255,255,255,0.08);
     transition: background 0.3s, box-shadow 0.3s;

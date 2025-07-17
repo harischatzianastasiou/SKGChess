@@ -105,7 +105,7 @@ body:not(.authenticated) .hero-section::before {
     width: 100%;
     top: 0;
     z-index: 1000;
-    background: #000000;
+    background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43)) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     -webkit-backdrop-filter: blur(10px);
     transform: translateZ(0);

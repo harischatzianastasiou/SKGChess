@@ -1,4 +1,13 @@
 /* Game Layout */
+
+.header {
+    background: linear-gradient(135deg, rgb(37, 36, 37), rgb(23, 23, 24)) !important; /* Always black for authenticated users on mobile */
+    box-shadow: none !important;
+    border: none;
+    transition: background 0.3s, box-shadow 0.3s;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
 .game-layout {
     display: flex;
     flex-direction: column;
@@ -47,7 +56,6 @@
     background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43));
     border-radius: 12px;
     padding: 0;
-    border: 1px solid rgba(107, 70, 193, 0.15);
     height: fit-content;
     overflow: hidden;
 }
@@ -141,13 +149,11 @@
 /* Player Card Styles */
 .player-card {
     background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43));
-    border-radius: 12px;
     padding: 8px 15px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    border: 1px solid rgba(107, 70, 193, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     width: 100%;
     max-width: 100%;
