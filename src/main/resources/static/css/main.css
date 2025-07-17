@@ -177,7 +177,7 @@ body:not(.authenticated) .hero-section::before {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/images/bnwthess.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/images/retrochess41.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
