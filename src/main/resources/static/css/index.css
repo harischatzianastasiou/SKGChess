@@ -2065,6 +2065,7 @@ body.authenticated::before {
     .hero-section {
         background-size: cover;
         background-repeat: no-repeat;
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/bnwthess.jpg');
         animation: backgroundTravel 50s infinite alternate ease-in-out; /* Added animation */
     }
     .welcome-main{
@@ -2687,5 +2688,13 @@ body.authenticated .header {
     border-bottom: 1px solid rgba(255,255,255,0.08);
     transition: background 0.3s, box-shadow 0.3s;
   }
+
+  .header {
+    background: transparent !important;
+    background: transparent !important; /* Transparent header */
+    box-shadow: none !important;        /* No shadow */
+    transition: background 0.3s, box-shadow 0.3s;
+    border: none;
+}
 }
 

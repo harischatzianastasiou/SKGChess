@@ -74,6 +74,9 @@ function waitForUsername(maxAttempts = 30, interval = 300) {
 
 // Check for pending actions after page load
 document.addEventListener('DOMContentLoaded', function() {
+    // Always start at the top of the page to prevent header blur on load
+    window.scrollTo(0, 0); // Ensures scroll position is 0 on page load
+    
     // If user is authenticated, check for pending actions
     if (document.body.classList.contains('authenticated')) {
         // Connect to WebSocket for real-time notifications with a delay to ensure page is loaded
