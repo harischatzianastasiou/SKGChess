@@ -8,7 +8,7 @@ html {
 /* Section styling for smooth transitions */
 section, .site-footer {
     scroll-margin-top: 80px; /* Adds space above sections when scrolling to them */
-    transition: opacity 0.5s ease-in-out; /* Smooth fade-in effect for sections */
+    transition: opacity 0.1s linear; /* Ultra fast fade-in effect for sections */
 }
 
 /* Scroll indicator styling */
@@ -73,12 +73,14 @@ section, .site-footer {
 .section-hidden {
     opacity: 0; /* Hidden sections are invisible */
     transform: translateY(20px); /* Slightly moved down */
+    /* Transition is set on .section-visible for appearance */
 }
 
 .section-visible {
     opacity: 1; /* Visible sections are fully opaque */
     transform: translateY(0); /* Normal position */
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition */
+    transition: opacity 0.04s linear, transform 0.04s linear; /* Even faster transition: 40ms */
+    /* Reduced from 0.1s to 0.04s for snappier appearance */
 }
 
 /* Hide scrollbar for non-authenticated users ONLY ON INDEX PAGE */

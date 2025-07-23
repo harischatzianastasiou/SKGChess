@@ -1,7 +1,19 @@
+/* Add this to your HTML <head>:
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+*/
+@font-face {
+    font-family: 'RetepRelleum';
+    src: url('/fonts/RetepRelleum.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+
 :root {
     /* Typography */
-    --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --font-secondary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-primary: 'Caveat', cursive, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-secondary: 'Caveat', cursive, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     
     /* Color Scheme */
     --primary-color: #2d1f2e;
@@ -81,7 +93,7 @@ textarea {
 
 /* Body Styles */
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Caveat', cursive;
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.7;
@@ -177,7 +189,7 @@ body:not(.authenticated) .hero-section::before {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/images/retrochess41.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url('/images/bnwthess.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
@@ -340,7 +352,7 @@ body:not(.authenticated) .hero-section::before {
     padding: 0.5rem 1.2rem;
     font-size: 0.9rem;
     font-weight: 600;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Caveat', cursive;
     border-radius: var(--border-radius-md);
     transition: all var(--transition-normal);
     color: var(--text-color);

@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentSectionIndex = 0;
     let isScrolling = false;
     let lastScrollTime = 0; // Track the last scroll time
-    const scrollDebounceTime = 100; // Minimum time between scroll events in milliseconds
+    const scrollDebounceTime = 30; // Minimum time between scroll events in milliseconds (reduced for faster response)
     
     // Function to scroll to a specific element
     function scrollToElement(element, index) {
@@ -50,10 +50,11 @@ document.addEventListener('DOMContentLoaded', function() {
         element.scrollIntoView({ behavior: 'smooth' });
         
         // Add visible class to the element after scrolling
+        // Reduced timeout to 200ms for faster section transition
         setTimeout(() => {
             element.classList.add('section-visible');
             isScrolling = false;
-        }, 500);
+        }, 200); // 200ms instead of 500ms for faster unlock
     }
     
     // Function to scroll to the next element

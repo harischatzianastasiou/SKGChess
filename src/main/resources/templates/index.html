@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>SKG Chess - Play Chess Online</title>
+    <title>ToSkaki.GR - Η ελληνική πλατφόρμα</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Play chess online with friends on SKG Chess. Join live games, track your progress, and improve your chess skills.">
@@ -18,22 +18,20 @@
     <!-- Internal stylesheets -->
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/index.css">
-    <link rel="stylesheet" href="/css/scroll-animations.css">
+    <!-- <link rel="stylesheet" href="/css/scroll-animations.css"> -->
     <link rel="stylesheet" href="/css/theme-switcher.css">
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/images/skgchessicon.png">
+    <link rel="icon" type="image/png" href="/images/toskaki.png">
     
     <!-- Preload critical assets -->
     <link rel="preload" href="/images/bnwthess.jpg" as="image">
-    <link rel="preload" href="/images/retrochess4.jpg" as="image">
-    <link rel="preload" href="/images/skgchess.svg" as="image">
-    
-    <!-- Scripts -->
+    <link rel="preload" href="/images/toskaki.png" as="image">
+    <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script th:inline="javascript" src="/js/index.js"></script>
     <script src="/js/notifications.js"></script>
-    <script src="/js/scroll-animations.js"></script>
+    <!-- <script src="/js/scroll-animations.js"></script> -->
     <script src="/js/chess-quotes.js"></script>
     <script src="/js/theme-switcher.js"></script>
     
@@ -95,11 +93,11 @@
         } */
         @media (min-width: 769px) {
             .welcome-icon {
-                width: 260px;
-                height: 260px;
+                width: 350px;
+                height: 350px;
                 background-size: contain;
                 margin-bottom: 1.2rem;
-                margin-top: 10rem;
+                margin-top: 5rem;
             }
             .main-content h1, main h1, .authenticated-hero .hero-content h1 {
                 font-size: 3.2rem;
@@ -113,13 +111,17 @@
         }
         @media (max-width: 768px) {
             .welcome-icon {
-                width: 230px;
-                height: 230px;
+                width: 280px;
+                height: 280px;
                 margin-bottom: 0.7rem;
-                margin-top: 7rem;
+                margin-top: 3rem;
             }
+            .welcome-main h1 {
+                font-size: 1.3rem !important;
+                line-height: 1.2 !important;
+                }
             .main-content h1, main h1 {
-                font-size: 2.8rem;
+                font-size: 1.5rem;
             }
             .quote-text, .welcome-quote {
                 font-size: 1.3rem;
@@ -355,14 +357,14 @@
                 }
             </style>
             <!-- Video background container -->
-            <div class="video-bg-container" style="background: url('/images/retrochess41.jpg'); background-size: 105%; background-position: right center; background-repeat: no-repeat; background-attachment: fixed; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; animation: backgroundTravel 30s infinite alternate ease-in-out;">
+            <div class="video-bg-container" style="background: url('/images/bnwthess.jpg'); background-size: 105%; background-position: right center; background-repeat: no-repeat; background-attachment: fixed; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2; animation: backgroundTravel 30s infinite alternate ease-in-out;">
                 <!-- Overlay for styling/darkening the image -->
                 <div class="video-overlay"></div>
             </div>
             <!-- Main content area -->
             <main class="welcome-main">
                 <div class="welcome-icon">
-                    <img src="/images/toskaki4.png" alt="SKG Chess Logo" loading="eager" />
+                    <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" />
                 </div>
                 <!-- Main heading / welcome quote -->
                 <h1 class="animated-fade-in-up" style="animation-delay: 0.4s;">H ελληνική πλατφόρμα για το σκάκι.</h1>
@@ -390,7 +392,7 @@
 
                 <div class="hero-content" sec:authorize="isAuthenticated()">
                     <div class="welcome-icon">
-                        <img src="/images/toskaki4.png" alt="SKG Chess Logo" loading="eager" />
+                        <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" />
                     </div>
                     <!-- In the authenticated hero heading, replace the username and pencil with a flex row -->
                     <h1 class="username-row">Welcome, <span id="username-display" sec:authentication="name" data-username="true" th:attr="data-changes-left=${user.usernameChangesLeft}"></span><span id="edit-username-btn" style="cursor:pointer; margin-left:8px; display:inline-block; font-size:0.5em; vertical-align:middle;" title="Edit Username"><i class="fas fa-pen"></i></span></h1>
@@ -579,7 +581,7 @@
     <!-- Join Game Dialog -->
     <div id="joinGameDialog" class="join-game-popup">
         <div class="popup-header">
-            <img src="/images/toskaki4.png" alt="SKGChess Logo" class="popup-header-logo" style="width: 120px; height: auto;">
+            <img src="/images/toskaki.png" alt="SKGChess Logo" class="popup-header-logo" style="width: 120px; height: auto;">
             <button class="close-btn" onclick="closeJoinGameDialog()">
                 <i class="fas fa-times"></i>
             </button>

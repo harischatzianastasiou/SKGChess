@@ -7,6 +7,7 @@
     transition: background 0.3s, box-shadow 0.3s;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    font-family: 'Caveat', cursive;
 }
 .game-layout {
     display: flex;
@@ -2453,4 +2454,13 @@
     font-weight: bold;
     letter-spacing: 2px;
     color : #fff;
+}
+
+/* Add this to your HTML <head>:
+<link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
+*/
+.game-chat, .chat-messages, .chat-message, .moves-list, .move-history, .move-row, .move, .move-number {
+    font-family: 'Neucha', cursive;
+    font-weight: 400;
+    letter-spacing: 0.02em;
 }

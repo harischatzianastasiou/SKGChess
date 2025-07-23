@@ -10,7 +10,7 @@
     justify-content: center;
     min-height: 100vh;
     padding: 4vw 2vw;
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/images/retrochess41.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/images/bnwthess.jpg');
     background-size: contain;
     background-position: right;
     background-repeat: repeat;
@@ -2064,7 +2064,7 @@ body.authenticated::before {
         animation: backgroundTravel 50s infinite alternate ease-in-out; /* Added animation */
     }
     .welcome-main{
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.05)), url('/images/retrochess2.jpg');
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.05)), url('/images/bnwthess.jpg');
     }
 }
 
@@ -2708,5 +2708,14 @@ body.authenticated .header {
     border-bottom: 1px solid rgba(255,255,255,0.08);
     transition: background 0.3s, box-shadow 0.3s;
   }
+}
+
+/* Add this to your HTML <head>:
+<link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
+*/
+.all-games-section, .games-left, .games-right, .all-game-card, .game-row, .game-row-header, .game-status, .game-result, .player-color, .all-game-info, .section-title, .section-header, .placeholder-message, .no-all-games, .view-game-link {
+    font-family: 'Neucha', cursive;
+    font-weight: 400;
+    letter-spacing: 0.02em;
 }
 
