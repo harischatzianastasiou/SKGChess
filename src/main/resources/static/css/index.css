@@ -2714,7 +2714,7 @@ body.authenticated .header {
 <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
 */
 .all-games-section, .games-left, .games-right, .all-game-card, .game-row, .game-row-header, .game-status, .game-result, .player-color, .all-game-info, .section-title, .section-header, .placeholder-message, .no-all-games, .view-game-link {
-    font-family: 'Neucha', cursive;
+    font-family: 'Neucha', 'Caveat','Poppins';
     font-weight: 400;
     letter-spacing: 0.02em;
 }

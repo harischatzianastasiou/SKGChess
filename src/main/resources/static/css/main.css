@@ -9,7 +9,6 @@
     font-display: swap;
 }
 
-
 :root {
     /* Typography */
     --font-primary: 'Caveat', cursive, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -93,7 +92,7 @@ textarea {
 
 /* Body Styles */
 body {
-    font-family: 'Caveat', cursive;
+    font-family: 'Caveat', 'Neucha','Poppins';
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.7;
