@@ -2675,6 +2675,10 @@ body.authenticated .header {
 }
 
 @media (max-width: 768px) {
+    body {
+        font-family: 'Neucha','Poppins' !important;
+    }
+
   body.authenticated .header {
     background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43)) !important; /* Always black for authenticated users on mobile */
     box-shadow: none !important;
@@ -2713,8 +2717,8 @@ body.authenticated .header {
 /* Add this to your HTML <head>:
 <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
 */
-.all-games-section, .games-left, .games-right, .all-game-card, .game-row, .game-row-header, .game-status, .game-result, .player-color, .all-game-info, .section-title, .section-header, .placeholder-message, .no-all-games, .view-game-link {
-    font-family: 'Neucha', 'Caveat','Poppins';
+.all-games-section, .games-left, .games-right, .all-game-card, .game-row, .game-row-header, .game-status, .game-result, .player-color, .all-game-info, .section-title, .section-header, .placeholder-message, .no-all-games, .view-game-link,.header,.header.header-shadow {
+    font-family: 'Neucha','Poppins' !important;
     font-weight: 400;
     letter-spacing: 0.02em;
 }
