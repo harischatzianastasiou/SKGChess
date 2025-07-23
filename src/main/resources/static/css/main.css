@@ -170,7 +170,7 @@ body:not(.authenticated) .hero-section::before {
 
 /* Ensure header nav links for non-authenticated users always use Neucha font */
 .header-auth {
-    font-family: 'Neucha', cursive !important; /* Use Neucha, fallback to cursive */
+    font-family:  cursive !important; /* Use Neucha, fallback to cursive */
     font-weight: 400;
     letter-spacing: 0.02em;
 }
@@ -1698,6 +1698,15 @@ body:not(.authenticated) .hero-section::before {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .header .logo {
+        font-family: cursive !important;
+        font-size: 2.2rem;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        color: #fff !important;
+        text-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    }
+    
     .invitation-actions {
         flex-direction: column;
     }
@@ -1810,4 +1819,13 @@ body:not(.authenticated) .hero-section::before {
         padding: 10px 14px;
         font-size: 0.85rem;
     }
+}
+
+.header .logo {
+    font-family: cursive !important;
+    font-size: 2.2rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: #fff !important;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.18);
 }
