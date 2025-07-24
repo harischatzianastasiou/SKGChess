@@ -76,7 +76,7 @@
 }
 
 /* Allow text selection only in specific elements */
-.chat-input input,
+.chatinput input,
 .game-id-box input,
 input[type="text"],
 input[type="password"],

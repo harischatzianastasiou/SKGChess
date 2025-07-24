@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>ToSkaki.GR - Η ελληνική πλατφόρμα</title>
+    <title id= "titlelang"></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Play chess online with friends on SKG Chess. Join live games, track your progress, and improve your chess skills.">
@@ -35,6 +35,7 @@
     <!-- <script src="/js/scroll-animations.js"></script> -->
     <script src="/js/chess-quotes.js"></script>
     <script src="/js/theme-switcher.js"></script>
+    <script src="/js/language.js"></script>
     
     <!-- Inline script to ensure animations are triggered on direct page load -->
     <script>
@@ -186,8 +187,8 @@
                 </div>
                 <div sec:authorize="!isAuthenticated()">
                     <nav>
-                        <a href="#" onclick="openLoginModal(); return false;">Σύνδεση</a>
-                        <a href="#" onclick="openLoginModal(); return false;">Εγγραφή</a>
+                        <a href="#" id="signinlang" onclick="openLoginModal(); return false;"></a>
+                        <a href="#" id="signuplang" onclick="openLoginModal(); return false;"></a>
                         <button class="menu-btn" onclick="openBurgerMenu()">&#9776;</button>
                     </nav>
                 </div>
@@ -205,16 +206,17 @@
                     </div>
                 </div>
                 <div style="display:flex; gap:0.5rem; align-items:center; font-size:0.98rem;">
-                    <span class="burger-lang">GR</span> / <span class="burger-lang active">EN</span>
+                    <span class="burger-lang" data-lang="gr" onclick="updateLanguage('gr'); return false;">GR</span> / 
+                    <span class="burger-lang" data-lang="en" onclick="updateLanguage('en'); return false;">EN</span>
                 </div>
                 <button onclick="closeBurgerMenu()" style="background:none; border:none; font-size:2.2rem; color:#222; cursor:pointer; z-index:4100; margin-left:1rem;">&times;</button>
             </div>
             <div style="width:100%; height:1px; background:#eee; margin-bottom:8px;"></div>
             <nav style="width:100%; padding:24px 24px 0 24px; box-sizing:border-box;">
-                <a href="#" class="burger-link" onclick="showNewspaper(); closeBurgerMenu(); return false;">Για Προγραμματιστές</a>
-                <a href="#" class="burger-link" onclick="alert('Θα προστεθεί σύντομα!'); closeBurgerMenu(); return false;">Κλείσε δουλειά μαζί μας</a>
+                <a href="#" id="fordeveloperslang" class="burger-link" onclick="showNewspaper(); closeBurgerMenu(); return false;"></a>
+                <a href="#" id="contactuslang" class="burger-link" onclick="alert('Θα προστεθεί σύντομα!'); closeBurgerMenu(); return false;"></a>
                 <div sec:authorize="isAuthenticated()">
-                    <a href="#" class="burger-link" onclick="handleSignOut(); closeBurgerMenu(); return false;" style="color:#c00;">Sign Out</a>
+                    <a href="#" id="signoutlang" class="burger-link" onclick="handleSignOut(); closeBurgerMenu(); return false;" style="color:#c00;"></a>
                 </div>
             </nav>
         </div>
@@ -371,10 +373,10 @@
                     <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" />                    
                 </div>
                 <!-- Main heading / welcome quote -->
-                <h1 class="animated-fade-in-up" style="animation-delay: 0.4s;">H ελληνική πλατφόρμα για το σκάκι.</h1>
+                <h1 id="motolang" class="animated-fade-in-up" style="animation-delay: 0.4s;"></h1>
                 <div class="spacer"></div>
                 <!-- Call-to-action button triggers login modal -->
-                <button class="cta-btn animated-fade-in-up" onclick="openLoginModal(); return false;">Γίνε Μέλος</button>
+                <button id ="ctalang" class="cta-btn animated-fade-in-up" onclick="openLoginModal(); return false;"></button>
             </main>
         </div>
 
@@ -399,7 +401,7 @@
                         <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" />
                     </div>
                     <!-- In the authenticated hero heading, replace the username and pencil with a flex row -->
-                    <h1 class="username-row">Welcome, <span id="username-display" sec:authentication="name" data-username="true" th:attr="data-changes-left=${user.usernameChangesLeft}"></span><span id="edit-username-btn" style="cursor:pointer; margin-left:8px; display:inline-block; font-size:0.5em; vertical-align:middle;" title="Edit Username"><i class="fas fa-pen"></i></span></h1>
+                    <h1 class="username-row"><span id="welcomelang"></span><span id="username-display" sec:authentication="name" data-username="true" th:attr="data-changes-left=${user.usernameChangesLeft}"></span><span id="edit-username-btn" style="cursor:pointer; margin-left:8px; display:inline-block; font-size:0.5em; vertical-align:middle;" title="Edit Username"><i class="fas fa-pen"></i></span></h1>
                     <div class="spacer"></div>
                     <!-- Overlay for modal - moved outside h1 for proper stacking -->
                     <div id="username-modal" class="game-creation-popup" style="display:none; z-index:10001;">
@@ -410,18 +412,18 @@
                             </div>
                             <div class="popup-body">
                                 <div class="form-group">
-                                    <label for="username-input-modal">New Username</label>
+                                    <label for="username-input-modal" id="newusernamelang"></label>
                                     <input type="text" id="username-input-modal" maxlength="50" autocomplete="off" />
                                     <span id="username-error-message-modal" style="color:red; display:none;"></span>
                                 </div>
                                 <div class="form-actions" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
                                     <div id="username-info-message" style="color:#a9a9ff; background:rgba(60,60,80,0.25); border-radius:5px; padding:8px 12px; font-size:0.95em; margin-bottom:8px; text-align:center; border:1px solid #6c63ff;">
                                         <i class="fas fa-info-circle" style="color:#6c63ff; margin-right:6px;"></i>
-                                        You will be prompted to relogin after changing the username.
+                                        <span id="usernameinfomessagelang"></span>
                                     </div>
                                     <div style="display:flex; gap:12px;">
-                                        <button id="save-username-btn-modal" class="btn btn-create">Save</button>
-                                        <button id="cancel-username-btn-modal" class="btn btn-cancel">Cancel</button>
+                                        <button id="saveusernamebtnmodal" class="btn btn-create"></button>
+                                        <button id="cancelusernamebtnmodal" class="btn btn-cancel"></button>
                                     </div>
                                 </div>
                             </div>
@@ -439,7 +441,7 @@
                 <!-- Scroll Indicator for Authenticated Users -->
                 <div class="scroll-indicator" onclick="window.scrollTo({top: window.innerHeight, behavior: 'smooth'})">
                     <i class="fas fa-chevron-down"></i>
-                    <span>Scroll to explore</span>
+                    <span id="scrolltolang"></span>
                 </div>
             </section>
 
@@ -452,7 +454,7 @@
                     <div class="games-two-column">
                         <!-- Right section moved to left position -->
                         <div class="games-right">
-                            <h2 class="section-title">Analyze Recent Game</h2>
+                            <h2 class="section-title" id="analyzerecentgamelang"></h2>
                             <div class="all-game-card glass-effect">
                                 <div class="all-game-header" th:if="${numOfUserGames > 0}">
                                     <h3 th:text="${lastGame.whitePlayerUsername + ' vs ' + lastGame.blackPlayerUsername}">Player1 vs Player2</h3>
@@ -464,7 +466,7 @@
                                 <!-- Placeholder message when no games -->
                                 <div th:if="${numOfUserGames == 0}" class="placeholder-message">
                                     <i class="fas fa-chess"></i>
-                                    <p>Start a game to see your moves and analyze your strategy here!</p>
+                                    <p id="startagamemessagelang"></p>
                                 </div>
                             </div>
                         </div>
@@ -473,13 +475,13 @@
                             <!-- Only show History section if there are completed games -->
                             <div th:with="recentGames=${checkmateGames}">
                                 <div th:if="${recentGames.size() ge 1}">
-                                    <h2 class="section-title">Recent Games</h2>
+                                    <h2 class="section-title" id="recentgameslang"></h2>
                                     <div class="game-row-container">
                                         <div class="game-row game-row-header">
-                                            <span>Players</span>
-                                            <span>Result</span>
-                                            <span class="game-moves">Moves</span>
-                                            <span>Date</span>
+                                            <span id="playerslang"></span>
+                                            <span id="resultlang"></span>
+                                            <span class="game-moves" id="moveslang"></span>
+                                            <span id="datelang"></span>
                                         </div>
                                         <!-- Show recent games -->
                                         <div th:each="game : ${recentGames}" 
@@ -525,10 +527,10 @@
                                 </div>
                                 <!-- Show placeholder message when no games -->
                                 <div th:if="${recentGames.size() lt 1}" class="history-placeholder">
-                                    <h2 class="section-title">Recent Games</h2>
+                                    <h2 class="section-title" id="recentgameslang"></h2>
                                     <div class="placeholder-message">
                                         <i class="fas fa-history"></i>
-                                        <p>Your recent games will appear here after playing.</p>
+                                        <p id="recentgamesmessagelang"></p>
                                     </div>
                                 </div>
 
@@ -538,7 +540,7 @@
                                     <a href="#" onclick="showJoinGameDialog(); return false;" class="main-button about">Join Game</a>
                                     <div th:if="${recentGames.size() ge 1}">
                                         <div class="main-buttons-container auth-buttons">
-                                            <a href="#all-games-section" class="main-button about">View All Games</a>
+                                            <a href="#all-games-section" class="main-button about" id="viewallgameslang"></a>
                                         </div>
                                     </div>
                                 </div>
@@ -593,7 +595,7 @@
         <div class="popup-body">
             <!-- Invitations Section -->
             <div class="invitations-section">
-                <h3>Pending Invitations</h3>
+                <h3 id="pendinginvitationslang"></h3>
                 <div id="invitationsContainer" class="invitations-container">
                     <!-- Invitations will be loaded here -->
                 </div>
@@ -862,6 +864,15 @@
         // Close on Escape
         window.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') closeBurgerMenu();
+        });
+
+        // On page load, set language from storage or default
+        window.addEventListener('DOMContentLoaded', function() {
+            // 1. Read language from localStorage, default to 'gr'
+            const lang = localStorage.getItem('lang') || 'gr';
+        
+            // 2. Update all translatable areas
+            updateLanguage(lang);
         });
     </script>
 </body>

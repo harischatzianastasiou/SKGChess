@@ -1899,6 +1899,8 @@ body.authenticated::before {
     animation: bounce 2s infinite;
     cursor: pointer;
     z-index: 10;
+    text-align: center;
+    width: 100%;
 }
 
 .scroll-indicator:hover {

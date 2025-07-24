@@ -83,13 +83,13 @@ class ChessGame {
         
         // Initialize chat elements
         this.chatMessages = document.getElementById('chat-messages');
-        this.chatInput = document.getElementById('chat-input');
+        this.chatInput = document.getElementById('chatinput');
         this.sendMessageBtn = document.getElementById('send-message');
         
         // Initialize enlarged chat modal elements
         this.chatModal = document.getElementById('chatModal');
         this.chatModalMessages = document.getElementById('chat-modal-messages');
-        this.chatModalInput = document.getElementById('chat-modal-input');
+        this.chatModalInput = document.getElementById('chatmodalinput');
         this.chatModalSendBtn = document.getElementById('chat-modal-send');
         this.chatModalCloseBtn = document.getElementById('chatModalClose');
         
@@ -130,7 +130,7 @@ class ChessGame {
         if (chatSection) {
             chatSection.addEventListener('click', (e) => {
                 // Don't toggle modal if clicking on input or button
-                if (e.target.closest('.chat-input') || e.target.closest('input') || e.target.closest('button')) {
+                if (e.target.closest('.chatinput') || e.target.closest('input') || e.target.closest('button')) {
                     return;
                 }
                 this.toggleChatModal();

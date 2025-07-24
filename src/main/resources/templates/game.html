@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Chess Game - SKG Chess</title>
+    <title id="gametitlelang"></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Font imports for consistent styling -->
@@ -25,6 +25,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <!-- Custom JavaScript -->
     <script th:inline="javascript" src="/js/game.js" defer></script>
+    <script src="/js/language.js"></script>
 </head>
 <body>
     <header class="header">
@@ -33,7 +34,7 @@
             <span sec:authentication="name" id="username" style="display: none;"></span>
         </div>
         <div sec:authorize="!isAuthenticated()">
-            <a href="/login" class="btn btn-sign-in">Sign In</a>
+            <a href="/login" class="btn btn-sign-in" id="gamesigninlang">Sign In</a>
         </div>
     </header>
 
@@ -89,7 +90,7 @@
             <div class="game-sidebar">
                 <!-- Tab bar for Play -->
                 <div class="sidebar-tabs">
-                    <button class="sidebar-tab active" data-tab="play">Play</button>
+                    <button class="sidebar-tab active" data-tab="play" id="gameplaytablang"></button>
                 </div>
                 
                 <!-- Tab panels -->
@@ -97,7 +98,7 @@
                     <div class="play-tab sidebar-tab-panel active">
                         <!-- Move History Section -->
                         <div class="move-history-section">
-                            <h3>Move History</h3>
+                            <h3 id="gamemovehistorylang"></h3>
                             <div id="moves-list" class="moves-list"></div>
                         </div>
                         
@@ -120,10 +121,10 @@
                         
                         <!-- Game Chat Section -->
                         <div class="game-chat-section">
-                            <h3>Game Chat</h3>
+                            <h3 id="gamechatlang"></h3>
                             <div id="chat-messages" class="chat-messages"></div>
-                            <div class="chat-input">
-                                <input type="text" id="chat-input" placeholder="Type a message...">
+                            <div class="chatinput">
+                                <input type="text" id="chatinput" placeholder="">
                                 <button id="send-message" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
                             </div>
                         </div>
@@ -132,15 +133,15 @@
                         <div id="chatModal" class="chat-modal">
                             <div class="chat-modal-content">
                                 <div class="chat-modal-header">
-                                    <h3>Game Chat</h3>
+                                    <h3 id="gamechatmodallang"></h3>
                                     <button class="chat-modal-close" id="chatModalClose">
                                         <i class="fas fa-times"></i>
                                     </button>
                                 </div>
                                 <div class="chat-modal-body">
                                     <div id="chat-modal-messages" class="chat-modal-messages"></div>
-                                    <div class="chat-modal-input">
-                                        <input type="text" id="chat-modal-input" placeholder="Type a message...">
+                                    <div class="chatmodalinput">
+                                        <input type="text" id="chatmodalinput" placeholder="">
                                         <button id="chat-modal-send" title="Send message">
                                             <i class="fas fa-paper-plane"></i>
                                         </button>
@@ -245,6 +246,14 @@
                     popup.style.display = 'none';
                 });
             });
+        });
+
+        window.addEventListener('DOMContentLoaded', function() {
+            // 1. Read language from localStorage, default to 'gr'
+            const lang = localStorage.getItem('lang') || 'gr';
+        
+            // 2. Update all translatable areas
+            updateLanguage(lang);
         });
         </script>
     </div>
