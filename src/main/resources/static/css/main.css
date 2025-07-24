@@ -220,7 +220,7 @@ body:not(.authenticated) .hero-section::before {
     font-size: 4.5rem;
     margin-bottom: var(--spacing-md);
     color: var(--text-color);
-    text-shadow: 0 0 30px rgba(74, 144, 226, 0.5);
+    text-shadow: none;
     animation: fadeInUp 1s ease-out;
 }
 
@@ -1819,6 +1819,18 @@ body:not(.authenticated) .hero-section::before {
         padding: 10px 14px;
         font-size: 0.85rem;
     }
+}
+
+/* Ensure ixlstudio logo displays properly */
+.ixlstudio-logo {
+    width: auto !important;
+    height: 60px !important;
+    max-width: none !important;
+    max-height: none !important;
+    object-fit: initial !important;
+    display: block !important;
+    margin-top: 20px !important;
+    align-self: flex-start !important;
 }
 
 .header .logo {
