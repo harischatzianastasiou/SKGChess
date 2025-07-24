@@ -1833,6 +1833,25 @@ body:not(.authenticated) .hero-section::before {
     align-self: flex-start !important;
 }
 
+/* Mobile-specific spacing for ixlstudio logo */
+@media (max-width: 768px) {
+    .ixlstudio-logo {
+        margin-bottom: 1.5rem !important; /* Add bottom margin for proper gap on mobile */
+    }
+}
+
+@media (max-width: 600px) {
+    .ixlstudio-logo {
+        margin-bottom: 2rem !important; /* Increase bottom margin for very small screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .ixlstudio-logo {
+        margin-bottom: 2.5rem !important; /* Maximum bottom margin for extra small screens */
+    }
+}
+
 .header .logo {
     font-family: cursive !important;
     font-size: 2.2rem;

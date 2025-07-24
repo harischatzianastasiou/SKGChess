@@ -1102,6 +1102,62 @@ body.authenticated::before {
     padding: 0 2vw;
 }
 
+/* Mobile-specific spacing for ixlstudio logo and welcome quote */
+@media (max-width: 768px) {
+    /* Add proper spacing below ixlstudio logo on mobile */
+    .welcome-icon div[style*="margin-top: 20px"] {
+        margin-bottom: 1.5rem !important; /* Add bottom margin for proper gap */
+    }
+    
+    /* Alternative selector for ixlstudio logo container */
+    .welcome-icon > div:has(.ixlstudio-logo) {
+        margin-bottom: 1.5rem !important; /* Add bottom margin for proper gap */
+    }
+    
+    /* Adjust welcome quote spacing on mobile */
+    .welcome-quote {
+        margin: 1rem 0; /* Increase margin for better spacing */
+        font-size: 0.9rem;
+        padding: 0 1rem;
+    }
+}
+
+@media (max-width: 600px) {
+    /* Even more spacing for very small screens */
+    .welcome-icon div[style*="margin-top: 20px"] {
+        margin-bottom: 2rem !important; /* Increase bottom margin for very small screens */
+    }
+    
+    /* Alternative selector for ixlstudio logo container */
+    .welcome-icon > div:has(.ixlstudio-logo) {
+        margin-bottom: 2rem !important; /* Increase bottom margin for very small screens */
+    }
+    
+    .welcome-quote {
+        margin: 1.5rem 0; /* Increase margin for very small screens */
+        font-size: 0.9rem;
+        padding: 0 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Maximum spacing for extra small screens */
+    .welcome-icon div[style*="margin-top: 20px"] {
+        margin-bottom: 2.5rem !important; /* Maximum bottom margin for extra small screens */
+    }
+    
+    /* Alternative selector for ixlstudio logo container */
+    .welcome-icon > div:has(.ixlstudio-logo) {
+        margin-bottom: 2.5rem !important; /* Maximum bottom margin for extra small screens */
+    }
+    
+    .welcome-quote {
+        margin: 2rem 0; /* Maximum margin for extra small screens */
+        font-size: 0.9rem;
+        padding: 0 0.5rem;
+    }
+}
+
 /* Active Games Section Styles */
 .all-games-section {
     display: flex;
@@ -1896,7 +1952,7 @@ body.authenticated::before {
     }
 
     .welcome-quote {
-        margin: 0.5rem 0; /* Reduced from 1.5rem to 0.5rem to move quote higher */
+        margin: 1rem 0; /* Increased spacing for better mobile layout */
         font-size: 0.9rem;
         padding: 0 1rem;
     }
@@ -2043,7 +2099,7 @@ body.authenticated::before {
     .welcome-quote {
         font-size: 0.9rem;      /* or even 0.8rem for extra small */
         padding: 0 0.5rem;
-        margin: 0.3rem 0; /* Reduced margin to move quote higher on very small screens */
+        margin: 1.5rem 0; /* Increased margin for better spacing on very small screens */
     }
     .welcome-quote .quote-text {
         font-size: 1em;         /* Ensures it doesn't get too large */
