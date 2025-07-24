@@ -949,6 +949,33 @@ body.authenticated {
     min-height: 100vh; /* Ensure body takes full viewport height */
 }
 
+body.authenticated .welcome-icon {
+    margin-top: 2rem !important;   /* Move logo further up (reduce top margin) */
+}
+
+@media (min-width: 769px) {
+    body.authenticated .welcome-icon {
+        margin-top: 2rem !important; /* Desktop: move up */
+    }
+}
+@media (max-width: 768px) {
+    body.authenticated .welcome-icon {
+        margin-top: 1rem !important; /* Mobile: move up */
+    }
+}
+
+@media (min-width: 769px) {
+    body.authenticated .scroll-indicator {
+        bottom: 20rem !important;
+    }
+}
+@media (max-width: 768px) {
+    body.authenticated .scroll-indicator {
+        bottom: 20rem !important;
+    }
+}
+
+
 body.authenticated::before {
     content: '';
     position: fixed;
@@ -1886,7 +1913,7 @@ body.authenticated::before {
 /* Scroll Indicator for Authenticated Users */
 .scroll-indicator {
     position: absolute;
-    bottom: 2rem;
+    bottom: 5rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
