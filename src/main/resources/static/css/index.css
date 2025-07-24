@@ -964,11 +964,6 @@ body.authenticated .welcome-icon {
     }
 }
 
-@media (min-width: 769px) {
-    body.authenticated .scroll-indicator {
-        bottom: 17rem !important;
-    }
-}
 @media (max-width: 768px) {
     body.authenticated .scroll-indicator {
         bottom: 17rem !important;
