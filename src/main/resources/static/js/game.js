@@ -2380,7 +2380,7 @@ class ChessGame {
                 min-width: 340px;
                 max-width: 95vw;
                 font-family: 'Poppins', sans-serif;
-                border: 2px solid var(--color-accent, #ffd700);
+                border: 4px solid #dbcdbe;
                 backdrop-filter: blur(6px);
                 animation: popupAppear 0.4s cubic-bezier(.68,-0.55,.27,1.55);
             }
@@ -2410,7 +2410,7 @@ class ChessGame {
             }
             #game-end-popup .popup-subtitle {
                 font-size: 1.1rem;
-                color: #ffd700;
+                color: #dbcdbe;
                 margin-bottom: 1.2rem;
                 font-weight: 500;
             }
@@ -2448,8 +2448,8 @@ class ChessGame {
                 border: 2px solid #fff;
             }
             #game-end-popup .popup-winner .popup-color {
-                border: 2px solid var(--color-accent, #ffd700);
-                box-shadow: 0 0 8px 2px var(--color-accent, #ffd700);
+                border: 2px solid #dbcdbe;
+                box-shadow: 0 0 8px 2px #dbcdbe;
             }
             #game-end-popup .popup-username {
                 font-size: 1.1rem;
@@ -2459,7 +2459,7 @@ class ChessGame {
                 text-shadow: 0 1px 2px #0008;
             }
             #game-end-popup .popup-winner .popup-username {
-                color: var(--color-accent, #ffd700);
+                color: #dbcdbe;
             }
             #game-end-popup .popup-result-center {
                 font-size: 2rem;
@@ -2489,22 +2489,24 @@ class ChessGame {
                 justify-content: center;
             }
             #game-end-popup .btn-rematch {
-                background: linear-gradient(135deg, #28a745, #20c997);
-                color: white;
+                background: #dbcdbe;
+                color: #222;
             }
             #game-end-popup .btn-rematch:hover {
-                background: linear-gradient(135deg, #20c997, #17a2b8);
+                background: #c0b2a6;
+                color: #222;
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+                box-shadow: 0 4px 12px rgba(219, 205, 190, 0.3);
             }
             #game-end-popup .btn-new-game {
-                background: linear-gradient(135deg, #6b46c1, #553c9a);
-                color: white;
+                background: #dbcdbe;
+                color: #222;
             }
             #game-end-popup .btn-new-game:hover {
-                background: linear-gradient(135deg, #553c9a, #44337a);
+                background: #c0b2a6;
+                color: #222;
                 transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(107, 70, 193, 0.3);
+                box-shadow: 0 4px 12px rgba(219, 205, 190, 0.3);
             }
             @keyframes popupAppear {
                 0% { transform: translate(-50%, -50%) scale(0.7); opacity: 0; }

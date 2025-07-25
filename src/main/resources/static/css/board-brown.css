@@ -4,23 +4,26 @@
     --font-primary: 'RetepRelleum', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --font-secondary: 'RetepRelleum', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     
-    /* Colors for gold theme */
-    --color-primary: #b8860b;  /* Dark gold */
-    --color-primary-dark: #8b6914;  /* Darker gold */
+    /* Colors matching index.css */
+    --color-primary: #ab9b87;
+    --color-primary-dark: #71645a;
     --color-secondary: #ffffff;
-    --color-text: #f9f5e9;
+    --color-text: #e9d8fd;
     --color-text-dark: #a0a0a0;
-    --color-background: #1a1a1a;
+    --color-background: #1a1625;
     --color-card: rgba(255, 255, 255, 0.05);
     --color-card-hover: rgba(255, 255, 255, 0.08);
     --transition-speed: 0.3s;
-    --color-accent: #dbcdbe;
+    --color-accent: #ab9b87;
     
-    /* Chess-specific colors for gold theme */
-    --color-white-square: #f0d9b5;
-    --color-black-square: #b58863;
-    --color-capture: rgba(255, 0, 0, 0.6);  /* Red color for capture highlights */
-    --color-legal-move: rgb(139, 69, 19);  /* Brown color for legal moves to match gold theme */
+    /* Chess-specific colors */
+    --color-white-square: #ab9b87;  /* Light brown instead of white */
+    --color-black-square: #71645a;  /* Dark brown */
+    --color-white-piece: #ffffff;
+    --color-black-piece: #000000;
+    --color-selected: rgba(171, 155, 135, 0.4);
+    --color-legal-move: rgba(171, 155, 135, 0.6);
+    --color-capture: rgba(220, 53, 69, 0.3);
     
     /* Dynamic base unit that adapts to screen size */
     --base-unit: clamp(0.0325rem, 0.0325rem + 0.01vw, 0.04rem);
@@ -68,10 +71,10 @@ body {
 }
 
 .center-panel {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/images/retrochess3.jpg') !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('/images/retrochess2.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .chess-board {
@@ -85,7 +88,7 @@ body {
     grid-template-columns: repeat(8, 1fr);
     background: #2C1B47;
     position: relative;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    box-shadow: 0 0 10px rgba(139, 69, 19, 0.3);
     padding: 0;
     gap: 0;
 }
@@ -160,9 +163,6 @@ body {
     position: relative;
     overflow: hidden;
     border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .tile.dark {
@@ -171,9 +171,6 @@ body {
     position: relative;
     overflow: hidden;
     border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 /* Clean, crisp highlighting effects */
@@ -188,35 +185,30 @@ body {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     border: 2px solid var(--color-accent);
-    z-index: 1;
-    pointer-events: none;
+    animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
 }
 
 .tile.legal-move-capture::before {
     content: '';
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    background: var(--color-capture);  /* Red color for capture highlights */
-    border: 2px solid rgba(255, 0, 0, 0.8);  /* Red border for capture */
-    z-index: 1;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--color-capture);
+    border: 2px solid rgba(214, 48, 49, 0.8);
 }
 
 /* Enhanced hover effects for legal moves */
 .tile.legal-move-non-capture:hover::after {
+    animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     background: var(--color-accent);
     border: 2px solid var(--color-accent);
-    width: 40%;
-    height: 40%;
 }
 
 .tile.legal-move-capture:hover::before {
-    background: rgba(255, 0, 0, 0.8);  /* Darker red on hover */
-    border: 2px solid rgba(255, 0, 0, 1);  /* Solid red border on hover */
+    background: rgba(214, 48, 49, 0.4);
+    border: 2px solid rgba(214, 48, 49, 1);
 }
 
 /* Clean selected tile effect */
@@ -235,40 +227,24 @@ body {
     border: 2px solid var(--color-accent);
     animation: selectedPulse 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     box-sizing: border-box;
-    z-index: 1;
 }
 
-/* Removed king in check highlighting styles */
-
-/* Animation keyframes */
-@keyframes pulseMove {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-}
-
-@keyframes pulseCapture {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
-    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.5; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.3; }
-}
-
-@keyframes pulseMoveHover {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.8; }
-}
-
-@keyframes pulseCaptureHover {
-    0% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.6; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+/* Selected tile styling */
+.tile.selected {
+    position: relative;
+    box-sizing: border-box;
 }
 
 @keyframes selectedPulse {
-    0% { border-color: rgba(255, 215, 0, 0.8); }
-    50% { border-color: rgba(255, 215, 0, 1); }
-    100% { border-color: rgba(255, 215, 0, 0.8); }
+    0% { 
+        border-color: rgba(171, 155, 135, 0.8);
+    }
+    50% { 
+        border-color: rgba(171, 155, 135, 1);
+    }
+    100% { 
+        border-color: rgba(171, 155, 135, 0.8);
+    }
 }
 
 /* Piece styling */
@@ -325,82 +301,207 @@ body {
     perspective: 1000px;
 }
 
-/* Animation keyframes */
-@keyframes floatPiece {
-    0% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-5px) rotate(2deg); }
-    100% { transform: translateY(0) rotate(0deg); }
+/* Enhance captured piece animation */
+@keyframes pieceCaptured {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.3) rotate(360deg);
+    }
 }
 
-@keyframes floatDrag {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    50% { transform: translate(-50%, -50%) rotate(5deg); }
-    100% { transform: translate(-50%, -50%) rotate(0deg); }
+/* Improve piece drop animation */
+@keyframes pieceDrop {
+    0% {
+        opacity: 0.8;
+        transform: translate(-50%, -50%) translateY(-20px) scale(1.2);
+    }
+    25% {
+        transform: translate(-50%, -50%) translateY(10px) scale(0.9);
+    }
+    50% {
+        transform: translate(-50%, -50%) translateY(-5px) scale(1.1);
+    }
+    75% {
+        transform: translate(-50%, -50%) translateY(2px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) translateY(0) scale(1);
+    }
 }
 
-/* Gold theme username banner */
-.username-banner {
+/* Optimize pulse animations */
+@keyframes pulseCapture {
+    0% { 
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    25% { 
+        transform: scale(1.3);
+        opacity: 0.9;
+    }
+    50% { 
+        transform: scale(0.8);
+        opacity: 0.8;
+    }
+    75% { 
+        transform: scale(1.2);
+        opacity: 0.9;
+    }
+    100% { 
+        transform: scale(1);
+        opacity: 0.7;
+    }
+}
+
+/* Optimize last move arrow animation */
+.last-move-arrow {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: rgba(26, 26, 26, 0.8);
-    color: var(--color-text);
-    padding: 5px 10px;
-    border-radius: 0;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.8;
+    animation: fadeInArrow 0.2s ease-out forwards;
+    will-change: opacity;
+}
+
+.last-move-arrow svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.last-move-arrow path {
+    stroke: rgba(181, 136, 99, 0.6);
+    stroke-width: 3;
+    fill: none;
+    marker-end: url(#arrowhead);
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: drawArrow 0.4s ease-out forwards;
+    will-change: stroke-dashoffset;
+}
+
+/* Optimize highlight animations */
+.last-move-source, .last-move-target {
+    background-color: rgba(181, 136, 99, 0.3) !important;
+    animation: fadeHighlight 0.3s ease-out;
+    will-change: opacity;
+}
+
+/* Enhanced styling for source and target tiles */
+.last-move-source {
+    background-color: rgba(59, 45, 87, 0.263) !important;
+}
+
+.last-move-target {
+    background-color: rgb(65, 60, 84) !important;
+}
+
+/* Special highlighting for capture moves - red background */
+.last-move-capture {
+    background-color: rgba(30, 29, 34, 0.086) !important; /* Semi-transparent red background */
+}
+
+@keyframes fadeInArrow {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes drawArrow {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes fadeHighlight {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Screen size specific adjustments */
+@media screen and (max-width: 1600px) {
+    .piece {
+        width: 80%;
+        height: 80%;
+    }
+}
+
+/* High DPI displays */
+@media screen and (min-resolution: 192dpi) {
+    .piece {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+.username-banner {
+    background: linear-gradient(135deg, #2a1f17, #3a2f27);
+    padding: 8px 15px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    z-index: 5;
-    box-shadow: none;
-    transition: none;
+    gap: 10px;
+    margin-bottom: 8px;
+    border: 1px solid rgba(193, 148, 94, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
 }
 
 .username-banner:hover {
-    transform: none;
-    box-shadow: none;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-color: rgba(25, 25, 25, 0.4);
 }
 
 .banner-icon {
-    color: var(--color-accent);
-    transition: none;
+    color: #c1945e;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
 }
 
 .username-banner:hover .banner-icon {
-    transform: none;
+    transform: rotate(15deg);
+    color: #d1a46e;
 }
 
 .username-banner h3 {
     margin: 0;
-    font-weight: 500;
-    font-size: 14px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 150px;
+    color: #f0d9b5;
+    font-size: 1.1rem;
+    font-weight: 600;
+    font-family: var(--font-primary);
+    letter-spacing: 0.5px;
 }
 
-/* Gold theme game start overlay */
+/* Game Start Animation */
 .game-start-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.5s ease;
+    transition: opacity 0.3s ease;
 }
 
 .game-start-overlay.show {
     opacity: 1;
-    pointer-events: auto;
-    animation: fadeInOut 2.5s ease-in-out forwards;
+    animation: fadeInOut 1s ease-in-out forwards;
 }
 
 .game-start-content {
@@ -414,10 +515,10 @@ body {
     font-size: 4rem;
     font-weight: 700;
     color: #fff;
-    text-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+    text-shadow: 0 0 20px rgba(193, 148, 94, 0.8);
     transform: scale(0);
-    animation: popIn 0.5s ease-out forwards;
-    animation-delay: 0.3s;
+    animation: popIn 0.3s ease-out forwards;
+    animation-delay: 0.15s;
 }
 
 .game-start-sparkles {
@@ -438,13 +539,13 @@ body {
     left: 50%;
     width: 120%;
     height: 120%;
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.8) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(193, 148, 94, 0.8) 0%, transparent 70%);
     transform: translate(-50%, -50%) scale(0);
-    animation: sparkleExpand 1s ease-out forwards;
+    animation: sparkleExpand 0.5s ease-out forwards;
 }
 
 .game-start-sparkles::after {
-    animation-delay: 0.2s;
+    animation-delay: 0.1s;
 }
 
 @keyframes fadeInOut {
@@ -460,7 +561,7 @@ body {
         opacity: 0;
     }
     50% { 
-        transform: scale(1.2);
+        transform: scale(1.1);
         opacity: 0.8;
     }
     100% { 
@@ -474,7 +575,8 @@ body {
         transform: translate(-50%, -50%) scale(0);
         opacity: 0;
     }
-    40% {
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
         opacity: 1;
     }
     100% {
@@ -483,87 +585,101 @@ body {
     }
 }
 
-/* Gold theme responsive piece sizing */
+/* Update the media queries for consistent piece sizing */
 @media screen and (min-width: 1920px) {
     .dragging-piece {
-        width: 8%;
-        height: 8%;
+        width: 90px !important;
+        height: 90px !important;
     }
 }
 
 @media screen and (min-width: 2560px) {
     .dragging-piece {
-        width: 6%;
-        height: 6%;
+        width: 80px !important;
+        height: 80px !important;
     }
 }
 
 @media screen and (max-width: 1200px) {
     .dragging-piece {
-        width: 12%;
-        height: 12%;
+        width: 50px !important;
+        height: 50px !important;
     }
 }
 
+/* Laptop screens (between 1200px and 1920px) */
 @media screen and (min-width: 1200px) and (max-width: 1919px) {
     .piece {
-        width: 80%;
-        height: 80%;
+        width: 85%;
+        height: 85%;
     }
     
     .dragging-piece {
-        width: 10%;
-        height: 10%;
+        width: 75px !important;
+        height: 75px !important;
     }
 }
 
 @media screen and (max-width: 1199px) {
     .piece {
-        width: 75%;
-        height: 75%;
+        width: 80%;
+        height: 80%;
     }
-    
     .dragging-piece {
-        width: 15%;
-        height: 15%;
+        width: 60px !important;
+        height: 60px !important;
     }
 }
 
-/* Gold theme capture appear animation */
+/* Animation keyframes */
 @keyframes captureAppear {
-    0% {
-        transform: scale(0.5) rotate(-10deg);
+    from {
+        transform: scale(0.8);
         opacity: 0;
     }
-    50% {
-        transform: scale(1.2) rotate(5deg);
-        opacity: 0.8;
-    }
-    100% {
-        transform: scale(1) rotate(0);
+    to {
+        transform: scale(1);
         opacity: 1;
     }
 }
 
-/* Gold theme selected breathing animations */
 @keyframes selectedBreathingLight {
-    0%, 100% {
-        box-shadow: none;
+    0% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
+        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
-    50% {
-        box-shadow: none;
+    50% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95));
+        box-shadow: inset 0 0 20px rgba(142, 68, 173, 0.5);
+    }
+    100% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
+        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
 }
 
 @keyframes selectedBreathingDark {
-    0%, 100% {
-        box-shadow: none;
+    0% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
+        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
-    50% {
-        box-shadow: none;
+    50% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95));
+        box-shadow: inset 0 0 20px rgba(142, 68, 173, 0.5);
+    }
+    100% { 
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
+        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
     }
 }
 
+@keyframes floatPiece {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-5px) rotate(2deg); }
+    100% { transform: translateY(0) rotate(0deg); }
+}
+
+/* Add en passant highlighting for purple theme */
 .tile.legal-move-en-passant::after {
     content: '';
     position: absolute;
@@ -571,10 +687,11 @@ body {
     left: 50%;
     width: 33%;
     height: 33%;
-    background: orange;
+    background: #ab9b87;  /* Brown theme color */
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid #ff9800;
+    border: 2px solid #ab9b87;  /* Darker brown for border */
+    animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     z-index: 2;
     pointer-events: none;
 }
@@ -586,45 +703,24 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 165, 0, 0.15);
-    border: 2px solid #ff9800;
+    background: rgba(171, 155, 135, 0.15);  /* Light brown with transparency */
+    border: 2px solid #ab9b87;  /* Darker brown for border */
     z-index: 1;
     pointer-events: none;
 }
 
 .tile.legal-move-en-passant:hover::after {
-    background: #ff9800;
-    border: 2px solid #ff9800;
+    animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    background: #ab9b87;  /* Darker brown on hover */
+    border: 2px solid #71645a;  /* Even darker brown for border on hover */
 }
 
 .tile.legal-move-en-passant:hover::before {
-    background: rgba(255, 165, 0, 0.3);
-    border: 2px solid #ff9800;
+    background: rgba(171, 155, 135, 0.3);  /* More opaque brown on hover */
+    border: 2px solid #71645a;  /* Even darker brown for border on hover */
 }
 
-/* Move highlighting styles for gold theme */
-/* Source tile - warm gold color to show where the piece moved from */
-.last-move-source {
-    background-color: rgba(255, 215, 0, 0.3) !important; /* Bright gold background */
-}
-
-/* Target tile - darker gold color to show where the piece moved to */
-.last-move-target {
-    background-color: rgba(189, 136, 0, 0.385) !important;
-     /* Darker gold background */
-}
-
-/* Special highlighting for capture moves - red background */
-.last-move-capture {
-    background-color: rgba(189, 136, 0, 0.385) !important;  /* Semi-transparent red background */
-}
-
-@keyframes fadeHighlight {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* Player Timer - Gold Theme */
+/* Player Timer - Purple Theme */
 .player-timer {
     font-family: 'Inter', Arial, sans-serif;
     font-size: 1.3rem;
@@ -658,7 +754,7 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(181, 136, 99, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(171, 155, 135, 0.1), transparent);
     animation: shimmer 3s infinite;
 }
 
@@ -682,8 +778,8 @@ body {
 
 /* Valid move hover effect - piece can land here */
 .tile.dragover-valid {
-    background-color: rgba(193, 148, 94, 0.6) !important; /* Gold highlight for valid moves */
-    box-shadow: inset 0 0 0 3px rgba(193, 148, 94, 0.8);
+    background-color: rgba(171, 155, 135, 0.6) !important; /* Brown highlight for valid moves */
+    box-shadow: inset 0 0 0 3px rgba(171, 155, 135, 0.8);
     transform: scale(1.05);
 }
 
@@ -694,7 +790,7 @@ body {
     left: 50%;
     width: 60%;
     height: 60%;
-    background: radial-gradient(circle, rgba(193, 148, 94, 0.3) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(171, 155, 135, 0.3) 0%, transparent 70%);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     animation: validDropPulse 0.8s ease-in-out infinite;
@@ -746,4 +842,4 @@ body {
     }
 }
 
-/* Enhanced dragging piece visuals */ 
+/* Enhanced dragging piece visuals */

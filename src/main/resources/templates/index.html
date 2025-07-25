@@ -458,7 +458,7 @@
                             <div class="all-game-card glass-effect">
                                 <div class="all-game-header" th:if="${numOfUserGames > 0}">
                                     <h3 th:text="${lastGame.whitePlayerUsername + ' vs ' + lastGame.blackPlayerUsername}">Player1 vs Player2</h3>
-                                    <span class="game-status" th:classappend="${lastGame.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${lastGame.status}"></span>
+                                    <!-- <span class="game-status" th:classappend="${lastGame.status != 'IN_PROGRESS' ? 'status-completed' : 'status-in-progress'}" th:text="${lastGame.status}"></span> -->
                                 </div>
                                 <a th:href="@{'/games/' + ${lastGame.id}}" class="all-game-board" th:if="${numOfUserGames > 0}">
                                     <div class="chess-board-preview" th:id="'board-preview-' + ${lastGame.id}"></div>
@@ -538,11 +538,7 @@
                                 <div class="main-buttons-container auth-buttons">
                                     <a href="#" onclick="newGame(); return false;" class="main-button get-started">New Game</a>
                                     <a href="#" onclick="showJoinGameDialog(); return false;" class="main-button about">Join Game</a>
-                                    <div th:if="${recentGames.size() ge 1}">
-                                        <div class="main-buttons-container auth-buttons">
-                                            <a href="#all-games-section" class="main-button about" id="viewallgameslang"></a>
-                                        </div>
-                                    </div>
+                                    <a th:if="${recentGames.size() ge 1}" href="#all-games-section" class="main-button about" id="viewallgameslang"></a>
                                 </div>
                             </div>
                         </div>
@@ -873,6 +869,14 @@
         
             // 2. Update all translatable areas
             updateLanguage(lang);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = localStorage.getItem('chess-board-theme') || 'brown';
+            document.querySelectorAll('.chess-board-preview').forEach(preview => {
+                preview.classList.remove('purple', 'gold', 'brown');
+                preview.classList.add(theme);
+            });
         });
     </script>
 </body>

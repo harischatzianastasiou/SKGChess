@@ -240,7 +240,6 @@ body:not(.authenticated) .hero-section::before {
 }
 
 .site-footer::before {
-  content: ''; /* Decorative line */
   position: absolute; /* Absolute positioning */
   top: 0; left: 0; right: 0;
   height: 0.1em; /* Responsive height */
@@ -299,7 +298,7 @@ body:not(.authenticated) .hero-section::before {
   text-align: center; /* Center text */
   margin-top: 4vw; /* Responsive margin */
   padding-top: 2vw; /* Responsive padding */
-  border-top: 0.1em solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  border-top: 0.1em solid #d9cbbc; /* Subtle border */
   font-size: 1em; /* Responsive font size */
 }
 
@@ -807,7 +806,6 @@ body:not(.authenticated) .hero-section::before {
     left: 50%;
     transform: translate(-50%, -50%) scale(0.9);
     background: linear-gradient(135deg, rgb(30, 29, 31), rgba(30, 29, 31));
-    border-radius: 16px;
     border: 1px solid rgba(107, 70, 193, 0.2);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
     z-index: 10000;
@@ -904,17 +902,17 @@ body:not(.authenticated) .hero-section::before {
 }
 
 .dropdown-trigger:hover {
-    border-color: rgba(107, 70, 193, 0.5);
+    border-color: #dbcdbe;
 }
 
 .dropdown-trigger.active {
-    border-color: rgba(107, 70, 193, 0.6);
+    border-color: #dbcdbe;;
     box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.1);
 }
 
 .dropdown-trigger:focus {
     outline: none;
-    border-color: rgba(107, 70, 193, 0.6);
+    border-color: #dbcdbe;
     box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.1);
 }
 
@@ -1017,7 +1015,7 @@ body:not(.authenticated) .hero-section::before {
 .game-creation-popup select:focus,
 .game-creation-popup input:focus {
     outline: none;
-    border-color: rgba(107, 70, 193, 0.6);
+    border-color: #dbcdbe;;
     box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.1);
 }
 
@@ -1047,7 +1045,7 @@ body:not(.authenticated) .hero-section::before {
 
 .game-creation-popup .color-option input[type="radio"]:checked + .color-box {
     transform: scale(1.1);
-    box-shadow: 0 0 0 2px rgba(107, 70, 193, 0.5);
+    box-shadow: 0 0 0 2px #d9cbbc;
 }
 
 .game-creation-popup .color-box {
@@ -1401,7 +1399,7 @@ body:not(.authenticated) .hero-section::before {
     left: 0;
     right: 0;
     background: #2c2c2e;
-    border: 1px solid rgba(107, 70, 193, 0.3);
+    border: 1px solid #d9cbbc;
     border-radius: 8px;
     max-height: 200px;
     overflow-y: auto;
@@ -1858,4 +1856,27 @@ body:not(.authenticated) .hero-section::before {
     letter-spacing: 0.02em;
     color: #fff !important;
     text-shadow: 0 1px 4px rgba(0,0,0,0.18);
+}
+
+.close-btn {
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: inherit !important;
+    font-size: 2rem;      /* Adjust as needed for your design */
+    font-weight: normal;  /* Or bold if you want a heavier X */
+    padding: 0.2em 0.5em; /* Minimal padding for click area */
+    margin: 0;
+    border-radius: 0 !important;
+    cursor: pointer;
+    outline: none;
+    transition: none;
+    line-height: 1;
+}
+
+.close-btn:focus,
+.close-btn:hover {
+    background: none !important;
+    color: inherit !important;
+    box-shadow: none !important;
 }

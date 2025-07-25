@@ -14,7 +14,7 @@
     --color-card: rgba(255, 255, 255, 0.05);
     --color-card-hover: rgba(255, 255, 255, 0.08);
     --transition-speed: 0.3s;
-    --color-accent: #9f7aea;
+    --color-accent: #dbcdbe;
     
     /* Chess-specific colors */
     --color-white-square: #9d74c4;  /* Light purple instead of white */
@@ -82,7 +82,7 @@ body {
     width: 100%;
     height: 100%;
     aspect-ratio: 1;
-    border: 5px solid rgb(29, 28, 28);
+    border: 5px solid #d2c5b6;
     border-radius: 5px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);

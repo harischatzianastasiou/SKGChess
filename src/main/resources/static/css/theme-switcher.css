@@ -51,6 +51,11 @@
     border: 2px solid #8b6914; /* Bright gold border */
 }
 
+.theme-switcher.brown-theme {
+    background: linear-gradient(135deg, #ab9b87 0%, #71645a 100%);
+    border: 2px solid #ab9b87;
+}
+
 /* Theme switcher animation */
 @keyframes slideIn {
     from {

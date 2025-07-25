@@ -111,6 +111,7 @@
                                     <div id="theme-switcher-popup" class="theme-switcher-popup" style="display: none;">
                                         <div class="theme-switcher purple-theme" data-theme="purple" title="Purple"></div>
                                         <div class="theme-switcher gold-theme" data-theme="gold" title="Gold"></div>
+                                        <div class="theme-switcher brown-theme" data-theme="brown" title="Brown"></div>
                                     </div>
                                 </div>
                                 <button id="resign-btn" class="btn btn-danger" title="Resign"><i class="fas fa-flag"></i></button>
@@ -177,6 +178,8 @@
                         boardThemeLink.href = '/css/board-purple.css';
                     } else if (theme === 'gold') {
                         boardThemeLink.href = '/css/board-gold.css';
+                    } else if (theme === 'brown') {
+                        boardThemeLink.href = '/css/board-brown.css';
                     }
                     
                     localStorage.setItem('chess-board-theme', theme);
@@ -241,6 +244,8 @@
                         document.getElementById('board-theme').href = '/css/board-purple.css';
                     } else if (theme === 'gold') {
                         document.getElementById('board-theme').href = '/css/board-gold.css';
+                    } else if (theme === 'brown') {
+                        document.getElementById('board-theme').href = '/css/board-brown.css';
                     }
                     localStorage.setItem('chess-board-theme', theme);
                     popup.style.display = 'none';

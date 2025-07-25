@@ -192,33 +192,37 @@
 }
 
 .main-button.get-started {
-    background: linear-gradient(90deg, #849d14 0%, #232526 100%);
-    color: #fff;
+    background:  #232526 10%;
+    color: #fffbf7;
     font-weight: 600;
-    border: 2px solid #333; border-radius: 8px;
-    box-shadow: 0 2px 12px 0 rgba(108,99,255,0.13);
-    transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, color 0.2s;
+    border: 2px solid #333; border-radius: 4px;
+    /* box-shadow: 0 2px 12px 0 rgba(108,99,255,0.13); */
+    transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, color 0.2s; 
     z-index: 3000;
+    border-radius: 0.1rem;
 }
 
 .main-button.get-started:hover {
-    background: linear-gradient(90deg, #232526 0%, #849d14 100%);
-    box-shadow: 0 4px 24px 0 rgba(108,99,255,0.18);
+    background: #333; /* Slightly lighter or darker than the original */
+    color: #fff;      /* Keep text white for contrast */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10); /* Subtle shadow for lift */
 }
 
 .main-button.about {
-    background: linear-gradient(90deg, #553c9a 0%, #232526 100%);
-    color: #fff;
+    background: #232526 10%;
+    color: #fffbf7;
     font-weight: 600;
-    border: 2px solid #333; border-radius: 8px;
-    box-shadow: 0 2px 12px 0 rgba(108,99,255,0.13);
+    border: 2px solid #333; border-radius: 4px;
+    /* box-shadow: 0 2px 12px 0 rgba(108,99,255,0.13); */
     transition: background 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.2s, color 0.2s;
     z-index: 3000;
+    border-radius: 0.1rem;
 }
     
 .main-button.about:hover {
-    background: linear-gradient(90deg, #232526 0%, #553c9a 100%);
-    box-shadow: 0 4px 24px 0 rgba(108,99,255,0.18);
+    background: #333; /* Slightly lighter or darker than the original */
+    color: #fff;      /* Keep text white for contrast */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.10); /* Subtle shadow for lift */
 }
 
 .dual-morph-btn {
@@ -392,13 +396,16 @@
     align-items: center;
 }
 
-.square.light {
-    background-color: #9d74c4;  
-}
+.chess-board-preview.brown .square.light { background-color: #ab9b87; }
+.chess-board-preview.brown .square.dark  { background-color: #71645a; }
 
-.square.dark {
-    background-color:  #4b286b;
-}
+/* Purple theme */
+.chess-board-preview.purple .square.light { background-color: #9d74c4; }
+.chess-board-preview.purple .square.dark  { background-color: #4b286b; }
+
+/* Gold theme */
+.chess-board-preview.gold .square.light { background-color: #f0d9b5; }
+.chess-board-preview.gold .square.dark  { background-color: #b58863; }
 
 .piece {
     width: 80%;
@@ -423,7 +430,6 @@
     height: auto;
     min-height: 400px;
     max-height: 80vh;
-    border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-lg);
     z-index: 1001;
     opacity: 0;
@@ -1453,7 +1459,7 @@ body.authenticated::before {
     font-size: 1.3rem; /* Reduced from 1.1rem to 0.9rem */
     margin-bottom: 0.75rem;
     padding: 0.4rem 0;
-    border-bottom: 2px solid #849d14;
+    border-bottom: 2px solid #d9cbbc;
     font-weight: 600;
     background-color: #585858;
     text-align: center;
@@ -2553,7 +2559,7 @@ body.authenticated::before {
     background: #b4c23d;
     color: #fff;
     padding: 1rem 2.5rem;
-    border-radius: 2rem;
+    border-radius: 0.2rem;
     font-size: 1.2rem;
     text-decoration: none;
     font-weight: bold;
