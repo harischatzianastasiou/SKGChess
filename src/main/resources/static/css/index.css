@@ -180,7 +180,7 @@
 
 .main-button {
     padding: 15px 30px;
-    font-family: 'Poppins', sans-serif;
+    font-family:  'NXBaskerville', serif !important;
     font-size: 1.1rem;
     font-weight: 500;
     border-radius: 25px;
@@ -2064,7 +2064,7 @@ body.authenticated::before {
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* IE/Edge */
-    font-family: 'Poppins', sans-serif;
+    font-family: 'NXBaskerville', serif;
     flex-direction: column;
 }
 
@@ -2746,7 +2746,7 @@ body:not(.authenticated) .video-bg-container {
     box-shadow: none !important;        /* No shadow */
     transition: background 0.3s, box-shadow 0.3s;
     border: none;
-    font-family: cursive !important;
+    font-family: 'NXBaskerville', serif !important;
 }
 
 body.authenticated .header {
@@ -2757,12 +2757,12 @@ body.authenticated .header {
 }
 
 @media (max-width: 768px) {
-    body {
-        font-family: 'Neucha','Poppins' !important;
+        body {
+            font-family: 'NXBaskerville', serif !important;
     }
 
     .header .logo {
-        font-family: cursive !important;
+        font-family: 'NXBaskerville', serif !important;
         font-size: 2.2rem;
         font-weight: 400;
         letter-spacing: 0.02em;
@@ -2809,7 +2809,7 @@ body.authenticated .header {
 <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
 */
 .all-games-section, .games-left, .games-right, .all-game-card, .game-row, .game-row-header, .game-status, .game-result, .player-color, .all-game-info, .section-title, .section-header, .placeholder-message, .no-all-games, .view-game-link,.header,.header.header-shadow {
-    font-family: 'Neucha','Poppins' !important;
+    font-family: 'NXBaskerville', serif !important;
     font-weight: 400;
     letter-spacing: 0.02em;
 }

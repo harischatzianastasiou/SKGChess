@@ -7,7 +7,7 @@
     transition: background 0.3s, box-shadow 0.3s;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
-    font-family: 'Caveat', cursive;
+    font-family: 'NXBaskerville', serif;
 }
 .game-layout {
     display: flex;
@@ -215,7 +215,7 @@
     border: 2px solid var(--color-accent, #ffd700);
     border-radius: 10px;
     color: #fff;
-    font-family: 'Poppins', sans-serif;
+    font-family: 'NXBaskerville', serif ;
     font-weight: 600;
     font-size: 1.2rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -505,7 +505,7 @@
 @media (max-width: 768px) {
 
     .header .logo {
-        font-family: cursive !important;
+        font-family: 'NXBaskerville', serif !important;
         font-size: 2.2rem;
         font-weight: 400;
         letter-spacing: 0.02em;
@@ -2469,7 +2469,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Neucha&display=swap" rel="stylesheet">
 */
 .game-chat, .chat-messages, .chat-message, .moves-list, .move-history, .move-row, .move, .move-number {
-    font-family: 'Neucha', cursive;
+    font-family: 'NXBaskerville', serif;
     font-weight: 400;
     letter-spacing: 0.02em;
 }

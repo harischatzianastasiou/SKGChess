@@ -1,16 +1,15 @@
 @font-face {
-    font-family: 'RetepRelleum';
-    src: url('/fonts/RetepRelleum.otf') format('opentype');
+    font-family: 'NXBaskerville';
+    src: url('/fonts/WorcesterRegular.otf') format('truetype');
     font-weight: normal;
     font-style: normal;
-    font-display: swap;
 }
 
 
 :root {
     /* Typography */
-    --font-primary: 'Neucha','Poppins';
-    --font-secondary: 'Neucha','Poppins',;
+    --font-primary: 'NXBaskerville', serif;
+    --font-secondary: 'NXBaskerville', serif;
     
     /* Color Scheme */
     --primary-color: #2d1f2e;
@@ -90,7 +89,7 @@ textarea {
 
 /* Body Styles */
 body {
-    font-family: 'Neucha','Poppins';
+    font-family: 'NXBaskerville', serif;
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.7;
@@ -170,7 +169,7 @@ body:not(.authenticated) .hero-section::before {
 
 /* Ensure header nav links for non-authenticated users always use Neucha font */
 .header-auth {
-    font-family:  cursive !important; /* Use Neucha, fallback to cursive */
+    font-family:  'NXBaskerville', serif !important; /* Use Neucha, fallback to cursive */
     font-weight: 400;
     letter-spacing: 0.02em;
 }
@@ -356,7 +355,7 @@ body:not(.authenticated) .hero-section::before {
     padding: 0.5rem 1.2rem;
     font-size: 0.9rem;
     font-weight: 600;
-    font-family: 'Neucha','Poppins';
+    font-family: 'NXBaskerville', serif;
     border-radius: var(--border-radius-md);
     transition: all var(--transition-normal);
     color: var(--text-color);
@@ -1699,7 +1698,7 @@ body:not(.authenticated) .hero-section::before {
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .header .logo {
-        font-family: cursive !important;
+        font-family: 'NXBaskerville', serif !important;
         font-size: 2.2rem;
         font-weight: 400;
         letter-spacing: 0.02em;
@@ -1853,7 +1852,7 @@ body:not(.authenticated) .hero-section::before {
 }
 
 .header .logo {
-    font-family: cursive !important;
+    font-family: 'NXBaskerville', serif !important;
     font-size: 2.2rem;
     font-weight: 400;
     letter-spacing: 0.02em;
