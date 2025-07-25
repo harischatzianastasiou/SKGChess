@@ -954,10 +954,15 @@ body.authenticated .welcome-icon {
 }
 
 @media (min-width: 769px) {
-    body.authenticated .welcome-icon {
-        margin-top: 2rem !important; /* Desktop: move up */
+    .welcome-icon {
+        margin-top: 4rem !important; 
     }
+    
+    #motolang {
+        margin-top: 3.5rem !important;
+    }   
 }
+
 @media (max-width: 768px) {
     body.authenticated .welcome-icon {
         margin-top: 1rem !important; /* Mobile: move up */
