@@ -960,7 +960,15 @@ body.authenticated .welcome-icon {
     
     #motolang {
         margin-top: 3.5rem !important;
-    }   
+    }
+    
+    body.authenticated .username-row {
+        margin-top: 3rem !important; /* Ensure no extra top margin on the h1 */
+    }
+
+    body.authenticated .welcome-icon {
+        margin-top: -0.2rem !important;
+    }
 }
 
 @media (max-width: 768px) {
