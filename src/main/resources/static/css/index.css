@@ -980,10 +980,12 @@ body.authenticated .welcome-icon {
 @media (max-width: 768px) {
     body.authenticated .welcome-icon {
         margin-top: 1rem !important; /* Mobile: move up */
+        width: 100px;
+        height: 100px;
     }
 
     #motolang {
-        margin-top: 3.5rem !important;
+        margin-top: 3rem !important;
     }
 }
 
@@ -1970,8 +1972,8 @@ body.authenticated::before {
 /* Media Queries for Responsive Layout */
 @media (max-width: 768px) {
     .welcome-icon {
-        width: 120px; /* Even smaller size for mobile */
-        height: 120px;
+        width: 150px; /* Smaller size for mobile */
+        height: 150px;
         margin-bottom: 1rem;
     }
 
@@ -2008,8 +2010,8 @@ body.authenticated::before {
 /* Additional breakpoint for very small screens */
 @media (max-width: 480px) {
     .welcome-icon {
-        width: 80px;
-        height: 80px;
+        width: 120px;
+        height: 120px;
     }
 
     .think-chess-text {
