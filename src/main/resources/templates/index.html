@@ -93,7 +93,8 @@
                 display: none !important;
             }
         }
-        /* Remove the rule that hides nav > a on desktop */
+
+                /* Remove the rule that hides nav > a on desktop */
         /* @media (max-width: 768px), (min-width: 769px) {
             .header-auth nav > a,
             .header-auth .btn-home,
@@ -149,17 +150,21 @@
                 margin-bottom: 3.5rem !important; /* Increase space below logo on mobile */
             }
         }
+        
+        /* Quote styling */
         .welcome-quote {
             text-align: center;
             margin: 0 auto;
             max-width: 90vw;
         }
+        
         .quote-text {
             display: inline-block;
             position: relative;
             font-style: italic;
             white-space: normal;
         }
+        
         .quote-text::before {
             content: '"';
             position: absolute;
@@ -168,6 +173,7 @@
             color: #aaa;
             font-size: 1.2em;
         }
+        
         .quote-text::after {
             content: '"';
             position: absolute;
@@ -176,7 +182,7 @@
             color: #aaa;
             font-size: 1.2em;
         }
-        </style>
+    </style>
 </head>
 <body th:classappend="${#authorization.expression('isAuthenticated()')} ? 'authenticated'">
     <!-- Audio player fragment -->
@@ -319,15 +325,6 @@
 
         <!-- Unauthenticated: Video background and header/main -->
         <div sec:authorize="!isAuthenticated()">
-            <style>
-            .video-bg-container {
-              position: fixed;
-              top: 0; left: 0; width: 100vw; height: 100vh;
-              z-index: -2;
-              overflow: hidden;
-            }
-            .video-bg {
-              width: 100vw;
             <!-- Video background container -->
             <div class="video-bg-container" style="background: url('/images/bnwthess.jpg'); background-size: 105%; background-position: right center; background-repeat: no-repeat; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; animation: backgroundTravel 30s infinite alternate ease-in-out;">
                 <!-- Overlay for styling/darkening the image -->
