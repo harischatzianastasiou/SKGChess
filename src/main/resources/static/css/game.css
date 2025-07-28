@@ -646,8 +646,8 @@
     width: 100%; /* Ensure full width */
     margin-bottom: 20px; /* Remove any bottom margin */
     background: 
-        linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), /* dark overlay */
-        url('/images/retrochess3.jpg'); 
+        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), /* dark overlay */
+        url('/images/background1.png'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -2472,4 +2472,14 @@
     font-family: 'NXBaskerville', serif;
     font-weight: 400;
     letter-spacing: 0.02em;
+}
+
+#resign-btn, #draw-btn, #theme-switcher-btn {
+    background: #dbcdbe !important;
+    color: #222;
+}
+
+#resign-btn:hover, #draw-btn:hover, #theme-switcher-btn:hover {
+    background: #c0b2a6 !important;
+    color: #222;
 }
