@@ -1970,8 +1970,8 @@ body.authenticated::before {
 /* Media Queries for Responsive Layout */
 @media (max-width: 768px) {
     .welcome-icon {
-        width: 150px; /* Smaller size for mobile */
-        height: 150px;
+        width: 120px; /* Even smaller size for mobile */
+        height: 120px;
         margin-bottom: 1rem;
     }
 
@@ -2008,8 +2008,8 @@ body.authenticated::before {
 /* Additional breakpoint for very small screens */
 @media (max-width: 480px) {
     .welcome-icon {
-        width: 120px;
-        height: 120px;
+        width: 80px;
+        height: 80px;
     }
 
     .think-chess-text {
