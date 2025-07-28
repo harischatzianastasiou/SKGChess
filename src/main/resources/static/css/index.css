@@ -981,6 +981,10 @@ body.authenticated .welcome-icon {
     body.authenticated .welcome-icon {
         margin-top: 1rem !important; /* Mobile: move up */
     }
+
+    #motolang {
+        margin-top: 3.5rem !important;
+    }
 }
 
 @media (max-width: 768px) {
