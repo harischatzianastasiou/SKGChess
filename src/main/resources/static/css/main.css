@@ -1818,8 +1818,8 @@ body:not(.authenticated) .hero-section::before {
     }
 }
 
-/* Ensure ixlstudio logo displays properly */
-.ixlstudio-logo {
+/* Ensure skgweb logo displays properly */
+.skgweb-logo {
     width: auto !important;
     height: 60px !important;
     max-width: none !important;
@@ -1830,21 +1830,21 @@ body:not(.authenticated) .hero-section::before {
     align-self: flex-start !important;
 }
 
-/* Mobile-specific spacing for ixlstudio logo */
+/* Mobile-specific spacing for skgweb logo */
 @media (max-width: 768px) {
-    .ixlstudio-logo {
+    .skgweb-logo {
         margin-bottom: 1.5rem !important; /* Add bottom margin for proper gap on mobile */
     }
 }
 
 @media (max-width: 600px) {
-    .ixlstudio-logo {
+    .skgweb-logo {
         margin-bottom: 2rem !important; /* Increase bottom margin for very small screens */
     }
 }
 
 @media (max-width: 480px) {
-    .ixlstudio-logo {
+    .skgweb-logo {
         margin-bottom: 2.5rem !important; /* Maximum bottom margin for extra small screens */
     }
 }

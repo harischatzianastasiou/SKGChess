@@ -17,7 +17,7 @@
     margin-bottom: 2vw;
     position: relative;
     overflow: hidden;
-    animation: backgroundTravel 15s infinite alternate ease-in-out; /* Animation enabled for mobile */
+    animation: backgroundTravel 15s infinite alternate ease-in-out;
     padding-top: 0 !important;
     margin-top: 0 !important;
 }
@@ -25,10 +25,110 @@
 /* For screens wider than 768px (not mobile) */
 @media (min-width: 768px) {
     .hero-section {
-        background-size: cover;         /* Cover the whole screen */
-        background-position: right;    /* Center the image */
-        background-repeat: no-repeat;   /* No repeat */
-        /* animation: none;  Removed to enable animation on all screens */
+        background-size: cover;
+        background-position: right;
+        background-repeat: no-repeat;
+    }
+}
+
+/* Welcome Main Styles */
+.welcome-main {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 1;
+    position: relative;
+}
+
+.welcome-main h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 8px #000;
+}
+
+.welcome-main p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 8px #000;
+}
+
+/* Video Background Styles */
+.video-bg-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -2;
+    overflow: hidden;
+}
+
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+}
+
+@keyframes backgroundTravel {
+    0% {
+        transform: scale(1.05) translate(0, 0);
+    }
+    100% {
+        transform: scale(1.05) translate(-2%, -2%);
+    }
+}
+
+/* Mobile responsive styles for welcome-main */
+@media (max-width: 768px) {
+    .video-bg-container {
+        background-size: cover !important;
+        background-position: center top !important;
+        background-repeat: no-repeat !important;
+    }
+    
+    .welcome-main h1 {
+        font-size: 1.5rem;
+    }
+    
+    .welcome-main p {
+        font-size: 1.3rem;
+    }
+    
+    .welcome-icon {
+        width: 280px;
+        height: 280px;
+        margin-bottom: 0.7rem;
+        margin-top: 3rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .welcome-icon {
+        width: 350px;
+        height: 350px;
+        background-size: contain;
+        margin-bottom: 1.2rem;
+        margin-top: 5rem;
+    }
+    
+    .main-content h1, main h1, .authenticated-hero .hero-content h1 {
+        font-size: 3.2rem;
+    }
+    
+    .quote-text, .welcome-quote {
+        font-size: 1.5rem;
+    }
+    
+    .authenticated-hero .welcome-quote, .authenticated-hero .quote-text {
+        font-size: 2.1rem;
     }
 }
 
@@ -1149,15 +1249,15 @@ body.authenticated::before {
     padding: 0 2vw;
 }
 
-/* Mobile-specific spacing for ixlstudio logo and welcome quote */
+/* Mobile-specific spacing for skgweb logo and welcome quote */
 @media (max-width: 768px) {
-    /* Add proper spacing below ixlstudio logo on mobile */
+    /* Add proper spacing below skgweb logo on mobile */
     .welcome-icon div[style*="margin-top: 20px"] {
         margin-bottom: 1.5rem !important; /* Add bottom margin for proper gap */
     }
     
-    /* Alternative selector for ixlstudio logo container */
-    .welcome-icon > div:has(.ixlstudio-logo) {
+    /* Alternative selector for skgweb logo container */
+    .welcome-icon > div:has(.skgweb-logo) {
         margin-bottom: 1.5rem !important; /* Add bottom margin for proper gap */
     }
     
@@ -1175,8 +1275,8 @@ body.authenticated::before {
         margin-bottom: 2rem !important; /* Increase bottom margin for very small screens */
     }
     
-    /* Alternative selector for ixlstudio logo container */
-    .welcome-icon > div:has(.ixlstudio-logo) {
+    /* Alternative selector for skgweb logo container */
+    .welcome-icon > div:has(.skgweb-logo) {
         margin-bottom: 2rem !important; /* Increase bottom margin for very small screens */
     }
     
@@ -1193,8 +1293,8 @@ body.authenticated::before {
         margin-bottom: 2.5rem !important; /* Maximum bottom margin for extra small screens */
     }
     
-    /* Alternative selector for ixlstudio logo container */
-    .welcome-icon > div:has(.ixlstudio-logo) {
+    /* Alternative selector for skgweb logo container */
+    .welcome-icon > div:has(.skgweb-logo) {
         margin-bottom: 2.5rem !important; /* Maximum bottom margin for extra small screens */
     }
     
@@ -2837,5 +2937,1338 @@ body.authenticated .header {
     font-family: 'NXBaskerville', serif !important;
     font-weight: 400;
     letter-spacing: 0.02em;
+}
+
+/* New Feature Section Styles */
+.feature-section {
+    background: linear-gradient(rgba(171, 155, 135, 0.3), rgba(113, 100, 90, 0.3)), url('/images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 6rem 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23e2e8f0" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.feature-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.feature-content {
+    text-align: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Feature Badge */
+.feature-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.feature-badge i {
+    color: #ffd700;
+}
+
+.feature-heading {
+    font-size: 3.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+    line-height: 1.1;
+    font-family: 'NXBaskerville', serif;
+}
+
+.feature-description {
+    font-size: 1.3rem;
+    color: #4a5568;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    font-family: 'NXBaskerville', serif;
+    font-weight: 400;
+}
+
+/* Professional Feature Grid */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.feature-card {
+    background: #71645a;
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid #71645a;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    height: 200px;
+    perspective: 1000px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    border-color: #cbd5e0;
+}
+
+.feature-card:hover::before {
+    transform: scaleX(1);
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.feature-icon i {
+    color: white;
+    font-size: 1.3rem;
+}
+
+.feature-card h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.5rem;
+    font-family: 'NXBaskerville', serif;
+    transition: all 0.3s ease;
+}
+
+.feature-card p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    font-family: 'NXBaskerville', serif;
+    margin: 0;
+    text-align: center;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.feature-card.expanded h3 {
+    margin-bottom: 0.5rem;
+}
+
+.feature-card.expanded p {
+    opacity: 1;
+    max-height: 200px;
+    margin-top: 0.5rem;
+}
+
+.feature-card-front,
+.feature-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.feature-card-front {
+    transform: rotateY(0deg);
+}
+
+.feature-card-back {
+    background: #71645a;
+    transform: rotateY(180deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.feature-card-back p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    font-family: 'NXBaskerville', serif;
+    margin: 0;
+    text-align: center;
+}
+
+/* Enhanced Call to Action */
+.feature-cta {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.feature-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'NXBaskerville', serif;
+    border: none;
+    text-decoration: none;
+}
+
+.feature-btn.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.feature-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.feature-btn.secondary {
+    background: white;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.feature-btn.secondary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.feature-pricing {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.price {
+    font-size: 1.1rem;
+    color: #1a202c;
+    font-weight: 700;
+    font-family: 'NXBaskerville', serif;
+}
+
+.subtitle {
+    font-size: 0.9rem;
+    color: #4a5568;
+    font-family: 'NXBaskerville', serif;
+}
+
+/* Development Info Section */
+.development-info {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.dev-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.dev-badge i {
+    color: #38b2ac;
+}
+
+.dev-description {
+    font-size: 1rem;
+    color: #4a5568;
+    margin-bottom: 1rem;
+    font-family: 'NXBaskerville', serif;
+    line-height: 1.6;
+}
+
+.contact-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+/* Additional Features Styles */
+.feature-visual {
+    margin-top: 3rem;
+}
+
+.additional-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.feature-highlight {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.feature-highlight:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.highlight-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem auto;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.highlight-icon i {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.feature-highlight h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 0.75rem;
+    font-family: 'NXBaskerville', serif;
+}
+
+.feature-highlight p {
+    font-size: 0.95rem;
+    color: #4a5568;
+    line-height: 1.5;
+    font-family: 'NXBaskerville', serif;
+    margin: 0;
+}
+
+/* IXLstudio Logo Section - Prominent Display */
+.skgweb-logo-section {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    padding: 8rem 2rem;
+    position: relative;
+    color: white;
+    text-align: center;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skgweb-logo-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.skgweb-logo-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+}
+
+.skgweb-logo-large {
+    width: 400px;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 30px;
+    backdrop-filter: blur(20px);
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: all 0.4s ease;
+    animation: logoFloat 6s ease-in-out infinite;
+}
+
+.skgweb-logo-large:hover {
+    transform: translateY(-10px) scale(1.05);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 
+        0 30px 60px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.skgweb-logo-large img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+}
+
+.skgweb-logo-text {
+    text-align: center;
+    max-width: 600px;
+}
+
+.skgweb-logo-text h2 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-family: 'NXBaskerville', serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.skgweb-logo-text p {
+    font-size: 1.3rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    font-family: 'NXBaskerville', serif;
+}
+
+.skgweb-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    padding: 1.2rem 2.5rem;
+    border-radius: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'NXBaskerville', serif;
+}
+
+.skgweb-link-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+@keyframes logoFloat {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* IXLstudio About Section */
+.skgweb-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 6rem 2rem;
+    position: relative;
+    color: white;
+}
+
+.skgweb-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    pointer-events: none;
+}
+
+.skgweb-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.skgweb-content {
+    display: flex;
+    align-items: center;
+    gap: 4rem;
+    text-align: left;
+}
+
+.skgweb-logo {
+    flex-shrink: 0;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.skgweb-logo:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.skgweb-logo img {
+    max-width: 80%;
+    max-height: 80%;
+    object-fit: contain;
+}
+
+.skgweb-info {
+    flex: 1;
+}
+
+.skgweb-info h3 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-family: 'NXBaskerville', serif;
+}
+
+.skgweb-info p {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    opacity: 0.95;
+    font-family: 'NXBaskerville', serif;
+}
+
+.skgweb-contact {
+    margin-top: 2rem;
+}
+
+.skgweb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    font-family: 'NXBaskerville', serif;
+}
+
+.skgweb-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    color: white;
+    text-decoration: none;
+}
+
+/* Responsive Design for Feature Section */
+@media (max-width: 1024px) {
+    .feature-heading {
+        font-size: 3.2rem;
+    }
+    
+    .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .additional-features {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .feature-section {
+        padding: 5rem 1.5rem;
+    }
+    
+    .feature-heading {
+        font-size: 2.8rem;
+    }
+    
+    .feature-description {
+        font-size: 1.2rem;
+    }
+    
+    .feature-cta {
+        flex-direction: column;
+        gap: 1.5rem;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .feature-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .feature-card {
+        padding: 1.2rem;
+        height: 180px;
+    }
+    
+    .feature-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .feature-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .feature-card h3 {
+        font-size: 1rem;
+    }
+    
+    .feature-card p {
+        font-size: 0.85rem;
+    }
+    
+    .additional-features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        max-width: 500px;
+    }
+    
+    .feature-highlight {
+        padding: 1.5rem;
+    }
+    
+    .highlight-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .highlight-icon i {
+        font-size: 1.3rem;
+    }
+    
+    /* IXLstudio Logo Section Mobile Styles */
+    .skgweb-logo-section {
+        padding: 5rem 1.5rem;
+        min-height: 50vh;
+    }
+    
+    .skgweb-logo-large {
+        width: 280px;
+        height: 280px;
+    }
+    
+    .skgweb-logo-text h2 {
+        font-size: 2.5rem;
+    }
+    
+    .skgweb-logo-text p {
+        font-size: 1.1rem;
+    }
+    
+    .skgweb-link-btn {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .skgweb-content {
+        gap: 3rem;
+    }
+    
+    .skgweb-logo {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .skgweb-info h3 {
+        font-size: 2.4rem;
+    }
+    
+    .skgweb-info p {
+        font-size: 1rem;
+    }
+    
+    .development-info {
+        padding: 1.5rem;
+    }
+    
+    .contact-buttons {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .contact-buttons .feature-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .feature-section {
+        padding: 4rem 1rem;
+    }
+    
+    .site-footer {
+        padding: 3rem 1rem 1.5rem 1rem;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .footer-section h3 {
+        font-size: 1.2rem;
+    }
+    
+    .footer-section p {
+        font-size: 0.9rem;
+    }
+    
+    .feature-heading {
+        font-size: 2.2rem;
+    }
+    
+    .feature-description {
+        font-size: 1.1rem;
+    }
+    
+    .feature-badge {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .feature-grid {
+        gap: 0.8rem;
+    }
+    
+    .feature-card {
+        padding: 1rem;
+        height: 160px;
+    }
+    
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        margin-bottom: 0.8rem;
+    }
+    
+    .feature-icon i {
+        font-size: 1.1rem;
+    }
+    
+    .feature-card h3 {
+        font-size: 0.95rem;
+    }
+    
+    .feature-card p {
+        font-size: 0.8rem;
+    }
+    
+    .feature-cta {
+        padding: 1.5rem;
+    }
+    
+    .feature-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .additional-features {
+        gap: 1rem;
+        max-width: 400px;
+    }
+    
+    .feature-highlight {
+        padding: 1.2rem;
+    }
+    
+    .highlight-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .highlight-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .feature-highlight h3 {
+        font-size: 1.1rem;
+    }
+    
+    .feature-highlight p {
+        font-size: 0.9rem;
+    }
+    
+    .platform-support {
+        padding: 3rem 0;
+    }
+    
+    /* IXLstudio Logo Section Small Screen Styles */
+    .skgweb-logo-section {
+        padding: 4rem 1rem;
+        min-height: 40vh;
+    }
+    
+    .skgweb-logo-large {
+        width: 220px;
+        height: 220px;
+    }
+    
+    .skgweb-logo-text h2 {
+        font-size: 2rem;
+    }
+    
+    .skgweb-logo-text p {
+        font-size: 1rem;
+    }
+    
+    .skgweb-link-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .skgweb-section {
+        padding: 4rem 1rem;
+    }
+    
+    .skgweb-content {
+        flex-direction: column;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .skgweb-logo {
+        width: 200px;
+        height: 200px;
+    }
+    
+    .skgweb-info h3 {
+        font-size: 2rem;
+    }
+    
+    .skgweb-info p {
+        font-size: 0.95rem;
+    }
+    
+    .skgweb-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .development-info {
+        padding: 1.2rem;
+    }
+    
+    .dev-description {
+        font-size: 0.9rem;
+    }
+    
+    .contact-buttons {
+        gap: 0.6rem;
+    }
+    
+    .contact-buttons .feature-btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Contact & Feedback Section */
+.contact-section {
+    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    padding: 6rem 2rem;
+    position: relative;
+}
+
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-header {
+    margin-bottom: 4rem;
+}
+
+.contact-header h3 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 1rem;
+    font-family: 'NXBaskerville', serif;
+}
+
+.contact-header p {
+    font-size: 1.2rem;
+    color: #4a5568;
+    font-family: 'NXBaskerville', serif;
+}
+
+.contact-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.contact-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.contact-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
+.contact-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.contact-icon i {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.contact-card h4 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 1rem;
+    font-family: 'NXBaskerville', serif;
+}
+
+.contact-card p {
+    font-size: 1rem;
+    color: #4a5568;
+    line-height: 1.6;
+    font-family: 'NXBaskerville', serif;
+    margin: 0;
+}
+
+/* Footer Styles
+.site-footer {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    color: white;
+    padding: 4rem 2rem 2rem 2rem;
+    position: relative;
+} */
+
+/* .site-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+} */
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.footer-section h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #e2e8f0;
+    font-family: 'NXBaskerville', serif;
+}
+
+.footer-section p {
+    color: #a0aec0;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-family: 'NXBaskerville', serif;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-section ul li a {
+    color: #a0aec0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-family: 'NXBaskerville', serif;
+}
+
+.footer-section ul li a:hover {
+    color: #667eea;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #a0aec0;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.footer-bottom {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
+    color: #718096;
+    font-family: 'NXBaskerville', serif;
+}
+
+.footer-bottom p {
+    margin-bottom: 0.5rem;
+}
+
+.footer-bottom a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.footer-bottom a:hover {
+    text-decoration: underline;
+}
+
+/* Contact Form Styles */
+.contact-form-container {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: left;
+}
+
+.form-group label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a202c;
+    font-family: 'NXBaskerville', serif;
+}
+
+
+
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-actions {
+    margin-top: 1rem;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'NXBaskerville', serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Responsive Design for Contact Section */
+@media (max-width: 1024px) {
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+    
+    .contact-header h3 {
+        font-size: 2.4rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .contact-section {
+        padding: 4rem 1.5rem;
+    }
+    
+    .contact-header h3 {
+        font-size: 2.2rem;
+    }
+    
+    .contact-header p {
+        font-size: 1.1rem;
+    }
+    
+    .contact-content {
+        gap: 2rem;
+    }
+    
+    .contact-card {
+        padding: 1.5rem;
+    }
+    
+    .contact-icon {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .contact-icon i {
+        font-size: 1.3rem;
+    }
+    
+    .contact-card h4 {
+        font-size: 1.2rem;
+    }
+    
+    .contact-card p {
+        font-size: 0.95rem;
+    }
+    
+    .contact-form-container {
+        padding: 2rem;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.7rem 0.9rem;
+        font-size: 0.95rem;
+    }
+    
+    .submit-btn {
+        padding: 0.9rem 1.8rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .contact-section {
+        padding: 3rem 1rem;
+    }
+    
+    .contact-header h3 {
+        font-size: 1.8rem;
+    }
+    
+    .contact-header p {
+        font-size: 1rem;
+    }
+    
+    .contact-card {
+        padding: 1.2rem;
+    }
+    
+    .contact-icon {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .contact-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .contact-card h4 {
+        font-size: 1.1rem;
+    }
+    
+    .contact-card p {
+        font-size: 0.9rem;
+    }
+    
+    .contact-form-container {
+        padding: 1.5rem;
+    }
+    
+    .form-group {
+        gap: 0.4rem;
+    }
+    
+    .form-group label {
+        font-size: 0.9rem;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+    
+    .form-group textarea {
+        min-height: 100px;
+    }
+    
+    .submit-btn {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.95rem;
+    }
 }
 
