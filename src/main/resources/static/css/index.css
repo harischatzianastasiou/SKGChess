@@ -4538,11 +4538,11 @@ body.authenticated .header {
     }
     
     .feature-card:hover p {
-        opacity: 0; /* Hide description on mobile hover */
-        max-height: 0; /* No height on mobile hover */
+        opacity: 1; /* Show description on mobile hover when image is visible */
+        max-height: 200px; /* Allow space for description */
     }
     
-    /* Only show description when explicitly expanded on mobile */
+    /* Show both image and expanded text when card is expanded on mobile */
     .feature-card.expanded:hover p {
         opacity: 1; /* Show description when expanded */
         max-height: 200px; /* Allow space for description */
