@@ -1122,19 +1122,27 @@
                 let touchStartTime = 0; // Store initial touch time
                 let hasMoved = false; // Track if finger has moved significantly
                 let touchDistance = 0; // Track total touch distance
+                let clickedOnLink = false; // Track if user clicked on a link
                 
                 // Handle touch start event
                 card.addEventListener('touchstart', function(e) {
+                    // Check if the touched element is a link
+                    if (e.target.tagName === 'A' || e.target.closest('a')) {
+                        clickedOnLink = true; // Mark that user clicked on a link
+                        return; // Don't handle card expansion for links
+                    }
+                    
                     // Store initial touch position and time
                     touchStartY = e.touches[0].clientY; // Get Y position of first touch
                     touchStartTime = Date.now(); // Store current timestamp
                     hasMoved = false; // Reset movement flag
                     touchDistance = 0; // Reset distance counter
+                    clickedOnLink = false; // Reset link click flag
                 }, { passive: true }); // Use passive for better performance
                 
                 // Handle touch move event
                 card.addEventListener('touchmove', function(e) {
-                    if (touchStartY === 0) return; // Skip if no touch start
+                    if (touchStartY === 0 || clickedOnLink) return; // Skip if no touch start or clicked on link
                     
                     // Calculate current touch position
                     const currentY = e.touches[0].clientY; // Get current Y position
@@ -1154,6 +1162,12 @@
                 
                 // Handle touch end event (replaces click)
                 card.addEventListener('touchend', function(e) {
+                    // If user clicked on a link, don't handle card expansion
+                    if (clickedOnLink) {
+                        clickedOnLink = false; // Reset flag
+                        return; // Allow link to work normally
+                    }
+                    
                     // Calculate touch duration
                     const touchDuration = Date.now() - touchStartTime; // Calculate total touch time
                     
@@ -1181,10 +1195,16 @@
                     touchStartTime = 0; // Reset touch start time
                     hasMoved = false; // Reset movement flag
                     touchDistance = 0; // Reset distance counter
+                    clickedOnLink = false; // Reset link click flag
                 }, { passive: false }); // Not passive to allow preventDefault
                 
                 // Keep click handler for desktop (non-touch devices)
                 card.addEventListener('click', function(e) {
+                    // Check if the clicked element is a link
+                    if (e.target.tagName === 'A' || e.target.closest('a')) {
+                        return; // Allow link to work normally
+                    }
+                    
                     // Only handle click if it's not from a touch device
                     if (!('ontouchstart' in window)) { // Check if device supports touch
                         // Toggle expanded state
