@@ -26,6 +26,14 @@
     <!-- Preload critical assets -->
     <link rel="preload" href="/images/bnwthess.jpg" as="image">
     <link rel="preload" href="/images/toskaki.png" as="image">
+    
+    <!-- Preload feature section images for smooth hover effects -->
+    <link rel="preload" href="/images/chess-engine.jpg" as="image">
+    <link rel="preload" href="/images/chat-system.jpg" as="image">
+    <link rel="preload" href="/images/classical-music.jpg" as="image">
+    <link rel="preload" href="/images/game-history.jpg" as="image">
+    <link rel="preload" href="/images/themes.jpg" as="image">
+    <link rel="preload" href="/images/mobile-optimized.jpg" as="image">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script th:inline="javascript" src="/js/index.js"></script>
@@ -334,7 +342,7 @@
             <main class="welcome-main">
                 <div class="welcome-icon">
                     <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" style="width: 300px; height: auto;" />   
-                    <img src="/images/skgweb.png" alt="skgweb logo" style="width: 160px; height: auto; margin-top: 45px;" />                 
+                    <img src="/images/skgweb1.png" alt="skgweb logo" style="width: 160px; height: auto; margin-top: 45px;" />                 
                 </div>
                 <!-- Main heading / welcome quote -->
                 <h1 id="motolang" class="animated-fade-in-up" style="animation-delay: 0.4s;"></h1>
@@ -350,64 +358,68 @@
                 <!-- Left Column - Text Content -->
                 <div class="feature-content">
                     <div class="feature-badge">
-                        <i class="fas fa-star"></i>
                         <span>100% Custom Built</span>
                     </div>
-                    <h2 class="feature-heading">Professional Chess Platform</h2>
+                    <h2 class="feature-heading">Με κλασσική μουσική στο παρασκήνιο και μοντέρνα θέματα</h2>
                     <p class="feature-description">
-                        A fully custom chess application built from the ground up with advanced features, 
-                        designed to unite Greek chess players on a single, powerful platform. 
-                        Experience chess like never before with our proprietary engine and modern interface.
-                    </p>
+                        ToSkaki.gr είναι μια πλήρης εφαρμογή σκακιού, όπου οι Έλληνες παίκτες μπορούν να συναντηθούν, να παίξουν και να αναπτύξουν τις δεξιότητές τους. Γίνε μέρος δωρεάν και προσκάλεσε τους φίλους σου από υπολογιστή ή κινητό, και ανακάλυψε τις λειτουργίες που κάνουν toskaki.gr ξεχωριστό.</p>
                     
+                    <!-- Dark Mode Toggle Button -->
+                    <div class="dark-mode-toggle">
+                        <button id="darkModeToggle" class="theme-toggle-btn">
+                            <i class="fas fa-moon" id="darkModeIcon"></i>
+                            <span id="darkModeText">Dark Mode</span>
+                        </button>
+                    </div>
+
                     <!-- Professional Features Grid -->
                     <div class="feature-grid">
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-chess-king"></i>
                             </div>
-                            <h3>Custom Chess Engine</h3>
-                            <p>Proprietary chess engine built from scratch, optimized for performance and accuracy</p>
+                            <h3>Προσαρμοσμένη μηχανή σκακιού</h3>
+                            <p>Ειδική μηχανή σκακιού κατασκευασμένη από το μηδέν, βελτιστοποιημένη για απόδοση και ανεξάρτητη απο τη χρήση εξωτερικών πηγών.</p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-comments"></i>
                             </div>
-                            <h3>Real-time Chat</h3>
-                            <p>Built-in chat system for players to communicate during games</p>
+                            <h3>Συνομιλία στο παιχνίδι</h3>
+                            <p>Ενσωματωμένο σύστημα συνομιλίας για την επικοινωνία των παικτών κατά τη διάρκεια των παιχνιδιών</p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-music"></i>
                             </div>
-                            <h3>Classical Music</h3>
-                            <p>Immersive gaming experience with background classical music</p>
+                            <h3>Κλασσική μουσική</h3>
+                            <p>Δυνατότητα επιλογής κλασσικής μουσικής στο παρασκήνιο</p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-history"></i>
                             </div>
-                            <h3>Game History</h3>
-                            <p>Complete game tracking and history with detailed analytics</p>
+                            <h3>Ιστορικό παιχνιδιών</h3>
+                            <p>Πλήρης παρακολούθηση και ιστορικό παιχνιδιών</p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-palette"></i>
                             </div>
-                            <h3>Multiple Themes</h3>
-                            <p>Customizable board themes and visual preferences</p>
+                            <h3>Πολλαπλά θέματα</h3>
+                            <p>Δυνατότητα επιλογής πολλαπλών θεμάτων</p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-mobile-alt"></i>
                             </div>
-                            <h3>Mobile Optimized</h3>
-                            <p>Fully responsive design that works perfectly on all devices</p>
+                            <h3>Συμβατότητα με κινητά</h3>
+                            <p>Πλήρως responsive design που λειτουργεί τέλεια σε όλες τις συσκευές</p>
                         </div>
                         
                     </div>
@@ -416,34 +428,28 @@
         </section>
 
         <!-- SKG WEB Logo Section - Prominent Display -->
-        <section class="skgweb-logo-section" sec:authorize="!isAuthenticated()">
-            <div class="skgweb-logo-container">
-                <div class="skgweb-logo-large">
-                    <img src="/images/skgweb.png" alt="SKG WEB Logo" />
-                </div>
-                <div class="skgweb-logo-text">
-                    <h2>Developed by SKG WEB</h2>
-                    <p>Brought by haris chatzianastasiou, a software engineer with a passion for chess and web development.</p>
-                    <a href="https://skgweb.dev" target="_blank" class="skgweb-link-btn">
-                        <i class="fas fa-external-link-alt"></i>
-                        Explore our projects
-                    </a>
-                </div>
-            </div>
-        </section>
+        
 
         <!-- SKG WEB About Section -->
         <section class="skgweb-section" sec:authorize="!isAuthenticated()">
             <div class="skgweb-container">
+                    <div class="skgweb-logo-container">
+                        <div class="skgweb-logo-large">
+                            <img src="/images/skgweb1.png" alt="SKG WEB Logo" />
+                        </div>
+                    </div>
                 <div class="skgweb-content">
                     <div class="skgweb-info">
-                        <h3>About SKG WEB</h3>
-                        <p>We specialize in creating custom web applications and digital solutions. Our expertise in modern web technologies allows us to build robust, scalable, and user-friendly applications.</p>
-                        <p>From concept to deployment, we handle every aspect of your project with attention to detail and commitment to quality.</p>
+                        <p>ToSkaki.gr είναι ένα project που αναπτύχθηκε από το <a href="https://skgweb.dev" target="_blank" style="color: #ab9b87; text-decoration: underline;">SKG WEB</a>. Η αποστολή μας είναι να δημιουργούμε προσαρμοσμένες web λύσεις που ξεπερνούν τις προσδοκίες και ανταποκρίνονται στις σύγχρονες ανάγκες.</p>
+                        <p>Ανακαλύψτε τις υπηρεσίες μας στο SKG WEB ή επικοινωνήστε μαζί μας για οποιαδήποτε πληροφορία.</p>
                         <div class="skgweb-contact">
                             <a href="https://skgweb.dev" target="_blank" class="skgweb-btn">
                                 <i class="fas fa-external-link-alt"></i>
-                                Visit SKG WEB
+                                SKG WEB
+                            </a>
+                            <a href="mailto:info@toskaki.gr" class="skgweb-btn" style="margin-left: 1rem;">
+                                <i class="fas fa-envelope"></i>
+                                Επικοινωνήστε μαζί μας
                             </a>
                         </div>
                     </div>
@@ -454,55 +460,50 @@
         <!-- Contact & Feedback Section -->
         <section class="contact-section" sec:authorize="!isAuthenticated()">
             <style>
-                /* Form input styling for unauthenticated users */
+                /* Form input styling for unauthenticated users - Board Brown Theme */
                 .form-group input,
                 .form-group select,
                 .form-group textarea {
                     padding: 0.75rem 1rem;
-                    border: 2px solid #e2e8f0;
+                    border: 2px solid rgba(255, 255, 255, 0.2);
                     border-radius: 8px;
                     font-size: 1rem;
                     font-family: 'NXBaskerville', serif;
                     transition: all 0.3s ease;
-                    background: white;
+                    background: rgba(255, 255, 255, 0.1);
+                    color: #eaeaea;
                 }
 
                 .form-group input:focus,
                 .form-group select:focus,
                 .form-group textarea:focus {
                     outline: none;
-                    border-color: #667eea;
-                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                    border-color: #ab9b87;
+                    box-shadow: 0 0 0 3px rgba(171, 155, 135, 0.2);
+                    background: rgba(255, 255, 255, 0.15);
+                }
+
+                .form-group input::placeholder,
+                .form-group textarea::placeholder {
+                    color: rgba(244, 244, 244, 0.6);
+                }
+
+                .form-group select option {
+                    background: #1a1625;
+                    color: #dddddd;
                 }
             </style>
             <div class="contact-container">
                 <div class="contact-header">
-                    <h3>Built for the Greek Chess Community</h3>
-                    <p>Have suggestions to improve the platform? Are you a chess club interested in cooperation?</p>
+                    <h3>Βοήθησε να μεγαλώσει ToSkaki.gr</h3>
+                    <p>Έχεις προτάσεις για την πλατφόρμα; Στείλε μας παρακάτω πως θα μπορούσε να βελτιωθεί toSkaki.gr!</p>
                 </div>
                 <div class="contact-content">
-                    <div class="contact-info">
-                        <div class="contact-card">
-                            <div class="contact-icon">
-                                <i class="fas fa-lightbulb"></i>
-                            </div>
-                            <h4>Platform Suggestions</h4>
-                            <p>Help us make toSkaki.gr even better! Share your ideas for new features, improvements, or any feedback you have.</p>
-                        </div>
-                        
-                        <div class="contact-card">
-                            <div class="contact-icon">
-                                <i class="fas fa-chess-king"></i>
-                            </div>
-                            <h4>Chess Club Cooperation</h4>
-                            <p>Are you a Greek chess club? We'd love to help you organize tournaments and provide custom features for your needs.</p>
-                        </div>
-                    </div>
                     
                     <div class="contact-form-container">
                         <form class="contact-form" id="contactForm">
                             <div class="form-group">
-                                <label for="contactName">Name *</label>
+                                <label for="contactName">Όνομα *</label>
                                 <input type="text" id="contactName" name="name" required>
                             </div>
                             
@@ -512,30 +513,29 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="contactType">Contact Type *</label>
+                                <label for="contactType">Τύπος *</label>
                                 <select id="contactType" name="type" required>
-                                    <option value="">Select type...</option>
-                                    <option value="suggestion">Platform Suggestion</option>
-                                    <option value="chess-club">Chess Club Cooperation</option>
+                                    <option value="">Επιλογή...</option>
+                                    <option value="suggestion">Προτάσεις για την πλατφόρμα</option>
                                     <option value="bug-report">Bug Report</option>
-                                    <option value="other">Other</option>
+                                    <option value="other">Άλλο</option>
                                 </select>
                             </div>
                             
                             <div class="form-group">
-                                <label for="contactSubject">Subject *</label>
+                                <label for="contactSubject">Θέμα *</label>
                                 <input type="text" id="contactSubject" name="subject" required>
                             </div>
                             
                             <div class="form-group">
-                                <label for="contactMessage">Message *</label>
-                                <textarea id="contactMessage" name="message" rows="5" required placeholder="Please describe your suggestion, cooperation proposal, or any other details..."></textarea>
+                                <label for="contactMessage">Μήνυμα *</label>
+                                <textarea id="contactMessage" name="message" rows="5" required placeholder="Περιγράψτε την πρότασή ή την παρατήρηση σας..."></textarea>
                             </div>
                             
                             <div class="form-actions">
                                 <button type="submit" class="submit-btn">
                                     <i class="fas fa-paper-plane"></i>
-                                    Send Message
+                                    Αποστολή Μηνύματος
                                 </button>
                             </div>
                         </form>
@@ -548,17 +548,17 @@
         <footer class="site-footer" sec:authorize="!isAuthenticated()">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>SKG Chess</h3>
-                    <p><b>SKG Chess</b> is a chess site inspired by Thessaloniki. It uses its own chess engine, lets you make a profile, save and view your games, and play with classical music in the background.</p>
+                    <h3>ΤoSkaki.gr</h3>
+                    <p><b>ToSkaki.gr</b> είναι μια πλατφόρμα που χρησιμοποιεί την δική της μηχανή σκακιού, σας επιτρέπει να δημιουργήσετε προφίλ, να αποθηκεύσετε και να δείτε τα παιχνίδια σας, και να παίξετε με κλασσική μουσική στο παρασκήνιο.</p>
                     <div class="social-links">
                         <a href="https://github.com/harischatzianastasiou" class="social-link" target="_blank"><i class="fab fa-github"></i></a>
                         <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" class="social-link" target="_blank"><i class="fab fa-linkedin"></i></a>
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h3>Quick Links</h3>
+                    <h3>Σύνδεσμοι</h3>
                     <ul>
-                        <li><a href="#" onclick="showNewspaper(); return false;">About</a></li>
+                        <li><a href="#" onclick="showNewspaper(); return false;">Σχετικά</a></li>
                         <li><a href="https://skgweb.dev" target="_blank">SKG WEB</a></li>
                     </ul>
                 </div>
@@ -572,7 +572,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 SKG Chess. All rights reserved.</p>
+                <p>&copy; 2025 toSkaki.gr . All rights reserved.</p>
                 <p>Created by <a href="https://github.com/harischatzianastasiou" target="_blank"><i class="fab fa-github"></i> @harischatzianastasiou</a></p>
             </div>
         </footer>
@@ -1126,6 +1126,39 @@
                     });
                 });
             });
+        });
+    </script>
+
+    <!-- Dark Mode Toggle JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const darkModeIcon = document.getElementById('darkModeIcon');
+            const darkModeText = document.getElementById('darkModeText');
+            
+            // Check for saved theme preference or default to dark
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateToggleButton(currentTheme);
+            
+            darkModeToggle.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateToggleButton(newTheme);
+            });
+            
+            function updateToggleButton(theme) {
+                if (theme === 'light') {
+                    darkModeIcon.className = 'fas fa-sun';
+                    darkModeText.textContent = 'Light Mode';
+                } else {
+                    darkModeIcon.className = 'fas fa-moon';
+                    darkModeText.textContent = 'Dark Mode';
+                }
+            }
         });
     </script>
 </body>

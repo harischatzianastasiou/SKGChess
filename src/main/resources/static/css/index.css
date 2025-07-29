@@ -2939,15 +2939,16 @@ body.authenticated .header {
     letter-spacing: 0.02em;
 }
 
-/* New Feature Section Styles */
+/* New Feature Section Styles - Board Brown Theme */
 .feature-section {
-    background: linear-gradient(rgba(171, 155, 135, 0.3), rgba(113, 100, 90, 0.3)), url('/images/background.jpg');
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     padding: 6rem 2rem;
     position: relative;
     overflow: hidden;
+    color: #e9d8fd; /* Light text color from board brown theme */
 }
 
 .feature-section::before {
@@ -2957,8 +2958,8 @@ body.authenticated .header {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23e2e8f0" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
-    opacity: 0.3;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ab9b87" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+    opacity: 0.2;
     z-index: 0;
 }
 
@@ -2981,14 +2982,14 @@ body.authenticated .header {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ab9b87 0%, #71645a 100%);
     color: white;
     padding: 0.5rem 1rem;
-    border-radius: 25px;
+    border-radius: 0px;
     font-size: 0.9rem;
     font-weight: 600;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(171, 155, 135, 0.3);
 }
 
 .feature-badge i {
@@ -2998,10 +2999,7 @@ body.authenticated .header {
 .feature-heading {
     font-size: 3.8rem;
     font-weight: 800;
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #000000; /* Changed to black */
     margin-bottom: 1.5rem;
     line-height: 1.1;
     font-family: 'NXBaskerville', serif;
@@ -3009,7 +3007,7 @@ body.authenticated .header {
 
 .feature-description {
     font-size: 1.3rem;
-    color: #4a5568;
+    color: #000000; /* Changed to black */
     line-height: 1.7;
     margin-bottom: 3rem;
     font-family: 'NXBaskerville', serif;
@@ -3025,11 +3023,11 @@ body.authenticated .header {
 }
 
 .feature-card {
-    background: #71645a;
-    color: white;
+    background: #272727; /* Changed to board brown color */
+    color: #767272; /* Changed to black text */
     padding: 1.5rem;
-    border-radius: 12px;
-    border: 1px solid #71645a;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -3042,6 +3040,141 @@ body.authenticated .header {
     justify-content: center;
     align-items: center;
     text-align: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+    background: #9a8b77; /* Slightly darker on hover */
+}
+
+/* Custom Chess Engine card */
+.feature-card:nth-child(1)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/chess-engine.jpg');
+    background-size: contain;
+    background-position: center;
+    transition: left 0.4s ease;
+    z-index: 1;
+}
+
+.feature-card:nth-child(1):hover::before {
+    left: 0;
+}
+
+/* Real-time Chat card */
+.feature-card:nth-child(2)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/chat-system.jpg');
+    background-size: contain;
+    background-position: center;
+    transition: left 0.4s ease;
+    z-index: 1;
+}
+
+.feature-card:nth-child(2):hover::before {
+    left: 0;
+}
+
+/* Classical Music card */
+.feature-card:nth-child(3)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/classical-music.jpg');
+    background-size: contain;
+    background-position: center;
+    transition: left 0.4s ease;
+    z-index: 1;
+}
+
+.feature-card:nth-child(3):hover::before {
+    left: 0;
+}
+
+/* Game History card */
+.feature-card:nth-child(4)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/game-history.jpg');
+    background-size: contain;
+    background-position: center;
+    transition: left 0.4s ease;
+    z-index: 1;
+}
+
+.feature-card:nth-child(4):hover::before {
+    left: 0;
+}
+
+/* Multiple Themes card */
+.feature-card:nth-child(5)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/themes.jpg');
+    background-size: contain;
+    background-position: center;
+    transition: left 0.4s ease;
+    z-index: 1;
+}
+
+.feature-card:nth-child(5):hover::before {
+    left: 0;
+}
+
+/* Mobile Optimized card */
+.feature-card:nth-child(6)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-image: url('/images/mobile-optimized.jpg');
+    background-size: contain;
+    background-position: center;
+    transition: left 0.4s ease;
+    z-index: 1;
+}
+
+.feature-card:nth-child(6):hover::before {
+    left: 0;
+}
+
+/* Ensure content stays above the sliding image */
+.feature-icon,
+.feature-card h3 {
+    position: relative;
+    z-index: 2;
+}
+
+.feature-card p {
+    display: none; /* Hide text completely */
 }
 
 .feature-card::before {
@@ -3056,12 +3189,6 @@ body.authenticated .header {
     transition: transform 0.3s ease;
 }
 
-.feature-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-    border-color: #cbd5e0;
-}
-
 .feature-card:hover::before {
     transform: scaleX(1);
 }
@@ -3069,13 +3196,13 @@ body.authenticated .header {
 .feature-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ab9b87 0%, #71645a 100%);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(171, 155, 135, 0.3);
 }
 
 .feature-icon i {
@@ -3086,22 +3213,9 @@ body.authenticated .header {
 .feature-card h3 {
     font-size: 1.1rem;
     font-weight: 700;
-    color: white;
+    color: #ffffff; /* Changed to black text */
     margin-bottom: 0.5rem;
     font-family: 'NXBaskerville', serif;
-    transition: all 0.3s ease;
-}
-
-.feature-card p {
-    font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.6;
-    font-family: 'NXBaskerville', serif;
-    margin: 0;
-    text-align: center;
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
     transition: all 0.3s ease;
 }
 
@@ -3328,12 +3442,12 @@ body.authenticated .header {
     margin: 0;
 }
 
-/* IXLstudio Logo Section - Prominent Display */
+/* SKG WEB Logo Section - Board Brown Theme */
 .skgweb-logo-section {
-    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    background: linear-gradient(135deg, #1a1625 0%, #2d3748 100%);
     padding: 8rem 2rem;
     position: relative;
-    color: white;
+    color: #e9d8fd; /* Light text color from board brown theme */
     text-align: center;
     min-height: 60vh;
     display: flex;
@@ -3349,8 +3463,8 @@ body.authenticated .header {
     right: 0;
     bottom: 0;
     background-image: 
-        radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+        radial-gradient(circle at 20% 80%, rgba(171, 155, 135, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(113, 100, 90, 0.1) 0%, transparent 50%);
     pointer-events: none;
 }
 
@@ -3366,32 +3480,22 @@ body.authenticated .header {
 }
 
 .skgweb-logo-large {
-    width: 400px;
-    height: 400px;
+    width: auto;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 30px;
-    backdrop-filter: blur(20px);
-    box-shadow: 
-        0 20px 40px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
     transition: all 0.4s ease;
     animation: logoFloat 6s ease-in-out infinite;
 }
 
 .skgweb-logo-large:hover {
     transform: translateY(-10px) scale(1.05);
-    background: rgba(255, 255, 255, 0.1);
-    box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .skgweb-logo-large img {
-    max-width: 80%;
-    max-height: 80%;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
@@ -3406,7 +3510,7 @@ body.authenticated .header {
     font-weight: 700;
     margin-bottom: 1.5rem;
     font-family: 'NXBaskerville', serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ab9b87 0%, #71645a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -3418,13 +3522,14 @@ body.authenticated .header {
     margin-bottom: 2rem;
     opacity: 0.9;
     font-family: 'NXBaskerville', serif;
+    color: #a0a0a0; /* Text dark color from board brown theme */
 }
 
 .skgweb-link-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.8rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ab9b87 0%, #71645a 100%);
     color: white;
     text-decoration: none;
     padding: 1.2rem 2.5rem;
@@ -3453,12 +3558,12 @@ body.authenticated .header {
     }
 }
 
-/* IXLstudio About Section */
+/* SKG WEB About Section - Board Brown Theme */
 .skgweb-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a1625 0%, #71645a 100%);
     padding: 6rem 2rem;
     position: relative;
-    color: white;
+    color: #e9d8fd; /* Light text color from board brown theme */
 }
 
 .skgweb-section::before {
@@ -3468,7 +3573,7 @@ body.authenticated .header {
     left: 0;
     right: 0;
     bottom: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-image: radial-gradient(circle, rgba(171, 155, 135, 0.1) 1px, transparent 1px);
     background-size: 20px 20px;
     pointer-events: none;
 }
@@ -3515,6 +3620,7 @@ body.authenticated .header {
 
 .skgweb-info {
     flex: 1;
+    margin-top: 2rem; /* Add spacer between logo and text */
 }
 
 .skgweb-info h3 {
@@ -3522,6 +3628,7 @@ body.authenticated .header {
     font-weight: 700;
     margin-bottom: 1.5rem;
     font-family: 'NXBaskerville', serif;
+    color: #ab9b87; /* Primary brown color from board brown theme */
 }
 
 .skgweb-info p {
@@ -3530,18 +3637,36 @@ body.authenticated .header {
     margin-bottom: 1.5rem;
     opacity: 0.95;
     font-family: 'NXBaskerville', serif;
+    color: #a0a0a0; /* Text dark color from board brown theme */
 }
 
 .skgweb-contact {
-    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .skgweb-contact {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .skgweb-contact .skgweb-btn {
+        margin-left: 0 !important;
+        width: 100%;
+        max-width: 200px;
+        justify-content: center;
+    }
 }
 
 .skgweb-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
+    background: rgba(171, 155, 135, 0.2); /* Primary brown with opacity */
+    color: #fbfbfb; /* Light text color from board brown theme */
     text-decoration: none;
     padding: 1rem 2rem;
     border-radius: 12px;
@@ -3549,15 +3674,15 @@ body.authenticated .header {
     font-weight: 600;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(171, 155, 135, 0.3);
     font-family: 'NXBaskerville', serif;
 }
 
 .skgweb-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(171, 155, 135, 0.3); /* Primary brown with opacity */
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    color: white;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    color: #fefefe; /* Light text color from board brown theme */
     text-decoration: none;
 }
 
@@ -3871,11 +3996,12 @@ body.authenticated .header {
     }
 }
 
-/* Contact & Feedback Section */
+/* Contact & Feedback Section - Board Brown Theme */
 .contact-section {
-    background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+    background: linear-gradient(135deg, #373737 0%, #71645a 100%);
     padding: 6rem 2rem;
     position: relative;
+    color: #fbfbfb; /* Light text color from board brown theme */
 }
 
 .contact-container {
@@ -3891,22 +4017,24 @@ body.authenticated .header {
 .contact-header h3 {
     font-size: 2.8rem;
     font-weight: 700;
-    color: #1a202c;
+    color: #ececec; /* Primary brown color from board brown theme */
     margin-bottom: 1rem;
     font-family: 'NXBaskerville', serif;
 }
 
 .contact-header p {
     font-size: 1.2rem;
-    color: #4a5568;
+    color: #c8c8c8; /* Text dark color from board brown theme */
     font-family: 'NXBaskerville', serif;
 }
 
 .contact-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    width: 100%;
+    max-width: 100%;
 }
 
 .contact-info {
@@ -3916,30 +4044,32 @@ body.authenticated .header {
 }
 
 .contact-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.05); /* Card color from board brown theme */
     padding: 2rem;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
     text-align: left;
+    color: #e9d8fd; /* Light text color from board brown theme */
 }
 
 .contact-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.08); /* Card hover color from board brown theme */
 }
 
 .contact-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ab9b87 0%, #71645a 100%);
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(171, 155, 135, 0.3);
 }
 
 .contact-icon i {
@@ -3950,14 +4080,14 @@ body.authenticated .header {
 .contact-card h4 {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #1a202c;
+    color: #ab9b87; /* Primary brown color from board brown theme */
     margin-bottom: 1rem;
     font-family: 'NXBaskerville', serif;
 }
 
 .contact-card p {
     font-size: 1rem;
-    color: #4a5568;
+    color: #a0a0a0; /* Text dark color from board brown theme */
     line-height: 1.6;
     font-family: 'NXBaskerville', serif;
     margin: 0;
@@ -4075,11 +4205,14 @@ body.authenticated .header {
 
 /* Contact Form Styles */
 .contact-form-container {
-    background: white;
-    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.05); /* Card color from board brown theme */
+    padding: 3rem;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .contact-form {
@@ -4098,7 +4231,7 @@ body.authenticated .header {
 .form-group label {
     font-size: 0.95rem;
     font-weight: 600;
-    color: #1a202c;
+    color: #e6e6e6; /* Primary brown color from board brown theme */
     font-family: 'NXBaskerville', serif;
 }
 
@@ -4115,7 +4248,7 @@ body.authenticated .header {
 }
 
 .submit-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #202020 0%, #202020 100%);
     color: white;
     border: none;
     padding: 1rem 2rem;
@@ -4128,12 +4261,12 @@ body.authenticated .header {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(171, 155, 135, 0.3);
 }
 
 .submit-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 20px rgba(171, 155, 135, 0.4);
 }
 
 .submit-btn:disabled {
@@ -4270,5 +4403,80 @@ body.authenticated .header {
         padding: 0.8rem 1.5rem;
         font-size: 0.95rem;
     }
+}
+
+/* Dark Mode Toggle Button */
+.dark-mode-toggle {
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0;
+}
+
+.theme-toggle-btn {
+    background: linear-gradient(135deg, #ab9b87 0%, #71645a 100%);
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.theme-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle-btn i {
+    font-size: 1.1rem;
+}
+
+/* CSS Custom Properties for Theme Colors */
+:root {
+    /* Dark Theme (Current) */
+    --feature-bg: linear-gradient(135deg, #1a1625 0%, #2d3748 100%);
+    --feature-text: #ffffff;
+    --feature-description: #ffffff;
+    --feature-card-bg: #ffffff;
+    --feature-card-text: #333333;
+    --feature-card-heading: #000000;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+    --feature-bg: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    --feature-text: #000000;
+    --feature-description: #000000;
+    --feature-card-bg: #272727;
+    --feature-card-text: #767272;
+    --feature-card-heading: #ffffff;
+}
+
+/* Apply CSS Variables */
+.feature-section {
+    background: var(--feature-bg);
+}
+
+.feature-heading {
+    color: var(--feature-text);
+}
+
+.feature-description {
+    color: var(--feature-description);
+}
+
+.feature-card {
+    background: var(--feature-card-bg);
+    color: var(--feature-card-text);
+}
+
+.feature-card h3 {
+    color: var(--feature-card-heading);
 }
 
