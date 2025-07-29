@@ -4533,8 +4533,8 @@ body.authenticated .header {
 /* Additional mobile optimization */
 @media (max-width: 768px) {
     .feature-card:hover h3 {
-        opacity: 1; /* Keep header visible on mobile hover */
-        transform: translateY(0); /* Keep header in place */
+        opacity: 0; /* Hide header on mobile hover */
+        transform: translateY(-10px); /* Move header up on mobile hover */
     }
     
     .feature-card:hover p {
@@ -4576,4 +4576,3 @@ body.authenticated .header {
 [data-theme="dark"] .feature-card.expanded:hover p {
     color: rgba(255, 255, 255, 0.9); /* Original hover color */
 }
-
