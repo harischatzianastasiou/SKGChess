@@ -3198,7 +3198,7 @@ body.authenticated .header {
     left: 0;
     right: 0;
     height: 3px;
-    background: #849d14; /* Green color matching join button */
+    background: #2b2b2b; /* Green color matching join button */
     transform: scaleX(0);
     transition: transform 0.3s ease;
     z-index: 5; /* Lower than text but higher than background */
