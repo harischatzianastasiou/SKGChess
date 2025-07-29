@@ -3043,6 +3043,7 @@ body.authenticated .header {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    touch-action: manipulation; /* Optimize for touch interactions */
 }
 
 .feature-card:hover {
@@ -3053,116 +3054,122 @@ body.authenticated .header {
 }
 
 /* Custom Chess Engine card */
-.feature-card:nth-child(1)::before {
+.feature-card:nth-child(1)::after {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background-image: url('/images/chess-engine.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/chess-engine.jpg');
     background-size: contain;
     background-position: center;
     transition: left 0.4s ease;
-    z-index: 1;
+    z-index: 1; /* Behind text but above background */
+    filter: blur(1px); /* Add subtle blur effect */
 }
 
-.feature-card:nth-child(1):hover::before {
+.feature-card:nth-child(1):hover::after {
     left: 0;
 }
 
 /* Real-time Chat card */
-.feature-card:nth-child(2)::before {
+.feature-card:nth-child(2)::after {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background-image: url('/images/chat-system.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/chat-system.jpg');
     background-size: contain;
     background-position: center;
     transition: left 0.4s ease;
-    z-index: 1;
+    z-index: 1; /* Behind text but above background */
+    filter: blur(1px); /* Add subtle blur effect */
 }
 
-.feature-card:nth-child(2):hover::before {
+.feature-card:nth-child(2):hover::after {
     left: 0;
 }
 
 /* Classical Music card */
-.feature-card:nth-child(3)::before {
+.feature-card:nth-child(3)::after {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background-image: url('/images/classical-music.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/classical-music.jpg');
     background-size: contain;
     background-position: center;
     transition: left 0.4s ease;
-    z-index: 1;
+    z-index: 1; /* Behind text but above background */
+    filter: blur(1px); /* Add subtle blur effect */
 }
 
-.feature-card:nth-child(3):hover::before {
+.feature-card:nth-child(3):hover::after {
     left: 0;
 }
 
 /* Game History card */
-.feature-card:nth-child(4)::before {
+.feature-card:nth-child(4)::after {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background-image: url('/images/game-history.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/game-history.jpg');
     background-size: contain;
     background-position: center;
     transition: left 0.4s ease;
-    z-index: 1;
+    z-index: 1; /* Behind text but above background */
+    filter: blur(2px); /* Add subtle blur effect */
 }
 
-.feature-card:nth-child(4):hover::before {
+.feature-card:nth-child(4):hover::after {
     left: 0;
 }
 
 /* Multiple Themes card */
-.feature-card:nth-child(5)::before {
+.feature-card:nth-child(5)::after {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background-image: url('/images/themes.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/themes.jpg');
     background-size: contain;
     background-position: center;
     transition: left 0.4s ease;
-    z-index: 1;
+    z-index: 1; /* Behind text but above background */
+    filter: blur(2px); /* Add subtle blur effect */
 }
 
-.feature-card:nth-child(5):hover::before {
+.feature-card:nth-child(5):hover::after {
     left: 0;
 }
 
 /* Mobile Optimized card */
-.feature-card:nth-child(6)::before {
+.feature-card:nth-child(6)::after {
     content: '';
     position: absolute;
     top: 0;
     left: -100%;
     width: 100%;
     height: 100%;
-    background-image: url('/images/mobile-optimized.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/mobile-optimized.jpg');
     background-size: contain;
     background-position: center;
     transition: left 0.4s ease;
-    z-index: 1;
+    z-index: 1; /* Behind text but above background */
+    filter: blur(2px); /* Add subtle blur effect */
 }
 
-.feature-card:nth-child(6):hover::before {
+.feature-card:nth-child(6):hover::after {
     left: 0;
 }
 
@@ -3170,13 +3177,26 @@ body.authenticated .header {
 .feature-icon,
 .feature-card h3 {
     position: relative;
-    z-index: 2;
+    z-index: 10; /* Higher z-index to appear above images */
 }
 
 .feature-card p {
-    display: none; /* Hide text completely */
+    display: block; /* Show paragraph instead of hiding completely */
+    opacity: 0; /* Start invisible */
+    max-height: 0; /* Start with no height */
+    margin-top: 0; /* No top margin initially */
+    overflow: hidden; /* Hide overflow content */
+    transition: all 0.3s ease; /* Smooth transition for all changes */
+    font-size: 0.9rem; /* Smaller font size for description */
+    color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+    line-height: 1.4; /* Good line height for readability */
+    font-family: 'NXBaskerville', serif; /* Same font family */
+    text-align: center; /* Center align text */
+    position: relative; /* Ensure proper positioning */
+    z-index: 10; /* Higher z-index to appear above images */
 }
 
+/* Top border effect */
 .feature-card::before {
     content: '';
     position: absolute;
@@ -3187,12 +3207,14 @@ body.authenticated .header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     transform: scaleX(0);
     transition: transform 0.3s ease;
+    z-index: 5; /* Lower than text but higher than background */
 }
 
 .feature-card:hover::before {
     transform: scaleX(1);
 }
 
+/* Feature icon styling */
 .feature-icon {
     width: 50px;
     height: 50px;
@@ -3203,6 +3225,8 @@ body.authenticated .header {
     justify-content: center;
     margin-bottom: 1rem;
     box-shadow: 0 4px 12px rgba(171, 155, 135, 0.3);
+    position: relative;
+    z-index: 10; /* Higher z-index to appear above images */
 }
 
 .feature-icon i {
@@ -3210,13 +3234,32 @@ body.authenticated .header {
     font-size: 1.3rem;
 }
 
+/* Feature card header styling */
 .feature-card h3 {
     font-size: 1.1rem;
     font-weight: 700;
     color: #ffffff; /* Changed to black text */
     margin-bottom: 0.5rem;
     font-family: 'NXBaskerville', serif;
-    transition: all 0.3s ease;
+    transition: all 0.3s ease; /* Smooth transition for all changes */
+    opacity: 1; /* Start fully visible */
+    transform: translateY(0); /* Start at normal position */
+    position: relative;
+    z-index: 10; /* Higher z-index to appear above images */
+}
+
+/* Hide header and show description on hover */
+.feature-card:hover h3 {
+    opacity: 0; /* Fade out the header */
+    transform: translateY(-10px); /* Move header up slightly */
+    margin-bottom: 0; /* Remove bottom margin when hidden */
+}
+
+/* Show description on hover */
+.feature-card:hover p {
+    opacity: 1; /* Fade in the description */
+    max-height: 100px; /* Allow space for description */
+    margin-top: 0.5rem; /* Add some space above description */
 }
 
 .feature-card.expanded h3 {
@@ -3224,9 +3267,9 @@ body.authenticated .header {
 }
 
 .feature-card.expanded p {
-    opacity: 1;
-    max-height: 200px;
-    margin-top: 0.5rem;
+    opacity: 1; /* Show description when expanded */
+    max-height: 200px; /* Allow more space for expanded state */
+    margin-top: 0.5rem; /* Add space above description */
 }
 
 .feature-card-front,
@@ -3560,7 +3603,7 @@ body.authenticated .header {
 
 /* SKG WEB About Section - Board Brown Theme */
 .skgweb-section {
-    background: linear-gradient(135deg, #1a1625 0%, #71645a 100%);
+    background: linear-gradient(135deg, #1a1625 0%, #5c524a 100%);
     padding: 6rem 2rem;
     position: relative;
     color: #e9d8fd; /* Light text color from board brown theme */
@@ -4478,5 +4521,59 @@ body.authenticated .header {
 
 .feature-card h3 {
     color: var(--feature-card-heading);
+}
+
+/* Mobile touch support - show description when card is expanded */
+.feature-card.expanded p {
+    opacity: 1; /* Show description when expanded */
+    max-height: 200px; /* Allow more space for expanded state */
+    margin-top: 0.5rem; /* Add space above description */
+}
+
+/* Additional mobile optimization */
+@media (max-width: 768px) {
+    .feature-card:hover h3 {
+        opacity: 1; /* Keep header visible on mobile hover */
+        transform: translateY(0); /* Keep header in place */
+    }
+    
+    .feature-card:hover p {
+        opacity: 0; /* Hide description on mobile hover */
+        max-height: 0; /* No height on mobile hover */
+    }
+    
+    /* Only show description when explicitly expanded on mobile */
+    .feature-card.expanded:hover p {
+        opacity: 1; /* Show description when expanded */
+        max-height: 200px; /* Allow space for description */
+    }
+}
+
+/* Ensure paragraph text is black when card is expanded (clicked) */
+.feature-card.expanded p {
+    color: #000000; /* Black text when expanded */
+    opacity: 1; /* Show description when expanded */
+    max-height: 200px; /* Allow more space for expanded state */
+    margin-top: 0.5rem; /* Add space above description */
+}
+
+/* Dark theme: black text when expanded */
+[data-theme="dark"] .feature-card.expanded p {
+    color: #000000; /* Black text for dark theme when expanded */
+}
+
+/* Light theme: white text when expanded */
+[data-theme="light"] .feature-card.expanded p {
+    color: #ffffff; /* White text for light theme when expanded */
+}
+
+/* Dark theme: when expanded but NOT hovered, keep black text */
+[data-theme="dark"] .feature-card.expanded:not(:hover) p {
+    color: #000000; /* Black text when expanded and not hovered */
+}
+
+/* Dark theme: when expanded AND hovered, use original hover color */
+[data-theme="dark"] .feature-card.expanded:hover p {
+    color: rgba(255, 255, 255, 0.9); /* Original hover color */
 }
 

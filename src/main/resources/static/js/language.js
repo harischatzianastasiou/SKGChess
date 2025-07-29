@@ -2,7 +2,7 @@
 const translations = {
     en: {
       titlelang: "ToSkaki.GR - The Greek Chess Platform.",
-      motolang: "The Greek chess platform.",
+      motolang: "The first chess platform in Greece.",
       ctalang: "Join",
       signinlang: "Sign in",
       signuplang: "Sign up",
@@ -36,8 +36,8 @@ const translations = {
       chatinput: "Type a message..."
     },
     gr: {
-      titlelang: "ToSkaki.GR - Η ελληνική πλατφόρμα για το σκάκι.",
-      motolang: "  Η ελληνική πλατφόρμα για το σκάκι.",
+      titlelang: "ToSkaki.GR - Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
+      motolang: "Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
       ctalang: "Γίνε Μέλος",
       signinlang: "Σύνδεση",
       signuplang: "Εγγραφή",
