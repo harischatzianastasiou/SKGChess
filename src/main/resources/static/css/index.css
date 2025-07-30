@@ -3597,7 +3597,8 @@ body.authenticated .header {
 
 /* SKG WEB About Section - Board Brown Theme */
 .skgweb-section {
-    background: linear-gradient(135deg, #1a1625 0%, #5c524a 100%);
+    background:     background: linear-gradient(135deg, #272626 0%, #5c524a 100%);
+    ;
     padding: 6rem 2rem;
     position: relative;
     color: #e9d8fd; /* Light text color from board brown theme */
@@ -4035,7 +4036,8 @@ body.authenticated .header {
 
 /* Contact & Feedback Section - Board Brown Theme */
 .contact-section {
-    background: linear-gradient(135deg, #373737 0%, #71645a 100%);
+     background: linear-gradient(135deg, #272626 0%, #5c524a 100%);
+
     padding: 6rem 2rem;
     position: relative;
     color: #fbfbfb; /* Light text color from board brown theme */
@@ -4480,7 +4482,7 @@ body.authenticated .header {
     --feature-bg: linear-gradient(135deg, #1a1625 0%, #2d3748 100%);
     --feature-text: #ffffff;
     --feature-description: #ffffff;
-    --feature-card-bg: #ffffff;
+    --feature-card-bg: #71645a;
     --feature-card-text: #333333;
     --feature-card-heading: #000000;
 }
@@ -4494,6 +4496,7 @@ body.authenticated .header {
     --feature-card-text: #767272;
     --feature-card-heading: #ffffff;
 }
+
 
 /* Apply CSS Variables */
 .feature-section {
