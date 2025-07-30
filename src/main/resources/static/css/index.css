@@ -1103,7 +1103,7 @@ body.authenticated::before {
     left: 0;
     width: 100%;
     height: 100vh;
-    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/bnwthess1.jpg');
+    background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/bnwthess.jpg');
     background-size: cover;
     background-position: right;
     background-repeat: no-repeat;
@@ -2266,11 +2266,11 @@ body.authenticated::before {
     .hero-section {
         background-size: cover;
         background-repeat: no-repeat;
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/bnwthess.jpg');
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/bnwthess1.jpg');
         animation: backgroundTravel 50s infinite alternate ease-in-out; /* Added animation */
     }
     .welcome-main{
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.05)), url('/images/bnwthess.jpg');
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.05)), url('/images/bnwthess1.jpg');
     }
 }
 
