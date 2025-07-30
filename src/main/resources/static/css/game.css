@@ -647,7 +647,7 @@
     margin-bottom: 20px; /* Remove any bottom margin */
     background: 
         linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* dark overlay */
-        url('/images/bnwthess.jpg'); 
+        url('/images/retrochess2.jpg'); 
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -1109,6 +1109,20 @@
     
     .chat-messages {
         max-height: 150px;
+    }
+
+    .board-row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%; /* Ensure full width */
+        margin-bottom: 20px; /* Remove any bottom margin */
+        background: 
+            linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* dark overlay */
+            url('/images/bnwthess.jpg'); 
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 }
 
