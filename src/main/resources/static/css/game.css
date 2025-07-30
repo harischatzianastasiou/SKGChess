@@ -646,7 +646,7 @@
     width: 100%; /* Ensure full width */
     margin-bottom: 20px; /* Remove any bottom margin */
     background: 
-        linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), /* dark overlay */
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), /* dark overlay */
         url('/images/bnwthess.jpg'); 
     background-size: cover;
     background-position: center;
