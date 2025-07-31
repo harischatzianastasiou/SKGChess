@@ -2982,7 +2982,7 @@ body.authenticated .header {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    background: linear-gradient(135deg, #696562 0%, #696562 100%);
+    background: linear-gradient(135deg, #766456 0%, #766456 100%);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 0px;
@@ -3212,7 +3212,7 @@ body.authenticated .header {
 .feature-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(135deg, #a0a0a0 0%, #a0a0a0 100%);
+    background: linear-gradient(135deg, #696562 0%, #b08f75 100%);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -3597,7 +3597,7 @@ body.authenticated .header {
 
 /* SKG WEB About Section - Board Brown Theme */
 .skgweb-section {
-    /* background:     background: linear-gradient(135deg, #272626 0%, #5c524a 100%); */
+    background: linear-gradient(135deg, #2f2f2e 0%, #48413b 100%); 
     padding: 6rem 2rem;
     position: relative;
     color: #e9d8fd; /* Light text color from board brown theme */
@@ -4035,7 +4035,7 @@ body.authenticated .header {
 
 /* Contact & Feedback Section - Board Brown Theme */
 .contact-section {
-     background: linear-gradient(135deg, #272626 0%, #696562 100%);
+    background: linear-gradient(135deg, #2f2f2e 0%, #48413b 100%); 
 
     padding: 6rem 2rem;
     position: relative;
@@ -4451,7 +4451,7 @@ body.authenticated .header {
 }
 
 .theme-toggle-btn {
-    background: linear-gradient(135deg, #696562 0%, #272626 100%);
+    background: linear-gradient(135deg, #696562 0%, #b08f75 100%);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -4478,7 +4478,7 @@ body.authenticated .header {
 /* CSS Custom Properties for Theme Colors */
 :root {
     /* Dark Theme (Current) */
-    --feature-bg: linear-gradient(135deg, #33322d 0%, #2d3748 100%);
+    --feature-bg: linear-gradient(135deg, #33322d 0%, #2f2a1e 100%);
     --feature-text: #ffffff;
     --feature-description: #ffffff;
     --feature-card-bg: #272727;
@@ -4488,22 +4488,12 @@ body.authenticated .header {
 
 /* Light Theme */
 [data-theme="light"] {
-    --feature-bg: linear-gradient(135deg, #ebebeb 0%, #ebebeb 100%);
+    --feature-bg: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
     --feature-text: #000000;
     --feature-description: #000000;
     --feature-card-bg: #272727;
     --feature-card-text: #767272;
     --feature-card-heading: #ffffff;
-    .theme-toggle-btn {
-        background: linear-gradient(135deg, #696562 0%, #272626 696562100%);
-    }
-}
-
-[data-theme="dark"] {
-    .theme-toggle-btn {
-        background: linear-gradient(135deg, #272626 0%, #696562 696562100%);
-    }
-
 }
 
 
@@ -4579,7 +4569,7 @@ body.authenticated .header {
 
 /* Dark theme: when expanded but NOT hovered, keep black text */
 [data-theme="dark"] .feature-card.expanded:not(:hover) p {
-    color: #000000; /* Black text when expanded and not hovered */
+    color: #ffffff; /* Black text when expanded and not hovered */
 }
 
 /* Dark theme: when expanded AND hovered, use original hover color */
@@ -4589,4 +4579,8 @@ body.authenticated .header {
 
 [data-theme="dark"] .feature-card.expanded:hover h3 {
     color: rgba(255, 255, 255, 0.9); /* Original hover color */
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    background: linear-gradient(135deg,  #423a28 0%, #695240 100%);
 }
