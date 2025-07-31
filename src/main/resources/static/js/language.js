@@ -1,7 +1,7 @@
 // 1. All translations in one object
 const translations = {
     en: {
-      titlelang: "ToSkaki.GR - The Greek Chess Platform.",
+      titlelang: "skgchess.com - The Greek Chess Platform.",
       motolang: "The first chess platform in Greece.",
       ctalang: "Join",
       signinlang: "Sign in",
@@ -26,7 +26,7 @@ const translations = {
       datelang: "Date",
       viewallgameslang: "View All Games",
       pendinginvitationslang: "Pending Invitations",
-      gametitlelang: "Play Chess - ToSkaki.GR The Greek Chess Platform",
+      gametitlelang: "Play Chess - skgchess.com - The Greek Chess Platform",
       gamesigninlang: "Sign In",
       gameplaytablang: "Play",
       gamemovehistorylang: "Move History",
@@ -36,9 +36,9 @@ const translations = {
       chatinput: "Type a message..."
     },
     gr: {
-      titlelang: "ToSkaki.GR - Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
+      titlelang: "skgchess.com - Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
       motolang: "Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
-      ctalang: "Γίνε Μέλος",
+      ctalang: "Γίνε Μέλος",  
       signinlang: "Σύνδεση",
       signuplang: "Εγγραφή",
       signoutlang: "Αποσύνδεση",
@@ -61,7 +61,7 @@ const translations = {
       datelang: "Ημερομηνία",
       viewallgameslang: "Προβολή όλων των παιχνιδιών",
       pendinginvitationslang: "Προσκλήσεις σε αναμονή",
-      gametitlelang: "Πάιξε Σκάκι - ToSkaki.GR - Η ελληνική πλατφόρμα για το σκάκι.",
+      gametitlelang: "Πάιξε Σκάκι - skgchess.com - Η ελληνική πλατφόρμα για το σκάκι.",
       gamesigninlang: "Σύνδεση",
       gameplaytablang: "Παιχνίδι",
       gamemovehistorylang: "Ιστορικό Κινήσεων",

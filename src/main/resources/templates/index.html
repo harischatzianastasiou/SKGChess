@@ -202,7 +202,7 @@
     <div class="home-container">
         <!-- Header with logo and user info -->
         <header class="header">
-            <a href="/" class="logo" style="text-decoration: none; color: inherit;">To Skaki</a>
+            <a href="/" class="logo" style="text-decoration: none; color: inherit;">skgchess</a>
             <div class="header-auth">
                 <div sec:authorize="isAuthenticated()">
                     <button class="menu-btn" onclick="openBurgerMenu()">&#9776;</button>
@@ -334,7 +334,7 @@
         <!-- Unauthenticated: Video background and header/main -->
         <div sec:authorize="!isAuthenticated()">
             <!-- Video background container -->
-            <div class="video-bg-container" style="background: url('/images/bnwthess.jpg'); background-size: 105%; background-position: right center; background-repeat: no-repeat; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; animation: backgroundTravel 30s infinite alternate ease-in-out;">
+            <div class="video-bg-container" style="background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/images/bnwthess.jpg'); background-size: 120%; background-position: left center; background-repeat: no-repeat; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; animation: backgroundTravel 30s infinite alternate ease-in-out;">
                 <!-- Overlay for styling/darkening the image -->
                 <div class="video-overlay"></div>
             </div>
@@ -363,7 +363,7 @@
                     <h2 class="feature-heading">Πλήρης διαδικτυακή εφαρμογή σκακιού. </h2>
                     <p class="feature-description">
                         Παίξε με κλασσική μουσική στο παρασκήνιο, και γνώρισε παίκτες από όλη την Ελλάδα. 
-                        Αναπτυγμένο απο το SKG WEB, toSkaki.gr είναι ένα μη κερδοσκοπικό project με στόχο την δημιουργία μιας online πλατφόρμας για τους Έλληνες σκακιστές. Μερικές απο τις λειτουργίες που παρέχει είναι:
+                        Αναπτυγμένο απο το <b> SKG WEB</b>, το Skgchess είναι ένα μη κερδοσκοπικό project με στόχο την δημιουργία μιας online πλατφόρμας για τους Έλληνες σκακιστές. Μερικές απο τις λειτουργίες που παρέχει είναι:
                         
                     </p>
                     
@@ -498,8 +498,8 @@
             </style>
             <div class="contact-container">
                 <div class="contact-header">
-                    <h3>Βοήθησε να μεγαλώσει ToSkaki.gr</h3>
-                    <p>Έχεις προτάσεις για την πλατφόρμα; Στείλε μας παρακάτω πως θα μπορούσε να βελτιωθεί toSkaki.gr!</p>
+                    <h3>Βοήθησε να μεγαλώσει το Skgchess</h3>
+                    <p>Έχεις προτάσεις για την πλατφόρμα; Στείλε μας παρακάτω πως θα μπορούσε να βελτιωθεί Skgchess!</p>
                 </div>
                 <div class="contact-content">
                     
@@ -551,8 +551,8 @@
         <footer class="site-footer" sec:authorize="!isAuthenticated()">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>ΤoSkaki.gr</h3>
-                    <p><b>ToSkaki.gr</b> είναι μια πλατφόρμα που χρησιμοποιεί την δική της μηχανή σκακιού, σας επιτρέπει να δημιουργήσετε προφίλ, να αποθηκεύσετε και να δείτε τα παιχνίδια σας, και να παίξετε με κλασσική μουσική στο παρασκήνιο.</p>
+                    <h3>Skgchess</h3>
+                    <p>To<b> skgchess</b> είναι μια πλατφόρμα που χρησιμοποιεί την δική της μηχανή σκακιού, σας επιτρέπει να δημιουργήσετε προφίλ, να αποθηκεύσετε και να δείτε τα παιχνίδια σας, και να παίξετε με κλασσική μουσική στο παρασκήνιο.</p>
                     <div class="social-links">
                         <a href="https://github.com/harischatzianastasiou" class="social-link" target="_blank"><i class="fab fa-github"></i></a>
                         <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" class="social-link" target="_blank"><i class="fab fa-linkedin"></i></a>
