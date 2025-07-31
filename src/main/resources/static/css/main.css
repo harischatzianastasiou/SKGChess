@@ -100,13 +100,6 @@ body {
         radial-gradient(circle at 90% 80%, rgba(231, 76, 60, 0.05) 0%, transparent 20%);
 }
 
-body:not(.authenticated) .hero-section {
-    background: none !important;
-}
-body:not(.authenticated) .hero-section::before {
-    background: none !important;
-}
-
 /* Header Styles */
 .header {
     position: fixed;

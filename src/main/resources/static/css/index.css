@@ -10,7 +10,6 @@
     justify-content: center;
     min-height: 100vh;
     padding: 4vw 2vw;
-    background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('/images/bnwthess.jpg');
     background-size: contain;
     background-position: right;
     background-repeat: repeat;
@@ -91,7 +90,8 @@
     .video-bg-container {
         background-size: cover !important;
         background-position: center top !important;
-        background-repeat: no-repeat !important;
+        background-repeat: no-repeat !important;       
+        background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/images/bnwthess.jpg') !important;
     }
     
     .welcome-main h1 {
@@ -2260,18 +2260,6 @@ body.authenticated::before {
 
 .main-buttons-container {
     margin-top: 1.5rem !important;
-}
-
-@media (max-width: 1000px) {
-    .hero-section {
-        background-size: cover;
-        background-repeat: no-repeat;
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/images/bnwthess1.jpg');
-        animation: backgroundTravel 50s infinite alternate ease-in-out; /* Added animation */
-    }
-    .welcome-main{
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.05)), url('/images/bnwthess1.jpg');
-    }
 }
 
 /* Add a title for the section with better contrast */
