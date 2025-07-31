@@ -334,7 +334,7 @@
         <!-- Unauthenticated: Video background and header/main -->
         <div sec:authorize="!isAuthenticated()">
             <!-- Video background container -->
-            <div class="video-bg-container" style="background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('/images/bnwthess.jpg'); background-size: 120%; background-position: left center; background-repeat: no-repeat; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; animation: backgroundTravel 30s infinite alternate ease-in-out;">
+            <div class="video-bg-container" style="background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('/images/bnwthess.jpg'); background-size: 101%; background-position: left center; background-repeat: no-repeat; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; animation: backgroundTravel 30s infinite alternate ease-in-out;">
                 <!-- Overlay for styling/darkening the image -->
                 <div class="video-overlay"></div>
             </div>
@@ -342,10 +342,13 @@
             <main class="welcome-main">
                 <div class="welcome-icon">
                     <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" style="width: 300px; height: auto;" />   
-                    <img src="/images/skgweb1.png" alt="skgweb logo" style="width: 160px; height: auto; margin-top: 45px;" />                 
+                    <img src="/images/skgweb.png" alt="skgweb logo" style="width: 160px; height: auto; margin-top: 45px;" />                 
+                    <div class="spacer" style="height: 2rem;"></div>
                 </div>
                 <!-- Main heading / welcome quote -->
-                <h1 id="motolang" class="animated-fade-in-up" style="animation-delay: 0.4s;"></h1>
+                <!-- <h1 id="motolang" class="animated-fade-in-up" style="animation-delay: 0.4s;"></h1> -->
+                <!-- Chess quotes display -->
+                <h1 id="motolang" class="animated-fade-in-up" style="animation-delay: 0.6s;"></h1>
                 <div class="spacer"></div>
                 <!-- Call-to-action button triggers login modal -->
                 <button id ="ctalang" class="cta-btn animated-fade-in-up" onclick="openLoginModal(); return false;"></button>
@@ -600,6 +603,7 @@
                     <div class="welcome-icon">
                         <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" />
                     </div>
+                    <h3 id="chessquote"></h3>
                     <!-- In the authenticated hero heading, replace the username and pencil with a flex row -->
                     <h1 class="username-row"><span id="welcomelang"></span><span id="username-display" sec:authentication="name" data-username="true" th:attr="data-changes-left=${user.usernameChangesLeft}"></span><span id="edit-username-btn" style="cursor:pointer; margin-left:8px; display:inline-block; font-size:0.5em; vertical-align:middle;" title="Edit Username"><i class="fas fa-pen"></i></span></h1>
                     <div class="spacer"></div>

@@ -2,7 +2,7 @@
 const translations = {
     en: {
       titlelang: "skgchess.com - The Greek Chess Platform.",
-      motolang: "The first chess platform in Greece.",
+      motolang: "The Greek Chess Platform.",
       ctalang: "Join",
       signinlang: "Sign in",
       signuplang: "Sign up",
@@ -37,7 +37,7 @@ const translations = {
     },
     gr: {
       titlelang: "skgchess.com - Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
-      motolang: "Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
+      motolang: "Η ελληνική πλατφόρμα για το σκάκι.",
       ctalang: "Γίνε Μέλος",  
       signinlang: "Σύνδεση",
       signuplang: "Εγγραφή",

@@ -93,6 +93,7 @@
         background-repeat: no-repeat !important;       
         background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/images/bnwthess.jpg') !important;
     }
+
     
     .welcome-main h1 {
         font-size: 1.5rem;
@@ -1165,12 +1166,32 @@ body.authenticated::before {
     text-align: center; /* Center the text */
 }
 
+/* Chess quote specific styling - ensure it's always visible */
+#chessquote {
+    opacity: 1 !important; /* Ensure visibility */
+    display: block !important; /* Ensure display */
+    visibility: visible !important; /* Ensure visibility */
+    color: #b8b3b3 !important; /* Ensure text color */
+    -webkit-text-fill-color: #fff !important; /* Ensure text color on webkit browsers */
+    font-style: italic;
+}
+
 /* Mobile responsive styles for welcome username */
 @media (max-width: 768px) {
     .authenticated-hero .hero-content h1 {
         font-size: 2rem; /* Much smaller on tablets */
         padding: 0.4rem 0.8rem;
         margin-bottom: 0.8rem;
+    }
+    
+    /* Mobile chess quote spacing */
+    #chessquote {
+        margin-top: 1.5rem !important; /* Reduced gap on tablets */
+        margin-bottom: 1rem !important; /* Reduced space below on tablets */
+        font-size: 1.8rem !important; /* Slightly smaller font on tablets */
+        opacity: 1 !important; /* Ensure visibility */
+        display: block !important; /* Ensure display */
+        visibility: visible !important; /* Ensure visibility */
     }
 }
 
@@ -1179,6 +1200,16 @@ body.authenticated::before {
         font-size: 1.5rem; /* Even smaller on mobile phones */
         padding: 0.3rem 0.6rem;
         margin-bottom: 0.6rem;
+    }
+    
+    /* Small mobile chess quote spacing */
+    #chessquote {
+        margin-top: 1rem !important; /* Further reduced gap on mobile */
+        margin-bottom: 0.8rem !important; /* Further reduced space below on mobile */
+        font-size: 1.4rem !important; /* Smaller font on mobile */
+        opacity: 1 !important; /* Ensure visibility */
+        display: block !important; /* Ensure display */
+        visibility: visible !important; /* Ensure visibility */
     }
 }
 
