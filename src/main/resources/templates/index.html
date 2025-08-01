@@ -603,9 +603,10 @@
                     <div class="welcome-icon">
                         <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" />
                     </div>
-                    <h3 id="chessquote"></h3>
                     <!-- In the authenticated hero heading, replace the username and pencil with a flex row -->
                     <h1 class="username-row"><span id="welcomelang"></span><span id="username-display" sec:authentication="name" data-username="true" th:attr="data-changes-left=${user.usernameChangesLeft}"></span><span id="edit-username-btn" style="cursor:pointer; margin-left:8px; display:inline-block; font-size:0.5em; vertical-align:middle;" title="Edit Username"><i class="fas fa-pen"></i></span></h1>
+                    <h3 id="chessquote"></h3>
+
                     <div class="spacer"></div>
                     <!-- Overlay for modal - moved outside h1 for proper stacking -->
                     <div id="username-modal" class="game-creation-popup" style="display:none; z-index:10001;">
