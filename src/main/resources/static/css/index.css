@@ -1094,7 +1094,7 @@ body.authenticated .welcome-icon {
 
 @media (max-width: 768px) {
     body.authenticated .scroll-indicator {
-        bottom: 17rem !important;
+        bottom: 6.8rem !important;
     }
 }
 
