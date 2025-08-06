@@ -1074,7 +1074,7 @@ body.authenticated .welcome-icon {
     }
 
     body.authenticated .welcome-icon {
-        margin-top: -7rem !important;
+        margin-top: -5rem !important;
     }
 }
 
@@ -2974,6 +2974,7 @@ body.authenticated .header {
     position: relative;
     overflow: hidden;
     color: #e9d8fd; /* Light text color from board brown theme */
+    font-family: 'Poppins', serif !important;
 }
 
 .feature-section::before {
@@ -3622,7 +3623,7 @@ body.authenticated .header {
 
 /* SKG WEB About Section - Board Brown Theme */
 .skgweb-section {
-    background: linear-gradient(135deg, #2f2f2e 0%, #48413b 100%); 
+    background: linear-gradient(135deg,  #212121  0%, #212121 100%); 
     padding: 6rem 2rem;
     position: relative;
     color: #e9d8fd; /* Light text color from board brown theme */
@@ -4060,7 +4061,7 @@ body.authenticated .header {
 
 /* Contact & Feedback Section - Board Brown Theme */
 .contact-section {
-    background: linear-gradient(135deg, #2f2f2e 0%, #48413b 100%); 
+    background: linear-gradient(135deg, #282828 0%, #282828 100%); 
 
     padding: 6rem 2rem;
     position: relative;
@@ -4503,7 +4504,7 @@ body.authenticated .header {
 /* CSS Custom Properties for Theme Colors */
 :root {
     /* Dark Theme (Current) */
-    --feature-bg: linear-gradient(135deg, #33322d 0%, #2f2a1e 100%);
+    --feature-bg: linear-gradient(135deg, #313131 0%, #313131 100%);
     --feature-text: #ffffff;
     --feature-description: #ffffff;
     --feature-card-bg: #272727;
