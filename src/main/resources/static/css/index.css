@@ -1086,6 +1086,7 @@ body.authenticated .welcome-icon {
 
     #motolang {
         margin-top: 3rem !important;
+        font-size: 1.5rem !important;
     }
     body.authenticated .welcome-icon {
         margin-top: -6.5rem !important;
