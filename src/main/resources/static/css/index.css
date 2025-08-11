@@ -2684,7 +2684,7 @@ body.authenticated::before {
 }
 
 .cta-btn {
-    background: #b4c23d;
+    background: #928575;
     color: #fff;
     padding: 1rem 2.5rem;
     border-radius: 0.2rem;
@@ -2697,7 +2697,7 @@ body.authenticated::before {
   }
   
   .cta-btn:hover {
-    background: #8a9a2d;
+    background: #60564a;
   }
 
   .logo {
