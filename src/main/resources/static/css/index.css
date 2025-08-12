@@ -89,9 +89,9 @@
 @media (max-width: 768px) {
     .video-bg-container {
         background-size: cover !important;
-        background-position: center top !important;
-        background-repeat: no-repeat !important;       
-        background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('/images/bnwthess.jpg') !important;
+        background-position: right top !important;
+        background-repeat: repeat !important;       
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/retrochess2.jpg') !important;
     }
 
     
