@@ -1086,7 +1086,7 @@ body.authenticated .welcome-icon {
 
     #motolang {
         margin-top: 3rem !important;
-        font-size: 1.5rem !important;
+        font-size: 2.5rem !important;
     }
     body.authenticated .welcome-icon {
         margin-top: -6.5rem !important;
@@ -3035,7 +3035,7 @@ body.authenticated .header {
 }
 
 .feature-description {
-    font-size: 1.3rem;
+    font-size: 1.1rem; /* Reduced from 1.3rem to 1.1rem for desktop */
     color: #000000; /* Changed to black */
     line-height: 1.7;
     margin-bottom: 3rem;
@@ -3260,8 +3260,8 @@ body.authenticated .header {
 
 /* Feature card header styling */
 .feature-card h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 400;
     color: #ffffff; /* Changed to black text */
     margin-bottom: 0.5rem;
     font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Match feature heading */
@@ -3703,8 +3703,9 @@ body.authenticated .header {
     line-height: 1.7;
     margin-bottom: 1.5rem;
     opacity: 0.95;
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: #a0a0a0; /* Text dark color from board brown theme */
+    font-weight: 350;
 }
 
 .skgweb-contact {
@@ -3737,8 +3738,8 @@ body.authenticated .header {
     text-decoration: none;
     padding: 1rem 2rem;
     border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    font-size: 1rem;
+    font-weight: 400;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(171, 155, 135, 0.3);
@@ -3915,11 +3916,11 @@ body.authenticated .header {
     }
     
     .feature-heading {
-        font-size: 2.2rem;
+        font-size: 2.5rem;
     }
     
     .feature-description {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     
     .feature-badge {
@@ -3947,7 +3948,7 @@ body.authenticated .header {
     }
     
     .feature-card h3 {
-        font-size: 1.3rem; /* Increased font size for mobile */
+        font-size: 1rem; /* Increased font size for mobile */
         font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Match feature heading */
     }
     
@@ -4039,7 +4040,8 @@ body.authenticated .header {
     }
     
     .skgweb-info p {
-        font-size: 0.95rem;
+        font-size: 1rem; /* Match desktop pattern */
+        font-weight: 350; /* Match desktop pattern */
     }
     
     .skgweb-btn {
@@ -4089,11 +4091,12 @@ body.authenticated .header {
     font-weight: 700;
     color: #ececec; /* Primary brown color from board brown theme */
     margin-bottom: 1rem;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'NXBaskerville', serif;
 }
 
 .contact-header p {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    font-weight: 350;
     color: #c8c8c8; /* Text dark color from board brown theme */
     font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
@@ -4368,7 +4371,8 @@ body.authenticated .header {
     }
     
     .contact-header p {
-        font-size: 1.1rem;
+        font-size: 1rem; /* Match desktop pattern */
+        font-weight: 350; /* Match desktop pattern */
     }
     
     .contact-content {
@@ -4393,7 +4397,8 @@ body.authenticated .header {
     }
     
     .contact-card p {
-        font-size: 0.95rem;
+        font-size: 0.95rem; /* Match desktop pattern */
+        font-weight: 350; /* Match desktop pattern */
     }
     
     .contact-form-container {
@@ -4423,7 +4428,8 @@ body.authenticated .header {
     }
     
     .contact-header p {
-        font-size: 1rem;
+        font-size: 0.95rem; /* Slightly smaller for mobile */
+        font-weight: 350; /* Match desktop pattern */
     }
     
     .contact-card {
@@ -4444,7 +4450,8 @@ body.authenticated .header {
     }
     
     .contact-card p {
-        font-size: 0.9rem;
+        font-size: 0.9rem; /* Keep small for mobile */
+        font-weight: 350; /* Match desktop pattern */
     }
     
     .contact-form-container {
