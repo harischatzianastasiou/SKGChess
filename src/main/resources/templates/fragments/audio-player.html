@@ -139,8 +139,7 @@
         <button class="music-player" onclick="initializeAndToggleMusic()"></button>
 
         <!-- Music Credits -->
-        <div class="music-credits" id="musicCredits">
-            <button class="close-btn" onclick="event.stopPropagation(); this.parentElement.classList.remove('show')">&times;</button>
+        <div class="music-credits" id="musicCredits" onclick="this.classList.remove('show')">
             <p><span class="title" id="currentSongTitle">Loading...</span></p>
             <p id="currentSongArtist"></p>
             <p>Source: Free Music Archive / Incompetech</p>
@@ -297,15 +296,11 @@
                 audio.volume = 0.5;  // Set to half volume
                 audio.muted = isMuted;  // Use stored mute state
                 
-                if (isMuted) {
-                    musicPlayer.classList.remove('unmuted');
-                    credits.classList.remove('show');
-                } else {
-                    musicPlayer.classList.add('unmuted');
-                    credits.classList.add('show');
-                    // Start playing immediately only if not muted
-                    playNextRandomSong();
-                }
+                // Always start muted to prevent automatic playback
+                audio.muted = true;
+                localStorage.setItem('musicMuted', 'true');
+                musicPlayer.classList.remove('unmuted');
+                credits.classList.remove('show');
 
                 // Add event listener for when a song ends
                 audio.addEventListener('ended', () => {

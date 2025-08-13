@@ -37,7 +37,7 @@ const translations = {
     },
     gr: {
       titlelang: "skgchess.com - Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
-      motolang: "Η ελληνική πλατφόρμα για το σκάκι.",
+      motolang: "The Greek Chess Platform.",
       ctalang: "Γίνε Μέλος",  
       signinlang: "Σύνδεση",
       signuplang: "Εγγραφή",

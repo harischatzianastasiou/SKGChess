@@ -1067,10 +1067,13 @@ body.authenticated .welcome-icon {
     
     #motolang {
         margin-top: 3.5rem !important;
+        font-family: Open Sans, sans-serif;
     }
     
     body.authenticated .username-row {
         margin-top: 0rem !important; /* Ensure no extra top margin on the h1 */
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif, sans-serif !important;
+        font-size: 2.5rem !important;
     }
 
     body.authenticated .welcome-icon {
@@ -1167,7 +1170,7 @@ body.authenticated::before {
     display: inline-block;
     width: auto; /* Allow width to be determined by content */
     text-align: center; /* Center the text */
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Chess quote specific styling - ensure it's always visible */
@@ -1178,7 +1181,7 @@ body.authenticated::before {
     color: #b8b3b3 !important; /* Ensure text color */
     -webkit-text-fill-color: #fff !important; /* Ensure text color on webkit browsers */
     font-style: italic;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Mobile responsive styles for welcome username */
@@ -2891,6 +2894,7 @@ body:not(.authenticated) .video-bg-container {
     .authenticated-hero .username-row {
         margin-top: 0 !important; /* No gap above username */
         margin-bottom: 0.7rem !important; /* Small gap below username */
+        font-size: 1rem !important;
     }
 }
 
@@ -3026,21 +3030,21 @@ body.authenticated .header {
 }
 
 .feature-heading {
-    font-size: 3.8rem;
-    font-weight: 900;
+    font-size: 3.2rem;
+    font-weight: 600;
     color: #000000; /* Changed to black */
     margin-bottom: 1.5rem;
     line-height: 1.1;
-    font-family: 'NXBaskerville', serif;
+    font-family:  'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif, sans-serif;
 }
 
 .feature-description {
-    font-size: 1.1rem; /* Reduced from 1.3rem to 1.1rem for desktop */
+    font-size: 1.1rem;
+    font-weight: 300;
     color: #000000; /* Changed to black */
     line-height: 1.7;
     margin-bottom: 3rem;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    font-weight: 400;
+    font-family: Mozilla Text, Helvetica, Arial, sans-serif;
 }
 
 /* Professional Feature Grid */
@@ -3060,7 +3064,7 @@ body.authenticated .header {
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
-    cursor: pointer;
+    cursor: default; /* Changed from pointer since click is disabled */
     transform-style: preserve-3d;
     height: 200px;
     perspective: 1000px;
@@ -3201,7 +3205,7 @@ body.authenticated .header {
 .feature-card h3 {
     position: relative;
     z-index: 10; /* Higher z-index to appear above images */
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .feature-card p {
@@ -3214,7 +3218,7 @@ body.authenticated .header {
     font-size: 0.9rem; /* Smaller font size for description */
     color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
     line-height: 1.4; /* Good line height for readability */
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     text-align: center; /* Center align text */
     position: relative; /* Ensure proper positioning */
     z-index: 10; /* Higher z-index to appear above images */
@@ -3251,6 +3255,7 @@ body.authenticated .header {
     box-shadow: 0 4px 12px rgba(171, 155, 135, 0.3);
     position: relative;
     z-index: 10; /* Higher z-index to appear above images */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
 }
 
 .feature-icon i {
@@ -3260,11 +3265,11 @@ body.authenticated .header {
 
 /* Feature card header styling */
 .feature-card h3 {
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: 1.2rem;
+    font-weight: 300;
     color: #ffffff; /* Changed to black text */
     margin-bottom: 0.5rem;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Match feature heading */
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Match feature heading */
     transition: all 0.3s ease; /* Smooth transition for all changes */
     opacity: 1; /* Start fully visible */
     transform: translateY(0); /* Start at normal position */
@@ -3272,29 +3277,34 @@ body.authenticated .header {
     z-index: 10; /* Higher z-index to appear above images */
 }
 
-/* Hide header and show description on hover */
+/* Hide header and icon, show description on hover */
 .feature-card:hover h3 {
     opacity: 0; /* Fade out the header */
     transform: translateY(-10px); /* Move header up slightly */
     margin-bottom: 0; /* Remove bottom margin when hidden */
 }
 
-/* Show description on hover */
+.feature-card:hover .feature-icon {
+    opacity: 0; /* Fade out the icon */
+    transform: translateY(-10px); /* Move icon up slightly */
+    margin-bottom: 0; /* Remove bottom margin when hidden */
+}
+
+/* Show description on hover - centered in the card */
 .feature-card:hover p {
     opacity: 1; /* Fade in the description */
     max-height: 100px; /* Allow space for description */
-    margin-top: 0.5rem; /* Add some space above description */
+    margin-top: 0; /* Remove top margin for better centering */
+    position: absolute; /* Position absolutely for centering */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Perfect centering */
+    width: 80%; /* Control width for better readability */
+    z-index: 15; /* Ensure it's above all other elements */
 }
 
-.feature-card.expanded h3 {
-    margin-bottom: 0.5rem;
-}
-
-.feature-card.expanded p {
-    opacity: 1; /* Show description when expanded */
-    max-height: 200px; /* Allow more space for expanded state */
-    margin-top: 0.5rem; /* Add space above description */
-}
+/* Expanded state styles removed - click functionality disabled */
+/* Cards now only show description on hover, centered in the card */
 
 .feature-card-front,
 .feature-card-back {
@@ -3694,7 +3704,7 @@ body.authenticated .header {
     font-size: 2.8rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: #ab9b87; /* Primary brown color from board brown theme */
 }
 
@@ -3703,9 +3713,9 @@ body.authenticated .header {
     line-height: 1.7;
     margin-bottom: 1.5rem;
     opacity: 0.95;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: #a0a0a0; /* Text dark color from board brown theme */
-    font-weight: 350;
+    font-weight: 376;
 }
 
 .skgweb-contact {
@@ -3743,7 +3753,7 @@ body.authenticated .header {
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(171, 155, 135, 0.3);
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .skgweb-btn:hover {
@@ -3921,6 +3931,7 @@ body.authenticated .header {
     
     .feature-description {
         font-size: 1rem;
+        font-weight: 376;
     }
     
     .feature-badge {
@@ -3948,8 +3959,9 @@ body.authenticated .header {
     }
     
     .feature-card h3 {
-        font-size: 1rem; /* Increased font size for mobile */
-        font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Match feature heading */
+        font-size: 1.2rem; /* Increased font size for mobile */
+        font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Match feature heading */
+        font-weight: 300;
     }
     
     .feature-card p {
@@ -4041,7 +4053,7 @@ body.authenticated .header {
     
     .skgweb-info p {
         font-size: 1rem; /* Match desktop pattern */
-        font-weight: 350; /* Match desktop pattern */
+        font-weight: 376; /* Match desktop pattern */
     }
     
     .skgweb-btn {
@@ -4091,14 +4103,14 @@ body.authenticated .header {
     font-weight: 700;
     color: #ececec; /* Primary brown color from board brown theme */
     margin-bottom: 1rem;
-    font-family: 'NXBaskerville', serif;
+    font-family: Mozilla Text, 'NXBaskerville', serif;
 }
 
 .contact-header p {
     font-size: 1.1rem;
-    font-weight: 350;
+    font-weight: 376;
     color: #c8c8c8; /* Text dark color from board brown theme */
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .contact-content {
@@ -4155,14 +4167,14 @@ body.authenticated .header {
     font-weight: 700;
     color: #ab9b87; /* Primary brown color from board brown theme */
     margin-bottom: 1rem;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .contact-card p {
     font-size: 1rem;
     color: #a0a0a0; /* Text dark color from board brown theme */
     line-height: 1.6;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
 }
 
@@ -4286,7 +4298,7 @@ body.authenticated .header {
     width: 90%;
     max-width: 600px;
     margin: 0 auto;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .contact-form {
@@ -4306,7 +4318,7 @@ body.authenticated .header {
     font-size: 0.95rem;
     font-weight: 600;
     color: #e6e6e6; /* Primary brown color from board brown theme */
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 
@@ -4331,7 +4343,7 @@ body.authenticated .header {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: Mozilla Text, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -4429,7 +4441,7 @@ body.authenticated .header {
     
     .contact-header p {
         font-size: 0.95rem; /* Slightly smaller for mobile */
-        font-weight: 350; /* Match desktop pattern */
+        font-weight: 376; /* Match desktop pattern */
     }
     
     .contact-card {
@@ -4559,66 +4571,21 @@ body.authenticated .header {
     color: var(--feature-card-heading);
 }
 
-/* Mobile touch support - show description when card is expanded */
-.feature-card.expanded p {
-    opacity: 1; /* Show description when expanded */
-    max-height: 200px; /* Allow more space for expanded state */
-    margin-top: 0.5rem; /* Add space above description */
-}
-
-/* Additional mobile optimization */
+/* Mobile optimization - hover only */
 @media (max-width: 768px) {
     .feature-card:hover h3 {
-        opacity: 1; /* Hide header on mobile hover */
+        opacity: 0; /* Hide header on mobile hover */
         transform: translateY(-10px); /* Move header up on mobile hover */
     }
     
     .feature-card:hover p {
-        opacity: 1; /* Show description on mobile hover when image is visible */
+        opacity: 1; /* Show description on mobile hover */
         max-height: 200px; /* Allow space for description */
     }
-    
-    /* Show both image and expanded text when card is expanded on mobile */
-    .feature-card.expanded:hover p {
-        opacity: 1; /* Show description when expanded */
-        max-height: 200px; /* Allow space for description */
-    }
-}
-
-/* Ensure paragraph text is black when card is expanded (clicked) */
-.feature-card.expanded p {
-    color: #000000; /* Black text when expanded */
-    opacity: 1; /* Show description when expanded */
-    max-height: 200px; /* Allow more space for expanded state */
-    margin-top: 0.5rem; /* Add space above description */
-}
-
-/* Dark theme: black text when expanded */
-[data-theme="dark"] .feature-card.expanded p {
-    color: #000000; /* Black text for dark theme when expanded */
 }
 
 [data-theme="dark"] .feature-card h3{
-    color: #f1f0f0; /* Black text for dark theme when expanded */
-}
-
-/* Light theme: white text when expanded */
-[data-theme="light"] .feature-card.expanded p {
-    color: #ffffff; /* White text for light theme when expanded */
-}
-
-/* Dark theme: when expanded but NOT hovered, keep black text */
-[data-theme="dark"] .feature-card.expanded:not(:hover) p {
-    color: #ffffff; /* Black text when expanded and not hovered */
-}
-
-/* Dark theme: when expanded AND hovered, use original hover color */
-[data-theme="dark"] .feature-card.expanded:hover p {
-    color: rgba(255, 255, 255, 0.9); /* Original hover color */
-}
-
-[data-theme="dark"] .feature-card.expanded:hover h3 {
-    color: rgba(255, 255, 255, 0.9); /* Original hover color */
+    color: #f1f0f0; /* Text color for dark theme */
 }
 
 [data-theme="dark"] .theme-toggle-btn {

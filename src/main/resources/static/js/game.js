@@ -1442,9 +1442,16 @@ class ChessGame {
         );
     }
 
-    sendChatMessage() {
-        const message = this.chatInput.value.trim();
-        if (!message || !this.stompClient || !this.stompClient.connected) return;
+    sendChatMessage(message = null) {
+        // If no message provided, get it from the small chat input
+        if (message === null) {
+            message = this.chatInput.value.trim();
+            if (!message || !this.stompClient || !this.stompClient.connected) return;
+            this.chatInput.value = '';
+        } else {
+            // Message provided (from modal), just check connection
+            if (!this.stompClient || !this.stompClient.connected) return;
+        }
         
         const chatMessage = {
             gameId: this.gameId,
@@ -1454,7 +1461,6 @@ class ChessGame {
         };
         
         this.stompClient.send('/app/chat/' + this.gameId, {}, JSON.stringify(chatMessage));
-        this.chatInput.value = '';
     }
     
     displayChatMessage(chatMessage) {
@@ -3288,7 +3294,7 @@ class ChessGame {
         const message = this.chatModalInput.value.trim();
         if (message) {
             this.sendChatMessage(message);
-            this.chatModalInput.value = '';
+            this.chatModalInput.value = ''; // Clear the modal input after sending
         }
     }
     

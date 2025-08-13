@@ -364,7 +364,7 @@
                     <div class="feature-badge">
                         <span>Custom Built</span>
                     </div>
-                    <h2 class="feature-heading">Με θέμα την Θεσσαλονίκη</h2>
+                    <h2 class="feature-heading">Θεματικό σκάκι από την Θεσσαλονίκη</h2>
                                           <p class="feature-description">
                                                      Αναπτυγμένο από το <a href="https://ixlstudio.com" target="_blank" style="color: #ab9b87; text-decoration: underline;">IXL studio</a>, το SKGChess είναι μια διαδικτυακή πλατφόρμα σκακιού που στοχεύει στη δημιουργία μιας ενιαίας κοινότητας για τους σκακιστές της Ελλάδας.
                            
@@ -387,7 +387,7 @@
                             <div class="feature-icon">
                                 <i class="fas fa-chess-king"></i>
                             </div>
-                            <h3>Προσαρμοσμένη μηχανή σκακιού</h3>
+                            <h3>Custom Engine</h3>
                             <p>Χωρίς την χρήση εξωτερικών βιβλιοθηκών. Διάβασε περισσότερα <a href="#" onclick="showNewspaper(); return false;" style="color: #ab9b87; text-decoration: underline;">εδώ</a>.</p>
                         </div>
                         
@@ -404,7 +404,7 @@
                                 <i class="fas fa-music"></i>
                             </div>
                             <h3>Κλασσική μουσική</h3>
-                            <p>Απόλαυσε το σκάκι σου με τα πιο διάσημα έργα της κλασσικής μουσικής.</p>
+                            <p>Παίξε με κλασσική μουσική στο παρασκήνιο.</p>
                         </div>
                         
                         <div class="feature-card">
@@ -586,7 +586,7 @@
         </footer>
 
         <!-- Newspaper Overlay (hidden by default, covers whole page except header) -->
-        <div id="newspaperOverlay" style="display:none; position:fixed; top:70px; left:0; width:100vw; height:calc(100vh - 70px); z-index:2000; padding:32px 24px; box-sizing:border-box; background:rgba(249,247,241,0.97);">
+        <div id="newspaperOverlay" style="display:none; position:fixed; top:70px; left:0; width:100vw; height:calc(100vh - 70px); z-index:2000; padding:32px 24px; box-sizing:border-box; background:rgb(249,247,241);">
             <button onclick="hideNewspaper()" class="close-btn" style="position: absolute; top: 36px; right: 36px; z-index: 10;">
                 <i class="fas fa-times"></i>
             </button>
@@ -610,34 +610,6 @@
                     <h3 id="chessquote"></h3>
 
                     <div class="spacer"></div>
-                    <!-- Overlay for modal - moved outside h1 for proper stacking -->
-                    <div id="username-modal" class="game-creation-popup" style="display:none; z-index:10001;">
-                        <div class="popup-content">
-                            <div class="popup-header">
-                                <h3>Change Username</h3>
-                                <button class="close-btn" id="close-username-modal" tabindex="0"><i class="fas fa-times"></i></button>
-                            </div>
-                            <div class="popup-body">
-                                <div class="form-group">
-                                    <label for="username-input-modal" id="newusernamelang"></label>
-                                    <input type="text" id="username-input-modal" maxlength="50" autocomplete="off" />
-                                    <span id="username-error-message-modal" style="color:red; display:none;"></span>
-                                </div>
-                                <div class="form-actions" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
-                                    <div id="username-info-message" style="color:#a9a9ff; background:rgba(60,60,80,0.25); border-radius:5px; padding:8px 12px; font-size:0.95em; margin-bottom:8px; text-align:center; border:1px solid #6c63ff;">
-                                        <i class="fas fa-info-circle" style="color:#6c63ff; margin-right:6px;"></i>
-                                        <span id="usernameinfomessagelang"></span>
-                                    </div>
-                                    <div style="display:flex; gap:12px;">
-                                        <button id="saveusernamebtnmodal" class="btn btn-create"></button>
-                                        <button id="cancelusernamebtnmodal" class="btn btn-cancel"></button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Overlay for modal - moved outside h1 for proper stacking -->
-                    <div id="username-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:10000;"></div>
                     
                     <!-- Quote styling for authenticated users -->
                     <div class="welcome-quote" sec:authorize="!isAuthenticated()">
@@ -900,8 +872,8 @@
             const usernameModal = document.getElementById('username-modal');
             const usernameModalOverlay = document.getElementById('username-modal-overlay');
             const usernameInputModal = document.getElementById('username-input-modal');
-            const saveBtnModal = document.getElementById('save-username-btn-modal');
-            const cancelBtnModal = document.getElementById('cancel-username-btn-modal');
+            const saveBtnModal = document.getElementById('saveusernamebtnmodal');
+            const cancelBtnModal = document.getElementById('cancelusernamebtnmodal');
             const closeModalBtn = document.getElementById('close-username-modal');
             const errorMsgModal = document.getElementById('username-error-message-modal');
 
@@ -918,18 +890,32 @@
 
             // Show modal when pen is clicked
             editBtn.onclick = function() {
+                console.log('Edit button clicked'); // Debug log
                 if (usernameChangesLeft <= 0) {
                     // Show a popup message if the user has reached the maximum number of username changes
                     showUsernameLimitPopup();
                     return;
                 }
+                console.log('Opening modal'); // Debug log
                 usernameModal.style.display = 'block';
                 usernameModal.classList.add('show');
                 usernameModalOverlay.style.display = 'block';
                 usernameInputModal.value = usernameDisplay.textContent.trim();
-                usernameInputModal.focus();
-                if (errorMsgModal) errorMsgModal.style.display = 'none';
+                
+                // Prevent body scroll and focus management
+                document.body.style.overflow = 'hidden';
                 document.body.classList.add('popup-open');
+                
+                // Focus the input after a short delay to ensure modal is visible
+                setTimeout(() => {
+                    usernameInputModal.focus();
+                    // Trap focus within the modal
+                    usernameModal.setAttribute('tabindex', '-1');
+                    usernameModal.focus();
+                    console.log('Modal should be visible now'); // Debug log
+                }, 100);
+                
+                if (errorMsgModal) errorMsgModal.style.display = 'none';
             };
 
             // Function to show the username limit popup
@@ -1001,11 +987,27 @@
                 usernameModalOverlay.style.display = 'none';
                 if (errorMsgModal) errorMsgModal.style.display = 'none';
                 document.body.classList.remove('popup-open');
+                
+                // Restore body scroll and focus
+                document.body.style.overflow = '';
+                usernameModal.removeAttribute('tabindex');
+                
+                // Return focus to the edit button
+                editBtn.focus();
             }
             // Hide modal on cancel or close
-            cancelBtnModal.onclick = hideUsernameModal;
-            closeModalBtn.onclick = hideUsernameModal;
-            usernameModalOverlay.onclick = hideUsernameModal;
+            cancelBtnModal.onclick = function() {
+                console.log('Cancel button clicked'); // Debug log
+                hideUsernameModal();
+            };
+            closeModalBtn.onclick = function() {
+                console.log('Close button clicked'); // Debug log
+                hideUsernameModal();
+            };
+            usernameModalOverlay.onclick = function() {
+                console.log('Overlay clicked'); // Debug log
+                hideUsernameModal();
+            };
             // Hide modal on Escape key
             document.addEventListener('keydown', function(event) {
                 if ((event.key === 'Escape' || event.keyCode === 27) && usernameModal.style.display === 'block') {
@@ -1014,6 +1016,7 @@
             });
             // Save username from modal
             saveBtnModal.onclick = function() {
+                console.log('Save button clicked'); // Debug log
                 const newUsername = usernameInputModal.value.trim();
                 if (!newUsername) return;
                 saveBtnModal.disabled = true;
@@ -1119,113 +1122,17 @@
             }
         });
 
-        // Feature Card Click Functionality - Enhanced for Mobile
+        // Feature Card Functionality - Hover Only (Click Disabled)
         document.addEventListener('DOMContentLoaded', function() {
             const featureCards = document.querySelectorAll('.feature-card');
             
+            // Remove any existing expanded classes to ensure clean state
             featureCards.forEach(card => {
-                // Variables to track touch state
-                let touchStartY = 0; // Store initial touch Y position
-                let touchStartTime = 0; // Store initial touch time
-                let hasMoved = false; // Track if finger has moved significantly
-                let touchDistance = 0; // Track total touch distance
-                let clickedOnLink = false; // Track if user clicked on a link
-                
-                // Handle touch start event
-                card.addEventListener('touchstart', function(e) {
-                    // Check if the touched element is a link
-                    if (e.target.tagName === 'A' || e.target.closest('a')) {
-                        clickedOnLink = true; // Mark that user clicked on a link
-                        return; // Don't handle card expansion for links
-                    }
-                    
-                    // Store initial touch position and time
-                    touchStartY = e.touches[0].clientY; // Get Y position of first touch
-                    touchStartTime = Date.now(); // Store current timestamp
-                    hasMoved = false; // Reset movement flag
-                    touchDistance = 0; // Reset distance counter
-                    clickedOnLink = false; // Reset link click flag
-                }, { passive: true }); // Use passive for better performance
-                
-                // Handle touch move event
-                card.addEventListener('touchmove', function(e) {
-                    if (touchStartY === 0 || clickedOnLink) return; // Skip if no touch start or clicked on link
-                    
-                    // Calculate current touch position
-                    const currentY = e.touches[0].clientY; // Get current Y position
-                    const deltaY = Math.abs(currentY - touchStartY); // Calculate vertical movement
-                    
-                    // Update total distance moved
-                    touchDistance += deltaY; // Add current movement to total
-                    
-                    // Mark as moved if distance exceeds threshold (prevents accidental clicks)
-                    if (deltaY > 10) { // 10px threshold for movement detection
-                        hasMoved = true; // Set movement flag
-                    }
-                    
-                    // Update start position for next calculation
-                    touchStartY = currentY; // Update start position for smooth tracking
-                }, { passive: true }); // Use passive for better performance
-                
-                // Handle touch end event (replaces click)
-                card.addEventListener('touchend', function(e) {
-                    // If user clicked on a link, don't handle card expansion
-                    if (clickedOnLink) {
-                        clickedOnLink = false; // Reset flag
-                        return; // Allow link to work normally
-                    }
-                    
-                    // Calculate touch duration
-                    const touchDuration = Date.now() - touchStartTime; // Calculate total touch time
-                    
-                    // Only trigger if:
-                    // 1. Touch was short (less than 500ms - prevents long press)
-                    // 2. Finger didn't move significantly (less than 20px total movement)
-                    // 3. Total distance moved is small (prevents scroll gestures)
-                    if (touchDuration < 500 && !hasMoved && touchDistance < 20) {
-                        // Prevent default behavior to avoid double-triggering
-                        e.preventDefault(); // Prevent any default touch behavior
-                        
-                        // Toggle expanded state
-                        this.classList.toggle('expanded'); // Toggle the expanded class
-                        
-                        // Close other cards when one is opened
-                        featureCards.forEach(otherCard => {
-                            if (otherCard !== this) { // Check if it's a different card
-                                otherCard.classList.remove('expanded'); // Remove expanded class
-                            }
-                        });
-                    }
-                    
-                    // Reset touch state
-                    touchStartY = 0; // Reset touch start position
-                    touchStartTime = 0; // Reset touch start time
-                    hasMoved = false; // Reset movement flag
-                    touchDistance = 0; // Reset distance counter
-                    clickedOnLink = false; // Reset link click flag
-                }, { passive: false }); // Not passive to allow preventDefault
-                
-                // Keep click handler for desktop (non-touch devices)
-                card.addEventListener('click', function(e) {
-                    // Check if the clicked element is a link
-                    if (e.target.tagName === 'A' || e.target.closest('a')) {
-                        return; // Allow link to work normally
-                    }
-                    
-                    // Only handle click if it's not from a touch device
-                    if (!('ontouchstart' in window)) { // Check if device supports touch
-                        // Toggle expanded state
-                        this.classList.toggle('expanded'); // Toggle the expanded class
-                        
-                        // Close other cards when one is opened
-                        featureCards.forEach(otherCard => {
-                            if (otherCard !== this) { // Check if it's a different card
-                                otherCard.classList.remove('expanded'); // Remove expanded class
-                            }
-                        });
-                    }
-                });
+                card.classList.remove('expanded'); // Remove any existing expanded state
             });
+            
+            // Note: Click functionality has been disabled as requested
+            // Cards now only show description on hover, centered in the card
         });
     </script>
 
@@ -1261,5 +1168,35 @@
             }
         });
     </script>
+
+    <!-- Username Modal - Root level for proper z-index -->
+    <div id="username-modal" class="game-creation-popup" style="display:none; z-index:999999; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 90vw; max-width: 500px; background: linear-gradient(135deg, rgb(30, 29, 31), rgba(30, 29, 31)); border: 1px solid rgba(107, 70, 193, 0.2); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); border-radius: 12px;">
+        <div class="popup-content" style="position: relative; z-index: 1000000; pointer-events: auto;">
+            <div class="popup-header">
+                <h3>Change Username</h3>
+                <button class="close-btn" id="close-username-modal" tabindex="0" style="position:relative; z-index:1000000; pointer-events:auto;"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="popup-body">
+                <div class="form-group">
+                    <label for="username-input-modal" id="newusernamelang"></label>
+                    <input type="text" id="username-input-modal" maxlength="50" autocomplete="off" />
+                    <span id="username-error-message-modal" style="color:red; display:none;"></span>
+                </div>
+                <div class="form-actions" style="display:flex; flex-direction:column; gap:12px; margin-top:16px;">
+                    <div id="username-info-message" style="color:#a9a9ff; background:rgba(60,60,80,0.25); border-radius:5px; padding:8px 12px; font-size:0.95em; margin-bottom:8px; text-align:center; border:1px solid #6c63ff;">
+                        <i class="fas fa-info-circle" style="color:#6c63ff; margin-right:6px;"></i>
+                        <span id="usernameinfomessagelang"></span>
+                    </div>
+                    <div style="display:flex; gap:12px;">
+                        <button id="saveusernamebtnmodal" class="btn btn-create" style="position:relative; z-index:1000000; pointer-events:auto;"></button>
+                        <button id="cancelusernamebtnmodal" class="btn btn-cancel" style="position:relative; z-index:1000000; pointer-events:auto;"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Username Modal Overlay - Root level -->
+    <div id="username-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:999998; backdrop-filter:blur(5px); pointer-events:auto;"></div>
 </body>
 </html> 

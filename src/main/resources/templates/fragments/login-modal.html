@@ -27,7 +27,7 @@
                         <span class="divider-line"></span>
                     </div>
 
-                    <div id="login-form-container">
+                    <div id="login-form-container" style="display: flex; flex-direction: column; height: 100%;">
                         <form id="login-form" class="login-form" action="/login" method="POST">
                             <div class="form-group">
                                 <label for="modal-username">Email or username</label>
@@ -90,7 +90,7 @@
             #login-modal .modal-container {
                 width: 90%;
                 max-width: 500px;
-                max-height: 82vh;
+                max-height: 90vh; /* Increased from 82vh to better fit signup form */
                 overflow: hidden;
                 position: relative;
                 transform: translateY(-20px) scale(0.95);
@@ -174,58 +174,65 @@
                 background: none !important;
                 border: none !important;
                 color: inherit !important;
-                font-size: 1.5rem;
+                font-size: 2rem; /* Increased from 1.5rem */
                 cursor: pointer;
-                border-radius: 0 !important;
-                cursor: pointer;
+                border-radius: 50% !important; /* Make it circular */
                 outline: none;
-                transition: none;
+                transition: all 0.2s ease; /* Smooth transition */
                 display: flex;
                 align-items: center;
                 justify-content: center;
+                width: 40px; /* Fixed width for better touch target */
+                height: 40px; /* Fixed height for better touch target */
+                min-width: 40px; /* Ensure minimum touch target */
+                min-height: 40px; /* Ensure minimum touch target */
             }
 
             #login-modal .modal-close:hover {
-                color: inherit !important;
-                background: none !important;
-                box-shadow: none !important;
+                color: #fff !important; /* Brighter color on hover */
+                background: rgba(255, 255, 255, 0.1) !important; /* Subtle background on hover */
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important; /* Subtle shadow on hover */
+                transform: scale(1.1); /* Slight scale effect on hover */
             }
 
             #login-modal .modal-body {
                 position: relative;
                 padding: 1rem;
-                /* Increase height significantly to fit all content */
-                max-height: 82vh;
+                /* Use max-height for desktop to allow natural sizing */
+                max-height: calc(90vh - 80px); /* Account for modal header height */
                 overflow-y: auto;
+                display: flex;
+                flex-direction: column;
             }
 
             /* Login form specific styles */
             #login-modal .login-form {
                 display: flex;
                 flex-direction: column;
-                gap: 0.5rem;
+                gap: 0.5rem; /* Restored original gap */
+                margin-bottom: 1rem; /* Restored original margin */
             }
 
             #login-modal .form-group {
-                margin-bottom: 6px;
+                margin-bottom: 6px; /* Restored original margin */
             }
 
             #login-modal .form-group label {
                 display: block;
-                margin-bottom: 4px;
+                margin-bottom: 4px; /* Restored original margin */
                 color: #fff;
-                font-size: 0.875rem;
+                font-size: 0.875rem; /* Restored original font size */
                 font-weight: 500;
             }
 
             #login-modal .form-group input {
                 width: 100%;
-                padding: 12px;
+                padding: 12px; /* Restored original padding */
                 border-radius: 4px;
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 background: rgba(26, 31, 38, 0.7) !important;
                 color: #fff;
-                font-size: 1rem;
+                font-size: 1rem; /* Restored original font size */
                 transition: all 0.3s ease;
             }
 
@@ -261,7 +268,7 @@
             /* Social login button styles */
             #login-modal .social-login-btn {
                 width: 100%;
-                padding: 0.75rem;
+                padding: 0.75rem; /* Restored original padding */
                 border-radius: 4px;
                 border: 1px solid rgba(255, 255, 255, 0.1);
                 background: rgba(255, 255, 255, 0.08);
@@ -271,9 +278,9 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                gap: 12px;
+                gap: 12px; /* Restored original gap */
                 transition: all 0.3s ease;
-                margin-bottom: 16px;
+                margin-bottom: 16px; /* Restored original margin */
             }
 
             #login-modal .social-login-btn:hover {
@@ -290,8 +297,8 @@
             #login-modal .divider {
                 display: flex;
                 align-items: center;
-                margin: 16px 0;
-                gap: 15px;
+                margin: 16px 0; /* Restored original margin */
+                gap: 15px; /* Restored original gap */
             }
 
             #login-modal .divider-line {
@@ -302,22 +309,22 @@
 
             #login-modal .divider-text {
                 color: rgba(255, 255, 255, 0.6);
-                font-size: 0.875rem;
+                font-size: 0.875rem; /* Restored original font size */
                 text-transform: uppercase;
             }
 
             /* Login button style */
             #login-modal .login-btn {
-                margin-top: 10px;
+                margin-top: 10px; /* Restored original margin */
                 margin-bottom: 0.2rem;
                 background: #425007;
                 color: #fff;
                 width: 100%;
-                padding: 12px;
+                padding: 12px; /* Restored original padding */
                 border-radius: 4px;
                 border: none;
                 font-weight: 700;
-                font-size: 1rem;
+                font-size: 1rem; /* Restored original font size */
                 cursor: pointer;
                 transition: all 0.3s ease;
             }
@@ -332,24 +339,24 @@
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                margin: 8px 0;
+                margin: 8px 0; /* Restored original margin */
             }
 
             #login-modal .remember-me {
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 8px; /* Restored original gap */
                 color: rgba(255, 255, 255, 0.6);
-                font-size: 0.9rem;
+                font-size: 0.9rem; /* Restored original font size */
             }
 
             #login-modal .forgot-password {
                 display: block;
                 text-align: center;
-                margin-top: 12px;
+                margin-top: 12px; /* Restored original margin */
                 color: rgba(255, 255, 255, 0.6);
                 text-decoration: none;
-                font-size: 0.875rem;
+                font-size: 0.875rem; /* Restored original font size */
                 transition: color 0.3s ease;
             }
 
@@ -363,9 +370,9 @@
                 justify-content: center;
                 align-items: center;
                 gap: 0.2em;
-                font-size: 0.9rem;
+                font-size: 0.9rem; /* Restored original font size */
                 color: rgba(255, 255, 255, 0.6);
-                margin: 0.3rem 0 0.2rem 0;
+                margin: 0.3rem 0 0.2rem 0; /* Restored original margin */
             }
 
             #login-modal .modal-switch-link {
@@ -382,8 +389,78 @@
                 text-decoration: underline;
             }
 
+            /* Signup form specific styles for better spacing */
+            #login-modal #signup-form {
+                margin-bottom: 0.5rem; /* Reduced margin to match login form */
+                flex: 1; /* Take available space */
+            }
+
+            #login-modal #signup-form .form-group {
+                margin-bottom: 4px; /* Compact spacing for signup form */
+            }
+
+            #login-modal #signup-form .form-group label {
+                font-size: 0.8rem; /* Smaller font for signup form */
+                margin-bottom: 3px; /* Smaller margin */
+            }
+
+            #login-modal #signup-form .form-group input {
+                padding: 10px; /* Smaller padding for signup form */
+                font-size: 0.9rem; /* Smaller font for signup form */
+            }
+
+            #login-modal #signup-form .login-btn {
+                margin-top: 8px; /* Compact spacing */
+                margin-bottom: 0.2rem;
+                padding: 10px; /* Smaller padding */
+                font-size: 0.9rem; /* Smaller font */
+            }
+
+            /* Tablet responsiveness */
+            @media (max-width: 768px) and (min-width: 481px) {
+                #login-modal .modal-container {
+                    width: 85%;
+                    max-height: 85vh;
+                }
+                
+                #login-modal .modal-body {
+                    max-height: calc(85vh - 80px); /* Use max-height like desktop */
+                    display: flex;
+                    flex-direction: column;
+                }
+                
+                /* Slightly larger on tablets for better readability */
+                #login-modal .form-group input {
+                    padding: 11px; /* Slightly larger than mobile */
+                    font-size: 0.95rem; /* Slightly larger than mobile */
+                }
+                
+                #login-modal .login-btn {
+                    padding: 11px; /* Slightly larger than mobile */
+                    font-size: 0.95rem; /* Slightly larger than mobile */
+                }
+            }
+
             /* Mobile responsiveness */
             @media (max-width: 480px) {
+                /* Position modal below header on mobile */
+                #login-modal.modal-overlay {
+                    align-items: flex-start; /* Align to top instead of center */
+                    padding-top: 80px; /* Add space for header (70px) + some margin */
+                }
+                
+                #login-modal .modal-container {
+                    width: 95%;
+                    max-height: calc(100vh - 100px); /* Account for header and padding */
+                    height: auto;
+                    margin: 10px;
+                    transform: translateY(0) scale(0.95); /* Remove Y translation since we're using flex-start */
+                }
+                
+                #login-modal.modal-overlay.active .modal-container {
+                    transform: translateY(0) scale(1); /* Keep X translation for centering */
+                }
+                
                 #login-modal .modal-header {
                     padding: 0.5rem;
                 }
@@ -395,68 +472,137 @@
                 #login-modal .modal-close {
                     top: 0.3rem;
                     right: 0.7rem;
+                    font-size: 2.2rem; /* Even larger on mobile */
+                    width: 44px; /* Larger touch target on mobile */
+                    height: 44px; /* Larger touch target on mobile */
+                    min-width: 44px; /* Ensure minimum touch target */
+                    min-height: 44px; /* Ensure minimum touch target */
+                }
+                
+                /* Even larger on very small screens */
+                @media (max-width: 360px) {
+                    #login-modal .modal-close {
+                        font-size: 2.4rem; /* Even larger on very small screens */
+                        width: 48px; /* Even larger touch target */
+                        height: 48px; /* Even larger touch target */
+                        min-width: 48px; /* Ensure minimum touch target */
+                        min-height: 48px; /* Ensure minimum touch target */
+                    }
                 }
                 
                 #login-modal .modal-body {
-                    padding: 1rem;
-                    /* Increase height significantly to fit all content */
-                    max-height: 82vh;
+                    padding: 0.8rem; /* Reduced padding */
+                    /* Fixed height to prevent scrolling */
+                    height: calc(100vh - 180px); /* Account for header, modal header, and padding */
                     overflow-y: auto;
-                }
-                
-                /* Make the modal container much larger on mobile */
-                #login-modal .modal-container {
-                    width: 95%;
-                    max-height: 82vh;
-                    height: auto;
-                    margin: 10px;
+                    display: flex;
+                    flex-direction: column;
                 }
                 
                 /* Ensure form elements are properly spaced on mobile */
                 #login-modal .form-group {
-                    margin-bottom: 0.8rem;
+                    margin-bottom: 2px; /* Even smaller margin for mobile */
                 }
                 
                 /* Make buttons more accessible on mobile */
                 #login-modal .login-btn {
-                    margin-top: 1rem;
-                    margin-bottom: 1rem;
-                    padding: 14px;
-                    font-size: 1.1rem;
+                    margin-top: 4px; /* Even smaller margin */
+                    margin-bottom: 0.3rem; /* Even smaller margin */
+                    padding: 10px; /* Even smaller padding */
+                    font-size: 0.85rem; /* Even smaller font size */
                 }
                 
                 /* Ensure the signup form is scrollable and buttons are visible */
                 #login-modal .login-form {
-                    gap: 0.5rem;
+                    gap: 0.2rem; /* Even smaller gap for mobile */
                 }
                 
-                /* Add padding to bottom to ensure submit button is visible */
-                #login-modal .modal-body {
-                    padding-bottom: 2rem;
+                /* Mobile-specific styles for signup form */
+                #login-modal #signup-form {
+                    margin-bottom: 0.3rem; /* Even smaller margin for mobile */
+                }
+                
+                #login-modal #signup-form .form-group {
+                    margin-bottom: 2px; /* Even smaller margin for mobile */
+                }
+                
+                /* Add extra space after the last form group (confirm password) */
+                #login-modal #signup-form .form-group:last-of-type {
+                    margin-bottom: 4px; /* Extra space before the button */
+                }
+                
+                #login-modal #signup-form .form-group label {
+                    font-size: 0.75rem; /* Even smaller font for mobile */
+                    margin-bottom: 2px; /* Even smaller margin */
+                }
+                
+                #login-modal #signup-form .form-group input {
+                    padding: 8px; /* Even smaller padding for mobile */
+                    font-size: 0.85rem; /* Even smaller font for mobile */
+                }
+                
+                #login-modal #signup-form .login-btn {
+                    margin-top: 8px; /* Increased margin for better spacing */
+                    margin-bottom: 0.2rem; /* Even smaller margin */
+                    padding: 8px; /* Even smaller padding */
+                    font-size: 0.8rem; /* Even smaller font */
                 }
             }
             
             /* Additional mobile styles for very small screens */
             @media (max-width: 360px) {
+                #login-modal.modal-overlay {
+                    padding-top: 70px; /* Slightly less padding for very small screens */
+                }
+                
                 #login-modal .modal-container {
                     width: 98%;
-                    max-height: 85vh;
+                    max-height: calc(100vh - 90px); /* Account for header and padding */
                     margin: 5px;
                 }
                 
                 #login-modal .modal-body {
-                    padding: 0.8rem;
-                    max-height: 85vh;
+                    padding: 0.6rem; /* Reduced padding for very small screens */
+                    height: calc(100vh - 170px); /* Account for header, modal header, and padding */
+                    display: flex;
+                    flex-direction: column;
                 }
                 
                 #login-modal .form-group input {
-                    padding: 14px;
-                    font-size: 16px; /* Prevent zoom on iOS */
+                    padding: 8px; /* Even smaller padding */
+                    font-size: 16px; /* Keep 16px to prevent zoom on iOS */
                 }
                 
                 #login-modal .login-btn {
-                    padding: 16px;
-                    font-size: 1.2rem;
+                    padding: 8px; /* Even smaller padding */
+                    font-size: 0.8rem; /* Even smaller font size */
+                }
+                
+                /* Very small screen specific styles for signup form */
+                #login-modal #signup-form .form-group {
+                    margin-bottom: 1px; /* Minimal margin */
+                }
+                
+                /* Add extra space after the last form group (confirm password) */
+                #login-modal #signup-form .form-group:last-of-type {
+                    margin-bottom: 3px; /* Extra space before the button */
+                }
+                
+                #login-modal #signup-form .form-group label {
+                    font-size: 0.7rem; /* Very small font */
+                    margin-bottom: 1px; /* Minimal margin */
+                }
+                
+                #login-modal #signup-form .form-group input {
+                    padding: 6px; /* Very small padding */
+                    font-size: 16px; /* Keep 16px to prevent zoom */
+                }
+                
+                #login-modal #signup-form .login-btn {
+                    margin-top: 6px; /* Increased margin for better spacing */
+                    margin-bottom: 0.1rem; /* Minimal margin */
+                    padding: 6px; /* Very small padding */
+                    font-size: 0.75rem; /* Very small font */
                 }
             }
         </style>
@@ -587,13 +733,11 @@
                 // Setup signup form event listeners
                 setupSignupFormEventListeners();
                 
-                // Scroll to bottom on mobile to ensure submit button is visible
+                // Ensure form is properly visible without scrolling
                 setTimeout(() => {
-                    if (window.innerWidth <= 480) {
-                        const modalBody = document.querySelector('#login-modal .modal-body');
-                        if (modalBody) {
-                            modalBody.scrollTop = modalBody.scrollHeight;
-                        }
+                    const modalBody = document.querySelector('#login-modal .modal-body');
+                    if (modalBody) {
+                        modalBody.scrollTop = 0; // Always scroll to top
                     }
                 }, 100);
             }
