@@ -1167,6 +1167,7 @@ body.authenticated::before {
     display: inline-block;
     width: auto; /* Allow width to be determined by content */
     text-align: center; /* Center the text */
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Chess quote specific styling - ensure it's always visible */
@@ -1177,6 +1178,7 @@ body.authenticated::before {
     color: #b8b3b3 !important; /* Ensure text color */
     -webkit-text-fill-color: #fff !important; /* Ensure text color on webkit browsers */
     font-style: italic;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 /* Mobile responsive styles for welcome username */
@@ -3025,7 +3027,7 @@ body.authenticated .header {
 
 .feature-heading {
     font-size: 3.8rem;
-    font-weight: 800;
+    font-weight: 900;
     color: #000000; /* Changed to black */
     margin-bottom: 1.5rem;
     line-height: 1.1;
@@ -3037,7 +3039,7 @@ body.authenticated .header {
     color: #000000; /* Changed to black */
     line-height: 1.7;
     margin-bottom: 3rem;
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     font-weight: 400;
 }
 
@@ -3199,6 +3201,7 @@ body.authenticated .header {
 .feature-card h3 {
     position: relative;
     z-index: 10; /* Higher z-index to appear above images */
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .feature-card p {
@@ -3211,7 +3214,7 @@ body.authenticated .header {
     font-size: 0.9rem; /* Smaller font size for description */
     color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
     line-height: 1.4; /* Good line height for readability */
-    font-family: 'NXBaskerville', serif; /* Same font family */
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     text-align: center; /* Center align text */
     position: relative; /* Ensure proper positioning */
     z-index: 10; /* Higher z-index to appear above images */
@@ -3258,10 +3261,10 @@ body.authenticated .header {
 /* Feature card header styling */
 .feature-card h3 {
     font-size: 1.1rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #ffffff; /* Changed to black text */
     margin-bottom: 0.5rem;
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Match feature heading */
     transition: all 0.3s ease; /* Smooth transition for all changes */
     opacity: 1; /* Start fully visible */
     transform: translateY(0); /* Start at normal position */
@@ -3691,7 +3694,7 @@ body.authenticated .header {
     font-size: 2.8rem;
     font-weight: 700;
     margin-bottom: 1.5rem;
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     color: #ab9b87; /* Primary brown color from board brown theme */
 }
 
@@ -3739,7 +3742,7 @@ body.authenticated .header {
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(171, 155, 135, 0.3);
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .skgweb-btn:hover {
@@ -3929,26 +3932,28 @@ body.authenticated .header {
     }
     
     .feature-card {
-        padding: 1rem;
-        height: 160px;
+        padding: 1.5rem;
+        height: 220px; /* Increased height for mobile */
     }
     
     .feature-icon {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 0.8rem;
+        width: 55px; /* Increased size for mobile */
+        height: 55px; /* Increased size for mobile */
+        margin-bottom: 1rem;
     }
     
     .feature-icon i {
-        font-size: 1.1rem;
+        font-size: 1.4rem; /* Increased icon size for mobile */
     }
     
     .feature-card h3 {
-        font-size: 0.95rem;
+        font-size: 1.3rem; /* Increased font size for mobile */
+        font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; /* Match feature heading */
     }
     
     .feature-card p {
-        font-size: 0.8rem;
+        font-size: 1rem; /* Increased font size for mobile */
+        font-family: 'NXBaskerville', serif; /* Original NX Baskerville font */
     }
     
     .feature-cta {
@@ -4084,13 +4089,13 @@ body.authenticated .header {
     font-weight: 700;
     color: #ececec; /* Primary brown color from board brown theme */
     margin-bottom: 1rem;
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .contact-header p {
     font-size: 1.2rem;
     color: #c8c8c8; /* Text dark color from board brown theme */
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .contact-content {
@@ -4147,14 +4152,14 @@ body.authenticated .header {
     font-weight: 700;
     color: #ab9b87; /* Primary brown color from board brown theme */
     margin-bottom: 1rem;
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .contact-card p {
     font-size: 1rem;
     color: #a0a0a0; /* Text dark color from board brown theme */
     line-height: 1.6;
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
 }
 
@@ -4278,6 +4283,7 @@ body.authenticated .header {
     width: 90%;
     max-width: 600px;
     margin: 0 auto;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 .contact-form {
@@ -4297,7 +4303,7 @@ body.authenticated .header {
     font-size: 0.95rem;
     font-weight: 600;
     color: #e6e6e6; /* Primary brown color from board brown theme */
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
 
@@ -4322,7 +4328,7 @@ body.authenticated .header {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-family: 'NXBaskerville', serif;
+    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
