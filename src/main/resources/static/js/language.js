@@ -2,12 +2,12 @@
 const translations = {
     en: {
       titlelang: "skgchess.com - The Greek Chess Platform.",
-      motolang: "The Greek Chess Platform.",
-      ctalang: "Join",
+      motolang: "The first chess platform in Greece.",
+      ctalang: "Play",
       signinlang: "Sign in",
       signuplang: "Sign up",
       signoutlang: "Sign out",
-      fordeveloperslang: "For developers",
+      fordeveloperslang: "Custom Chess Engine",
       contactuslang: "Contact us",
       //
       welcomelang: "Welcome, ",
@@ -33,16 +33,30 @@ const translations = {
       gamechatlang: "Game Chat",
       gamechatmodallang: "Game Chat",
       chatmodalinput: "Type a message...",
-      chatinput: "Type a message..."
+      chatinput: "Type a message...",
+      featureheadinglang : "Ιnspired by Thessaloniki",
+      featuredescriptionlang :  "Historical photos, classical music, and unique themes create an experience where retro meets modern, bringing chess closer to the culture of the city.",
+      card1lang: "Integrated chat",
+      card2lang: "Classical music",
+      card3lang: "Game history",
+      card4lang: "Multiple themes",
+      card5lang: "Mobile functionality",
+      card0descriptionlang: "Without the use of external libraries.",
+      card1descriptionlang: "Chat with other players during games",
+      card2descriptionlang: "Play with classical music in the background.",
+      card3descriptionlang: "Optimize your game with the game history.",
+      card4descriptionlang: "Choose between three themes.",
+      card5descriptionlang: "Play from your computer or mobile.",
+      ixllang: "Created by IXLSTUDIO."
     },
     gr: {
       titlelang: "skgchess.com - Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
-      motolang: "The Greek Chess Platform.",
-      ctalang: "Γίνε Μέλος",  
+      motolang: "Η πρώτη σκακιστική πλατφόρμα στην Ελλάδα.",
+      ctalang: "Παίξε",  
       signinlang: "Σύνδεση",
       signuplang: "Εγγραφή",
       signoutlang: "Αποσύνδεση",
-      fordeveloperslang: "Για προγραμματιστές",
+      fordeveloperslang: "Custom Chess Engine",
       contactuslang: "Επικοινωνήστε μαζί μας",
       //
       welcomelang: "Καλώς ήρθες, ",
@@ -68,7 +82,21 @@ const translations = {
       gamechatlang: "Συνομιλία",
       gamechatmodallang: "Συνομιλία",
       chatmodalinput: "Πληκτρολογήστε ένα μήνυμα...",
-      chatinput: "Πληκτρολογήστε ένα μήνυμα..."
+      chatinput: "Πληκτρολογήστε ένα μήνυμα...",
+      featureheadinglang : "Mε άρωμα Θεσσαλονίκης",
+      featuredescriptionlang : "Ιστορικές φωτογραφίες, κλασική μουσική και μοναδικά θέματα δημιουργούν μια εμπειρία όπου το ρετρό συναντά το μοντέρνο, φέρνοντας το σκάκι πιο κοντά στην κουλτούρα της πόλης.",
+      card1lang: "Ενσωματωμένη συνομιλία",
+      card2lang: "Κλασσική μουσική",
+      card3lang: "Ιστορικό παιχνιδιών",
+      card4lang: "Πολλαπλά θέματα",
+      card5lang: "Λειτουργία σε κινητά",
+      card0descriptionlang: "Χωρίς την χρήση εξωτερικών βιβλιοθηκών.",
+      card1descriptionlang: "Συνομίλησε με άλλους παίκτες κατά τη διάρκεια των παιχνιδιών",
+      card2descriptionlang: "Παίξε με κλασσική μουσική στο παρασκήνιο.",
+      card3descriptionlang: "Βελτιστοποιήσε το παιχνίδι σου με το ιστορικό παιχνιδιών.",
+      card4descriptionlang: "Διάλεξε μεταξύ τριών θεμάτων.",
+      card5descriptionlang: "Παίξε απο υπολογιστή ή κινητό.",
+      ixllang: "Mια δημιουργία του IXLSTUDIO."
     }
   };
   

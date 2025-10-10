@@ -222,12 +222,6 @@
         <div id="burgerMenuOverlayBg" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.45); z-index:3999; transition:opacity 0.2s;" onclick="closeBurgerMenu()"></div>
         <div id="burgerMenuOverlay" style="display:none; position:fixed; top:0; right:0; width:90vw; max-width:400px; height:100vh; background:#fff; z-index:4000; flex-direction:column; justify-content:flex-start; align-items:flex-start; padding:0; box-sizing:border-box; box-shadow:-2px 0 16px rgba(0,0,0,0.08); transition:transform 0.2s;">
             <div class="burger-menu-topbar" style="width:100%; display:flex; align-items:center; justify-content:space-between; padding:20px 24px 12px 24px; box-sizing:border-box; font-size:0.98rem; font-weight:500;">
-                <div style="display:flex; gap:1.2rem; align-items:center;">
-                    <div sec:authorize="!isAuthenticated()">
-                        <a href="#" onclick="openLoginModal(); closeBurgerMenu(); return false;" class="burger-top-link">LOG IN</a>
-                        <a href="#" onclick="alert('Sign up coming soon!'); closeBurgerMenu(); return false;" class="burger-top-link">SIGN UP</a>
-                    </div>
-                </div>
                 <div style="display:flex; gap:0.5rem; align-items:center; font-size:0.98rem;">
                     <span class="burger-lang" data-lang="gr" onclick="updateLanguage('gr'); return false;">GR</span> / 
                     <span class="burger-lang" data-lang="en" onclick="updateLanguage('en'); return false;">EN</span>
@@ -364,15 +358,8 @@
                     <div class="feature-badge">
                         <span>Custom Built</span>
                     </div>
-                    <h2 class="feature-heading">Θεματικό σκάκι από την Θεσσαλονίκη</h2>
-                                          <p class="feature-description">
-                                                     Αναπτυγμένο από το <a href="https://ixlstudio.com" target="_blank" style="color: #ab9b87; text-decoration: underline;">IXL studio</a>, το SKGChess είναι μια διαδικτυακή πλατφόρμα σκακιού που στοχεύει στη δημιουργία μιας ενιαίας κοινότητας για τους σκακιστές της Ελλάδας.
-                           
-                           Η εφαρμογή ενσωματώνει φωτογραφίες της Θεσσαλονίκης, ελληνική γλώσσα, καθώς και μουσική στο παρασκήνιο. 
-                           
-                           Ανακάλυψε παρακάτω όλες τις λειτουργίες και κάνε εγγραφή για να παίξεις με παίκτες από όλη την Ελλάδα.                          
-                      </p>
-                    
+                    <h2 id ="featureheadinglang" class="feature-heading"></h2>
+                    <p id ="featuredescriptionlang" class="feature-description"></p>                    
                     <!-- Dark Mode Toggle Button -->
                     <div class="dark-mode-toggle">
                         <button id="darkModeToggle" class="theme-toggle-btn">
@@ -388,47 +375,47 @@
                                 <i class="fas fa-chess-king"></i>
                             </div>
                             <h3>Custom Engine</h3>
-                            <p>Χωρίς την χρήση εξωτερικών βιβλιοθηκών. Διάβασε περισσότερα <a href="#" onclick="showNewspaper(); return false;" style="color: #ab9b87; text-decoration: underline;">εδώ</a>.</p>
+                            <p id = "card0descriptionlang"></p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-comments"></i>
                             </div>
-                            <h3>Ενσωματωμένο chat</h3>
-                            <p>Συνομίλησε με άλλους παίκτες κατά τη διάρκεια των παιχνιδιών</p>
+                            <h3 id = "card1lang"></h3>
+                            <p id = "card1descriptionlang"></p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-music"></i>
                             </div>
-                            <h3>Κλασσική μουσική</h3>
-                            <p>Παίξε με κλασσική μουσική στο παρασκήνιο.</p>
+                            <h3 id = "card2lang"></h3>
+                            <p id = "card2descriptionlang"></p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-history"></i>
                             </div>
-                            <h3>Ιστορικό παιχνιδιών</h3>
-                            <p>Βελτιστοποιήσε το παιχνίδι σου με το ιστορικό παιχνιδιών.</p>
+                            <h3 id = "card3lang"></h3>
+                            <p id = "card3descriptionlang"></p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-palette"></i>
                             </div>
-                            <h3>Πολλαπλά θέματα</h3>
-                            <p>Διάλεξε μεταξύ τριών θεμάτων ή στείλε μας την δική σου προτίμηση χρωμάτων <a href="#contact-section" style="color: #ab9b87; text-decoration: underline;">εδώ</a>!</p>
+                            <h3 id = "card4lang"></h3>
+                            <p id = "card4descriptionlang"></p>
                         </div>
                         
                         <div class="feature-card">
                             <div class="feature-icon">
                                 <i class="fas fa-mobile-alt"></i>
                             </div>
-                            <h3>Mobile Λειτουργία</h3>
-                            <p>Παίξε απο υπολογιστή ή κινητό!</p>
+                            <h3 id = "card5lang"></h3>
+                            <p id = "card5descriptionlang"></p>
                         </div>
                         
                     </div>
@@ -449,15 +436,11 @@
                     </div>
                 <div class="skgweb-content">
                     <div class="skgweb-info">
-                        <p>By Haris Chatzianastasiou.</p>
+                        <p id="ixllang"></p>
                         <div class="skgweb-contact">
-                            <a href="https://skgweb.dev" target="_blank" class="skgweb-btn">
+                            <a href="https://ixlstudio.com/" target="_blank" class="skgweb-btn">
                                 <i class="fas fa-external-link-alt"></i>
                                 Visit IXL
-                            </a>
-                            <a href="mailto:info@toskaki.gr" class="skgweb-btn" style="margin-left: 1rem;">
-                                <i class="fas fa-envelope"></i>
-                                Επικοινωνία
                             </a>
                         </div>
                     </div>
@@ -465,92 +448,7 @@
             </div>
         </section>
 
-        <!-- Contact & Feedback Section -->
-        <section class="contact-section" id="contact-section" sec:authorize="!isAuthenticated()">
-            <style>
-                /* Form input styling for unauthenticated users - Board Brown Theme */
-                .form-group input,
-                .form-group select,
-                .form-group textarea {
-                    padding: 0.75rem 1rem;
-                    border: 2px solid rgba(255, 255, 255, 0.2);
-                    border-radius: 8px;
-                    font-size: 1rem;
-                    font-family: apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-                    transition: all 0.3s ease;
-                    background: rgba(255, 255, 255, 0.1);
-                    color: #eaeaea;
-                }
-
-                .form-group input:focus,
-                .form-group select:focus,
-                .form-group textarea:focus {
-                    outline: none;
-                    border-color: #ab9b87;
-                    box-shadow: 0 0 0 3px rgba(171, 155, 135, 0.2);
-                    background: rgba(255, 255, 255, 0.15);
-                }
-
-                .form-group input::placeholder,
-                .form-group textarea::placeholder {
-                    color: rgba(244, 244, 244, 0.6);
-                }
-
-                .form-group select option {
-                    background: #1a1625;
-                    color: #dddddd;
-                }
-            </style>
-            <div class="contact-container">
-                <div class="contact-header">
-                    <h3>Βοήθησε να μεγαλώσει το Skg Chess</h3>
-                    <p>Έχεις προτάσεις για την πλατφόρμα; Στείλε μας παρακάτω πως θα μπορούσαμε να την βελτιώσουμε!</p>
-                </div>
-                <div class="contact-content">
-                    
-                    <div class="contact-form-container">
-                        <form class="contact-form" id="contactForm">
-                            <div class="form-group">
-                                <label for="contactName">Όνομα *</label>
-                                <input type="text" id="contactName" name="name" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="contactEmail">Email *</label>
-                                <input type="email" id="contactEmail" name="email" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="contactType">Τύπος *</label>
-                                <select id="contactType" name="type" required>
-                                    <option value="">Επιλογή...</option>
-                                    <option value="suggestion">Προτάσεις για την πλατφόρμα</option>
-                                    <option value="bug-report">Bug Report</option>
-                                    <option value="other">Άλλο</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="contactSubject">Θέμα *</label>
-                                <input type="text" id="contactSubject" name="subject" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="contactMessage">Μήνυμα *</label>
-                                <textarea id="contactMessage" name="message" rows="5" required placeholder="Περιγράψτε την πρότασή ή την παρατήρηση σας..."></textarea>
-                            </div>
-                            
-                            <div class="form-actions">
-                                <button type="submit" class="submit-btn">
-                                    <i class="fas fa-paper-plane"></i>
-                                    Αποστολή Μηνύματος
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
+    
 
         <!-- Footer for Unauthenticated Users -->
         <footer class="site-footer" sec:authorize="!isAuthenticated()">
