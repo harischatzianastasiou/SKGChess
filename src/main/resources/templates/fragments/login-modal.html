@@ -10,31 +10,31 @@
         <div id="login-modal" class="modal-overlay">
             <div class="modal-container">
                 <div class="modal-header">
-                    <h3 class="modal-title">Log in to Chess</h3>
+                    <h3 class="modal-title" id="loginToChess">Log in to Chess</h3>
                     <button class="modal-close">&times;</button>
                 </div>
                 <div class="modal-body">
                     <!-- Google Sign In Button -->
                     <button class="social-login-btn google-btn" onclick="handleGoogleSignIn()">
                         <img src="https://www.google.com/favicon.ico" alt="Google Icon">
-                        Continue with Google
+                        <span id="continueWithGoogle">Continue with Google</span>
                     </button>
 
                     <!-- Divider -->
                     <div class="divider">
                         <span class="divider-line"></span>
-                        <span class="divider-text">or</span>
+                        <span class="divider-text" id="or">or</span>
                         <span class="divider-line"></span>
                     </div>
 
                     <div id="login-form-container" style="display: flex; flex-direction: column; height: 100%;">
                         <form id="login-form" class="login-form" action="/login" method="POST">
                             <div class="form-group">
-                                <label for="modal-username">Email or username</label>
+                                <label for="modal-username" id="emailOrUsername">Email or username</label>
                                 <input type="text" id="modal-username" name="username" placeholder="Email or username" required autocomplete="username">
                             </div>
                             <div class="form-group">
-                                <label for="modal-password">Password</label>
+                                <label for="modal-password" id="password">Password</label>
                                 <div class="password-input">
                                     <input type="password" id="modal-password" name="password" placeholder="Password" required autocomplete="current-password">
                                     <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
@@ -45,17 +45,17 @@
                             <div class="remember-me-row">
                                 <div class="remember-me">
                                     <input type="checkbox" id="modal-remember" name="remember">
-                                    <label for="modal-remember">Remember Me</label>
+                                    <label for="modal-remember" id="rememberMe">Remember Me</label>
                                 </div>
                                 <div id="login-error-container"></div>
                             </div>
-                            <button type="submit" class="login-btn">Log In</button>
+                            <button type="submit" class="login-btn" id="logIn">Log In</button>
                         </form>
                         <div class="modal-switch-msg">
-                            <span>Don't have an account?</span>
-                            <a href="#" class="modal-switch-link" onclick="switchToSignupForm()">Sign up</a>
+                            <span id="dontHaveAccount">Don't have an account?</span>
+                            <a href="#" class="modal-switch-link" onclick="switchToSignupForm()" id="signUp">Sign up</a>
                         </div>
-                        <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
+                        <a href="/forgot-password" class="forgot-password" id="forgotPassword">Forgot your password?</a>
                     </div>
                 </div>
             </div>
@@ -656,26 +656,26 @@
                 return `
                     <form id="signup-form" class="login-form" action="/signup" method="POST">
                         <div class="form-group">
-                            <label for="modal-signup-username">Username</label>
-                            <input type="text" id="modal-signup-username" name="username" placeholder="Choose a username" required>
+                            <label for="modal-signup-username">${getTranslation('username')}</label>
+                            <input type="text" id="modal-signup-username" name="username" placeholder="${getTranslation('chooseUsername')}" required>
                         </div>
                         <div class="form-group">
-                            <label for="modal-signup-email">Email</label>
-                            <input type="email" id="modal-signup-email" name="email" placeholder="Enter your email" required>
+                            <label for="modal-signup-email">${getTranslation('email')}</label>
+                            <input type="email" id="modal-signup-email" name="email" placeholder="${getTranslation('enterEmail')}" required>
                         </div>
                         <div class="form-group">
-                            <label for="modal-signup-password">Password</label>
+                            <label for="modal-signup-password">${getTranslation('password')}</label>
                             <div class="password-input">
-                                <input type="password" id="modal-signup-password" name="password" placeholder="Create a password" required>
+                                <input type="password" id="modal-signup-password" name="password" placeholder="${getTranslation('createPassword')}" required>
                                 <button type="button" class="toggle-password" onclick="toggleSignupPasswordVisibility()">
                                     <img src="/images/eye.svg" alt="Toggle password visibility">
                                 </button>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="modal-signup-confirm-password">Confirm Password</label>
+                            <label for="modal-signup-confirm-password">${getTranslation('confirmPassword')}</label>
                             <div class="password-input">
-                                <input type="password" id="modal-signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
+                                <input type="password" id="modal-signup-confirm-password" name="confirmPassword" placeholder="${getTranslation('confirmYourPassword')}" required>
                                 <button type="button" class="toggle-password" onclick="toggleSignupConfirmPasswordVisibility()">
                                     <img src="/images/eye.svg" alt="Toggle password visibility">
                                 </button>
@@ -693,41 +693,41 @@
                 const modalTitle = document.querySelector('.modal-title');
                 const loginFormContainer = document.getElementById('login-form-container');
                 // Update modal title
-                modalTitle.textContent = 'Sign up for Chess';
+                modalTitle.textContent = getTranslation('signUpForChess');
                 // Replace login form with signup form and switch message
                 loginFormContainer.innerHTML = `
                     <form id="signup-form" class="login-form" action="/signup" method="POST">
                         <div class="form-group">
-                            <label for="modal-signup-username">Username</label>
-                            <input type="text" id="modal-signup-username" name="username" placeholder="Choose a username" required>
+                            <label for="modal-signup-username">${getTranslation('username')}</label>
+                            <input type="text" id="modal-signup-username" name="username" placeholder="${getTranslation('chooseUsername')}" required>
                         </div>
                         <div class="form-group">
-                            <label for="modal-signup-email">Email</label>
-                            <input type="email" id="modal-signup-email" name="email" placeholder="Enter your email" required>
+                            <label for="modal-signup-email">${getTranslation('email')}</label>
+                            <input type="email" id="modal-signup-email" name="email" placeholder="${getTranslation('enterEmail')}" required>
                         </div>
                         <div class="form-group">
-                            <label for="modal-signup-password">Password</label>
+                            <label for="modal-signup-password">${getTranslation('password')}</label>
                             <div class="password-input">
-                                <input type="password" id="modal-signup-password" name="password" placeholder="Create a password" required>
+                                <input type="password" id="modal-signup-password" name="password" placeholder="${getTranslation('createPassword')}" required>
                                 <button type="button" class="toggle-password" onclick="toggleSignupPasswordVisibility()">
                                     <img src="/images/eye.svg" alt="Toggle password visibility">
                                 </button>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="modal-signup-confirm-password">Confirm Password</label>
+                            <label for="modal-signup-confirm-password">${getTranslation('confirmPassword')}</label>
                             <div class="password-input">
-                                <input type="password" id="modal-signup-confirm-password" name="confirmPassword" placeholder="Confirm your password" required>
+                                <input type="password" id="modal-signup-confirm-password" name="confirmPassword" placeholder="${getTranslation('confirmYourPassword')}" required>
                                 <button type="button" class="toggle-password" onclick="toggleSignupConfirmPasswordVisibility()">
                                     <img src="/images/eye.svg" alt="Toggle password visibility">
                                 </button>
                             </div>
                         </div>
-                        <button type="submit" class="login-btn">Sign Up</button>
+                        <button type="submit" class="login-btn">${getTranslation('signUpBtn')}</button>
                     </form>
                     <div class="modal-switch-msg">
-                        <span>Already have an account?</span>
-                        <a href="#" class="modal-switch-link" onclick="switchToLoginForm()">Log in</a>
+                        <span>${getTranslation('alreadyHaveAccount')}</span>
+                        <a href="#" class="modal-switch-link" onclick="switchToLoginForm()">${getTranslation('logInLink')}</a>
                     </div>
                 `;
                 // Setup signup form event listeners
@@ -749,18 +749,18 @@
                 const modalTitle = document.querySelector('.modal-title');
                 const loginFormContainer = document.getElementById('login-form-container');
                 // Update modal title
-                modalTitle.textContent = 'Log in to Chess';
+                modalTitle.textContent = getTranslation('loginToChess');
                 // Replace signup form with login form and switch message
                 loginFormContainer.innerHTML = `
                     <form id="login-form" class="login-form" action="/login" method="POST">
                         <div class="form-group">
-                            <label for="modal-username">Email or username</label>
-                            <input type="text" id="modal-username" name="username" placeholder="Email or username" required autocomplete="username">
+                            <label for="modal-username">${getTranslation('emailOrUsername')}</label>
+                            <input type="text" id="modal-username" name="username" placeholder="${getTranslation('emailOrUsernamePlaceholder')}" required autocomplete="username">
                         </div>
                         <div class="form-group">
-                            <label for="modal-password">Password</label>
+                            <label for="modal-password">${getTranslation('password')}</label>
                             <div class="password-input">
-                                <input type="password" id="modal-password" name="password" placeholder="Password" required autocomplete="current-password">
+                                <input type="password" id="modal-password" name="password" placeholder="${getTranslation('passwordPlaceholder')}" required autocomplete="current-password">
                                 <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
                                     <img src="/images/eye.svg" alt="Toggle password visibility">
                                 </button>
@@ -773,13 +773,13 @@
                             </div>
                             <div id="login-error-container"></div>
                         </div>
-                        <button type="submit" class="login-btn">Log In</button>
-                    </form>
-                    <div class="modal-switch-msg">
-                        <span>Don't have an account?</span>
-                        <a href="#" class="modal-switch-link" onclick="switchToSignupForm()">Sign up</a>
-                    </div>
-                    <a href="/forgot-password" class="forgot-password">Forgot your password?</a>
+                        <button type="submit" class="login-btn">${getTranslation('logIn')}</button>
+                        </form>
+                        <div class="modal-switch-msg">
+                            <span>${getTranslation('dontHaveAccount')}</span>
+                            <a href="#" class="modal-switch-link" onclick="switchToSignupForm()">${getTranslation('signUp')}</a>
+                        </div>
+                        <a href="/forgot-password" class="forgot-password">${getTranslation('forgotPassword')}</a>
                 `;
                 // Setup login form event listeners
                 setupModalEventListeners();
@@ -826,7 +826,7 @@
                                 window.location.href = '/index?login=success';
                             } else {
                                 console.error('Login failed after signup');
-                                alert('Signup successful but login failed. Please try logging in manually.');
+                                alert(getTranslation('signupSuccessful'));
                             }
                         } else {
                             // Handle JSON error response
@@ -838,9 +838,9 @@
                         const errorText = await response.text();
                         console.error('Server returned non-JSON response:', errorText);
                         if (response.status === 403) {
-                            alert('Access denied. Please try again later.');
+                            alert(getTranslation('accessDenied'));
                         } else if (response.status === 400) {
-                            alert('Invalid input. Please check your details and try again.');
+                            alert(getTranslation('invalidInput'));
                         } else {
                             console.error('Error during signup:', errorText);
                         }
@@ -867,20 +867,20 @@
                     
                     // Basic validation
                     if (password !== confirmPassword) {
-                        alert('Passwords do not match');
+                        alert(getTranslation('passwordsDoNotMatch'));
                         return;
                     }
 
                     // Validate username length
                     if (username.length < 3 || username.length > 50) {
-                        alert('Username must be between 3 and 50 characters');
+                        alert(getTranslation('usernameLength'));
                         return;
                     }
 
                     // Validate email format
                     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                     if (!emailRegex.test(email)) {
-                        alert('Please enter a valid email address');
+                        alert(getTranslation('validEmail'));
                         return;
                     }
                     
@@ -943,13 +943,13 @@
                     
                     // Client-side validation
                     if (!username) {
-                        showLoginError('Please enter your username or email');
+                        showLoginError(getTranslation('pleaseEnterUsername'));
                         usernameInput.focus();
                         return;
                     }
                     
                     if (!password) {
-                        showLoginError('Please enter your password');
+                        showLoginError(getTranslation('pleaseEnterPassword'));
                         passwordInput.focus();
                         return;
                     }
@@ -1040,7 +1040,7 @@
                 // Show loading state
                 const loginBtn = document.querySelector('.login-btn');
                 const originalText = loginBtn.textContent;
-                loginBtn.textContent = 'Logging in...';
+                loginBtn.textContent = getTranslation('loggingIn');
                 loginBtn.disabled = true;
                 
                 // Create form data
@@ -1067,14 +1067,14 @@
                         const contentType = response.headers.get('content-type');
                         if (contentType && contentType.includes('application/json')) {
                             const errorData = await response.json();
-                            showLoginError(errorData.message || 'Invalid username or password');
+                            showLoginError(errorData.message || getTranslation('invalidCredentials'));
                         } else {
-                            showLoginError('Invalid username or password');
+                            showLoginError(getTranslation('invalidCredentials'));
                         }
                     }
                 } catch (error) {
                     console.error('Login error:', error);
-                    showLoginError('An error occurred during login. Please try again.');
+                    showLoginError(getTranslation('errorDuringLogin'));
                 } finally {
                     // Restore button state
                     loginBtn.textContent = originalText;
@@ -1122,7 +1122,7 @@
                     window.location.href = '/index';
                 } catch (error) {
                     console.error("Error creating game:", error);
-                    alert(`Error creating game: ${error.message}`);
+                    alert(getTranslation('errorCreatingGame') + error.message);
                     
                     // Clear the pending action
                     sessionStorage.removeItem('pendingAction');

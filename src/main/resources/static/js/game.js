@@ -517,10 +517,10 @@ class ChessGame {
         
         // Show confirmation dialog
         const confirmed = await this.showConfirmationDialog(
-            'Resign Game',
-            'Are you sure you want to resign? This will end the game and your opponent will win.',
-            'Resign',
-            'Cancel'
+            'resignGame',
+            'areYouSureResign',
+            'resign',
+            'cancel'
         );
         
         if (confirmed) {
@@ -547,10 +547,10 @@ class ChessGame {
         
         // Show confirmation dialog
         const confirmed = await this.showConfirmationDialog(
-            'Offer Draw',
-            'Are you sure you want to offer a draw to your opponent?',
-            'Offer Draw',
-            'Cancel'
+            'offerDraw',
+            'areYouSureDraw',
+            'offerDrawBtn',
+            'cancel'
         );
         
         if (confirmed) {
@@ -656,11 +656,11 @@ class ChessGame {
             dialog.className = 'draw-offer-dialog';
             dialog.innerHTML = `
                 <div class="draw-offer-content">
-                    <h3>Draw Offer</h3>
-                    <p>${offeringPlayerUsername} has offered a draw.</p>
+                    <h3>${getTranslation('drawOfferTitle')}</h3>
+                    <p>${offeringPlayerUsername} ${getTranslation('drawOfferMessage')}</p>
                     <div class="draw-offer-buttons">
-                        <button class="btn-accept-draw">Accept Draw</button>
-                        <button class="btn-decline-draw">Decline Draw</button>
+                        <button class="btn-accept-draw">${getTranslation('acceptDraw')}</button>
+                        <button class="btn-decline-draw">${getTranslation('declineDraw')}</button>
                     </div>
                 </div>
             `;
@@ -948,11 +948,11 @@ class ChessGame {
             dialog.className = 'confirmation-dialog';
             dialog.innerHTML = `
                 <div class="confirmation-content">
-                    <h3>${title}</h3>
-                    <p>${message}</p>
+                    <h3>${getTranslation(title)}</h3>
+                    <p>${getTranslation(message)}</p>
                     <div class="confirmation-buttons">
-                        <button class="btn-confirm">${confirmText}</button>
-                        <button class="btn-cancel">${cancelText}</button>
+                        <button class="btn-confirm">${getTranslation(confirmText)}</button>
+                        <button class="btn-cancel">${getTranslation(cancelText)}</button>
                     </div>
                 </div>
             `;
@@ -986,9 +986,9 @@ class ChessGame {
         popup.className = 'error-popup';
         popup.innerHTML = `
             <div class="error-content">
-                <h3>Error</h3>
+                <h3>${getTranslation('errorTitle')}</h3>
                 <p>${message}</p>
-                <button class="btn-ok">OK</button>
+                <button class="btn-ok">${getTranslation('ok')}</button>
             </div>
         `;
         
@@ -2330,7 +2330,7 @@ class ChessGame {
         const popup = document.createElement('div');
         popup.id = 'game-end-popup';
         popup.innerHTML = `
-            <button class="popup-close" id="close-game-end-popup" title="Close">&#10005;</button>
+            <button class="popup-close" id="close-game-end-popup" title="${getTranslation('close')}">&#10005;</button>
             <div class="popup-title">${title}</div>
             <div class="popup-subtitle">${subtitle}</div>
             <div class="popup-players">
@@ -2347,11 +2347,11 @@ class ChessGame {
             <div class="popup-actions">
                 <button id="offer-rematch-btn" class="popup-action-btn btn-rematch">
                     <i class="fas fa-redo"></i>
-                    Offer Rematch
+                    ${getTranslation('offerRematch')}
                 </button>
                 <button id="new-game-btn" class="popup-action-btn btn-new-game">
                     <i class="fas fa-plus"></i>
-                    New Game
+                    ${getTranslation('newGame')}
                 </button>
             </div>
         `;

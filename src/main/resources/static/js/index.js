@@ -325,10 +325,10 @@ function confirmClosePopup(gameId) {
     confirmDialog.className = 'confirm-dialog';
     confirmDialog.innerHTML = `
         <div class="confirm-content">
-            <h4>Cancel Game Creation?</h4>
+            <h4>${getTranslation('cancelGameCreation')}</h4>
             <div class="confirm-buttons">
-                <button class="btn-no" onclick="this.closest('.confirm-dialog').remove()">Keep Waiting</button>
-                <button class="btn-yes" onclick="closeSharePopup('${gameId}')">Cancel Game</button>
+                <button class="btn-no" onclick="this.closest('.confirm-dialog').remove()">${getTranslation('keepCreating')}</button>
+                <button class="btn-yes" onclick="closeSharePopup('${gameId}')">${getTranslation('yesCancel')}</button>
             </div>
         </div>
     `;
@@ -459,7 +459,7 @@ function copyGameId(gameId) {
         // Show success message
         const button = document.querySelector('.copy-btn');
         const originalText = button.innerHTML;
-        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        button.innerHTML = '<i class="fas fa-check"></i> ' + getTranslation('copied');
         button.classList.add('success');
         
         // Reset button after 2 seconds
@@ -493,29 +493,29 @@ function showGameCreationPopup() {
         <div id="gameCreationPopup" class="game-creation-popup">
             <div class="popup-content">
                 <div class="popup-header">
-                    <h3>Create New Game</h3>
+                    <h3>${getTranslation('createNewGameTitle')}</h3>
                     <button class="close-btn" onclick="closeGameCreationPopup()">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="popup-body">
                     <div class="form-group">
-                        <label for="opponentSearch">Search for opponent:</label>
+                        <label for="opponentSearch">${getTranslation('searchForOpponent')}</label>
                         <div class="search-container">
-                            <input type="text" id="opponentSearch" placeholder="Enter username to search..." autocomplete="off">
+                            <input type="text" id="opponentSearch" placeholder="${getTranslation('enterUsernameToSearch')}" autocomplete="off">
                             <div id="searchResults" class="search-results"></div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="timeControl">Time Control:</label>
+                        <label for="timeControl">${getTranslation('timeControl')}</label>
                         <div class="custom-dropdown" id="timeControlDropdown">
                             <div class="dropdown-trigger" id="timeControlTrigger">
-                                <span class="dropdown-text">Select time control</span>
+                                <span class="dropdown-text">${getTranslation('selectTimeControl')}</span>
                                 <i class="fas fa-chevron-down"></i>
                             </div>
                             <div class="dropdown-menu" id="timeControlMenu">
                                 <div class="dropdown-group">
-                                    <div class="dropdown-group-label">Bullet</div>
+                                    <div class="dropdown-group-label">${getTranslation('bullet')}</div>
                                     <div class="dropdown-option" data-value="1|0">1 min</div>
                                     <div class="dropdown-option" data-value="1|1">1 | 1</div>
                                     <div class="dropdown-option" data-value="2|1">2 | 1</div>
@@ -523,7 +523,7 @@ function showGameCreationPopup() {
                                     <div class="dropdown-option" data-value="0.33|1">20 sec | 1</div>
                                 </div>
                                 <div class="dropdown-group">
-                                    <div class="dropdown-group-label">Blitz</div>
+                                    <div class="dropdown-group-label">${getTranslation('blitz')}</div>
                                     <div class="dropdown-option" data-value="3|0">3 min</div>
                                     <div class="dropdown-option" data-value="3|2">3 | 2</div>
                                     <div class="dropdown-option" data-value="5|0">5 min</div>
@@ -531,7 +531,7 @@ function showGameCreationPopup() {
                                     <div class="dropdown-option" data-value="5|2">5 | 2</div>
                                 </div>
                                 <div class="dropdown-group">
-                                    <div class="dropdown-group-label">Rapid</div>
+                                    <div class="dropdown-group-label">${getTranslation('rapid')}</div>
                                     <div class="dropdown-option" data-value="10|0">10 min</div>
                                     <div class="dropdown-option" data-value="10|5">10 | 5</div>
                                     <div class="dropdown-option" data-value="15|10">15 | 10</div>
@@ -544,27 +544,27 @@ function showGameCreationPopup() {
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Your Color:</label>
+                        <label>${getTranslation('yourColor')}</label>
                         <div class="color-selection">
                             <label class="color-option">
                                 <input type="radio" name="playerColor" value="white" checked>
                                 <span class="color-box white-piece">♔</span>
-                                <span>White</span>
+                                <span>${getTranslation('white')}</span>
                             </label>
                             <label class="color-option">
                                 <input type="radio" name="playerColor" value="black">
                                 <span class="color-box black-piece">♚</span>
-                                <span>Black</span>
+                                <span>${getTranslation('black')}</span>
                             </label>
                             <label class="color-option">
                                 <input type="radio" name="playerColor" value="random">
                                 <span class="color-box random-piece">?</span>
-                                <span>Random</span>
+                                <span>${getTranslation('random')}</span>
                             </label>
                         </div>
                     </div>
                     <div class="create-button-container">
-                        <button class="btn-create" onclick="createInvitation()" id="createInvitationBtn" disabled>Send Invitation</button>
+                        <button class="btn-create" onclick="createInvitation()" id="createInvitationBtn" disabled>${getTranslation('sendInvitation')}</button>
                     </div>
                 </div>
             </div>
@@ -1166,13 +1166,13 @@ function loadPendingInvitations(username) {
     if (!invitationsContainer) return;
     
     // Show loading state
-    invitationsContainer.innerHTML = '<div class="loading">Loading invitations...</div>';
+    invitationsContainer.innerHTML = '<div class="loading">' + getTranslation('loadingInvitations') + '</div>';
     
     fetch(`/api/invitations/pending/${username}`)
         .then(response => response.json())
         .then(invitations => {
             if (invitations.length === 0) {
-                invitationsContainer.innerHTML = '<div class="no-invitations">No pending invitations</div>';
+                invitationsContainer.innerHTML = '<div class="no-invitations">' + getTranslation('noPendingInvitations') + '</div>';
             } else {
                 invitationsContainer.innerHTML = invitations.map(invitation => `
                     <div class="invitation-item" data-invitation-id="${invitation.id}">
@@ -1198,7 +1198,7 @@ function loadPendingInvitations(username) {
         })
         .catch(error => {
             
-            invitationsContainer.innerHTML = '<div class="error">Error loading invitations</div>';
+            invitationsContainer.innerHTML = '<div class="error">' + getTranslation('errorLoadingInvitations') + '</div>';
         });
 }
 
@@ -1284,7 +1284,7 @@ function respondToInvitation(invitationId, action) {
             // Check if there are no more invitations and show appropriate message
             const invitationsContainer = document.getElementById('invitationsContainer');
             if (invitationsContainer && invitationsContainer.children.length === 0) {
-                invitationsContainer.innerHTML = '<div class="no-invitations">No pending invitations</div>';
+                invitationsContainer.innerHTML = '<div class="no-invitations">' + getTranslation('noPendingInvitations') + '</div>';
             }
             
             // Redirect to game if gameId is provided (both users should be redirected)
@@ -1311,7 +1311,7 @@ function respondToInvitation(invitationId, action) {
             // Check if there are no more invitations and show appropriate message
             const invitationsContainer = document.getElementById('invitationsContainer');
             if (invitationsContainer && invitationsContainer.children.length === 0) {
-                invitationsContainer.innerHTML = '<div class="no-invitations">No pending invitations</div>';
+                invitationsContainer.innerHTML = '<div class="no-invitations">' + getTranslation('noPendingInvitations') + '</div>';
             }
         }
     })
@@ -1378,7 +1378,7 @@ function showErrorPopup(message) {
         <div class="error-content">
             <i class="fas fa-exclamation-triangle"></i>
             <p>${message}</p>
-            <button onclick="this.parentElement.parentElement.remove()">OK</button>
+            <button onclick="this.parentElement.parentElement.remove()">${getTranslation('ok')}</button>
         </div>
     `;
     
@@ -1413,7 +1413,7 @@ function showSuccessPopup(message) {
         <div class="success-content">
             <i class="fas fa-check-circle"></i>
             <p>${message}</p>
-            <button onclick="this.parentElement.parentElement.remove()">OK</button>
+            <button onclick="this.parentElement.parentElement.remove()">${getTranslation('ok')}</button>
         </div>
     `;
     
@@ -1544,7 +1544,7 @@ function setupOpponentSearch() {
             })
             .catch(error => {
                 
-                searchResults.innerHTML = '<div class="search-error">Error searching users</div>';
+                searchResults.innerHTML = '<div class="search-error">' + getTranslation('errorSearchingUsers') + '</div>';
                 searchResults.style.display = 'block';
             });
     }
@@ -1552,7 +1552,7 @@ function setupOpponentSearch() {
     // Function to display search results
     function displaySearchResults(users) {
         if (users.length === 0) {
-            searchResults.innerHTML = '<div class="no-results">No users found</div>';
+            searchResults.innerHTML = '<div class="no-results">' + getTranslation('noUsersFound') + '</div>';
         } else {
             searchResults.innerHTML = users.map(user => `
                 <div class="search-result-item" data-username="${user.username}">
@@ -2035,8 +2035,8 @@ function showInvitationNotification(message) {
             <i class="fas fa-chess"></i>
             <p>${message}</p>
             <div class="invitation-actions">
-                <button class="btn-view-invitations" onclick="viewInvitations()">View Invitations</button>
-                <button class="btn-dismiss" onclick="this.parentElement.parentElement.parentElement.remove()">Dismiss</button>
+                <button class="btn-view-invitations" onclick="viewInvitations()">${getTranslation('viewInvitations')}</button>
+                <button class="btn-dismiss" onclick="this.parentElement.parentElement.parentElement.remove()">${getTranslation('dismiss')}</button>
             </div>
         </div>
     `;
@@ -2285,9 +2285,9 @@ function checkFormValidity() {
     
     // Update button text based on opponent selection
     if (opponentSelected) {
-        createBtn.textContent = `Send Invitation to ${opponentSearch.value.trim()}`;
+        createBtn.textContent = `${getTranslation('sendInvitationTo')} ${opponentSearch.value.trim()}`;
     } else {
-        createBtn.textContent = 'Send Invitation';
+        createBtn.textContent = getTranslation('sendInvitation');
     }
 }
 

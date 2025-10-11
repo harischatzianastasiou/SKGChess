@@ -608,8 +608,8 @@
 
                                 <!-- Main buttons container for authenticated users -->
                                 <div class="main-buttons-container auth-buttons">
-                                    <a href="#" onclick="newGame(); return false;" class="main-button get-started">New Game</a>
-                                    <a href="#" onclick="showJoinGameDialog(); return false;" class="main-button about">Join Game</a>
+                                    <a id="newGameLang" href="#" onclick="newGame(); return false;" class="main-button get-started"></a>
+                                    <a id="joinGameLang" href="#" onclick="showJoinGameDialog(); return false;" class="main-button about"></a>
                                     <a th:if="${recentGames.size() ge 1}" href="#all-games-section" class="main-button about" id="viewallgameslang"></a>
                                 </div>
                             </div>
