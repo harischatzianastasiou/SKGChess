@@ -21,11 +21,11 @@
     <!-- <link rel="stylesheet" href="/css/scroll-animations.css"> -->
     <link rel="stylesheet" href="/css/theme-switcher.css">
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="/images/toskaki.png">
+    <link rel="icon" type="image/png" href="/images/skgchess.png">
     
     <!-- Preload critical assets -->
     <link rel="preload" href="/images/bnwthess.jpg" as="image">
-    <link rel="preload" href="/images/toskaki.png" as="image">
+    <link rel="preload" href="/images/skgchess.png" as="image">
     
     <!-- Preload feature section images for smooth hover effects -->
     <link rel="preload" href="/images/chess-engine.jpg" as="image">
@@ -335,8 +335,7 @@
             <!-- Main content area -->
             <main class="welcome-main">
                 <div class="welcome-icon">
-                    <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" style="width: 300px; height: auto;" />   
-                    <img src="/images/ixl2.png" alt="skgweb logo" style="width: 160px; height: auto; margin-top: 45px;" />                 
+                    <img src="/images/skgchess.png" alt="SKG Chess Logo" loading="eager" style="width: 300px; height: auto;" />   
                     <div class="spacer" style="height: 2rem;"></div>
                 </div>
                 <!-- Main heading / welcome quote -->
@@ -354,16 +353,13 @@
             <div class="feature-container">
                 <!-- Left Column - Text Content -->
                 <div class="feature-content">
-                    <div class="feature-badge">
-                        <span>Custom Built</span>
-                    </div>
                     <h2 id ="featureheadinglang" class="feature-heading"></h2>
                     <p id ="featuredescriptionlang" class="feature-description"></p>                    
                     <!-- Dark Mode Toggle Button -->
                     <div class="dark-mode-toggle">
                         <button id="darkModeToggle" class="theme-toggle-btn">
                             <i class="fas fa-moon" id="darkModeIcon"></i>
-                            <span id="darkModeText">Dark Mode</span>
+                            <span id="darkModeText"></span>
                         </button>
                     </div>
 
@@ -373,7 +369,7 @@
                             <div class="feature-icon">
                                 <i class="fas fa-chess-king"></i>
                             </div>
-                            <h3>Custom Engine</h3>
+                            <h3 id="card0lang"></h3>
                             <p id = "card0descriptionlang"></p>
                         </div>
                         
@@ -438,8 +434,8 @@
                         <p id="ixllang"></p>
                         <div class="skgweb-contact">
                             <a href="https://ixlstudio.com/" target="_blank" class="skgweb-btn">
-                                <i class="fas fa-external-link-alt"></i>
-                                Visit IXL
+                                <i class="fas fa-external-link-alt"><span id = "visitIXLSTUDIOlang" style="none"></span></i>
+                                
                             </a>
                         </div>
                     </div>
@@ -500,7 +496,7 @@
 
                 <div class="hero-content" sec:authorize="isAuthenticated()">
                     <div class="welcome-icon">
-                        <img src="/images/toskaki.png" alt="SKG Chess Logo" loading="eager" />
+                        <img src="/images/skgchess.png" alt="SKG Chess Logo" loading="eager" />
                     </div>
                     <!-- In the authenticated hero heading, replace the username and pencil with a flex row -->
                     <h1 class="username-row"><span id="welcomelang"></span><span id="username-display" sec:authentication="name" data-username="true" th:attr="data-changes-left=${user.usernameChangesLeft}"></span><span id="edit-username-btn" style="cursor:pointer; margin-left:8px; display:inline-block; font-size:0.5em; vertical-align:middle;" title="Edit Username"><i class="fas fa-pen"></i></span></h1>
@@ -659,7 +655,7 @@
     <!-- Join Game Dialog -->
     <div id="joinGameDialog" class="join-game-popup">
         <div class="popup-header">
-            <img src="/images/toskaki.png" alt="SKGChess Logo" class="popup-header-logo" style="width: 120px; height: auto;">
+            <img src="/images/skgchess.png" alt="SKGChess Logo" class="popup-header-logo" style="width: 120px; height: auto;">
             <button class="close-btn" onclick="closeJoinGameDialog()">
                 <i class="fas fa-times"></i>
             </button>
@@ -1057,10 +1053,8 @@
             function updateToggleButton(theme) {
                 if (theme === 'light') {
                     darkModeIcon.className = 'fas fa-sun';
-                    darkModeText.textContent = 'Light Mode';
                 } else {
                     darkModeIcon.className = 'fas fa-moon';
-                    darkModeText.textContent = 'Dark Mode';
                 }
             }
         });
