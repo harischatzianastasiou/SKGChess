@@ -704,7 +704,9 @@ function createGameWithOptions() {
     .then(response => {
         if (!response.ok) {
             return response.json().then(errorData => {
-                showErrorPopup(errorData.message);
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message);
+                showErrorPopup(translatedMessage);
                 throw new Error(errorData.message);
             });
         }
@@ -751,7 +753,9 @@ function joinGame(gameId) {
         
         if (!response.ok) {
             return response.json().then(errorData => {
-                showErrorPopup(errorData.message);
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message);
+                showErrorPopup(translatedMessage);
                 throw new Error(errorData.message);
             });
         }
@@ -1181,15 +1185,15 @@ function loadPendingInvitations(username) {
                             <span class="invitation-time">${invitation.timeControlMinutes} min</span>
                         </div>
                         <div class="invitation-details">
-                            <span class="invitation-text">invited you to a game</span>
-                            <span class="invitation-color">(You will play as ${invitation.playerColor === 'white' ? 'black' : invitation.playerColor === 'black' ? 'white' : 'random'})</span>
+                            <span class="invitation-text">${getTranslation('invitationToGame')} ${getTimeControlTranslation(invitation.timeControlMinutes)}</span>
+                            <span class="invitation-color">(${getColorTranslation(invitation.playerColor === 'white' ? 'black' : invitation.playerColor === 'black' ? 'white' : 'random')})</span>
                         </div>
                         <div class="invitation-actions">
                             <button class="btn-accept" onclick="respondToInvitation('${invitation.id}', 'accept')">
-                                <i class="fas fa-check"></i> Accept
+                                <i class="fas fa-check"></i> ${getTranslation('accept')}
                             </button>
                             <button class="btn-decline" onclick="respondToInvitation('${invitation.id}', 'decline')">
-                                <i class="fas fa-times"></i> Decline
+                                <i class="fas fa-times"></i> ${getTranslation('decline')}
                             </button>
                         </div>
                     </div>
@@ -1264,7 +1268,9 @@ function respondToInvitation(invitationId, action) {
                     invitationElement.style.pointerEvents = 'auto';
                 }
                 
-                showErrorPopup(errorData.message);
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message);
+                showErrorPopup(translatedMessage);
                 throw new Error(errorData.message);
             });
         }
@@ -1273,7 +1279,7 @@ function respondToInvitation(invitationId, action) {
     .then(data => {
         // Handle successful response
         if (action === 'accept') {
-            showSuccessPopup('Invitation accepted! Redirecting to game...');
+            showSuccessPopup(getTranslation('invitationAccepted') + '! ' + getTranslation('redirectingToGame'));
             
             // Remove the invitation from the UI immediately
             const invitationElement = document.querySelector(`[data-invitation-id="${invitationId}"]`);
@@ -1301,7 +1307,7 @@ function respondToInvitation(invitationId, action) {
                 }, 2000);
             }
         } else {
-            showSuccessPopup('Invitation declined');
+            showSuccessPopup(getTranslation('invitationDeclined'));
             // Remove the declined invitation from the UI immediately
             const invitationElement = document.querySelector(`[data-invitation-id="${invitationId}"]`);
             if (invitationElement) {
@@ -1413,7 +1419,7 @@ function showSuccessPopup(message) {
         <div class="success-content">
             <i class="fas fa-check-circle"></i>
             <p>${message}</p>
-            <button onclick="this.parentElement.parentElement.remove()">${getTranslation('ok')}</button>
+            <button onclick="this.parentElement.parentElement.remove()">${getTranslation('okButton')}</button>
         </div>
     `;
     
@@ -1636,7 +1642,9 @@ function createInvitation() {
     .then(response => {
         if (!response.ok) {
             return response.json().then(errorData => {
-                showErrorPopup(errorData.message);
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message);
+                showErrorPopup(translatedMessage);
                 throw new Error(errorData.message);
             });
         }
@@ -1644,7 +1652,7 @@ function createInvitation() {
     })
     .then(data => {
         if (!data) return; // Return if we showed an error popup
-        showSuccessPopup(`Invitation sent to ${opponentUsername}! You will be redirected to the game page once they join.`);
+        showSuccessPopup(`${getTranslation('invitationSent')} ${opponentUsername}! ${getTranslation('youWillBeRedirected')}.`);
     })
     .catch(error => {
         // Don't show another error popup here since we already showed one in the response handling
@@ -1683,7 +1691,7 @@ function showInvitationReceivedNotification(notification) {
     const playerColor = notification.playerColor === 'white' ? 'black' : 
                       notification.playerColor === 'black' ? 'white' : 'random';
     
-    const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
+    const message = `${getTranslation('from')} ${inviterName}: ${getTranslation('invitationToGame')} ${getTimeControlTranslation(timeControl)} (${getColorTranslation(playerColor)})`;
     
     // Play notification sound for real-time invitations
     playNotificationSound();
@@ -1794,15 +1802,15 @@ function showInvitationAcceptedNotification(notification) {
     let message;
     if (currentUsername === notification.inviterUsername) {
         // Current user is the inviter
-        message = `${notification.inviteeUsername} accepted your invitation!`;
+        message = `${notification.inviteeUsername} ${getTranslation('invitationAccepted').toLowerCase()}!`;
         
     } else if (currentUsername === notification.inviteeUsername) {
         // Current user is the invitee
-        message = `You accepted ${notification.inviterUsername}'s invitation!`;
+        message = `You ${getTranslation('invitationAccepted').toLowerCase()} ${notification.inviterUsername}'s invitation!`;
         
     } else {
         // Fallback message
-        message = `Invitation accepted! Game is ready.`;
+        message = `${getTranslation('invitationAccepted')}! Game is ready.`;
         
     }
     
@@ -1933,7 +1941,7 @@ function checkForNewInvitations(username) {
                     const playerColor = invitation.playerColor === 'white' ? 'black' : 
                                       invitation.playerColor === 'black' ? 'white' : 'random';
                     
-                    const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
+                    const message = `${getTranslation('from')} ${inviterName}: ${getTranslation('invitationToGame')} ${getTimeControlTranslation(timeControl)} (${getColorTranslation(playerColor)})`;
                     
                     // Play notification sound for new invitations
                     playNotificationSound();
@@ -1960,7 +1968,7 @@ function checkForAcceptedInvitations(username) {
             );
             
             if (acceptedInvitation) {
-                showSuccessPopup('Your invitation was accepted! Redirecting to game...');
+                showSuccessPopup(`${getTranslation('invitationAccepted')}! ${getTranslation('redirectingToGame')}`);
                 
                 // Delete the invitation after 3 seconds
                 setTimeout(() => {
@@ -2008,7 +2016,7 @@ function checkForPendingInvitationsOnLoad() {
                         const playerColor = invitation.playerColor === 'white' ? 'black' : 
                                           invitation.playerColor === 'black' ? 'white' : 'random';
                         
-                        const message = `${inviterName} invited you to a ${timeControl}-minute game! (You will play as ${playerColor} color)`;
+                        const message = `${getTranslation('from')} ${inviterName}: ${getTranslation('invitationToGame')} ${getTimeControlTranslation(timeControl)} (${getColorTranslation(playerColor)})`;
                         showInvitationNotification(message);
                     }, index * 2000); // 2 second delay between each notification
                 });

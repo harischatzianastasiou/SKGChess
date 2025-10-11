@@ -154,7 +154,69 @@ const translations = {
       signupSuccessful: "Signup successful but login failed. Please try logging in manually.",
       accessDenied: "Access denied. Please try again later.",
       invalidInput: "Invalid input. Please check your details and try again.",
-      errorCreatingGame: "Error creating game:"
+      errorCreatingGame: "Error creating game:",
+      // Invitation notifications
+      invitedYouToGame: "invited you to a",
+      minuteGame: "minute game!",
+      youWillPlayAs: "You will play as",
+      color: "color",
+      youWillBeRedirected: "You will be redirected to the page when it is accepted",
+      // Notification format
+      from: "From",
+      invitationToGame: "Invitation to",
+      // Time control strings
+      minute: "minute",
+      minutes: "minute",
+      second: "second",
+      seconds: "seconds",
+      // Game results
+      youWon: "You won",
+      youLost: "You lost",
+      gameEndedInDraw: "Game ended in draw",
+      byResignation: "by resignation",
+      byCheckmate: "by checkmate",
+      byTimeout: "by timeout",
+      // Match success/error messages
+      matchCreatedSuccessfully: "Match created successfully",
+      matchJoinedSuccessfully: "Match joined successfully",
+      matchCreationFailed: "Match creation failed",
+      matchJoinFailed: "Match join failed",
+      invitationSent: "Invitation sent successfully to ",
+      invitationAccepted: "Invitation accepted",
+      invitationDeclined: "Invitation declined",
+      // Additional invitation strings
+      accept: "Accept",
+      decline: "Decline",
+      // Redirect messages
+      redirectingToGame: "Redirecting to game...",
+      // Invitation error messages
+      cannotInviteYourself: "You cannot invite yourself to a game",
+      alreadyHaveActiveGame: "You already have an active game",
+      opponentHasActiveGame: "The opponent already has an active game",
+      pendingInvitationExists: "You already have a pending invitation with this user",
+      invitationNotFound: "Invitation not found",
+      canOnlyRespondToYourInvitations: "You can only respond to invitations sent to you",
+      invitationNoLongerPending: "This invitation is no longer pending",
+      invitationExpired: "This invitation has expired",
+      invalidAction: "Invalid action. Use 'accept' or 'decline'",
+      canOnlyCancelYourInvitations: "You can only cancel invitations you sent",
+      // Game error messages
+      canOnlyResignWhenInProgress: "You can only resign when the game is in progress",
+      canOnlyOfferDrawWhenInProgress: "You can only offer a draw when the game is in progress",
+      canOnlyOfferDrawOnYourTurn: "You can only offer a draw on your turn",
+      failedToResignGame: "Failed to resign game",
+      failedToOfferDraw: "Failed to offer draw",
+      failedToRespondToDrawOffer: "Failed to respond to draw offer",
+      failedToOfferRematch: "Failed to offer rematch",
+      failedToRespondToRematchOffer: "Failed to respond to rematch offer",
+      // Game success messages
+      rematchOfferSent: "Rematch offer sent to your opponent",
+      drawOfferSent: "Draw offer sent to your opponent",
+      gameResignedSuccessfully: "Game resigned successfully",
+      rematchAccepted: "Rematch accepted",
+      // Popup button translations
+      successTitle: "Success",
+      okButton: "OK"
     },
     gr: {
       titlelang: "skgchess.com - Το σκάκι της Θεσσαλονίκης",
@@ -256,7 +318,7 @@ const translations = {
       login: "Σύνδεση",
       // Invitation popup
       gameInvitation: "Πρόσκληση Παιχνιδιού",
-      hasInvitedYou: "σας προσκάλεσε να παίξετε ένα παιχνίδι",
+      hasInvitedYou: "Σας προσκάλεσε να παίξετε ένα παιχνίδι",
       accept: "Αποδοχή",
       decline: "Απόρριψη",
       // Login/Signup modal
@@ -310,7 +372,73 @@ const translations = {
       signupSuccessful: "Η εγγραφή ήταν επιτυχής αλλά η σύνδεση απέτυχε. Παρακαλώ συνδεθείτε χειροκίνητα.",
       accessDenied: "Απαγορεύεται η πρόσβαση. Παρακαλώ δοκιμάστε αργότερα.",
       invalidInput: "Μη έγκυρα δεδομένα. Παρακαλώ ελέγξτε τα στοιχεία σας και δοκιμάστε ξανά.",
-      errorCreatingGame: "Σφάλμα δημιουργίας παιχνιδιού:"
+      errorCreatingGame: "Σφάλμα δημιουργίας παιχνιδιού:",
+      // Invitation notifications
+      invitedYouToGame: "Σας προσκάλεσε σε παιχνίδι",
+      minuteGame: "λεπτό παιχνίδι!",
+      youWillPlayAs: "Θα παίξετε ως",
+      color: "χρώμα",
+      youWillBeRedirected: "Θα μεταβείτε στο παιχνίδι όταν γίνει αποδεκτή",
+      // Notification format
+      from: "Από",
+      invitationToGame: "Πρόσκληση σε παιχνίδι",
+      // Time control strings
+      minute: "λεπτού",
+      minutes: "λεπτών",
+      second: "δευτερόλεπτο",
+      seconds: "δευτερόλεπτα",
+      // Color translations for Greek
+      white: "άσπρα",
+      black: "μαύρα",
+      random: "τυχαίο",
+      // Game results
+      youWon: "Κερδίσατε",
+      youLost: "Χάσατε",
+      gameEndedInDraw: "Το παιχνίδι έληξε ισόπαλο",
+      byResignation: "λόγω παραίτησης",
+      byCheckmate: "λόγω ματ",
+      byTimeout: "λόγω χρόνου",
+      // Match success/error messages
+      matchCreatedSuccessfully: "Το παιχνίδι δημιουργήθηκε επιτυχώς",
+      matchJoinedSuccessfully: "Συμμετείχατε επιτυχώς στο παιχνίδι",
+      matchCreationFailed: "Αποτυχία δημιουργίας παιχνιδιού",
+      matchJoinFailed: "Αποτυχία συμμετοχής στο παιχνίδι",
+      invitationSent: "Η πρόσκληση στάλθηκε επιτυχώς στον ",
+      invitationAccepted: "Η πρόσκληση αποδέχτηκε",
+      invitationDeclined: "Η πρόσκληση απορρίφθηκε",
+      // Additional invitation strings
+      accept: "Αποδοχή",
+      decline: "Απόρριψη",
+      // Redirect messages
+      redirectingToGame: "Μετάβαση στο παιχνίδι...",
+      // Invitation error messages
+      cannotInviteYourself: "Δεν μπορείτε να προσκαλέσετε τον εαυτό σας σε παιχνίδι",
+      alreadyHaveActiveGame: "Έχετε ήδη ένα ενεργό παιχνίδι",
+      opponentHasActiveGame: "Ο αντίπαλος έχει ήδη ένα ενεργό παιχνίδι",
+      pendingInvitationExists: "Έχετε ήδη μια εκκρεμή πρόσκληση με αυτόν τον χρήστη",
+      invitationNotFound: "Η πρόσκληση δεν βρέθηκε",
+      canOnlyRespondToYourInvitations: "Μπορείτε να απαντήσετε μόνο σε προσκλήσεις που σας απευθύνονται",
+      invitationNoLongerPending: "Αυτή η πρόσκληση δεν είναι πλέον εκκρεμής",
+      invitationExpired: "Αυτή η πρόσκληση έχει λήξει",
+      invalidAction: "Μη έγκυρη ενέργεια. Χρησιμοποιήστε 'αποδοχή' ή 'απόρριψη'",
+      canOnlyCancelYourInvitations: "Μπορείτε να ακυρώσετε μόνο τις προσκλήσεις που στείλατε",
+      // Game error messages
+      canOnlyResignWhenInProgress: "Μπορείτε να παραιτηθείτε μόνο όταν το παιχνίδι είναι σε εξέλιξη",
+      canOnlyOfferDrawWhenInProgress: "Μπορείτε να προτείνετε ισοπαλία μόνο όταν το παιχνίδι είναι σε εξέλιξη",
+      canOnlyOfferDrawOnYourTurn: "Μπορείτε να προτείνετε ισοπαλία μόνο στην σειρά σας",
+      failedToResignGame: "Αποτυχία παραίτησης παιχνιδιού",
+      failedToOfferDraw: "Αποτυχία πρότασης ισοπαλίας",
+      failedToRespondToDrawOffer: "Αποτυχία απάντησης στην πρόταση ισοπαλίας",
+      failedToOfferRematch: "Αποτυχία πρότασης επανάληψης",
+      failedToRespondToRematchOffer: "Αποτυχία απάντησης στην πρόταση επανάληψης",
+      // Game success messages
+      rematchOfferSent: "Η πρόταση επανάληψης στάλθηκε στον αντίπαλό σας",
+      drawOfferSent: "Η πρόταση ισοπαλίας στάλθηκε στον αντίπαλό σας",
+      gameResignedSuccessfully: "Το παιχνίδι παραιτήθηκε επιτυχώς",
+      rematchAccepted: "Η επανάληψη αποδέχτηκε",
+      // Popup button translations
+      successTitle: "Επιτυχία",
+      okButton: "Εντάξει"
     }
   };
   
@@ -318,6 +446,104 @@ const translations = {
   function getTranslation(key) {
     const lang = localStorage.getItem('lang') || 'gr';
     return translations[lang][key] || key;
+  }
+
+  // 3. Function to translate backend error messages
+  function translateErrorMessage(errorMessage) {
+    // Map backend error messages to translation keys
+    const errorMappings = {
+      // Invitation errors
+      "You cannot invite yourself to a game": "cannotInviteYourself",
+      "You already have an active game": "alreadyHaveActiveGame", 
+      "The opponent already has an active game": "opponentHasActiveGame",
+      "You already have a pending invitation with this user": "pendingInvitationExists",
+      "Invitation not found": "invitationNotFound",
+      "You can only respond to invitations sent to you": "canOnlyRespondToYourInvitations",
+      "This invitation is no longer pending": "invitationNoLongerPending",
+      "This invitation has expired": "invitationExpired",
+      "Invalid action. Use 'accept' or 'decline'": "invalidAction",
+      "You can only cancel invitations you sent": "canOnlyCancelYourInvitations",
+      // Game errors
+      "You can only resign when the game is in progress": "canOnlyResignWhenInProgress",
+      "You can only offer a draw when the game is in progress": "canOnlyOfferDrawWhenInProgress",
+      "You can only offer a draw on your turn": "canOnlyOfferDrawOnYourTurn",
+      "Failed to resign game": "failedToResignGame",
+      "Failed to offer draw": "failedToOfferDraw",
+      "Failed to respond to draw offer": "failedToRespondToDrawOffer",
+      "Failed to offer rematch": "failedToOfferRematch",
+      "Failed to respond to rematch offer": "failedToRespondToRematchOffer"
+    };
+    
+    // Check if we have a translation for this error message
+    const translationKey = errorMappings[errorMessage];
+    if (translationKey) {
+      return getTranslation(translationKey);
+    }
+    
+    // If no translation found, return the original message
+    return errorMessage;
+  }
+
+  // 3. Function to get color translation for Greek
+  function getColorTranslation(color) {
+    const lang = localStorage.getItem('lang') || 'gr';
+    
+    if (lang === 'gr') {
+      // Greek: "Θα παίξετε με τα άσπρα/μαύρα"
+      if (color === 'white') {
+        return `Θα παίξετε με τα ${getTranslation('white')}`;
+      } else if (color === 'black') {
+        return `Θα παίξετε με τα ${getTranslation('black')}`;
+      } else {
+        return `Θα παίξετε με ${getTranslation('random')} χρώμα`;
+      }
+    } else {
+      // English: "You will play as white/black color"
+      return `${getTranslation('youWillPlayAs')} ${color} ${getTranslation('color')}`;
+    }
+  }
+
+  // 4. Function to get time control translation
+  function getTimeControlTranslation(timeControl) {
+    const lang = localStorage.getItem('lang') || 'gr';
+    
+    // Check if it's seconds (contains 'sec' or is less than 1 minute)
+    if (timeControl.toString().includes('sec') || timeControl < 1) {
+      const seconds = Math.round(timeControl * 60); // Convert to seconds
+      if (lang === 'gr') {
+        // Greek: "30 δευτερόλεπτα" (no "παιχνίδι" at the end)
+        if (seconds === 1) {
+          return `${seconds} ${getTranslation('second')}`;
+        } else {
+          return `${seconds} ${getTranslation('seconds')}`;
+        }
+      } else {
+        // English: "30 seconds game"
+        if (seconds === 1) {
+          return `${seconds} ${getTranslation('second')} game`;
+        } else {
+          return `${seconds} ${getTranslation('seconds')} game`;
+        }
+      }
+    } else {
+      // It's minutes
+      const minutes = Math.round(timeControl);
+      if (lang === 'gr') {
+        // Greek: "5 λεπτών" (no "παιχνίδι" at the end)
+        if (minutes === 1) {
+          return `${minutes} ${getTranslation('minute')}`;
+        } else {
+          return `${minutes} ${getTranslation('minutes')}`;
+        }
+      } else {
+        // English: "5 minutes game"
+        if (minutes === 1) {
+          return `${minutes} ${getTranslation('minute')} game`;
+        } else {
+          return `${minutes} ${getTranslation('minutes')} game`;
+        }
+      }
+    }
   }
 
   // 3. Function to update all translatable areas

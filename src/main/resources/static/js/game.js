@@ -509,7 +509,7 @@ class ChessGame {
     async handleResignClick() {
         // Check if game is in progress
         if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
-            this.showErrorPopup('You can only resign when the game is in progress');
+            this.showErrorPopup(getTranslation('canOnlyResignWhenInProgress'));
             return;
         }
         
@@ -535,13 +535,13 @@ class ChessGame {
     async handleDrawClick() {
         // Check if game is in progress
         if (this.gameStatus !== 'IN_PROGRESS' && this.gameStatus !== 'CHECK') {
-            this.showErrorPopup('You can only offer a draw when the game is in progress');
+            this.showErrorPopup(getTranslation('canOnlyOfferDrawWhenInProgress'));
             return;
         }
         
         // Check if it's the player's turn (they can only offer draw on their turn)
         if (!this.isPlayerTurn) {
-            this.showErrorPopup('You can only offer a draw on your turn');
+            this.showErrorPopup(getTranslation('canOnlyOfferDrawOnYourTurn'));
             return;
         }
         
@@ -581,7 +581,9 @@ class ChessGame {
             
             if (!response.ok) {
                 const errorData = await response.json();
-                this.showErrorPopup(errorData.message || 'Failed to resign game');
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message) || 'Failed to resign game';
+                this.showErrorPopup(translatedMessage);
                 return;
             }
             
@@ -590,7 +592,7 @@ class ChessGame {
             
         } catch (error) {
             console.error('Error resigning game:', error);
-            this.showErrorPopup('Failed to resign game. Please try again.');
+            this.showErrorPopup(getTranslation('failedToResignGame') + '. Please try again.');
         }
     }
 
@@ -617,7 +619,9 @@ class ChessGame {
             
             if (!response.ok) {
                 const errorData = await response.json();
-                this.showErrorPopup(errorData.message || 'Failed to offer draw');
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message) || 'Failed to offer draw';
+                this.showErrorPopup(translatedMessage);
                 return;
             }
             
@@ -626,7 +630,7 @@ class ChessGame {
             
         } catch (error) {
             console.error('Error offering draw:', error);
-            this.showErrorPopup('Failed to offer draw. Please try again.');
+            this.showErrorPopup(getTranslation('failedToOfferDraw') + '. Please try again.');
         }
     }
 
@@ -716,7 +720,9 @@ class ChessGame {
             
             if (!response.ok) {
                 const errorData = await response.json();
-                this.showErrorPopup(errorData.message || 'Failed to respond to draw offer');
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message) || 'Failed to respond to draw offer';
+                this.showErrorPopup(translatedMessage);
                 return;
             }
             
@@ -725,7 +731,7 @@ class ChessGame {
             
         } catch (error) {
             console.error('Error responding to draw offer:', error);
-            this.showErrorPopup('Failed to respond to draw offer. Please try again.');
+            this.showErrorPopup(getTranslation('failedToRespondToDrawOffer') + '. Please try again.');
         }
     }
 
@@ -757,7 +763,9 @@ class ChessGame {
                 if (gameEndPopup) {
                     gameEndPopup.remove();
                 }
-                this.showErrorPopup(errorData.message || 'Failed to offer rematch');
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message) || 'Failed to offer rematch';
+                this.showErrorPopup(translatedMessage);
                 return;
             }
             
@@ -771,11 +779,11 @@ class ChessGame {
             console.log('Rematch offer sent successfully');
             
             // Show success feedback to user (not as error popup)
-            this.showSuccessMessage('Rematch offer sent to your opponent');
+            this.showSuccessMessage(getTranslation('rematchOfferSent'));
             
         } catch (error) {
             console.error('Error offering rematch:', error);
-            this.showErrorPopup('Failed to offer rematch. Please try again.');
+            this.showErrorPopup(getTranslation('failedToOfferRematch') + '. Please try again.');
         }
     }
 
@@ -920,7 +928,9 @@ class ChessGame {
             
             if (!response.ok) {
                 const errorData = await response.json();
-                this.showErrorPopup(errorData.message || 'Failed to respond to rematch offer');
+                // Translate the error message before showing it
+                const translatedMessage = translateErrorMessage(errorData.message) || 'Failed to respond to rematch offer';
+                this.showErrorPopup(translatedMessage);
                 return;
             }
             
@@ -929,7 +939,7 @@ class ChessGame {
             
         } catch (error) {
             console.error('Error responding to rematch offer:', error);
-            this.showErrorPopup('Failed to respond to rematch offer. Please try again.');
+            this.showErrorPopup(getTranslation('failedToRespondToRematchOffer') + '. Please try again.');
         }
     }
 
@@ -1012,9 +1022,9 @@ class ChessGame {
         popup.className = 'success-popup';
         popup.innerHTML = `
             <div class="success-content">
-                <h3>Success</h3>
+                <h3>${getTranslation('successTitle')}</h3>
                 <p>${message}</p>
-                <button class="btn-ok">OK</button>
+                <button class="btn-ok">${getTranslation('okButton')}</button>
             </div>
         `;
         
@@ -1411,7 +1421,7 @@ class ChessGame {
                                     
                                     // Redirect to new game
                                     if (moveData.newGameId) {
-                                        this.showSuccessMessage('Rematch accepted! Redirecting to new game...');
+                                        this.showSuccessMessage(getTranslation('rematchAccepted') + '! ' + getTranslation('redirectingToGame'));
                                         setTimeout(() => {
                                             window.location.href = `/games/${moveData.newGameId}`;
                                         }, 2000);
