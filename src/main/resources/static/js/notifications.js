@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check for logout parameter
     if (urlParams.has('logout')) {
-        showNotification('You have been successfully logged out', 'success');
+        showNotification(getTranslation('successfullyLoggedOut'), 'success');
         // Clean up the URL
         window.history.replaceState({}, document.title, window.location.pathname);
     }
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check for login parameter
     if (urlParams.has('login')) {
         console.log('Login parameter found');
-        showNotification('Successfully logged in', 'success');
+        showNotification(getTranslation('successfullyLoggedIn'), 'success');
         // Clean up the URL
         window.history.replaceState({}, document.title, window.location.pathname);
     }

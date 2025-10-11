@@ -247,6 +247,7 @@ body {
   margin: 0 auto; /* Center horizontally */
   position: relative; /* For stacking */
   z-index: 1; /* Above background */
+  text-align: center; /* Center all content */
 }
 
 .footer-section h3 {
@@ -266,6 +267,8 @@ body {
   display: flex; /* Flexbox for layout */
   gap: 2vw; /* Responsive gap */
   margin-top: 2vw; /* Responsive margin */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
 }
 
 .social-link {

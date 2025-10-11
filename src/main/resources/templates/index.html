@@ -449,32 +449,14 @@
         <footer class="site-footer" sec:authorize="!isAuthenticated()">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Skgchess</h3>
-                    <p>To<b> skgchess</b> είναι μια πλατφόρμα που χρησιμοποιεί την δική της μηχανή σκακιού, σας επιτρέπει να δημιουργήσετε προφίλ, να αποθηκεύσετε και να δείτε τα παιχνίδια σας, και να παίξετε με κλασσική μουσική στο παρασκήνιο.</p>
                     <div class="social-links">
-                        <a href="https://github.com/harischatzianastasiou" class="social-link" target="_blank"><i class="fab fa-github"></i></a>
                         <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" class="social-link" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="mailto:harischatzi@tutanota.com">harischatzi@tutanota.com</a>
                     </div>
-                </div>
-                <div class="footer-section">
-                    <h3>Σύνδεσμοι</h3>
-                    <ul>
-                        <li><a href="#" onclick="showNewspaper(); return false;">Σχετικά</a></li>
-                        <li><a href="https://skgweb.dev" target="_blank">SKG WEB</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact</h3>
-                    <ul>
-                        <li><a href="mailto:info@toskaki.gr">info@toskaki.gr</a></li>
-                        <li><a href="#">Support</a></li>
-                        <li><a href="#">Feedback</a></li>
-                    </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 toSkaki.gr . All rights reserved.</p>
-                <p>Created by <a href="https://github.com/harischatzianastasiou" target="_blank"><i class="fab fa-github"></i> @harischatzianastasiou</a></p>
+                <p>&copy; 2025 skgchess.com . All rights reserved.</p>
             </div>
         </footer>
 
@@ -610,7 +592,7 @@
                                 <div class="main-buttons-container auth-buttons">
                                     <a id="newGameLang" href="#" onclick="newGame(); return false;" class="main-button get-started"></a>
                                     <a id="joinGameLang" href="#" onclick="showJoinGameDialog(); return false;" class="main-button about"></a>
-                                    <a th:if="${recentGames.size() ge 1}" href="#all-games-section" class="main-button about" id="viewallgameslang"></a>
+                                    <!-- <a th:if="${recentGames.size() ge 1}" href="#all-games-section" class="main-button about" id="viewallgameslang"></a> -->
                                 </div>
                             </div>
                         </div>
@@ -621,31 +603,14 @@
             <footer class="site-footer" sec:authorize="isAuthenticated()">
                 <div class="footer-content">
                     <div class="footer-section">
-                        <h3>SKG Chess</h3>
-                                                 <p><b>SKG Chess</b> is a chess platform inspired by Thessaloniki (SKG), featuring historical photos of the city throughout the application. It uses its own chess engine, lets you create a profile, save and view your games, and play with classical music in the background.</p>
                         <div class="social-links">
-                            <a href="https://github.com/harischatzianastasiou" class="social-link" target="_blank"><i class="fab fa-github"></i></a>
                             <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" class="social-link" target="_blank"><i class="fab fa-linkedin"></i></a>
+                            <a href="mailto:harischatzi@tutanota.com">harischatzi@tutanota.com</a>
                         </div>
-                    </div>
-                    <div class="footer-section">
-                        <h3>Quick Links</h3>
-                        <ul>
-                            <li><a href="#" onclick="showNewspaper(); return false;">About</a></li>
-                        </ul>
-                    </div>
-                    <div class="footer-section">
-                        <h3>Contact</h3>
-                        <ul>
-                            <li><a href="mailto:info@toskaki.gr">info@toskaki.gr</a></li>
-                            <li><a href="#">Support</a></li>
-                            <li><a href="#">Feedback</a></li>
-                        </ul>
                     </div>
                 </div>
                 <div class="footer-bottom">
                     <p>&copy; 2025 SKG Chess. All rights reserved.</p>
-                    <p>Created by <a href="https://github.com/harischatzianastasiou" target="_blank"><i class="fab fa-github"></i> @harischatzianastasiou</a></p>
                 </div>
             </footer>
         </main>

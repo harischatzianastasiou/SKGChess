@@ -111,7 +111,6 @@ const translations = {
       emailOrUsernamePlaceholder: "Email or username",
       password: "Password",
       passwordPlaceholder: "Password",
-      rememberMe: "Remember Me",
       logIn: "Log In",
       dontHaveAccount: "Don't have an account?",
       signUp: "Sign up",
@@ -216,7 +215,10 @@ const translations = {
       rematchAccepted: "Rematch accepted",
       // Popup button translations
       successTitle: "Success",
-      okButton: "OK"
+      okButton: "OK",
+      // Login/Logout messages
+      successfullyLoggedIn: "Successfully logged in",
+      successfullyLoggedOut: "You have been successfully logged out"
     },
     gr: {
       titlelang: "skgchess.com - Το σκάκι της Θεσσαλονίκης",
@@ -253,7 +255,7 @@ const translations = {
       chatmodalinput: "Πληκτρολογήστε ένα μήνυμα...",
       chatinput: "Πληκτρολογήστε ένα μήνυμα...",
       featureheadinglang : "Με ρετρό χαρακτήρα",
-      featuredescriptionlang : "Tαξιδέψτε στον χρόνο με φόντο τον ιστορικό Λευκό Πύργο του 1900, το πλακόστρωτο και τις φίγουρες μιας άλλης εποχής. Κλασικά μουσικά έργα συνοδεύουν τις κινήσεις σας, ενώ μια συλλογή σκακιστικών αποφθεγμάτων διακοσμεί την αρχική σας σελίδα. Το SKG Chess φέρνει μια ξεχωριστή εμπειρία που συνδυάζει το σκάκι με την πολιτιστική κληρονομία της Θεσσαλονίκης. Ανακαλύψτε τις λειτουργίες του και κάντε εγγραφή για να παίξετε.",
+      featuredescriptionlang : "Tαξιδέψτε στον χρόνο με φόντο τον ιστορικό Λευκό Πύργο του 1900, το πλακόστρωτο και τις φίγουρες μιας άλλης εποχής, καθώς διάσημα έργα της κλασικής μουσικής συνοδεύουν τις κινήσεις σας. Ζήστε μια ξεχωριστή εμπειρία που συνδυάζει το σκάκι με την πολιτιστική κληρονομία της Θεσσαλονίκης.",
       card0lang: "Aνεξάρτητη μηχανή υπολογισμού κινήσεων",
       card1lang: "Ενσωματωμένη συνομιλία",
       card2lang: "Κλασσική μουσική",
@@ -438,7 +440,10 @@ const translations = {
       rematchAccepted: "Η επανάληψη αποδέχτηκε",
       // Popup button translations
       successTitle: "Επιτυχία",
-      okButton: "Εντάξει"
+      okButton: "Εντάξει",
+      // Login/Logout messages
+      successfullyLoggedIn: "Συνδεθήκατε επιτυχώς",
+      successfullyLoggedOut: "Έχετε αποσυνδεθεί επιτυχώς"
     }
   };
   

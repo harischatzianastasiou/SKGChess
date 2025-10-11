@@ -4203,6 +4203,11 @@ body.authenticated .header {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 3rem;
     margin-bottom: 3rem;
+    text-align: center;
+}
+
+.footer-section {
+    text-align: center;
 }
 
 .footer-section h3 {
@@ -4244,6 +4249,8 @@ body.authenticated .header {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
+    justify-content: center;
+    align-items: center;
 }
 
 .social-link {
