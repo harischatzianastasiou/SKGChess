@@ -33,19 +33,20 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("status", "error");
         
-        // Provide specific error messages based on the type of authentication failure
-        String errorMessage;
+        // Provide specific error codes based on the type of authentication failure
+        String errorCode;
         if (exception instanceof BadCredentialsException) {
-            errorMessage = "Invalid username or password. Please check your credentials and try again.";
+            errorCode = "invalidCredentials";
         } else if (exception instanceof DisabledException) {
-            errorMessage = "Your account has been disabled. Please contact support for assistance.";
+            errorCode = "accountDisabled";
         } else if (exception instanceof LockedException) {
-            errorMessage = "Your account has been locked. Please contact support for assistance.";
+            errorCode = "accountLocked";
         } else {
-            errorMessage = "Authentication failed. Please check your credentials and try again.";
+            errorCode = "authenticationFailed";
         }
         
-        errorResponse.put("message", errorMessage);
+        errorResponse.put("errorCode", errorCode);
+        errorResponse.put("message", errorCode); // Frontend will translate this
         
         // Write JSON response
         objectMapper.writeValue(response.getWriter(), errorResponse);

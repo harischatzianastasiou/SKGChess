@@ -1323,7 +1323,7 @@ class ChessGame {
                                 
                                 // Update game status and show end game popup if it's timeout
                                 if (this.gameStatus === 'TIME_OUT') {
-                                    this.statusElement.textContent = 'Game over by timeout!';
+                                    this.statusElement.textContent = getTranslation('gameOver') + ' ' + getTranslation('byTimeout') + '!';
                                     // The updateBoard method will handle showing the end game popup
                                     this.updateBoard();
                                 }
@@ -1344,7 +1344,7 @@ class ChessGame {
                                 
                                 // Update game status and show end game popup
                                 if (this.gameStatus === 'RESIGNED') {
-                                    this.statusElement.textContent = 'Game over by resignation!';
+                                    this.statusElement.textContent = getTranslation('gameOver') + ' ' + getTranslation('byResignation') + '!';
                                     // The updateBoard method will handle showing the end game popup
                                     this.updateBoard();
                                 }
@@ -1378,7 +1378,7 @@ class ChessGame {
                                     await this.fetchGame();
                                     
                                     if (this.gameStatus === 'MUTUAL_AGREEMENT') {
-                                        this.statusElement.textContent = 'Game ended in draw by mutual agreement!';
+                                        this.statusElement.textContent = getTranslation('gameEndedInDraw') + ' ' + getTranslation('byAgreement') + '!';
                                         // The updateBoard method will handle showing the end game popup
                                         this.updateBoard();
                                     }
@@ -2061,7 +2061,7 @@ class ChessGame {
                 this.statusElement.textContent = 'Draw by insufficient material!';
                 winner = 'Draw';
             } else if(this.gameStatus === 'MUTUAL_AGREEMENT') {
-                this.statusElement.textContent = 'Draw by mutual agreement!';
+                this.statusElement.textContent = getTranslation('draw') + ' ' + getTranslation('byAgreement') + '!';
                 winner = 'Draw';
             }
 
@@ -2104,86 +2104,86 @@ class ChessGame {
                 // We have a winner ID and it's not a draw
                 if (this.winnerId === this.userId) {
                     // Current player won
-                    popupTitle = 'You won';
+                    popupTitle = getTranslation('youWon');
                 } else {
                     // Opponent won - show their color
                     // Determine winner color by comparing winnerId with player IDs
                     let winnerColor;
                     if (this.winnerId === this.boardDTO.whitePlayerId) {
-                        winnerColor = 'White';
+                        winnerColor = getTranslation('whiteWins');
                     } else if (this.winnerId === this.boardDTO.blackPlayerId) {
-                        winnerColor = 'Black';
+                        winnerColor = getTranslation('blackWins');
                     } else {
                         // Fallback: determine based on current player's perspective
                         // If current player is White and opponent won, opponent is Black
                         // If current player is Black and opponent won, opponent is White
-                        winnerColor = (this.playerColor === 'WHITE') ? 'Black' : 'White';
+                        winnerColor = (this.playerColor === 'WHITE') ? getTranslation('blackWins') : getTranslation('whiteWins');
                     }
-                    popupTitle = `${winnerColor} wins`;
+                    popupTitle = winnerColor;
                 }
                 
                 // Create subtitle based on game type
                 switch (this.gameStatus) {
                     case 'CHECKMATE':
-                        popupSubtitle = 'by checkmate';
+                        popupSubtitle = getTranslation('byCheckmate');
                         break;
                     case 'TIME_OUT':
-                        popupSubtitle = 'by timeout';
+                        popupSubtitle = getTranslation('byTimeout');
                         break;
                     case 'RESIGNED':
-                        popupSubtitle = 'by resignation';
+                        popupSubtitle = getTranslation('byResignation');
                         break;
                     case 'STALEMATE':
-                        popupSubtitle = 'by stalemate';
+                        popupSubtitle = getTranslation('byStalemate');
                         break;
                     case 'THREEFOLD_REPETITION':
-                        popupSubtitle = 'by threefold repetition';
+                        popupSubtitle = getTranslation('byStalemate'); // Using stalemate translation for threefold repetition
                         break;
                     case 'FIFTY_MOVE_RULE':
-                        popupSubtitle = 'by fifty move rule';
+                        popupSubtitle = getTranslation('byStalemate'); // Using stalemate translation for fifty move rule
                         break;
                     case 'INSUFFICIENT_MATERIAL':
-                        popupSubtitle = 'by insufficient material';
+                        popupSubtitle = getTranslation('byStalemate'); // Using stalemate translation for insufficient material
                         break;
                     case 'MUTUAL_AGREEMENT':
-                        popupSubtitle = 'by mutual agreement';
+                        popupSubtitle = getTranslation('byAgreement');
                         break;
                     default:
-                        popupSubtitle = 'by game end';
+                        popupSubtitle = getTranslation('byCheckmate');
                 }
             } else {
                 // Draw game or no winner ID
                 if (winner === 'Draw') {
                     // Handle different types of draws - use consistent format like wins
-                    popupTitle = 'Draw'; // Always show "Draw" as title
+                    popupTitle = getTranslation('draw'); // Always show "Draw" as title
                     
                     // Create subtitle based on draw reason
                     switch (this.gameStatus) {
                         case 'STALEMATE':
-                            popupSubtitle = 'by stalemate';
+                            popupSubtitle = getTranslation('byStalemate');
                             break;
                         case 'THREEFOLD_REPETITION':
-                            popupSubtitle = 'by threefold repetition';
+                            popupSubtitle = getTranslation('byStalemate'); // Using stalemate translation for threefold repetition
                             break;
                         case 'FIFTY_MOVE_RULE':
-                            popupSubtitle = 'by fifty move rule';
+                            popupSubtitle = getTranslation('byStalemate'); // Using stalemate translation for fifty move rule
                             break;
                         case 'INSUFFICIENT_MATERIAL':
-                            popupSubtitle = 'by insufficient material';
+                            popupSubtitle = getTranslation('byStalemate'); // Using stalemate translation for insufficient material
                             break;
                         case 'MUTUAL_AGREEMENT':
-                            popupSubtitle = 'by mutual agreement';
+                            popupSubtitle = getTranslation('byAgreement');
                             break;
                         case 'DRAW':
-                            popupSubtitle = 'by agreement';
+                            popupSubtitle = getTranslation('byAgreement');
                             break;
                         default:
-                            popupSubtitle = 'by game end';
+                            popupSubtitle = getTranslation('byAgreement'); // Default to agreement for unknown draw reasons
                     }
                 } else {
                     // No winner ID but not a draw - fallback
-                    popupTitle = 'Game Over';
-                    popupSubtitle = this.gameStatus === 'TIME_OUT' ? 'by timeout' : 'by checkmate';
+                    popupTitle = getTranslation('gameOver');
+                    popupSubtitle = this.gameStatus === 'TIME_OUT' ? getTranslation('byTimeout') : getTranslation('byCheckmate');
                 }
             }
 
@@ -3009,7 +3009,7 @@ class ChessGame {
         
         // If no game positions loaded, show empty state
         if (!this.gamePositions || this.gamePositions.length === 0) {
-            movesListContainer.innerHTML = '<div class="no-moves">No moves yet</div>';
+            movesListContainer.innerHTML = `<div class="no-moves">${getTranslation('noMovesYet')}</div>`;
             return;
         }
         

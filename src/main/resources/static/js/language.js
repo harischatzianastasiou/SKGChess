@@ -148,7 +148,10 @@ const translations = {
       passwordsDoNotMatch: "Passwords do not match",
       usernameLength: "Username must be between 3 and 50 characters",
       validEmail: "Please enter a valid email address",
-      invalidCredentials: "Invalid username or password",
+      invalidCredentials: "Invalid username or password. Please check your credentials and try again.",
+      accountDisabled: "Your account has been disabled. Please contact support for assistance.",
+      accountLocked: "Your account has been locked. Please contact support for assistance.",
+      authenticationFailed: "Authentication failed. Please check your credentials and try again.",
       errorDuringLogin: "An error occurred during login. Please try again.",
       signupSuccessful: "Signup successful but login failed. Please try logging in manually.",
       accessDenied: "Access denied. Please try again later.",
@@ -218,7 +221,31 @@ const translations = {
       okButton: "OK",
       // Login/Logout messages
       successfullyLoggedIn: "Successfully logged in",
-      successfullyLoggedOut: "You have been successfully logged out"
+      successfullyLoggedOut: "You have been successfully logged out",
+      // Game result messages
+      youWon: "You won",
+      youLost: "You lost",
+      whiteWins: "White Wins",
+      blackWins: "Black Wins",
+      gameEndedInDraw: "Game ended in draw",
+      draw: "Draw",
+      byResignation: "by resignation",
+      byCheckmate: "by checkmate",
+      byTimeout: "by timeout",
+      byStalemate: "by stalemate",
+      byAgreement: "by agreement",
+      gameOver: "Game Over",
+      checkmate: "Checkmate",
+      stalemate: "Stalemate",
+      timeout: "Timeout",
+      resignation: "Resignation",
+      // Game interface messages
+      noMovesYet: "No moves yet",
+      // Username change modal
+      changeusernamelang: "Change Username",
+      newUsername: "New Username",
+      save: "Save",
+      cancel: "Cancel"
     },
     gr: {
       titlelang: "skgchess.com - Το σκάκι της Θεσσαλονίκης",
@@ -235,7 +262,7 @@ const translations = {
       usernameinfomessagelang: "Θα σας ζητηθεί να συνδεθείτε ξανά μετά την αλλαγή του όνοματος χρήστη.",
       saveusernamebtnmodal: "Αποθήκευση",
       cancelusernamebtnmodal: "Ακύρωση",
-      scrolltolang: "Κάνε σκρολ για να εξερευνήσεις",
+      scrolltolang: " ",
       analyzerecentgamelang: "Ανάλυση τελευταίου παιχνιδιού",
       startagamemessagelang: "Ξεκινήστε ένα παιχνίδι για να δείτε τις κινήσεις σας και να αναλύσετε την στρατηγική σας εδώ!",
       recentgameslang: "Πρόσφατα παιχνίδια",
@@ -324,7 +351,7 @@ const translations = {
       accept: "Αποδοχή",
       decline: "Απόρριψη",
       // Login/Signup modal
-      loginToChess: "Σύνδεση στο Σκάκι",
+      loginToChess: "Σύνδεση",
       continueWithGoogle: "Συνέχεια με Google",
       or: "ή",
       emailOrUsername: "Email ή όνομα χρήστη",
@@ -336,7 +363,7 @@ const translations = {
       dontHaveAccount: "Δεν έχετε λογαριασμό;",
       signUp: "Εγγραφή",
       forgotPassword: "Ξεχάσατε τον κωδικό σας;",
-      signUpForChess: "Εγγραφή στο Σκάκι",
+      signUpForChess: "Εγγραφή",
       username: "Όνομα χρήστη",
       chooseUsername: "Επιλέξτε όνομα χρήστη",
       email: "Email",
@@ -369,7 +396,10 @@ const translations = {
       passwordsDoNotMatch: "Οι κωδικοί δεν ταιριάζουν",
       usernameLength: "Το όνομα χρήστη πρέπει να είναι μεταξύ 3 και 50 χαρακτήρων",
       validEmail: "Παρακαλώ εισάγετε έγκυρο email",
-      invalidCredentials: "Μη έγκυρο όνομα χρήστη ή κωδικός",
+      invalidCredentials: "Μη έγκυρο όνομα χρήστη ή κωδικός. Παρακαλώ ελέγξτε τα στοιχεία σας και δοκιμάστε ξανά.",
+      accountDisabled: "Ο λογαριασμός σας έχει απενεργοποιηθεί. Παρακαλώ επικοινωνήστε με την υποστήριξη για βοήθεια.",
+      accountLocked: "Ο λογαριασμός σας έχει κλειδωθεί. Παρακαλώ επικοινωνήστε με την υποστήριξη για βοήθεια.",
+      authenticationFailed: "Η πιστοποίηση απέτυχε. Παρακαλώ ελέγξτε τα στοιχεία σας και δοκιμάστε ξανά.",
       errorDuringLogin: "Παρουσιάστηκε σφάλμα κατά τη σύνδεση. Παρακαλώ δοκιμάστε ξανά.",
       signupSuccessful: "Η εγγραφή ήταν επιτυχής αλλά η σύνδεση απέτυχε. Παρακαλώ συνδεθείτε χειροκίνητα.",
       accessDenied: "Απαγορεύεται η πρόσβαση. Παρακαλώ δοκιμάστε αργότερα.",
@@ -406,7 +436,7 @@ const translations = {
       matchCreationFailed: "Αποτυχία δημιουργίας παιχνιδιού",
       matchJoinFailed: "Αποτυχία συμμετοχής στο παιχνίδι",
       invitationSent: "Η πρόσκληση στάλθηκε επιτυχώς στον ",
-      invitationAccepted: "Η πρόσκληση αποδέχτηκε",
+      invitationAccepted: "Η πρόσκληση έγινε αποδεκτή",
       invitationDeclined: "Η πρόσκληση απορρίφθηκε",
       // Additional invitation strings
       accept: "Αποδοχή",
@@ -443,7 +473,31 @@ const translations = {
       okButton: "Εντάξει",
       // Login/Logout messages
       successfullyLoggedIn: "Συνδεθήκατε επιτυχώς",
-      successfullyLoggedOut: "Έχετε αποσυνδεθεί επιτυχώς"
+      successfullyLoggedOut: "Έχετε αποσυνδεθεί επιτυχώς",
+      // Game result messages
+      youWon: "Κερδίσατε",
+      youLost: "Χάσατε",
+      whiteWins: "Τα λευκά κερδίσαν",
+      blackWins: "Τα μαύρα κερδίσαν",
+      gameEndedInDraw: "Το παιχνίδι έληξε ισόπαλο",
+      draw: "Ισοπαλία",
+      byResignation: "λόγω παραίτησης",
+      byCheckmate: "λόγω ματ",
+      byTimeout: "λόγω χρόνου",
+      byStalemate: "λόγω πατ",
+      byAgreement: "λόγω συμφωνίας",
+      gameOver: "Τέλος Παιχνιδιού",
+      checkmate: "Ματ",
+      stalemate: "Πατ",
+      timeout: "Λήξη Χρόνου",
+      resignation: "Παραίτηση",
+      // Game interface messages
+      noMovesYet: "Δεν έχουν γίνει κινήσεις ακόμα",
+      // Username change modal
+      changeusernamelang: "Αλλαγή Ονόματος Χρήστη",
+      newUsername: "Νέο Όνομα Χρήστη",
+      save: "Αποθήκευση",
+      cancel: "Ακύρωση"
     }
   };
   
@@ -563,6 +617,13 @@ const translations = {
     if (chatInput) chatInput.placeholder = translations[lang].chatinput;
     const chatModalInput = document.getElementById('chatmodalinput');
     if (chatModalInput) chatModalInput.placeholder = translations[lang].chatmodalinput;
+    
+    // Update username modal button texts
+    const saveBtnModal = document.getElementById('saveusernamebtnmodal');
+    if (saveBtnModal) saveBtnModal.textContent = translations[lang].save;
+    const cancelBtnModal = document.getElementById('cancelusernamebtnmodal');
+    if (cancelBtnModal) cancelBtnModal.textContent = translations[lang].cancel;
+    
     localStorage.setItem('lang', lang);
     document.querySelectorAll('.burger-lang').forEach(span => {
         span.classList.remove('active');

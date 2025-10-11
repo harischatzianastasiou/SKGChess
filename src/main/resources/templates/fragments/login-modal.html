@@ -930,7 +930,7 @@
                     // Get form data
                     const username = usernameInput.value.trim();
                     const password = passwordInput.value;
-                    const remember = document.getElementById('modal-remember').checked;
+                    const remember = false; // Remember me checkbox removed
                     
                     // Client-side validation
                     if (!username) {
@@ -1058,7 +1058,9 @@
                         const contentType = response.headers.get('content-type');
                         if (contentType && contentType.includes('application/json')) {
                             const errorData = await response.json();
-                            showLoginError(errorData.message || getTranslation('invalidCredentials'));
+                            // Use errorCode if available, otherwise fallback to message
+                            const errorKey = errorData.errorCode || errorData.message;
+                            showLoginError(getTranslation(errorKey) || getTranslation('invalidCredentials'));
                         } else {
                             showLoginError(getTranslation('invalidCredentials'));
                         }

@@ -1093,6 +1093,18 @@ body {
     gap: 8px;
 }
 
+/* Username modal specific button styles */
+#username-modal .btn-cancel {
+    background: linear-gradient(135deg, #991616, #991616);
+    color: white;
+}
+
+#username-modal .btn-create {
+    background: #1b6b05;
+    color: white;
+    border: 2px solid #2fa70d;
+}
+
 .game-creation-popup .btn-create:hover {
     background: linear-gradient(135deg, #553c9a, #44337a);
     transform: translateY(-2px);
