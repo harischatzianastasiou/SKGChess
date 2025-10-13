@@ -245,7 +245,11 @@ const translations = {
       changeusernamelang: "Change Username",
       newUsername: "New Username",
       save: "Save",
-      cancel: "Cancel"
+      cancel: "Cancel",
+      // Music toggle
+      toggleMusic: "Toggle Music",
+      musicOn: "Music",
+      musicOff: "Music"
     },
     gr: {
       titlelang: "skgchess.com - Το σκάκι της Θεσσαλονίκης",
@@ -288,13 +292,13 @@ const translations = {
       card2lang: "Κλασσική μουσική",
       card3lang: "Ιστορικό παιχνιδιών",
       card4lang: "Πολλαπλά θέματα",
-      card5lang: "Σκακιστικά Αποφθέγματα",
+      card5lang: "Σκακιστικά αποφθέγματα",
       card0descriptionlang: "Χρησιμοποιούμε έναν δικό μας αλγόριθμο για τον υπολογισμό των κινήσεων",
       card1descriptionlang: "Δυνατότητα συνομιλίας κατά τη διάρκεια του παιχνιδίου",
       card2descriptionlang: "Συνοδεύστε το παιχνίδι σας με κλασσική μουσική στο παρασκήνιο",
       card3descriptionlang: "Βρείτε όλα τα παιχνίδια σας στην αρχική σελίδα",
       card4descriptionlang: "Επιλέξτε μεταξύ τριών θεμάτων",
-      card5descriptionlang: "Απολαύστε μια συλλογή απο σκακιστικά αποφθέγματα στην αρχική σελίδα",
+      card5descriptionlang: "Απολαύστε μια συλλογή απο σκακιστικά αποφθέγματα",
       ixllang: "Mια δημιουργία του IXLSTUDIO.",
       darkModeText : "Λειτουργίες",
       visitIXLSTUDIOlang: " Μάθετε περισσότερα",
@@ -497,7 +501,11 @@ const translations = {
       changeusernamelang: "Αλλαγή Ονόματος Χρήστη",
       newUsername: "Νέο Όνομα Χρήστη",
       save: "Αποθήκευση",
-      cancel: "Ακύρωση"
+      cancel: "Ακύρωση",
+      // Music toggle
+      toggleMusic: "Εναλλαγή Μουσικής",
+      musicOn: "Μουσική",
+      musicOff: "Μουσική"
     }
   };
   
@@ -605,6 +613,66 @@ const translations = {
     }
   }
 
+  // Function to update music toggle tooltip based on current state
+  function updateMusicToggleTooltip() {
+    const musicPlayer = document.querySelector('.music-player');
+    if (musicPlayer) {
+        const lang = localStorage.getItem('lang') || 'gr';
+        const isMuted = musicPlayer.classList.contains('unmuted');
+        const tooltipText = isMuted ? translations[lang].musicOn : translations[lang].musicOff;
+        musicPlayer.setAttribute('data-tooltip', tooltipText);
+        console.log('Updated music tooltip:', tooltipText, 'Language:', lang, 'Is muted:', isMuted);
+        console.log('Current data-tooltip attribute:', musicPlayer.getAttribute('data-tooltip'));
+        
+        // Force a style update
+        musicPlayer.style.setProperty('--tooltip-text', `"${tooltipText}"`);
+    } else {
+        console.log('Music player element not found');
+    }
+  }
+
+  // Initialize tooltip when DOM is ready
+  document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for the music player to be fully loaded
+    setTimeout(() => {
+      updateMusicToggleTooltip();
+      
+      // Add event listener to music player for state changes
+      const musicPlayer = document.querySelector('.music-player');
+      if (musicPlayer) {
+        musicPlayer.addEventListener('click', function() {
+          // Update tooltip after a short delay to allow state change
+          setTimeout(() => {
+            updateMusicToggleTooltip();
+          }, 100);
+        });
+      }
+    }, 100);
+  });
+
+  // Make the function globally available for testing
+  window.updateMusicToggleTooltip = updateMusicToggleTooltip;
+  
+  // Also create a more direct update function
+  window.forceUpdateMusicTooltip = function() {
+    const musicPlayer = document.querySelector('.music-player');
+    if (musicPlayer) {
+      const lang = localStorage.getItem('lang') || 'gr';
+      const isMuted = musicPlayer.classList.contains('unmuted');
+      const tooltipText = isMuted ? translations[lang].musicOn : translations[lang].musicOff;
+      
+      // Force update the attribute
+      musicPlayer.setAttribute('data-tooltip', tooltipText);
+      
+      // Also try to force a style recalculation
+      musicPlayer.style.display = 'none';
+      musicPlayer.offsetHeight; // Trigger reflow
+      musicPlayer.style.display = '';
+      
+      console.log('Force updated music tooltip:', tooltipText);
+    }
+  };
+
   // 3. Function to update all translatable areas
   function updateLanguage(lang) {
     document.title = translations[lang].titlelang;
@@ -623,6 +691,15 @@ const translations = {
     if (saveBtnModal) saveBtnModal.textContent = translations[lang].save;
     const cancelBtnModal = document.getElementById('cancelusernamebtnmodal');
     if (cancelBtnModal) cancelBtnModal.textContent = translations[lang].cancel;
+    
+    // Update music toggle tooltip immediately when language changes
+    setTimeout(() => {
+        updateMusicToggleTooltip();
+        // Also try the force update approach
+        if (typeof window.forceUpdateMusicTooltip === 'function') {
+          window.forceUpdateMusicTooltip();
+        }
+    }, 50);
     
     localStorage.setItem('lang', lang);
     document.querySelectorAll('.burger-lang').forEach(span => {

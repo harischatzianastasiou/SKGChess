@@ -747,7 +747,7 @@ body {
 
 /* Add tooltip styles */
 .music-player::after {
-    content: 'Toggle music';  /* Tooltip text */
+    content: attr(data-tooltip) !important;  /* Force use data-tooltip attribute for text */
     position: absolute;       /* Position absolutely */
     bottom: 100%;            /* Position above the toggle */
     left: 50%;               /* Center horizontally */

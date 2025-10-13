@@ -103,7 +103,7 @@
 
         /* Add tooltip styles */
         .music-player::after {
-            content: 'Toggle music';  /* Tooltip text */
+            content: attr(data-tooltip) !important;  /* Force use data-tooltip attribute for text */
             position: absolute;       /* Position absolutely */
             bottom: 100%;            /* Position above the toggle */
             left: 50%;               /* Center horizontally */
@@ -136,7 +136,7 @@
         </audio>
 
         <!-- Update the music player button -->
-        <button class="music-player" onclick="initializeAndToggleMusic()"></button>
+        <button class="music-player" data-tooltip="" onclick="initializeAndToggleMusic()" style="position: relative;"></button>
 
         <!-- Music Credits -->
         <div class="music-credits" id="musicCredits" onclick="this.classList.remove('show')">
@@ -317,6 +317,11 @@
                     musicPlayer.classList.remove('unmuted');
                     credits.classList.remove('show');  // Hide credits when muted
                 }
+                
+                // Update tooltip after state change
+                if (typeof updateMusicToggleTooltip === 'function') {
+                    updateMusicToggleTooltip();
+                }
             };
 
             // Initialize audio on page load
@@ -337,6 +342,11 @@
                 localStorage.setItem('musicMuted', 'true');
                 musicPlayer.classList.remove('unmuted');
                 credits.classList.remove('show');
+
+                // Initialize tooltip
+                if (typeof updateMusicToggleTooltip === 'function') {
+                    updateMusicToggleTooltip();
+                }
 
                 // Add event listener for when a song ends
                 audio.addEventListener('ended', () => {
