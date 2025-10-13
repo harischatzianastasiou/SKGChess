@@ -104,7 +104,7 @@ const translations = {
       accept: "Accept",
       decline: "Decline",
       // Login/Signup modal
-      loginToChess: "Log in to Chess",
+      loginToChess: "Log in",
       continueWithGoogle: "Continue with Google",
       or: "or",
       emailOrUsername: "Email or username",
@@ -115,7 +115,7 @@ const translations = {
       dontHaveAccount: "Don't have an account?",
       signUp: "Sign up",
       forgotPassword: "Forgot your password?",
-      signUpForChess: "Sign up for Chess",
+      signUpForChess: "Sign up",
       username: "Username",
       chooseUsername: "Choose a username",
       email: "Email",

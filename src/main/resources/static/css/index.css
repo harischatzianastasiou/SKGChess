@@ -131,6 +131,23 @@
     .authenticated-hero .welcome-quote, .authenticated-hero .quote-text {
         font-size: 2.1rem;
     }
+
+    /* Desktop header logo and menu button styles with transition */
+    .header .logo,
+    .header .menu-btn {
+        transition: color 0.3s ease; /* Smooth transition for color changes */
+    }
+
+    /* Black header text when first section is not visible - Desktop and Light Mode only */
+    [data-theme="light"] .header.first-section-hidden .logo {
+        color: #000 !important; /* Black text when first section is not visible in light mode */
+        text-shadow: none; /* Remove text shadow for better black text visibility */
+    }
+
+    /* Black burger menu icon when first section is not visible - Desktop and Light Mode only */
+    [data-theme="light"] .header.first-section-hidden .menu-btn {
+        color: #000 !important; /* Black burger menu icon when first section is not visible in light mode */
+    }
 }
 
 /* ==========================================================================

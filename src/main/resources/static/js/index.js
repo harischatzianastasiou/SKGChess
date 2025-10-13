@@ -152,6 +152,105 @@ document.addEventListener('DOMContentLoaded', function() {
             header.classList.remove('scroll');
         }
     });
+
+    // Detect when features section is visible to change header text color
+    // Only on desktop (screen width > 768px) and when in light mode
+    const firstSection = document.querySelector('.welcome-main'); // Target first section
+    const featuresSection = document.querySelector('.feature-section'); // Target features section (2nd section)
+    
+    // Function to check if we should apply the black text effect
+    function shouldApplyBlackText() {
+        // Only apply on desktop (screen width > 768px) and when in light mode
+        return window.innerWidth > 768 && document.documentElement.getAttribute('data-theme') === 'light';
+    }
+    
+    // Helper function to check if element is in viewport
+    function isElementInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        // Element is in viewport if any part is visible (with 10% threshold)
+        return rect.top < windowHeight * 0.9 && rect.bottom > windowHeight * 0.1;
+    }
+    
+    if (firstSection && featuresSection && header) {
+        // Create intersection observer for both sections
+        const observer = new IntersectionObserver((entries) => {
+            // Check both sections whenever any section changes
+            const firstSectionVisible = firstSection && isElementInViewport(firstSection);
+            const featuresSectionVisible = featuresSection && isElementInViewport(featuresSection);
+            
+            // Debug logging
+            console.log('First section visible:', firstSectionVisible);
+            console.log('Features section visible:', featuresSectionVisible);
+            
+            if (firstSectionVisible) {
+                // First section is visible - white text (default)
+                header.classList.remove('first-section-hidden');
+                console.log('Setting header to WHITE (first section visible)');
+            } else if (featuresSectionVisible) {
+                // First section not visible but features section visible - black text
+                if (shouldApplyBlackText()) {
+                    header.classList.add('first-section-hidden');
+                    console.log('Setting header to BLACK (features section visible, first not visible)');
+                }
+            } else {
+                // Neither section visible - white text (default)
+                header.classList.remove('first-section-hidden');
+                console.log('Setting header to WHITE (neither section visible)');
+            }
+        }, {
+            threshold: 0.1, // Trigger when 10% of the section is visible/hidden
+            rootMargin: '0px' // No margin offset
+        });
+        
+        // Start observing both sections
+        observer.observe(firstSection);
+        observer.observe(featuresSection);
+        
+        // Add scroll listener to ensure header updates when scrolling to 3rd section
+        window.addEventListener('scroll', () => {
+            const firstSectionVisible = firstSection && isElementInViewport(firstSection);
+            const featuresSectionVisible = featuresSection && isElementInViewport(featuresSection);
+            
+            if (firstSectionVisible) {
+                // First section is visible - white text (default)
+                header.classList.remove('first-section-hidden');
+            } else if (featuresSectionVisible) {
+                // First section not visible but features section visible - black text
+                if (shouldApplyBlackText()) {
+                    header.classList.add('first-section-hidden');
+                }
+            } else {
+                // Neither section visible - white text (default)
+                header.classList.remove('first-section-hidden');
+            }
+        });
+        
+        // Listen for theme changes to update header text color
+        const themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+                    // Theme changed, check if we should update the header
+                    if (!shouldApplyBlackText()) {
+                        header.classList.remove('first-section-hidden');
+                    }
+                }
+            });
+        });
+        
+        // Observe theme changes on the document element
+        themeObserver.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['data-theme']
+        });
+        
+        // Listen for window resize to handle desktop/mobile switching
+        window.addEventListener('resize', () => {
+            if (!shouldApplyBlackText()) {
+                header.classList.remove('first-section-hidden');
+            }
+        });
+    }
 });
 
 // Function to connect to the WebSocket

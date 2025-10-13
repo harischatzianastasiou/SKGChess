@@ -1857,13 +1857,28 @@ body {
     }
 }
 
-.header .logo {
+.header .logo,
+.header .menu-btn {
     font-family: 'NXBaskerville', serif !important;
     font-size: 2.2rem;
     font-weight: 400;
     letter-spacing: 0.02em;
     color: #fff !important;
     text-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    transition: color 0.3s ease; /* Smooth transition for color changes */
+}
+
+/* Black header text when first section is not visible - Desktop and Light Mode only */
+@media (min-width: 769px) {
+    [data-theme="light"] .header.first-section-hidden .logo {
+        color: #000 !important; /* Black text when first section is not visible in light mode */
+        text-shadow: none; /* Remove text shadow for better black text visibility */
+    }
+
+    /* Black burger menu icon when first section is not visible - Desktop and Light Mode only */
+    [data-theme="light"] .header.first-section-hidden .menu-btn {
+        color: #000 !important; /* Black burger menu icon when first section is not visible in light mode */
+    }
 }
 
 .close-btn {
