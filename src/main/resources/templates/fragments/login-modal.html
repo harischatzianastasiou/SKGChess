@@ -439,12 +439,12 @@
                 /* Chrome-specific fixes for modal height */
                 @supports (-webkit-appearance: none) {
                     #login-modal .modal-container {
-                        max-height: calc(100vh - 120px) !important; /* Chrome needs more space */
+                        max-height: calc(100vh - 140px) !important; /* Chrome needs more space */
                         height: auto !important;
                     }
                     
                     #login-modal .modal-body {
-                        max-height: calc(100vh - 200px) !important; /* Chrome-specific body height */
+                        max-height: calc(100vh - 220px) !important; /* Chrome-specific body height */
                         overflow-y: auto !important;
                     }
                 }
@@ -569,14 +569,23 @@
                 /* Target Chrome specifically */
                 @supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
                     #login-modal .modal-container {
-                        max-height: calc(100vh - 120px) !important;
+                        max-height: calc(100vh - 140px) !important; /* Increased space for Chrome */
                         height: auto !important;
+                        margin: 5px !important; /* Reduce margin for more space */
                     }
                     
                     #login-modal .modal-body {
-                        max-height: calc(100vh - 200px) !important;
+                        max-height: calc(100vh - 220px) !important; /* More space for content */
                         overflow-y: auto !important;
-                        padding: 0.5rem !important; /* Reduce padding in Chrome */
+                        padding: 0.3rem !important; /* Further reduce padding in Chrome */
+                    }
+                    
+                    #login-modal .modal-header {
+                        padding: 0.5rem 1rem !important; /* Reduce header padding */
+                    }
+                    
+                    #login-modal .modal-footer {
+                        padding: 0.5rem 1rem !important; /* Reduce footer padding */
                     }
                 }
             }
