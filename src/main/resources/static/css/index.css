@@ -105,6 +105,13 @@ html, body {
     overflow-x: hidden !important; /* Prevent horizontal scroll */
 }
 
+/* Hide scroll indicator on mobile */
+@media (max-width: 768px) {
+    .scroll-indicator {
+        display: none !important;
+    }
+}
+
 /* Mobile responsive styles for welcome-main */
 @media (max-width: 768px) {
     .video-bg-container {
