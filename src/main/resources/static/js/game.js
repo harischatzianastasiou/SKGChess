@@ -587,11 +587,9 @@ class ChessGame {
                 return;
             }
             
-            // Game resigned successfully - the WebSocket will handle the game state update
-            console.log('Game resigned successfully');
+    
             
         } catch (error) {
-            console.error('Error resigning game:', error);
             this.showErrorPopup(getTranslation('failedToResignGame') + '. Please try again.');
         }
     }
@@ -626,10 +624,8 @@ class ChessGame {
             }
             
             // Draw offer sent successfully - the WebSocket will handle the response
-            console.log('Draw offer sent successfully');
             
         } catch (error) {
-            console.error('Error offering draw:', error);
             this.showErrorPopup(getTranslation('failedToOfferDraw') + '. Please try again.');
         }
     }
@@ -727,10 +723,10 @@ class ChessGame {
             }
             
             // Draw response sent successfully - the WebSocket will handle the game state update
-            console.log('Draw response sent successfully:', action);
+('Draw response sent successfully:', action);
             
         } catch (error) {
-            console.error('Error responding to draw offer:', error);
+('Error responding to draw offer:', error);
             this.showErrorPopup(getTranslation('failedToRespondToDrawOffer') + '. Please try again.');
         }
     }
@@ -776,13 +772,13 @@ class ChessGame {
             }
             
             // Rematch offer sent successfully - the WebSocket will handle the response
-            console.log('Rematch offer sent successfully');
+('Rematch offer sent successfully');
             
             // Show success feedback to user (not as error popup)
             this.showSuccessMessage(getTranslation('rematchOfferSent'));
             
         } catch (error) {
-            console.error('Error offering rematch:', error);
+('Error offering rematch:', error);
             this.showErrorPopup(getTranslation('failedToOfferRematch') + '. Please try again.');
         }
     }
@@ -935,10 +931,10 @@ class ChessGame {
             }
             
             // Rematch response sent successfully - the WebSocket will handle the game state update
-            console.log('Rematch response sent successfully:', action);
+('Rematch response sent successfully:', action);
             
         } catch (error) {
-            console.error('Error responding to rematch offer:', error);
+('Error responding to rematch offer:', error);
             this.showErrorPopup(getTranslation('failedToRespondToRematchOffer') + '. Please try again.');
         }
     }
@@ -1121,7 +1117,7 @@ class ChessGame {
         // Store winner information from database
         if (gameData.winnerId) {
             this.winnerId = gameData.winnerId;
-            console.log('Received winnerId from database:', gameData.winnerId);
+('Received winnerId from database:', gameData.winnerId);
         }
         
         this.gameStatus = gameData.status;
@@ -1260,14 +1256,14 @@ class ChessGame {
                                 }
                             } else if (moveData.type === 'MOVE_MADE') {
                                 // Debug: Log the full message
-                                console.log('Full MOVE_MADE WebSocket message:', moveData);
+('Full MOVE_MADE WebSocket message:', moveData);
                                 
                                 // Store winner ID if provided in the message
                                 if (moveData.winnerId) {
                                     this.winnerId = moveData.winnerId;
-                                    console.log('Received winnerId from MOVE_MADE:', moveData.winnerId);
+('Received winnerId from MOVE_MADE:', moveData.winnerId);
                                 } else {
-                                    console.log('No winnerId in MOVE_MADE message');
+('No winnerId in MOVE_MADE message');
                                 }
                                 
                                 await this.fetchGame();
@@ -1307,14 +1303,14 @@ class ChessGame {
                                 }
                             } else if (moveData.type === 'TIME_OUT') {
                                 // Debug: Log the full message
-                                console.log('Full TIME_OUT WebSocket message:', moveData);
+('Full TIME_OUT WebSocket message:', moveData);
                                 
                                 // Store winner ID if provided in the message
                                 if (moveData.winnerId) {
                                     this.winnerId = moveData.winnerId;
-                                    console.log('Received winnerId from TIME_OUT:', moveData.winnerId);
+('Received winnerId from TIME_OUT:', moveData.winnerId);
                                 } else {
-                                    console.log('No winnerId in TIME_OUT message');
+('No winnerId in TIME_OUT message');
                                 }
                                 
                                 this.stopTimer();
@@ -1329,14 +1325,14 @@ class ChessGame {
                                 }
                             } else if (moveData.type === 'GAME_RESIGNED') {
                                 // Debug: Log the full message
-                                console.log('Full GAME_RESIGNED WebSocket message:', moveData);
+('Full GAME_RESIGNED WebSocket message:', moveData);
                                 
                                 // Store winner ID if provided in the message
                                 if (moveData.winnerId) {
                                     this.winnerId = moveData.winnerId;
-                                    console.log('Received winnerId from GAME_RESIGNED:', moveData.winnerId);
+('Received winnerId from GAME_RESIGNED:', moveData.winnerId);
                                 } else {
-                                    console.log('No winnerId in GAME_RESIGNED message');
+('No winnerId in GAME_RESIGNED message');
                                 }
                                 
                                 this.stopTimer();
@@ -1350,7 +1346,7 @@ class ChessGame {
                                 }
                             } else if (moveData.type === 'DRAW_OFFERED') {
                                 // Debug: Log the full message
-                                console.log('Full DRAW_OFFERED WebSocket message:', moveData);
+('Full DRAW_OFFERED WebSocket message:', moveData);
                                 
                                 // Check if this player is the one who should respond to the draw offer
                                 // (i.e., not the one who offered it)
@@ -1363,12 +1359,12 @@ class ChessGame {
                                 // The game continues normally while draw offer is pending
                             } else if (moveData.type === 'DRAW_RESPONSE') {
                                 // Debug: Log the full message
-                                console.log('Full DRAW_RESPONSE WebSocket message:', moveData);
+('Full DRAW_RESPONSE WebSocket message:', moveData);
                                 
                                 // Store winner ID if provided in the message (for accepted draws)
                                 if (moveData.winnerId) {
                                     this.winnerId = moveData.winnerId;
-                                    console.log('Received winnerId from DRAW_RESPONSE:', moveData.winnerId);
+('Received winnerId from DRAW_RESPONSE:', moveData.winnerId);
                                 }
                                 
                                 // Handle the draw response
@@ -1398,7 +1394,7 @@ class ChessGame {
                                 }
                             } else if (moveData.type === 'REMATCH_OFFERED') {  // ← Now at correct level
                                 // Debug: Log the full message
-                                console.log('Full REMATCH_OFFERED WebSocket message:', moveData);
+('Full REMATCH_OFFERED WebSocket message:', moveData);
                                 
                                 // Check if this player is the one who should respond to the rematch offer
                                 // (i.e., not the one who offered it)
@@ -1409,7 +1405,7 @@ class ChessGame {
          
                             } else if (moveData.type === 'REMATCH_RESPONSE') {  // ← Now at correct level
                                 // Debug: Log the full message
-                                console.log('Full REMATCH_RESPONSE WebSocket message:', moveData);
+('Full REMATCH_RESPONSE WebSocket message:', moveData);
                                 
                                 // Handle the rematch response
                                 if (moveData.action === 'accept') {
@@ -2089,16 +2085,7 @@ class ChessGame {
             // Create personalized title and subtitle based on winnerId
             let popupTitle, popupSubtitle;
             
-            // Debug logging
-            console.log('Debug popup logic:', {
-                winnerId: this.winnerId,
-                userId: this.userId,
-                winner: winner,
-                gameStatus: this.gameStatus,
-                whitePlayerId: this.boardDTO.whitePlayerId,
-                blackPlayerId: this.boardDTO.blackPlayerId,
-                boardDTO: this.boardDTO // Log the full boardDTO to see what's available
-            });
+            // Debug logging removed
             
             if (this.winnerId && winner !== 'Draw') {
                 // We have a winner ID and it's not a draw

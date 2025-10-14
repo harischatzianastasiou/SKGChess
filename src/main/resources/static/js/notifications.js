@@ -62,7 +62,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check for login parameter
     if (urlParams.has('login')) {
-        console.log('Login parameter found');
         showNotification(getTranslation('successfullyLoggedIn'), 'success');
         // Clean up the URL
         window.history.replaceState({}, document.title, window.location.pathname);

@@ -24,16 +24,14 @@
     <link rel="icon" type="image/png" href="/images/skgchess.png">
     
     <!-- Preload critical assets -->
-    <link rel="preload" href="/images/bnwthess.jpg" as="image">
+    <link rel="preload" href="/images/retrochess2.jpg" as="image">
     <link rel="preload" href="/images/skgchess.png" as="image">
     
     <!-- Preload feature section images for smooth hover effects -->
     <link rel="preload" href="/images/chess-engine.jpg" as="image">
-    <link rel="preload" href="/images/chat-system.png" as="image">
     <link rel="preload" href="/images/classical-music.jpg" as="image">
     <link rel="preload" href="/images/game-history.jpg" as="image">
     <link rel="preload" href="/images/themes.jpg" as="image">
-    <link rel="preload" href="/images/mobile-optimized.jpg" as="image">
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script th:inline="javascript" src="/js/index.js"></script>
@@ -736,29 +734,30 @@
             const errorMsgModal = document.getElementById('username-error-message-modal');
 
             // Get the number of username changes left from the data attribute
-            let usernameChangesLeft = parseInt(usernameDisplay.getAttribute('data-changes-left'), 10);
+            let usernameChangesLeft = usernameDisplay ? parseInt(usernameDisplay.getAttribute('data-changes-left'), 10) : 0;
 
             function updateEditButtonState() {
                 // Always show the edit button; do not hide it or show a message span
-                editBtn.style.display = 'inline-block';
+                if (editBtn) {
+                    editBtn.style.display = 'inline-block';
+                }
                 const msg = document.getElementById('username-limit-message');
                 if (msg) msg.remove();
             }
             updateEditButtonState();
 
             // Show modal when pen is clicked
-            editBtn.onclick = function() {
-                console.log('Edit button clicked'); // Debug log
+            if (editBtn) {
+                editBtn.onclick = function() {
                 if (usernameChangesLeft <= 0) {
                     // Show a popup message if the user has reached the maximum number of username changes
                     showUsernameLimitPopup();
                     return;
                 }
-                console.log('Opening modal'); // Debug log
                 usernameModal.style.display = 'block';
                 usernameModal.classList.add('show');
                 usernameModalOverlay.style.display = 'block';
-                usernameInputModal.value = usernameDisplay.textContent.trim();
+                usernameInputModal.value = usernameDisplay ? usernameDisplay.textContent.trim() : '';
                 
                 // Prevent body scroll and focus management
                 document.body.style.overflow = 'hidden';
@@ -770,11 +769,11 @@
                     // Trap focus within the modal
                     usernameModal.setAttribute('tabindex', '-1');
                     usernameModal.focus();
-                    console.log('Modal should be visible now'); // Debug log
                 }, 100);
                 
                 if (errorMsgModal) errorMsgModal.style.display = 'none';
-            };
+                };
+            }
 
             // Function to show the username limit popup
             function showUsernameLimitPopup() {
@@ -855,15 +854,12 @@
             }
             // Hide modal on cancel or close
             cancelBtnModal.onclick = function() {
-                console.log('Cancel button clicked'); // Debug log
                 hideUsernameModal();
             };
             closeModalBtn.onclick = function() {
-                console.log('Close button clicked'); // Debug log
                 hideUsernameModal();
             };
             usernameModalOverlay.onclick = function() {
-                console.log('Overlay clicked'); // Debug log
                 hideUsernameModal();
             };
             // Hide modal on Escape key
@@ -874,7 +870,6 @@
             });
             // Save username from modal
             saveBtnModal.onclick = function() {
-                console.log('Save button clicked'); // Debug log
                 const newUsername = usernameInputModal.value.trim();
                 if (!newUsername) return;
                 saveBtnModal.disabled = true;
@@ -882,14 +877,16 @@
                 fetch('/api/users/change-username', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: usernameDisplay.textContent.trim(), newUsername: newUsername })
+                    body: JSON.stringify({ username: usernameDisplay ? usernameDisplay.textContent.trim() : '', newUsername: newUsername })
                 })
                 .then(response => response.json().then(data => ({ status: response.status, body: data })))
                 .then(({ status, body }) => {
                     if (status === 200 && body && body.username) {
-                        usernameDisplay.textContent = body.username;
+                        if (usernameDisplay) {
+                            usernameDisplay.textContent = body.username;
+                            usernameDisplay.setAttribute('data-changes-left', usernameChangesLeft);
+                        }
                         usernameChangesLeft = body.usernameChangesLeft;
-                        usernameDisplay.setAttribute('data-changes-left', usernameChangesLeft);
                         // Log the user out and redirect to login page after username change for session consistency
                         fetch('/logout', { method: 'POST' })
                           .then(() => window.location.href = '/?logout=true');

@@ -619,13 +619,10 @@ const translations = {
         const isMuted = musicPlayer.classList.contains('unmuted');
         const tooltipText = isMuted ? translations[lang].musicOn : translations[lang].musicOff;
         musicPlayer.setAttribute('data-tooltip', tooltipText);
-        console.log('Updated music tooltip:', tooltipText, 'Language:', lang, 'Is muted:', isMuted);
-        console.log('Current data-tooltip attribute:', musicPlayer.getAttribute('data-tooltip'));
         
         // Force a style update
         musicPlayer.style.setProperty('--tooltip-text', `"${tooltipText}"`);
     } else {
-        console.log('Music player element not found');
     }
   }
 
@@ -667,7 +664,6 @@ const translations = {
       musicPlayer.offsetHeight; // Trigger reflow
       musicPlayer.style.display = '';
       
-      console.log('Force updated music tooltip:', tooltipText);
     }
   };
 

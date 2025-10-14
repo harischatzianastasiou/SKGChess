@@ -283,7 +283,6 @@
                 
                 // Play the song
                 audio.play().catch(error => {
-                    console.error("Playback failed:", error);
                 });
             }
 
@@ -295,7 +294,6 @@
                 
                 // Toggle play/pause
                 if (audio.paused) {
-                    console.log('Unmuting audio');
                     // First unmute, then play
                     audio.muted = false;
                     localStorage.setItem('musicMuted', 'false');  // Store mute state
@@ -304,13 +302,11 @@
                         playNextRandomSong();
                     } else {
                         audio.play().catch(error => {
-                            console.error("Playback failed:", error);
                         });
                     }
                     musicPlayer.classList.add('unmuted');
                     credits.classList.add('show');  // Show credits when unmuted
                 } else {
-                    console.log('Muting audio');
                     audio.pause();
                     audio.muted = true;  // Ensure it's muted when paused
                     localStorage.setItem('musicMuted', 'true');  // Store mute state
@@ -355,28 +351,14 @@
 
                 // Add event listeners for audio loading and errors
                 audio.addEventListener('loadeddata', () => {
-                    console.log('Audio file loaded successfully');
-                    console.log('Audio duration:', audio.duration, 'seconds');
-                    console.log('Audio source:', audio.currentSrc);
                 });
 
                 audio.addEventListener('error', (e) => {
-                    console.error('Error loading audio:', e);
-                    console.error('Audio error details:', audio.error);
-                    console.error('Audio source:', audio.currentSrc);
                     
                     // Try to load the next song if there's an error
                     playNextRandomSong();
                 });
 
-                // Log initial audio state
-                console.log('Initial audio state:', {
-                    hasAudio: !!audio,
-                    readyState: audio.readyState,
-                    muted: audio.muted,
-                    paused: audio.paused,
-                    src: audio.currentSrc
-                });
             });
         </script>
     </div>

@@ -858,28 +858,23 @@
                                 closeLoginModal();
                                 window.location.href = '/index?login=success';
                             } else {
-                                console.error('Login failed after signup');
                                 alert(getTranslation('signupSuccessful'));
                             }
                         } else {
                             // Handle JSON error response
                             const errorMessage = data.error || data.message || 'Unknown error occurred';
-                            console.error('Server error:', data);
                         }
                     } else {
                         // Handle non-JSON response
                         const errorText = await response.text();
-                        console.error('Server returned non-JSON response:', errorText);
                         if (response.status === 403) {
                             alert(getTranslation('accessDenied'));
                         } else if (response.status === 400) {
                             alert(getTranslation('invalidInput'));
                         } else {
-                            console.error('Error during signup:', errorText);
                         }
                     }
                 } catch (error) {
-                    console.error('Error during signup:', error);
                 }
             }
 
@@ -1108,7 +1103,6 @@
                         }
                     }
                 } catch (error) {
-                    console.error('Login error:', error);
                     showLoginError(getTranslation('errorDuringLogin'));
                 } finally {
                     // Restore button state
@@ -1156,7 +1150,6 @@
                     // Redirect to index page instead of game page
                     window.location.href = '/index';
                 } catch (error) {
-                    console.error("Error creating game:", error);
                     alert(getTranslation('errorCreatingGame') + error.message);
                     
                     // Clear the pending action
@@ -1208,7 +1201,6 @@
                             showJoinGameDialog();
                             break;
                         default:
-                            console.log('Unknown pending action:', pendingAction);
                     }
                 }
             }

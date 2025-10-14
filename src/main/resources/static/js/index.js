@@ -180,23 +180,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const featuresSectionVisible = featuresSection && isElementInViewport(featuresSection);
             
             // Debug logging
-            console.log('First section visible:', firstSectionVisible);
-            console.log('Features section visible:', featuresSectionVisible);
             
             if (firstSectionVisible) {
                 // First section is visible - white text (default)
                 header.classList.remove('first-section-hidden');
-                console.log('Setting header to WHITE (first section visible)');
             } else if (featuresSectionVisible) {
                 // First section not visible but features section visible - black text
                 if (shouldApplyBlackText()) {
                     header.classList.add('first-section-hidden');
-                    console.log('Setting header to BLACK (features section visible, first not visible)');
                 }
             } else {
                 // Neither section visible - white text (default)
                 header.classList.remove('first-section-hidden');
-                console.log('Setting header to WHITE (neither section visible)');
             }
         }, {
             threshold: 0.1, // Trigger when 10% of the section is visible/hidden
@@ -1259,7 +1254,6 @@ function showJoinGameDialog() {
         };
         overlay.addEventListener('click', handleOutsideClick);
     } else {
-        console.error('Join game dialog or overlay not found');
     }
 }
 
