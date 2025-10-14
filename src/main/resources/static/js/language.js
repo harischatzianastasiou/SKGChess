@@ -106,6 +106,7 @@ const translations = {
       // Login/Signup modal
       loginToChess: "Log in",
       continueWithGoogle: "Continue with Google",
+      googlePrivacyNotice: "By signing in with Google, you agree to their privacy policy and cookie usage.",
       or: "or",
       emailOrUsername: "Email or username",
       emailOrUsernamePlaceholder: "Email or username",
@@ -356,6 +357,7 @@ const translations = {
       // Login/Signup modal
       loginToChess: "Σύνδεση",
       continueWithGoogle: "Συνέχεια με Google",
+      googlePrivacyNotice: "Συνδέοντας με το Google, συμφωνείτε με την πολιτική απορρήτου και τη χρήση cookies τους.",
       or: "ή",
       emailOrUsername: "Email ή όνομα χρήστη",
       emailOrUsernamePlaceholder: "Email ή όνομα χρήστη",
