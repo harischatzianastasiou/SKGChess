@@ -74,10 +74,9 @@ public class UserController {
     @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
     public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequestDTO requestDTO, HttpServletRequest httpRequest) {
         
-        // Log the incoming request for debugging
-        log.info("Signup request received - Username: {}, Email: {}, Password length: {}", 
-                requestDTO.getUsername(), requestDTO.getEmail(), 
-                requestDTO.getPassword() != null ? requestDTO.getPassword().length() : 0);
+        // Log the incoming request for debugging (without password info)
+        log.info("Signup request received - Username: {}, Email: {}", 
+                requestDTO.getUsername(), requestDTO.getEmail());
 
         try {
             // Create a new User entity from the DTO
