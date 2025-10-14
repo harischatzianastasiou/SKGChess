@@ -386,6 +386,23 @@
                 padding: 10px; /* Smaller padding for signup form */
                 font-size: 0.9rem; /* Smaller font for signup form */
             }
+            
+            /* Password requirements styling */
+            .password-requirements {
+                background-color: #f8f9fa;
+                border: 1px solid #e9ecef;
+                border-radius: 4px;
+                padding: 8px;
+                margin-top: 8px;
+                font-size: 0.75rem;
+                color: #495057;
+                line-height: 1.4;
+            }
+            
+            .password-requirements strong {
+                color: #212529;
+                font-weight: 600;
+            }
 
             #login-modal #signup-form .login-btn {
                 margin-top: 8px; /* Compact spacing */
@@ -839,43 +856,74 @@
                     if (contentType && contentType.includes('application/json')) {
                         const data = await response.json();
                         if (response.ok) {
-                            // First login with the credentials
-                            const loginResponse = await fetch('/login', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/x-www-form-urlencoded',
-                                },
-                                body: `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`
-                            });
-
-                            if (loginResponse.ok) {
-                                // Wait a short moment to ensure session is established
-                                await new Promise(resolve => setTimeout(resolve, 1000));
-                                
-                                // Now create the game
-                                await createGameDirectly(username);
-                                
-                                // Close the modal and reload the page
-                                closeLoginModal();
-                                window.location.href = '/index?login=success';
-                            } else {
-                                alert(getTranslation('signupSuccessful'));
-                            }
+                            // Signup successful - now automatically log in the user
+                            console.log('Signup successful, attempting automatic login...');
+                            
+                            // Create a form to submit login credentials
+                            const loginForm = document.createElement('form');
+                            loginForm.method = 'POST';
+                            loginForm.action = '/login';
+                            loginForm.style.display = 'none';
+                            
+                            // Add username field
+                            const usernameField = document.createElement('input');
+                            usernameField.type = 'hidden';
+                            usernameField.name = 'username';
+                            usernameField.value = username;
+                            loginForm.appendChild(usernameField);
+                            
+                            // Add password field
+                            const passwordField = document.createElement('input');
+                            passwordField.type = 'hidden';
+                            passwordField.name = 'password';
+                            passwordField.value = password;
+                            loginForm.appendChild(passwordField);
+                            
+                            // Add remember me field
+                            const rememberField = document.createElement('input');
+                            rememberField.type = 'hidden';
+                            rememberField.name = 'remember';
+                            rememberField.value = 'on';
+                            loginForm.appendChild(rememberField);
+                            
+                            // Add form to page and submit
+                            document.body.appendChild(loginForm);
+                            loginForm.submit();
                         } else {
-                            // Handle JSON error response
+                            // Handle JSON error response with specific field highlighting
                             const errorMessage = data.error || data.message || 'Unknown error occurred';
+                            const errorField = data.field || null;
+                            
+                            console.error('Signup failed:', errorMessage);
+                            
+                            // Show user-friendly error message
+                            alert('Signup failed: ' + errorMessage);
                         }
                     } else {
                         // Handle non-JSON response
                         const errorText = await response.text();
+                        console.error('Signup failed with status:', response.status, errorText);
                         if (response.status === 403) {
-                            alert(getTranslation('accessDenied'));
+                            alert('Access denied. Please try again.');
                         } else if (response.status === 400) {
-                            alert(getTranslation('invalidInput'));
+                            alert('Invalid input. Please check your information and try again.');
                         } else {
+                            alert('Signup failed. Please try again.');
                         }
                     }
                 } catch (error) {
+                    console.error('Signup error:', error);
+                    alert('An error occurred during signup. Please try again.');
+                }
+            }
+
+            /**
+             * Clears error styling from form fields when user starts typing
+             */
+            function clearFieldError(fieldId) {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.style.borderColor = '';
                 }
             }
 
@@ -884,6 +932,17 @@
              */
             function setupSignupFormEventListeners() {
                 const signupForm = document.getElementById('signup-form');
+                
+                // Clear error styling when user types in fields
+                const usernameField = document.getElementById('modal-signup-username');
+                const emailField = document.getElementById('modal-signup-email');
+                
+                if (usernameField) {
+                    usernameField.addEventListener('input', () => clearFieldError('modal-signup-username'));
+                }
+                if (emailField) {
+                    emailField.addEventListener('input', () => clearFieldError('modal-signup-email'));
+                }
                 
                 signupForm.addEventListener('submit', function(event) {
                     event.preventDefault();
@@ -906,10 +965,42 @@
                         return;
                     }
 
-                    // Validate email format
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(email)) {
+                    // Validate email format with enhanced regex
+                    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+                    if (!emailRegex.test(email) || email.length < 5 || email.length > 254) {
                         alert(getTranslation('validEmail'));
+                        return;
+                    }
+                    
+                    // Check for disposable email domains
+                    const disposableDomains = ['10minutemail.com', 'tempmail.org', 'guerrillamail.com', 'mailinator.com', 'temp-mail.org', 'throwaway.email'];
+                    const domain = email.substring(email.lastIndexOf('@') + 1).toLowerCase();
+                    if (disposableDomains.includes(domain)) {
+                        alert('Disposable email addresses are not allowed');
+                        return;
+                    }
+                    
+                    // Validate password strength
+                    if (password.length < 8) {
+                        alert('Password must be at least 8 characters long');
+                        return;
+                    }
+                    
+                    // Check password complexity
+                    const hasUpperCase = /[A-Z]/.test(password);
+                    const hasLowerCase = /[a-z]/.test(password);
+                    const hasNumbers = /\d/.test(password);
+                    const hasSpecialChar = /[@$!%*?&]/.test(password);
+                    
+                    if (!hasUpperCase || !hasLowerCase || !hasNumbers || !hasSpecialChar) {
+                        alert('Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)');
+                        return;
+                    }
+                    
+                    // Check for common weak passwords
+                    const commonPasswords = ['password', '123456', '123456789', 'qwerty', 'abc123', 'password123', 'admin', 'letmein', 'welcome', 'monkey'];
+                    if (commonPasswords.includes(password.toLowerCase())) {
+                        alert('This password is too common. Please choose a stronger password.');
                         return;
                     }
                     

@@ -1,6 +1,7 @@
 package com.chess.dto.rest.request;
 
-import jakarta.validation.constraints.Email;
+import com.chess.validation.ValidEmail;
+import com.chess.validation.ValidPassword;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * Data Transfer Object for user registration requests
- * Used to validate and transfer user registration data
+ * Used to validate and transfer user registration data with enhanced security validation
  */
 @Data
 @Builder
@@ -22,13 +23,13 @@ public class CreateUserRequestDTO {
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
     private String username;
     
-    // Email field with validation
+    // Email field with enhanced validation
     @NotBlank(message = "Email is required")
-    @Email(message = "Email should be valid")
+    @ValidEmail(message = "Invalid email format. Please provide a valid email address.")
     private String email;
     
-    // Password field with validation
+    // Password field with strong validation
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 6 characters")
+    @ValidPassword(message = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character")
     private String password;
 } 

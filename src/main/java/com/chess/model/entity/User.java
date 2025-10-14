@@ -42,7 +42,7 @@ public class User implements Serializable {
     private String username;
 
     @NotNull
-    @Email(message = "Email should be valid")
+    @com.chess.validation.ValidEmail(message = "Invalid email format. Please provide a valid email address.")
     @Column(name = "S_EMAIL", nullable = false, unique = true, length = 50)
     private String email;
 

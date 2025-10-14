@@ -27,6 +27,13 @@ import java.util.stream.Collectors;
 import java.util.Map;
 import java.util.HashMap;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.http.HttpStatus;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -65,13 +72,19 @@ public class UserController {
     }
 
     @PostMapping(value = "/signup", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<?> createUser(@RequestBody CreateUserRequestDTO requestDTO, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequestDTO requestDTO, HttpServletRequest httpRequest) {
+        
+        // Log the incoming request for debugging
+        log.info("Signup request received - Username: {}, Email: {}, Password length: {}", 
+                requestDTO.getUsername(), requestDTO.getEmail(), 
+                requestDTO.getPassword() != null ? requestDTO.getPassword().length() : 0);
 
         try {
             // Create a new User entity from the DTO
-            User user = new User();
-            user.setUsername(requestDTO.getUsername());
-            user.setEmail(requestDTO.getEmail());
+            User user = User.builder()
+                .username(requestDTO.getUsername())
+                .email(requestDTO.getEmail())
+                .build();
             user.setPassword(passwordEncoder.encode(requestDTO.getPassword())); // Encode the password
             
             // Register the user
@@ -86,10 +99,19 @@ public class UserController {
             ));
             
             return ResponseEntity.ok(response);
+        } catch (DataIntegrityViolationException e) {
+            // Handle duplicate username or email - use generic message for security
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Username or email already exists. Please choose different credentials.");
+            
+            log.warn("Duplicate user registration attempt: username={}, email={}", 
+                    requestDTO.getUsername(), requestDTO.getEmail());
+            
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
         } catch (Exception e) {
             log.error("Error creating user: {}", e.getMessage(), e);
             Map<String, String> errorResponse = new HashMap<>();
-            errorResponse.put("message", "Failed to create user: " + e.getMessage());
+            errorResponse.put("message", "Failed to create user. Please try again.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
@@ -133,5 +155,29 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("message", "Failed to change username: " + e.getMessage()));
         }
+    }
+    
+    /**
+     * Handle validation errors and return detailed error messages
+     * This method catches @Valid annotation validation failures
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(MethodArgumentNotValidException ex) {
+        Map<String, Object> response = new HashMap<>();
+        Map<String, String> errors = new HashMap<>();
+        
+        // Extract field errors and create user-friendly messages
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            String fieldName = error.getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        }
+        
+        response.put("message", "Validation failed");
+        response.put("errors", errors);
+        
+        log.warn("Validation failed for signup request: {}", errors);
+        
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 }

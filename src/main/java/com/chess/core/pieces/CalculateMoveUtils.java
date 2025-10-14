@@ -24,6 +24,7 @@ import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerKing
 import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerKingsideCastleValidation;
 import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerPiecePinnedValidation;
 import  com.chess.core.pieces.moveValidation.opponentDepending.CurrentPlayerQueensideCastleValidation;
+import  com.chess.core.pieces.King;
 import  com.chess.core.player.Player;
 import com.chess.core.tiles.Tile;
 import com.chess.service.GameService;
