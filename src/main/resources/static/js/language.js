@@ -473,7 +473,7 @@ const translations = {
       gameResignedSuccessfully: "Το παιχνίδι παραιτήθηκε επιτυχώς",
       rematchAccepted: "Η επανάληψη αποδέχτηκε",
       // Popup button translations
-      successTitle: "Επιτυχία",
+      successTitle: " ",
       okButton: "Εντάξει",
       // Login/Logout messages
       successfullyLoggedIn: "Συνδεθήκατε επιτυχώς",
