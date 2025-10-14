@@ -106,8 +106,11 @@
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: 100% !important; /* Full container height */
+        height: 100vh !important; /* Fixed viewport height - never changes */
+        max-height: 100vh !important; /* Maximum height constraint */
+        min-height: 100vh !important; /* Minimum height constraint */
         z-index: -2 !important;
+        /* Remove overflow: hidden to allow scrolling */
         /* Prevent zoom and touch interactions */
         touch-action: none !important;
         user-select: none !important;
@@ -119,8 +122,11 @@
     .welcome-main {
         margin-bottom: 0 !important;
         padding-bottom: 0 !important;
-        min-height: 100vh !important; /* Full viewport height */
-        /* Remove fixed height and overflow hidden to allow scrolling */
+        height: 100vh !important; /* Fixed height - never changes */
+        max-height: 100vh !important; /* Maximum height constraint */
+        min-height: 100vh !important; /* Minimum height constraint */
+        /* Remove overflow: hidden to allow scrolling */
+        position: relative !important; /* Ensure proper positioning */
     }
     
     .hero-section {
@@ -176,6 +182,10 @@
         background-size: cover !important; /* Use cover for better mobile display */
         background-position: center !important; /* Center the image */
         background-repeat: no-repeat !important;
+        height: 100vh !important; /* Fixed viewport height - never changes */
+        max-height: 100vh !important; /* Maximum height constraint */
+        min-height: 100vh !important; /* Minimum height constraint */
+        /* Remove overflow: hidden to allow scrolling */
         /* Prevent zoom and touch interactions */
         touch-action: none !important;
         user-select: none !important;
@@ -190,7 +200,10 @@
         background-position: center !important; /* Center the image */
         background-repeat: no-repeat !important;
         background-attachment: scroll !important;
-        min-height: 100vh !important;
+        height: 100vh !important; /* Fixed viewport height - never changes */
+        max-height: 100vh !important; /* Maximum height constraint */
+        min-height: 100vh !important; /* Minimum height constraint */
+        /* Remove overflow: hidden to allow scrolling */
     }
     
     .welcome-main {
@@ -199,6 +212,10 @@
         background-position: center !important;
         background-repeat: no-repeat !important;
         background-attachment: scroll !important;
+        height: 100vh !important; /* Fixed viewport height - never changes */
+        max-height: 100vh !important; /* Maximum height constraint */
+        min-height: 100vh !important; /* Minimum height constraint */
+        /* Remove overflow: hidden to allow scrolling */
     }
     
     /* Chrome mobile specific positioning for small screens */
