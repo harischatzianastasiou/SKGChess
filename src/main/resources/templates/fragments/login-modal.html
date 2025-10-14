@@ -636,6 +636,17 @@
                 #login-modal .modal-footer {
                     padding: 0.5rem 1rem !important; /* Minimal footer padding */
                 }
+                
+                /* Reduce spacing between login button and signup link on mobile */
+                #login-modal .modal-switch-msg {
+                    margin: 0.1rem 0 0.1rem 0 !important; /* Minimal margin on mobile */
+                    gap: 0.1em !important; /* Smaller gap between text and link */
+                }
+                
+                /* Ensure the switch message is closer to the button */
+                #login-modal .login-btn {
+                    margin-bottom: 5px !important; /* Reduce bottom margin of button */
+                }
             }
             
             /* Fallback for browsers that don't support backdrop-filter */
