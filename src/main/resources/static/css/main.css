@@ -263,6 +263,18 @@ body {
   margin-bottom: 1vw; /* Responsive margin */
 }
 
+.footer-link {
+  color: var(--text-secondary); /* Footer link color */
+  text-decoration: none; /* Remove underline */
+  transition: color 0.3s ease; /* Smooth color transition */
+  font-size: 0.9rem; /* Slightly smaller font */
+}
+
+.footer-link:hover {
+  color: var(--primary-light); /* Highlight on hover */
+  text-decoration: underline; /* Add underline on hover */
+}
+
 .social-links {
   display: flex; /* Flexbox for layout */
   gap: 2vw; /* Responsive gap */

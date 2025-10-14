@@ -160,14 +160,26 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping("/about")
-    public String about(){
-        return "about";
-    }
 
     @GetMapping("/health")
     public String healthCheck() {
         return "OK";
+    }
+
+
+    @GetMapping("/privacy-policy")
+    public String privacyPolicy() {
+        return "privacy-policy";
+    }
+
+    @GetMapping("/terms-of-use")
+    public String termsOfUse() {
+        return "terms-of-use";
+    }
+
+    @GetMapping("/security-policy")
+    public String securityPolicy() {
+        return "security-policy";
     }
 }
 

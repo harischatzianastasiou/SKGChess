@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /games/
+Disallow: /req/
+
+# Sitemap
+Sitemap: https://skgchess.com/sitemap.xml

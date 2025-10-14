@@ -1,0 +1,8 @@
+Contact: mailto:harischatzi@tutanota.com
+Expires: 2027-01-01T00:00:00.000Z
+Preferred-Languages: en, el
+Canonical: https://skgchess.com/.well-known/security.txt
+
+# Security Policy
+# If you discover a security vulnerability, please report it to the contact above.
+# We appreciate responsible disclosure and will work with you to resolve any issues.

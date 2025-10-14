@@ -357,7 +357,7 @@ const translations = {
       // Login/Signup modal
       loginToChess: "Σύνδεση",
       continueWithGoogle: "Συνέχεια με Google",
-      googlePrivacyNotice: "Συνδέοντας με το Google, συμφωνείτε με την πολιτική απορρήτου και τη χρήση cookies τους.",
+      googlePrivacyNotice: "Συνδέοντας με το Google, συμφωνείτε με την πολιτική απορρήτου και τη χρήση cookies του Google.",
       or: "ή",
       emailOrUsername: "Email ή όνομα χρήστη",
       emailOrUsernamePlaceholder: "Email ή όνομα χρήστη",
