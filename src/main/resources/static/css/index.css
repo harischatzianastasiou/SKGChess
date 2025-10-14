@@ -3251,7 +3251,7 @@ body.authenticated .header {
     }
 
   body.authenticated .header {
-    background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43)) !important; /* Always black for authenticated users on mobile */
+    background: #000000 !important; /* Always black for authenticated users on mobile */
     box-shadow: none !important;
     border: none;
     transition: background 0.3s, box-shadow 0.3s;
