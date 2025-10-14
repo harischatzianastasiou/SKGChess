@@ -101,21 +101,26 @@
         background-size: cover !important; /* Use cover for better mobile display */
         background-position: center !important; /* Center the image */
         background-repeat: no-repeat !important;
-        background-attachment: fixed !important; /* Fixed attachment to prevent scrolling */
-        position: fixed !important; /* Fixed position to prevent scrolling */
+        background-attachment: scroll !important; /* Allow normal scrolling */
+        position: absolute !important; /* Absolute position for normal behavior */
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: 100vh !important; /* Full viewport height */
+        height: 100% !important; /* Full container height */
         z-index: -2 !important;
+        /* Prevent zoom and touch interactions */
+        touch-action: none !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
     }
     
     .welcome-main {
         margin-bottom: 0 !important;
         padding-bottom: 0 !important;
-        min-height: 100vh !important; /* Full viewport height to prevent scrolling */
-        height: 100vh !important; /* Fixed height to prevent scrolling */
-        overflow: hidden !important; /* Prevent any overflow scrolling */
+        min-height: 100vh !important; /* Full viewport height */
+        /* Remove fixed height and overflow hidden to allow scrolling */
     }
     
     .hero-section {
@@ -141,6 +146,27 @@
         background-repeat: no-repeat !important;
         background-attachment: scroll !important;
     }
+    
+    /* Chrome mobile specific positioning */
+    @supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+        .welcome-main {
+            padding-top: 2rem !important; /* Move content higher in Chrome */
+        }
+        
+        .welcome-icon {
+            margin-top: 1rem !important; /* Move logo higher in Chrome */
+            margin-bottom: 1rem !important; /* Reduce space below logo */
+        }
+        
+        .welcome-main h1 {
+            margin-top: 0.5rem !important; /* Move text higher in Chrome */
+            margin-bottom: 0.5rem !important; /* Reduce space below text */
+        }
+        
+        .cta-btn {
+            margin-top: 1rem !important; /* Move button higher in Chrome */
+        }
+    }
 }
 
 /* Additional mobile fix for very small screens */
@@ -150,6 +176,12 @@
         background-size: cover !important; /* Use cover for better mobile display */
         background-position: center !important; /* Center the image */
         background-repeat: no-repeat !important;
+        /* Prevent zoom and touch interactions */
+        touch-action: none !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
     }
     
     .home-container {
@@ -167,6 +199,27 @@
         background-position: center !important;
         background-repeat: no-repeat !important;
         background-attachment: scroll !important;
+    }
+    
+    /* Chrome mobile specific positioning for small screens */
+    @supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+        .welcome-main {
+            padding-top: 1.5rem !important; /* Move content higher in Chrome on small screens */
+        }
+        
+        .welcome-icon {
+            margin-top: 0.5rem !important; /* Move logo higher in Chrome */
+            margin-bottom: 0.5rem !important; /* Reduce space below logo */
+        }
+        
+        .welcome-main h1 {
+            margin-top: 0.3rem !important; /* Move text higher in Chrome */
+            margin-bottom: 0.3rem !important; /* Reduce space below text */
+        }
+        
+        .cta-btn {
+            margin-top: 0.8rem !important; /* Move button higher in Chrome */
+        }
     }
 
     
