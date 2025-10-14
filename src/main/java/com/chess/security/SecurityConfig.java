@@ -133,6 +133,12 @@ public class SecurityConfig {
                 .contentSecurityPolicy(csp -> csp
                     .policyDirectives("default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; connect-src 'self' https: wss: ws: http://localhost:*; img-src 'self' https: data:; form-action 'self' https: http://localhost:*;")
                 )
+                .contentTypeOptions(contentType -> contentType.and())
+                .httpStrictTransportSecurity(hsts -> hsts
+                    .maxAgeInSeconds(31536000) // 1 year
+                    .includeSubDomains(true)
+                )
+                .referrerPolicy(referrer -> referrer.policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
             )
             .build();
     }
