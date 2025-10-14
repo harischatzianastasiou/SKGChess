@@ -1,3 +1,14 @@
+/* Prevent mobile zoom and viewport issues */
+html, body {
+    touch-action: manipulation !important; /* Prevent zoom gestures */
+    -webkit-touch-callout: none !important; /* Prevent callout on iOS */
+    -webkit-user-select: none !important; /* Prevent text selection */
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    overflow-x: hidden !important; /* Prevent horizontal scroll */
+}
+
 /* Game Layout */
 
 .header {

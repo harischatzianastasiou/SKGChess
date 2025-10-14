@@ -122,6 +122,66 @@ html, body {
         min-height: 55vh !important; /* Ensure content area has more height */
     }
     
+    /* Brave browser specific fixes for game creation popup modal */
+    .game-creation-popup {
+        max-height: 85vh !important; /* Reduce height to ensure button is visible */
+        overflow-y: auto !important; /* Allow scrolling if content is too tall */
+        padding-bottom: 20px !important; /* Ensure space at bottom for button */
+    }
+    
+    .game-creation-popup .popup-content {
+        max-height: 80vh !important; /* Ensure content doesn't exceed viewport */
+        overflow-y: auto !important; /* Allow scrolling within content */
+        display: flex !important;
+        flex-direction: column !important;
+        padding-bottom: 0 !important; /* Remove bottom padding to prevent overlap */
+    }
+    
+    /* Ensure the button container is always visible at bottom */
+    .game-creation-popup .create-button-container {
+        position: sticky !important; /* Stick to bottom of scrollable area */
+        bottom: 0 !important;
+        background: linear-gradient(135deg, rgb(30, 29, 31), rgba(30, 29, 31)) !important; /* Match modal background */
+        padding: 16px 20px !important;
+        margin-top: auto !important;
+        flex-shrink: 0 !important;
+        border-top: 1px solid rgba(107, 70, 193, 0.2) !important;
+        z-index: 10 !important;
+    }
+    
+    .game-creation-popup .btn-create {
+        width: 100% !important;
+        min-height: 48px !important;
+        padding: 14px 20px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        background: linear-gradient(135deg, #6b46c1, #553c9a) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        box-shadow: 0 2px 8px rgba(107, 70, 193, 0.3) !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .game-creation-popup .btn-create:hover {
+        background: linear-gradient(135deg, #553c9a, #44337a) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(107, 70, 193, 0.4) !important;
+    }
+    
+    .game-creation-popup .btn-create:disabled {
+        background: #666 !important;
+        cursor: not-allowed !important;
+        transform: none !important;
+        box-shadow: none !important;
+        opacity: 0.6 !important;
+    }
+    
     /* Fix game results table alignment on mobile */
     .game-row,
     .game-row-header {
