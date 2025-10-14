@@ -582,76 +582,59 @@
                 }
             }
             
-            /* Chrome-specific modal height fixes */
+            /* Mobile browsers - use full screen height minus header */
             @media (max-width: 480px) {
-                /* Target Chrome specifically */
-                @supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
-                    #login-modal .modal-container {
-                        max-height: calc(100vh - 160px) !important; /* Chrome needs less height */
-                        height: auto !important;
-                        margin: 5px !important; /* Reduce margin for more space */
-                    }
-                    
-                    #login-modal .modal-body {
-                        max-height: calc(100vh - 240px) !important; /* Less height for content */
-                        overflow-y: auto !important;
-                        padding: 0.3rem !important; /* Further reduce padding in Chrome */
-                    }
-                    
-                    #login-modal .modal-header {
-                        padding: 0.5rem 1rem !important; /* Reduce header padding */
-                    }
-                    
-                    #login-modal .modal-footer {
-                        padding: 0.5rem 1rem !important; /* Reduce footer padding */
-                    }
+                #login-modal .modal-container {
+                    height: calc(100vh - 80px) !important; /* Full height minus header */
+                    max-height: calc(100vh - 80px) !important;
+                    margin: 0 !important; /* No margin to use full width */
+                    width: 100% !important; /* Full width */
                 }
-            }
-            
-            /* Non-Chrome mobile browsers - maximize height safely */
-            @media (max-width: 480px) {
-                /* Target non-Chrome browsers (Safari, Firefox, Edge, etc.) */
-                @supports not ((-webkit-appearance: none) and (not (-moz-appearance: none))) {
-                    #login-modal .modal-container {
-                        max-height: calc(100vh - 100px) !important; /* More height for non-Chrome */
-                        height: auto !important;
-                        margin: 10px !important; /* Slightly more margin */
-                    }
-                    
-                    #login-modal .modal-body {
-                        height: calc(100vh - 140px) !important; /* More height for non-Chrome */
-                        max-height: calc(100vh - 140px) !important;
-                        padding: 1rem !important; /* More comfortable padding */
-                    }
-                    
-                    /* Ensure form fits properly in larger modal */
-                    #login-modal .login-form {
-                        min-height: calc(100vh - 180px);
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                    }
-                    
-                    /* Better spacing for larger modal */
-                    #login-modal .form-group {
-                        margin-bottom: 10px; /* More space between fields */
-                    }
-                    
-                    #login-modal .login-btn {
-                        margin-top: 15px; /* More space before button */
-                        margin-bottom: 10px; /* More space after button */
-                        padding: 12px; /* More comfortable button size */
-                    }
-                    
-                    /* Signup form specific improvements for non-Chrome */
-                    #login-modal #signup-form .form-group {
-                        margin-bottom: 8px; /* Better spacing for signup form */
-                    }
-                    
-                    #login-modal #signup-form .login-btn {
-                        margin-top: 20px; /* More space before signup button */
-                        margin-bottom: 15px; /* More space after signup button */
-                    }
+                
+                #login-modal .modal-body {
+                    height: calc(100vh - 160px) !important; /* Full height minus header and modal header */
+                    max-height: calc(100vh - 160px) !important;
+                    padding: 1rem !important; /* Comfortable padding */
+                    overflow-y: auto !important; /* Allow scrolling if needed */
+                }
+                
+                /* Ensure form uses full available space */
+                #login-modal .login-form {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                }
+                
+                /* Better spacing for full height modal */
+                #login-modal .form-group {
+                    margin-bottom: 12px; /* Good spacing between fields */
+                }
+                
+                #login-modal .login-btn {
+                    margin-top: 20px; /* More space before button */
+                    margin-bottom: 10px; /* Space after button */
+                    padding: 14px; /* Comfortable button size */
+                }
+                
+                /* Signup form specific improvements */
+                #login-modal #signup-form .form-group {
+                    margin-bottom: 10px; /* Good spacing for signup form */
+                }
+                
+                #login-modal #signup-form .login-btn {
+                    margin-top: 25px; /* More space before signup button */
+                    margin-bottom: 15px; /* More space after signup button */
+                }
+                
+                /* Header optimization */
+                #login-modal .modal-header {
+                    padding: 0.8rem 1rem !important; /* Comfortable header padding */
+                }
+                
+                /* Remove footer padding to maximize content space */
+                #login-modal .modal-footer {
+                    padding: 0.5rem 1rem !important; /* Minimal footer padding */
                 }
             }
             
