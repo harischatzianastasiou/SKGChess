@@ -3251,7 +3251,7 @@ body.authenticated .header {
     }
 
   body.authenticated .header {
-    background: #000000 !important; /* Always black for authenticated users on mobile */
+    background: linear-gradient(135deg, rgb(42, 41, 43), rgba(42, 41, 43)) !important; /* Always black for authenticated users on mobile */
     box-shadow: none !important;
     border: none;
     transition: background 0.3s, box-shadow 0.3s;
@@ -4922,4 +4922,3 @@ body.authenticated .header {
 [data-theme="dark"] .theme-toggle-btn {
     background: linear-gradient(135deg,  #423a28 0%, #695240 100%);
 }
-
