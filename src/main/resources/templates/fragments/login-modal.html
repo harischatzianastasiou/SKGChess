@@ -342,29 +342,6 @@
                 margin: 8px 0; /* Restored original margin */
             }
 
-            #login-modal .remember-me {
-                display: flex;
-                align-items: center;
-                gap: 8px; /* Restored original gap */
-                color: rgba(255, 255, 255, 0.6);
-                font-size: 0.9rem; /* Restored original font size */
-            }
-
-            #login-modal .forgot-password {
-                display: block;
-                text-align: center;
-                margin-top: 12px; /* Restored original margin */
-                color: rgba(255, 255, 255, 0.6);
-                text-decoration: none;
-                font-size: 0.875rem; /* Restored original font size */
-                transition: color 0.3s ease;
-            }
-
-            #login-modal .forgot-password:hover {
-                color: #fff;
-                text-decoration: underline;
-            }
-
             #login-modal .modal-switch-msg {
                 display: flex;
                 justify-content: center;
@@ -827,7 +804,6 @@
                             <span>${getTranslation('dontHaveAccount')}</span>
                             <a href="#" class="modal-switch-link" onclick="switchToSignupForm()">${getTranslation('signUp')}</a>
                         </div>
-                        <a href="/forgot-password" class="forgot-password">${getTranslation('forgotPassword')}</a>
                 `;
                 // Setup login form event listeners
                 setupModalEventListeners();
