@@ -94,6 +94,17 @@
     }
 }
 
+/* Prevent mobile zoom and viewport issues */
+html, body {
+    touch-action: manipulation !important; /* Prevent zoom gestures */
+    -webkit-touch-callout: none !important; /* Prevent callout on iOS */
+    -webkit-user-select: none !important; /* Prevent text selection */
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+    overflow-x: hidden !important; /* Prevent horizontal scroll */
+}
+
 /* Mobile responsive styles for welcome-main */
 @media (max-width: 768px) {
     .video-bg-container {
@@ -127,6 +138,25 @@
         min-height: 100vh !important; /* Minimum height constraint */
         /* Remove overflow: hidden to allow scrolling */
         position: relative !important; /* Ensure proper positioning */
+        /* Prevent mobile viewport changes */
+        transform: translateZ(0) !important; /* Force hardware acceleration */
+        -webkit-transform: translateZ(0) !important;
+        will-change: auto !important; /* Prevent layout shifts */
+    }
+    
+    /* Fix spacing issues between logo and text */
+    .welcome-icon {
+        margin-top: 0 !important; /* Remove top margin */
+        margin-bottom: 0.5rem !important; /* Fixed bottom margin */
+        transform: translateZ(0) !important; /* Force hardware acceleration */
+        -webkit-transform: translateZ(0) !important;
+    }
+    
+    .welcome-main h1 {
+        margin-top: 0 !important; /* Remove top margin */
+        margin-bottom: 0.5rem !important; /* Fixed bottom margin */
+        transform: translateZ(0) !important; /* Force hardware acceleration */
+        -webkit-transform: translateZ(0) !important;
     }
     
     .hero-section {

@@ -4,7 +4,7 @@
 <head>
     <title id= "titlelang"></title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <meta name="description" content="Play chess online with friends on SKG Chess. Join live games, track your progress, and improve your chess skills.">
     
     <!-- Preconnect to external resources -->
@@ -1054,5 +1054,41 @@
     
     <!-- Username Modal Overlay - Root level -->
     <div id="username-modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); z-index:999998; backdrop-filter:blur(5px); pointer-events:auto;"></div>
+    
+    <!-- Prevent mobile zoom and viewport issues -->
+    <script>
+        // Prevent mobile zoom and viewport changes
+        document.addEventListener('touchstart', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault(); // Prevent pinch zoom
+            }
+        }, { passive: false });
+        
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 1) {
+                e.preventDefault(); // Prevent pinch zoom
+            }
+        }, { passive: false });
+        
+        // Prevent double-tap zoom
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            const now = (new Date()).getTime();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault(); // Prevent double-tap zoom
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+        
+        // Fix viewport height on mobile browsers
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setViewportHeight();
+        window.addEventListener('resize', setViewportHeight);
+        window.addEventListener('orientationchange', setViewportHeight);
+    </script>
 </body>
 </html> 
