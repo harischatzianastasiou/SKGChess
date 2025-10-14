@@ -101,19 +101,21 @@
         background-size: cover !important; /* Use cover for better mobile display */
         background-position: center !important; /* Center the image */
         background-repeat: no-repeat !important;
-        background-attachment: scroll !important;
-        position: absolute !important;
+        background-attachment: fixed !important; /* Fixed attachment to prevent scrolling */
+        position: fixed !important; /* Fixed position to prevent scrolling */
         top: 0 !important;
         left: 0 !important;
         width: 100% !important;
-        height: 100% !important;
+        height: 100vh !important; /* Full viewport height */
         z-index: -2 !important;
-        min-height: 100vh !important;
     }
     
     .welcome-main {
         margin-bottom: 0 !important;
         padding-bottom: 0 !important;
+        min-height: 100vh !important; /* Full viewport height to prevent scrolling */
+        height: 100vh !important; /* Fixed height to prevent scrolling */
+        overflow: hidden !important; /* Prevent any overflow scrolling */
     }
     
     .hero-section {

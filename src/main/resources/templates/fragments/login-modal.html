@@ -459,6 +459,19 @@
                     box-sizing: border-box; /* Include padding and border in width calculation */
                 }
                 
+                /* Chrome-specific fixes for modal height */
+                @supports (-webkit-appearance: none) {
+                    #login-modal .modal-container {
+                        max-height: calc(100vh - 120px) !important; /* Chrome needs more space */
+                        height: auto !important;
+                    }
+                    
+                    #login-modal .modal-body {
+                        max-height: calc(100vh - 200px) !important; /* Chrome-specific body height */
+                        overflow-y: auto !important;
+                    }
+                }
+                
                 #login-modal.modal-overlay.active .modal-container {
                     transform: translateY(0) scale(1); /* Keep X translation for centering */
                 }
@@ -571,6 +584,23 @@
                 #login-modal .modal-container {
                     -webkit-backdrop-filter: blur(8px);
                     backdrop-filter: blur(8px);
+                }
+            }
+            
+            /* Chrome-specific modal height fixes */
+            @media (max-width: 480px) {
+                /* Target Chrome specifically */
+                @supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+                    #login-modal .modal-container {
+                        max-height: calc(100vh - 120px) !important;
+                        height: auto !important;
+                    }
+                    
+                    #login-modal .modal-body {
+                        max-height: calc(100vh - 200px) !important;
+                        overflow-y: auto !important;
+                        padding: 0.5rem !important; /* Reduce padding in Chrome */
+                    }
                 }
             }
             
