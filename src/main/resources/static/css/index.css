@@ -110,6 +110,17 @@ html, body {
     .scroll-indicator {
         display: none !important;
     }
+    
+    /* Increase height of create new game popup on mobile */
+    .game-creation-popup {
+        height: auto !important;
+        min-height: 60vh !important; /* Increased from default */
+        max-height: 80vh !important; /* Allow more height */
+    }
+    
+    .game-creation-popup .popup-content {
+        min-height: 55vh !important; /* Ensure content area has more height */
+    }
 }
 
 /* Mobile responsive styles for welcome-main */
