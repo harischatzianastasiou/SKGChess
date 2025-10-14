@@ -121,6 +121,39 @@ html, body {
     .game-creation-popup .popup-content {
         min-height: 55vh !important; /* Ensure content area has more height */
     }
+    
+    /* Fix game results table alignment on mobile */
+    .game-row,
+    .game-row-header {
+        grid-template-columns: 1fr 80px 60px !important; /* Adjusted column widths for mobile */
+        column-gap: 16px !important; /* Reduced gap for mobile */
+        padding: 0.8rem 0.5rem !important; /* Adjusted padding for mobile */
+        min-height: 50px !important; /* Increased minimum height for better alignment */
+        align-items: flex-start !important; /* Align to top for better text wrapping */
+    }
+    
+    /* Ensure result and moves columns stay aligned */
+    .game-row > div:nth-child(2), /* Result column */
+    .game-row > div:nth-child(3), /* Moves column */
+    .game-row-header > div:nth-child(2),
+    .game-row-header > div:nth-child(3) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 40px !important; /* Fixed height for consistent alignment */
+        text-align: center !important;
+    }
+    
+    /* Players column - allow text wrapping */
+    .game-row > div:first-child,
+    .game-row-header > div:first-child {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        min-height: 40px !important;
+        line-height: 1.2 !important;
+    }
 }
 
 /* Mobile responsive styles for welcome-main */
