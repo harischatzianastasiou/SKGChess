@@ -64,6 +64,16 @@
             z-index: 3001 !important;
         }
         
+        /* Header visibility control for mobile non-authenticated users */
+        .header.hidden {
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .header {
+            transition: transform 0.3s ease-in-out;
+        }
+        
         /* Menu button styles */
         .menu-btn {
             min-width: 48px;
@@ -1105,6 +1115,35 @@
         setViewportHeight();
         window.addEventListener('resize', setViewportHeight);
         window.addEventListener('orientationchange', setViewportHeight);
+        
+        // Header visibility control for mobile non-authenticated users
+        function handleHeaderVisibility() {
+            const header = document.querySelector('.header');
+            const isMobile = window.innerWidth <= 768; // Mobile breakpoint
+            const isAuthenticated = document.body.classList.contains('authenticated');
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Only hide header on mobile for non-authenticated users when scrolled down
+            if (isMobile && !isAuthenticated && scrollTop > 50) {
+                header.classList.add('hidden');
+            } else {
+                header.classList.remove('hidden');
+            }
+        }
+        
+        // Add scroll event listener for header visibility
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            // Throttle scroll events for better performance
+            if (scrollTimeout) {
+                clearTimeout(scrollTimeout);
+            }
+            scrollTimeout = setTimeout(handleHeaderVisibility, 10);
+        });
+        
+        // Handle header visibility on page load and resize
+        document.addEventListener('DOMContentLoaded', handleHeaderVisibility);
+        window.addEventListener('resize', handleHeaderVisibility);
     </script>
 </body>
 </html> 
