@@ -647,6 +647,33 @@
                 }
             }
             
+            /* Chrome mobile specific fixes for scrolling */
+            @media (max-width: 480px) {
+                /* Target Chrome specifically for scrolling fixes */
+                @supports (-webkit-appearance: none) and (not (-moz-appearance: none)) {
+                    #login-modal .modal-container {
+                        overflow-y: auto !important; /* Ensure container can scroll */
+                        -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS Chrome */
+                    }
+                    
+                    #login-modal .modal-body {
+                        overflow-y: visible !important; /* Allow content to flow naturally */
+                        height: auto !important; /* Let content determine height */
+                        max-height: none !important; /* Remove height restrictions */
+                    }
+                    
+                    #login-modal .login-form {
+                        min-height: auto !important; /* Remove minimum height constraint */
+                        height: auto !important; /* Let form size naturally */
+                    }
+                    
+                    /* Ensure all content is accessible */
+                    #login-modal .modal-body {
+                        padding-bottom: 2rem !important; /* Extra padding at bottom */
+                    }
+                }
+            }
+            
             /* Fallback for browsers that don't support backdrop-filter */
             @supports not (backdrop-filter: blur(8px)) {
                 #login-modal .modal-container {
