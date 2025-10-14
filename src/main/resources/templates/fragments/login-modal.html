@@ -608,6 +608,53 @@
                 }
             }
             
+            /* Non-Chrome mobile browsers - maximize height safely */
+            @media (max-width: 480px) {
+                /* Target non-Chrome browsers (Safari, Firefox, Edge, etc.) */
+                @supports not ((-webkit-appearance: none) and (not (-moz-appearance: none))) {
+                    #login-modal .modal-container {
+                        max-height: calc(100vh - 100px) !important; /* More height for non-Chrome */
+                        height: auto !important;
+                        margin: 10px !important; /* Slightly more margin */
+                    }
+                    
+                    #login-modal .modal-body {
+                        height: calc(100vh - 140px) !important; /* More height for non-Chrome */
+                        max-height: calc(100vh - 140px) !important;
+                        padding: 1rem !important; /* More comfortable padding */
+                    }
+                    
+                    /* Ensure form fits properly in larger modal */
+                    #login-modal .login-form {
+                        min-height: calc(100vh - 180px);
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                    }
+                    
+                    /* Better spacing for larger modal */
+                    #login-modal .form-group {
+                        margin-bottom: 10px; /* More space between fields */
+                    }
+                    
+                    #login-modal .login-btn {
+                        margin-top: 15px; /* More space before button */
+                        margin-bottom: 10px; /* More space after button */
+                        padding: 12px; /* More comfortable button size */
+                    }
+                    
+                    /* Signup form specific improvements for non-Chrome */
+                    #login-modal #signup-form .form-group {
+                        margin-bottom: 8px; /* Better spacing for signup form */
+                    }
+                    
+                    #login-modal #signup-form .login-btn {
+                        margin-top: 20px; /* More space before signup button */
+                        margin-bottom: 15px; /* More space after signup button */
+                    }
+                }
+            }
+            
             /* Fallback for browsers that don't support backdrop-filter */
             @supports not (backdrop-filter: blur(8px)) {
                 #login-modal .modal-container {
