@@ -326,7 +326,7 @@
         <!-- Unauthenticated: Video background and header/main -->
         <div sec:authorize="!isAuthenticated()">
             <!-- Video background container -->
-            <div class="video-bg-container" style="background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url('/images/retrochess2.jpg'); background-size: 115%; background-position: left center; background-repeat: no-repeat; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; animation: backgroundTravel 30s infinite alternate ease-in-out;">
+            <div class="video-bg-container">
                 <!-- Overlay for styling/darkening the image -->
                 <div class="video-overlay"></div>
             </div>

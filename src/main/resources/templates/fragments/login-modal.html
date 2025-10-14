@@ -98,6 +98,10 @@
                 border-radius: 4px;
                 background: rgba(26, 31, 38, 0.6);
                 backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px); /* Safari support */
+                /* Fallback for browsers that don't support backdrop-filter */
+                background: rgba(26, 31, 38, 0.9);
+                box-sizing: border-box; /* Include padding and border in width calculation */
             }
 
             #login-modal.modal-overlay.active .modal-container {
@@ -156,6 +160,7 @@
                 letter-spacing: -0.5px;
                 background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
                 -webkit-background-clip: text;
+                background-clip: text;
                 -webkit-text-fill-color: transparent;
                 flex-shrink: 0;
                 z-index: 1;
@@ -446,10 +451,12 @@
                 
                 #login-modal .modal-container {
                     width: 95%;
+                    max-width: 95vw; /* Ensure it doesn't exceed viewport width */
                     max-height: calc(100vh - 100px); /* Account for header and padding */
                     height: auto;
                     margin: 10px;
                     transform: translateY(0) scale(0.95); /* Remove Y translation since we're using flex-start */
+                    box-sizing: border-box; /* Include padding and border in width calculation */
                 }
                 
                 #login-modal.modal-overlay.active .modal-container {
@@ -552,10 +559,30 @@
                 
                 #login-modal .modal-container {
                     width: 98%;
+                    max-width: 98vw; /* Ensure it doesn't exceed viewport width */
                     max-height: calc(100vh - 90px); /* Account for header and padding */
                     margin: 5px;
+                    box-sizing: border-box; /* Include padding and border in width calculation */
                 }
-                
+            }
+            
+            /* Browser-specific fixes */
+            @supports (-webkit-backdrop-filter: blur(8px)) {
+                #login-modal .modal-container {
+                    -webkit-backdrop-filter: blur(8px);
+                    backdrop-filter: blur(8px);
+                }
+            }
+            
+            /* Fallback for browsers that don't support backdrop-filter */
+            @supports not (backdrop-filter: blur(8px)) {
+                #login-modal .modal-container {
+                    background: rgba(26, 31, 38, 0.9);
+                }
+            }
+            
+            /* Additional mobile styles for very small screens */
+            @media (max-width: 360px) {
                 #login-modal .modal-body {
                     padding: 0.6rem; /* Reduced padding for very small screens */
                     height: calc(100vh - 170px); /* Account for header, modal header, and padding */

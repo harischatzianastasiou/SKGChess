@@ -64,6 +64,15 @@
     height: 100%;
     z-index: -2;
     overflow: hidden;
+    /* Fallback background color for browsers that block images */
+    background-color: #1a1a1a;
+    /* Ensure the background image loads properly */
+    background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)), url('/images/retrochess2.jpg');
+    background-size: 115%;
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    animation: backgroundTravel 30s infinite alternate ease-in-out;
 }
 
 .video-overlay {
@@ -88,10 +97,74 @@
 /* Mobile responsive styles for welcome-main */
 @media (max-width: 768px) {
     .video-bg-container {
-        background-size: cover !important;
-        background-position: right top !important;
-        background-repeat: repeat !important;       
         background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/retrochess2.jpg') !important;
+        background-size: cover !important; /* Use cover for better mobile display */
+        background-position: center !important; /* Center the image */
+        background-repeat: no-repeat !important;
+        background-attachment: scroll !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: -2 !important;
+        min-height: 100vh !important;
+    }
+    
+    .welcome-main {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    
+    .hero-section {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    
+    /* Force background image to show on mobile */
+    .home-container {
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/retrochess2.jpg') !important;
+        background-size: cover !important; /* Use cover for better mobile display */
+        background-position: center !important; /* Center the image */
+        background-repeat: no-repeat !important;
+        background-attachment: scroll !important;
+        min-height: 100vh !important;
+    }
+    
+    /* Additional fallback for the first section */
+    .welcome-main {
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/retrochess2.jpg') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-attachment: scroll !important;
+    }
+}
+
+/* Additional mobile fix for very small screens */
+@media (max-width: 480px) {
+    .video-bg-container {
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/retrochess2.jpg') !important;
+        background-size: cover !important; /* Use cover for better mobile display */
+        background-position: center !important; /* Center the image */
+        background-repeat: no-repeat !important;
+    }
+    
+    .home-container {
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/retrochess2.jpg') !important;
+        background-size: cover !important; /* Use cover for better mobile display */
+        background-position: center !important; /* Center the image */
+        background-repeat: no-repeat !important;
+        background-attachment: scroll !important;
+        min-height: 100vh !important;
+    }
+    
+    .welcome-main {
+        background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('/images/retrochess2.jpg') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-attachment: scroll !important;
     }
 
     
@@ -269,6 +342,7 @@
     margin-bottom: 0.5rem;
     background: linear-gradient(45deg, var(--primary-light), var(--accent-light));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: fadeInUp 0.8s ease-out;
 }
@@ -1074,7 +1148,8 @@ body.authenticated {
 }
 
 body.authenticated .welcome-icon {
-    margin-top: 2rem !important;   /* Move logo further up (reduce top margin) */
+    margin-top: 1rem !important;   /* Move logo even further up */
+    margin-bottom: 1rem !important; /* Reduce bottom margin to move content up */
 }
 
 @media (min-width: 769px) {
@@ -1090,7 +1165,8 @@ body.authenticated .welcome-icon {
     body.authenticated .username-row {
         margin-top: 0rem !important; /* Ensure no extra top margin on the h1 */
         font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif, sans-serif !important;
-        font-size: 2.5rem !important;
+        font-size: 2rem !important; /* Reduced from 2.5rem to 2rem for smaller welcome text */
+        margin-bottom: 0.5rem !important; /* Reduce bottom margin to move chess quote up */
     }
 
     body.authenticated .welcome-icon {
@@ -1110,6 +1186,7 @@ body.authenticated .welcome-icon {
     }
     body.authenticated .welcome-icon {
         margin-top: -6.5rem !important;
+        margin-bottom: 0.5rem !important; /* Reduce bottom margin to move content up */
     }
 }
 
@@ -1173,12 +1250,13 @@ body.authenticated::before {
     margin-top: 2rem; /* Reduced from 4rem to 2rem to move content higher */
 }
 
-/* Make welcome message bigger for authenticated users */
+/* Make welcome message smaller for authenticated users */
 .authenticated-hero .hero-content h1 {
-    font-size: 3rem; /* Reduced from 3.5rem to 3rem */
-    margin-bottom: 1rem;
+    font-size: 2.5rem; /* Reduced from 3rem to 2.5rem for smaller welcome text */
+    margin-bottom: 0.5rem; /* Reduced margin to move chess quote up */
     background: linear-gradient(45deg, var(--primary-light), var(--accent-light));
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: white;
     text-shadow: 0 0 30px rgba(130, 90, 220, 0.3);
     padding: 0.5rem 1rem;
@@ -1211,9 +1289,9 @@ body.authenticated::before {
     
     /* Mobile chess quote spacing */
     #chessquote {
-        margin-top: 1.5rem !important; /* Reduced gap on tablets */
+        margin-top: 0.5rem !important; /* Move chess quote much closer to welcome text */
         margin-bottom: 1rem !important; /* Reduced space below on tablets */
-        font-size: 1.8rem !important; /* Slightly smaller font on tablets */
+        font-size: 1.5rem !important; /* Smaller font on tablets */
         opacity: 1 !important; /* Ensure visibility */
         display: block !important; /* Ensure display */
         visibility: visible !important; /* Ensure visibility */
@@ -1229,9 +1307,9 @@ body.authenticated::before {
     
     /* Small mobile chess quote spacing */
     #chessquote {
-        margin-top: 1rem !important; /* Further reduced gap on mobile */
+        margin-top: 0.3rem !important; /* Move chess quote much closer to welcome text on mobile */
         margin-bottom: 0.8rem !important; /* Further reduced space below on mobile */
-        font-size: 1.4rem !important; /* Smaller font on mobile */
+        font-size: 1.2rem !important; /* Smaller font on mobile */
         opacity: 1 !important; /* Ensure visibility */
         display: block !important; /* Ensure display */
         visibility: visible !important; /* Ensure visibility */
@@ -2801,6 +2879,7 @@ body:not(.authenticated) .video-bg-container {
         -webkit-text-fill-color: #fff !important;
         background: none !important;
         -webkit-background-clip: unset !important;
+        background-clip: unset !important;
         text-shadow: none;
         background-color: unset;
         border-radius: unset;
@@ -2877,11 +2956,6 @@ body:not(.authenticated) .video-bg-container {
     }
 }
 
-@media (max-width: 768px) {
-    .video-bg-container {
-        background-attachment: scroll !important;
-    }
-}
 
 @media (max-width: 768px) {
     .welcome-main .cta-btn {
@@ -3078,7 +3152,7 @@ body.authenticated .header {
     padding: 1.5rem;
     border-radius: 4px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease; /* Only animate opacity and transform, not all properties */
     position: relative;
     overflow: hidden;
     cursor: default; /* Changed from pointer since click is disabled */
@@ -3297,13 +3371,13 @@ body.authenticated .header {
 /* Hide header and icon, show description on hover */
 .feature-card:hover h3 {
     opacity: 0; /* Fade out the header */
-    transform: translateY(-10px); /* Move header up slightly */
+    transform: translateY(0); /* Remove movement animation */
     margin-bottom: 0; /* Remove bottom margin when hidden */
 }
 
 .feature-card:hover .feature-icon {
     opacity: 0; /* Fade out the icon */
-    transform: translateY(-10px); /* Move icon up slightly */
+    transform: translateY(0); /* Remove movement animation */
     margin-bottom: 0; /* Remove bottom margin when hidden */
 }
 
@@ -3315,9 +3389,10 @@ body.authenticated .header {
     position: absolute; /* Position absolutely for centering */
     top: 50%; /* Center vertically */
     left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Perfect centering */
+    transform: translate(-50%, -50%); /* Perfect centering - no movement animation */
     width: 80%; /* Control width for better readability */
     z-index: 15; /* Ensure it's above all other elements */
+    transition: opacity 0.3s ease; /* Only animate opacity, not transform */
 }
 
 /* Expanded state styles removed - click functionality disabled */
