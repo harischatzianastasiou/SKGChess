@@ -1462,10 +1462,10 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 95vw; /* Use viewport width for better mobile sizing */
-        height: 90dvh; /* Use dynamic viewport height for better keyboard handling */
+        width: 90vw; /* Reduced from 95vw for better mobile sizing */
+        height: 70vh; /* Reduced from 90dvh for better mobile sizing */
         max-width: 400px; /* Set maximum width for larger screens */
-        max-height: 600px; /* Set maximum height for larger screens */
+        max-height: 500px; /* Reduced from 600px for better mobile sizing */
         margin: 0; /* Remove any default margins */
         border-radius: 12px; /* Keep border radius for rounded corners */
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6); /* Enhanced shadow for better visibility */
@@ -1620,10 +1620,10 @@
 /* Additional mobile styles for very small screens */
 @media (max-width: 480px) {
     .chat-modal {
-        width: 98vw; /* Use almost full viewport width */
-        height: 95vh; /* Use almost full viewport height */
-        max-width: none; /* Remove max-width constraint */
-        max-height: none; /* Remove max-height constraint */
+        width: 85vw; /* Reduced from 98vw for better mobile sizing */
+        height: 65vh; /* Reduced from 95vh for better mobile sizing */
+        max-width: 350px; /* Set reasonable max-width for small screens */
+        max-height: 450px; /* Set reasonable max-height for small screens */
         border-radius: 8px; /* Smaller border radius for very small screens */
     }
     
