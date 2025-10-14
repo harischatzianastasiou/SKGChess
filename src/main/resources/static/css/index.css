@@ -144,7 +144,7 @@ html, body {
         text-align: center !important;
     }
     
-    /* Players column - allow text wrapping */
+    /* Players column - force text wrapping and prevent horizontal expansion */
     .game-row > div:first-child,
     .game-row-header > div:first-child {
         display: flex !important;
@@ -153,6 +153,25 @@ html, body {
         align-items: flex-start !important;
         min-height: 40px !important;
         line-height: 1.2 !important;
+        max-width: 100% !important; /* Prevent horizontal expansion */
+        overflow-wrap: break-word !important; /* Force word breaking */
+        word-wrap: break-word !important; /* Legacy word wrap */
+        word-break: break-word !important; /* Break long words */
+        hyphens: auto !important; /* Add hyphens for better wrapping */
+        white-space: normal !important; /* Allow text to wrap */
+        width: 100% !important; /* Use full available width */
+        box-sizing: border-box !important; /* Include padding in width calculation */
+    }
+    
+    /* Force all text inside players column to wrap */
+    .game-row > div:first-child *,
+    .game-row-header > div:first-child * {
+        max-width: 100% !important;
+        overflow-wrap: break-word !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        white-space: normal !important;
+        display: block !important; /* Make each element a block for better wrapping */
     }
 }
 
