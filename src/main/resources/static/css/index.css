@@ -3251,7 +3251,7 @@ body.authenticated .header {
     }
 
   body.authenticated .header {
-    background: #000000 !important; /* Always black for authenticated users on mobile */
+    background: #ffffff !important; /* Always black for authenticated users on mobile */
     box-shadow: none !important;
     border: none;
     transition: background 0.3s, box-shadow 0.3s;
@@ -3266,6 +3266,13 @@ body.authenticated .header {
     transition: background 0.3s, box-shadow 0.3s;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+  }
+  
+  /* Make header text and burger menu black on mobile for authenticated users */
+  body.authenticated .header .logo,
+  body.authenticated .header .menu-btn {
+    color: #000000 !important; /* Black text and burger menu icon on mobile for authenticated users */
+    text-shadow: none !important; /* Remove text shadow for better black text visibility */
   }
   .header {
     background: transparent !important; /* Unauthenticated: transparent by default */

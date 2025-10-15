@@ -129,8 +129,15 @@ body {
 /* Mobile header styling for non-authenticated users */
 @media (max-width: 768px) {
     body:not(.authenticated) .header {
-        background: #000000 !important; /* Override transparent background with black for non-authenticated users on mobile */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important; /* Add shadow for non-authenticated users on mobile */
+        background: #ffffff !important; /* Override transparent background with white for non-authenticated users on mobile */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important; /* Add subtle shadow for non-authenticated users on mobile */
+    }
+    
+    /* Make header text and burger menu black on mobile for non-authenticated users */
+    body:not(.authenticated) .header .logo,
+    body:not(.authenticated) .header .menu-btn {
+        color: #000000 !important; /* Black text and burger menu icon on mobile for non-authenticated users */
+        text-shadow: none !important; /* Remove text shadow for better black text visibility */
     }
 }
 
@@ -1728,8 +1735,14 @@ body {
         font-size: 2.2rem;
         font-weight: 400;
         letter-spacing: 0.02em;
-        color: #fff !important;
+        color: #fff !important; /* Default white for authenticated users */
         text-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    }
+    
+    /* Override logo color for non-authenticated users on mobile */
+    body:not(.authenticated) .header .logo {
+        color: #000000 !important; /* Black text for non-authenticated users on mobile */
+        text-shadow: none !important; /* Remove text shadow for better black text visibility */
     }
     
     .invitation-actions {
