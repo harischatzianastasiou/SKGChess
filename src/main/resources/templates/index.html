@@ -581,7 +581,7 @@
                                                 </span>
                                                 <!-- Game still in progress -->
                                                 <span th:unless="${game.status != 'IN_PROGRESS'}" class="status-in-progress">
-                                                    <span th:text="${game.status}"></span>
+                                                    <span th:text="${game.status == 'IN_PROGRESS' ? 'In Progress' : game.status}"></span>
                                                 </span>
                                             </span>
                                             <span class="game-moves" th:text="${game.moveCount}"></span>

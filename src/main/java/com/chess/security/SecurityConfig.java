@@ -120,7 +120,8 @@ public class SecurityConfig {
                     "/chess-websocket/**",
                     "/topic/**",
                     "/app/**",
-                    "/api/users/change-username"
+                    "/api/users/change-username",
+                    "/api/invitations/**"
                 )
             )
             .headers(headers -> headers
