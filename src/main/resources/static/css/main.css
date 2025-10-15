@@ -120,10 +120,18 @@ body {
     align-items: center;
     z-index: 10;
     transition: background-color var(--transition-normal);
-    background: transparent !important; /* Transparent header */
-    box-shadow: none !important;        /* No shadow */
+    background: transparent !important; /* Transparent header by default */
+    box-shadow: none !important;        /* No shadow by default */
     transition: background 0.3s, box-shadow 0.3s;
     border: none;
+}
+
+/* Mobile header styling for non-authenticated users */
+@media (max-width: 768px) {
+    body:not(.authenticated) .header {
+        background: #000000 !important; /* Override transparent background with black for non-authenticated users on mobile */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3) !important; /* Add shadow for non-authenticated users on mobile */
+    }
 }
 
 /* Logo Styles */
