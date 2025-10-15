@@ -20,7 +20,7 @@ public class CreateGameRequestDTO {
     private String gameType = "standard";
     
     // Optional field for time control
-    private Integer timeControlMinutes;
+    private Double timeControlMinutes;
     
     // Optional field for game settings
     private Boolean isRated = false;

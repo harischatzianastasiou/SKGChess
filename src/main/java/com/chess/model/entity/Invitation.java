@@ -43,7 +43,7 @@ public class Invitation implements Serializable {
     private User invitee; // User who received the invitation
 
     @Column(name = "N_TIMECONTROLMINUTES", nullable = false)
-    private Integer timeControlMinutes; // Time control for the game
+    private Double timeControlMinutes; // Time control for the game
 
     @Column(name = "S_PLAYERCOLOR", nullable = true)
     private String playerColor; // Color preference (white, black, random)
@@ -73,7 +73,7 @@ public class Invitation implements Serializable {
     }
 
     // Constructor to set expiration time (24 hours from creation)
-    public Invitation(User inviter, User invitee, Integer timeControlMinutes, Integer incrementSeconds, String playerColor) {
+    public Invitation(User inviter, User invitee, Double timeControlMinutes, Integer incrementSeconds, String playerColor) {
         this.inviter = inviter;
         this.invitee = invitee;
         this.timeControlMinutes = timeControlMinutes;

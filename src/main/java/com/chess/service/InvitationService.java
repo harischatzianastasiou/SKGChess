@@ -53,7 +53,7 @@ public class InvitationService {
      */
     @Transactional
     public Invitation createInvitation(String inviterUsername, String opponentUsername, 
-                                     Integer timeControlMinutes, Integer incrementSeconds, String playerColor) {
+                                     Double timeControlMinutes, Integer incrementSeconds, String playerColor) {
         // Find the inviter (person sending the invitation)
         User inviter = userRepository.findByUsername(inviterUsername)
             .orElseThrow(() -> new UserNotFoundException(inviterUsername));
@@ -339,7 +339,7 @@ public class InvitationService {
             "{\"type\":\"INVITATION_RECEIVED\"," +
             "\"invitationId\":\"%s\"," +
             "\"inviterUsername\":\"%s\"," +
-            "\"timeControlMinutes\":%d," +
+            "\"timeControlMinutes\":%.1f," +
             "\"playerColor\":\"%s\"," +
             "\"createdAt\":\"%s\"}",
             invitation.getId(),

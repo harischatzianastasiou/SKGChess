@@ -28,7 +28,7 @@ public class InvitationDTO {
     private String inviteeUsername;
     
     // Game settings
-    private Integer timeControlMinutes;
+    private Double timeControlMinutes;
     private String playerColor;
     
     // Timestamps

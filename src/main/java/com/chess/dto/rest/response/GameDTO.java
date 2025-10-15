@@ -52,7 +52,7 @@ public class GameDTO {
     private Double whiteTimeLeftSeconds;
     private Double blackTimeLeftSeconds;
     private LocalDateTime lastMoveAt;
-    private Integer timeControlMinutes;
+    private Double timeControlMinutes;
     
     // The current server time when the response is generated
     private LocalDateTime serverTime; // Used for client-server time sync

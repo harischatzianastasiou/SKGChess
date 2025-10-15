@@ -249,7 +249,8 @@ const translations = {
       // Music toggle
       toggleMusic: "Toggle Music",
       musicOn: "Music",
-      musicOff: "Music"
+      musicOff: "Music",
+      inProgressLang: "In Progress"
     },
     gr: {
       titlelang: "skgchess.com - Το σκάκι της Θεσσαλονίκης",
@@ -505,7 +506,8 @@ const translations = {
       // Music toggle
       toggleMusic: "Εναλλαγή Μουσικής",
       musicOn: "Μουσική",
-      musicOff: "Μουσική"
+      musicOff: "Μουσική",
+      inProgressLang: "Σε εξέλιξη"
     }
   };
   

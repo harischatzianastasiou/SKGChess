@@ -55,7 +55,7 @@ public class GameService {
     }
 
     @Transactional
-    public Game createGame(String username, String gameType, Integer timeControlMinutes, Integer incrementSeconds, Boolean isRated, String customRules, String playerColor) {
+    public Game createGame(String username, String gameType, Double timeControlMinutes, Integer incrementSeconds, Boolean isRated, String customRules, String playerColor) {
         try {
             // Validate username
             if (username == null || username.trim().isEmpty()) {
@@ -97,7 +97,7 @@ public class GameService {
                 game.setWhitePlayer(user);
             }
             game.setGameType(Optional.ofNullable(gameType).orElse("standard"));
-            game.setTimeControlMinutes(Optional.ofNullable(timeControlMinutes).orElse(10));
+            game.setTimeControlMinutes(Optional.ofNullable(timeControlMinutes).orElse(10.0));
             game.setIncrementSeconds(incrementSeconds);
             game.setStatus(GameStatus.WAITING_FOR_OPPONENT.name());
             game.setCreatedAt(LocalDateTime.now());

@@ -24,9 +24,9 @@ public class CreateInvitationRequestDTO {
     
     // Required field for time control with validation
     @NotNull(message = "Time control is required")
-    @Min(value = 1, message = "Time control must be at least 1 minute")
+    @Min(value = 0, message = "Time control must be at least 0 minutes")
     @Max(value = 60, message = "Time control must be at most 60 minutes")
-    private Integer timeControlMinutes;
+    private Double timeControlMinutes;
     
     // Optional field for increment (seconds per move)
     private Integer incrementSeconds;

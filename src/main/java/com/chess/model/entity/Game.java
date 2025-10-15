@@ -55,7 +55,7 @@ public class Game implements Serializable {
     private String gameType = "standard";
 
     @Column(name = "N_TIMECONTROLMINUTES", nullable = true)
-    private Integer timeControlMinutes = 10;
+    private Double timeControlMinutes = 10.0;
 
     @Column(name = "N_MOVECOUNT")
     private int moveCount;
