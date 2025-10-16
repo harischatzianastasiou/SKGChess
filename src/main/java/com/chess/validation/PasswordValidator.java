@@ -16,12 +16,8 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
     
     private static final Pattern pattern = Pattern.compile(PASSWORD_PATTERN);
     
-    // Common weak passwords to block
-    private static final String[] COMMON_PASSWORDS = {
-        "password", "123456", "123456789", "qwerty", "abc123", 
-        "password123", "admin", "letmein", "welcome", "monkey",
-        "1234567890", "password1", "qwerty123", "dragon", "master"
-    };
+    // Common weak passwords to block - REMOVED to allow any password that meets complexity requirements
+    // private static final String[] COMMON_PASSWORDS = {};
     
     @Override
     public void initialize(ValidPassword constraintAnnotation) {
@@ -47,23 +43,23 @@ public class PasswordValidator implements ConstraintValidator<ValidPassword, Str
             return false;
         }
         
-        // Check for common weak passwords
-        String lowerPassword = password.toLowerCase();
-        for (String commonPassword : COMMON_PASSWORDS) {
-            if (lowerPassword.equals(commonPassword)) {
-                return false;
-            }
-        }
+        // Check for common weak passwords - REMOVED to allow any password that meets complexity requirements
+        // String lowerPassword = password.toLowerCase();
+        // for (String commonPassword : COMMON_PASSWORDS) {
+        //     if (lowerPassword.equals(commonPassword)) {
+        //         return false;
+        //     }
+        // }
         
-        // Check for repeated characters (more than 3 consecutive)
-        if (hasRepeatedCharacters(password, 3)) {
-            return false;
-        }
+        // Check for repeated characters - REMOVED to allow patterns like "aaa"
+        // if (hasRepeatedCharacters(password, 3)) {
+        //     return false;
+        // }
         
-        // Check for sequential characters (more than 3 consecutive)
-        if (hasSequentialCharacters(password, 3)) {
-            return false;
-        }
+        // Check for sequential characters - REMOVED to allow patterns like "abcd", "1234"
+        // if (hasSequentialCharacters(password, 3)) {
+        //     return false;
+        // }
         
         // Check password pattern (uppercase, lowercase, digit, special char)
         return pattern.matcher(password).matches();
