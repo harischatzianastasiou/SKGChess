@@ -250,7 +250,73 @@ const translations = {
       toggleMusic: "Toggle Music",
       musicOn: "Music",
       musicOff: "Music",
-      inProgressLang: "In Progress"
+      inProgressLang: "In Progress",
+      // Newspaper translations
+      newspaperCoreArchitecture: "Core Architecture",
+      newspaperDeepDive: "Deep Dive",
+      newspaperWelcomeToSKGChess: "Welcome to SKG Chess",
+      newspaperJustTheBeginning: "Just the beginning",
+      newspaperCustomChessEngine: "Custom Chess Engine!",
+      newspaperByHaris: "by Haris Chatzianastasiou",
+      newspaperCustomEngineDescription: "Unlike most chess projects that rely on existing libraries, SKG Chess implements its own chess engine from scratch in Java. This gives us complete control over the game logic and allows for deep optimization. Let's see how this works!",
+      newspaperHeartOfEngine: "The heart of the engine",
+      newspaperHeartDescription: "At the heart of the engine lies the Board class, which follows an immutable design pattern. The important thing to understand is that each time a move is played, a new Board is created, hoding the information of the tiles (empty or occupied -- which piece is on it -- ) and the players (current and opponent, with their pieces and list of moves they can play). Here's the Board class describing the structure of the board:",
+      newspaperPiecesAndMoves: "Pieces and Moves",
+      newspaperPiecesDescription: "Each player has a collection of pieces and a collections of moves they can make.",
+      newspaperPiecesDescription2: "Let's see how each piece on the board is represented by a Piece object.",
+      newspaperMoveDescription: "Let's also see how we represent a move with the Move class.",
+      newspaperHowDoesItWork: "But how does it work?",
+      newspaperTechnicalWarning: "Warning : Technical content ahead! If you thought the left section was complex, buckle up - we're about to dive into the chess engine's brain! 🧠♟️",
+      newspaperStep1: "Step 1 : Game Initialization",
+      newspaperStep1Description: "When a new game starts, a new Game entity is created in the database. The initial board state is created using the Builder pattern through the createStandardBoard() method:",
+      newspaperStep2: "Step 2 : User clicks a piece from position x to position y",
+      newspaperStep2Description: "When a player clicks a piece, the following sequence occurs:",
+      newspaperStep2List1: "Frontend captures the tile coordinate of the clicked piece",
+      newspaperStep2List2: "Frontend sends a POST request to /api/game/{gameId}/move with:",
+      newspaperStep2List2a: "sourceCoordinate: The tile coordinate of the clicked piece",
+      newspaperStep2List2b: "targetCoordinate: The tile coordinate where the piece will move",
+      newspaperStep3: "Step 3 : The move is processed",
+      newspaperStep3Description: "The move is processed through several steps:",
+      newspaperStep3List1: "GameController receives the move request and calls GameService",
+      newspaperStep3List2: "GameService retrieves the current game state from the database",
+      newspaperStep3List3: "The board is deserialized from the stored JSON",
+      newspaperStep3List4: "The current player's legal moves are retrieved",
+      newspaperStep4: "Step 4 : Board Creation & Player Updates",
+      newspaperStep4Description: "If the move played is in the list of legal moves, a new Board is created with updated tiles and players.",
+      newspaperStep4ForEach: "For each player, the following happens:",
+      newspaperStep4List1: "All pieces of the player's color are collected from the tiles",
+      newspaperStep4List2: "Legal moves are calculated for each piece through a complex process:",
+      newspaperStep4List2a: "For each piece, calculate all possible destination coordinates based on its movement pattern:",
+      newspaperStep4List2b: "Apply multiple validation layers for each potential move:",
+      newspaperStep4List2c: "For sliding pieces (Bishop, Rook, Queen), continue checking in each direction until:",
+      newspaperStep4List2d: "For fixed-distance pieces (Pawn, Knight, King):",
+      newspaperStep4List3: "The player is created with:",
+      newspaperStep5: "Step 5 : Game Update",
+      newspaperStep5Description: "After the move is executed:",
+      newspaperStep5List1: "The new board state is serialized to JSON",
+      newspaperStep5List2: "The game entity is updated in the database",
+      newspaperStep5List3: "The new state is broadcast to both players via WebSocket",
+      newspaperStep5List4: "The frontend updates the board display",
+      newspaperSpringBootIntegration: "Spring Boot Integration",
+      newspaperSpringBootSubtitle: "Because We're Not Savages - We Use Spring Boot! 🌱",
+      newspaperSpringBootDescription: "Ah yes, Spring Boot! The framework that makes Java developers feel like they're not living in the stone age. SKG Chess proudly rides the Spring Boot train, because who doesn't love auto-configuration? 🚂",
+      newspaperFancyLayers: "Our Fancy Application Layers",
+      newspaperTechStack: "Our Tech Stack (AKA The Cool Kids' Table)",
+      newspaperWebSocket: "WebSocket - For those sweet, sweet real-time updates (no carrier pigeons here!) 📡",
+      newspaperPostgreSQL: "PostgreSQL - Our reliable data butler, always ready to serve 🎩",
+      newspaperThymeleaf: "Thymeleaf - Our trusty template engine for server-side rendering 🎨",
+      // Additional bullet point translations
+      newspaperBasicValidations: "Basic validations (bounds, alliance, pattern)",
+      newspaperCheckValidations: "Check validations (king safety, pins)",
+      newspaperSpecialMoveValidations: "Special move validations (castling, en passant)",
+      newspaperHittingBoardEdge: "Hitting the board edge",
+      newspaperHittingPiece: "Hitting a piece (stop or capture)",
+      newspaperFailingValidation: "Failing a validation",
+      newspaperCheckDestination: "Check each possible destination once",
+      newspaperValidateSpecial: "Validate special conditions (first move, castling rights)",
+      newspaperCollectionPieces: "Collection of pieces",
+      newspaperCollectionMoves: "Collection of legal moves",
+      newspaperPlayerAlliance: "Player's alliance (WHITE/BLACK)"
     },
     gr: {
       titlelang: "skgchess.com - Το σκάκι της Θεσσαλονίκης",
@@ -507,7 +573,73 @@ const translations = {
       toggleMusic: "Εναλλαγή Μουσικής",
       musicOn: "Μουσική",
       musicOff: "Μουσική",
-      inProgressLang: "Σε εξέλιξη"
+      inProgressLang: "Σε εξέλιξη",
+      // Newspaper translations
+      newspaperCoreArchitecture: "Ανάλυση",
+      newspaperDeepDive: "Βασικής Αρχιτεκτονικής",
+      newspaperWelcomeToSKGChess: "Καλώς ήρθατε στο SKG Chess",
+      newspaperJustTheBeginning: "Μόνο η αρχή",
+      newspaperCustomChessEngine: "Προσαρμοσμένη Μηχανή Σκακιού!",
+      newspaperByHaris: "από τον Χάρη Χατζηαναστασίου",
+      newspaperCustomEngineDescription: "Σε αντίθεση με τα περισσότερα παιχνίδια που βασίζονται σε υπάρχουσες βιβλιοθήκες, το SKG Chess υλοποιεί τη δική του μηχανή σκακιού σε γλώσσα προγραμματισμού Java. Ας δούμε πώς λειτουργεί!",
+      newspaperHeartOfEngine: "Η καρδιά της μηχανής",
+      newspaperHeartDescription: "Στην καρδιά της μηχανής βρίσκεται η κλάση Board, που ακολουθεί immutable design pattern. Το σημαντικό είναι να καταλάβουμε ότι κάθε φορά που παίζεται μια κίνηση, δημιουργείται ένα νέο Board, που κρατάει τις πληροφορίες των τετραγώνων (άδεια ή κατειλημμένα, ποιο κομμάτι είναι πάνω τους) και των παικτών (τρέχων και αντίπαλος, με τα κομμάτια τους και τη λίστα κινήσεων που μπορούν να παίξουν). Εδώ είναι η κλάση Board που περιγράφει τη δομή της σκακιέρας :",
+      newspaperPiecesAndMoves: "Κομμάτια και Κινήσεις",
+      newspaperPiecesDescription: "Κάθε παίκτης έχει μια συλλογή κομματιών και μια συλλογή κινήσεων που μπορεί να κάνει.",
+      newspaperPiecesDescription2: "Ας δούμε πώς κάθε κομμάτι στη σκακιέρα αντιπροσωπεύεται στη Java από ένα αντικείμενο Piece.",
+      newspaperMoveDescription: "Ας δούμε επίσης πώς αντιπροσωπεύουμε μια κίνηση με την κλάση Move.",
+      newspaperHowDoesItWork: "Πως λειτουργεί ;",
+      newspaperTechnicalWarning: " ",
+      newspaperStep1: "Βήμα 1: Αρχικοποίηση Παιχνιδιού",
+      newspaperStep1Description: "Όταν ξεκινά ένα νέο παιχνίδι, δημιουργείται μια νέα οντότητα Game στη βάση δεδομένων. Η αρχική κατάσταση της σκακιέρας δημιουργείται χρησιμοποιώντας το Builder pattern μέσω της μεθόδου createStandardBoard():",
+      newspaperStep2: "Βήμα 2: Ο χρήστης κάνει κλικ σε ένα κομμάτι από τη θέση x στη θέση y",
+      newspaperStep2Description: "Όταν ένας παίκτης κάνει κλικ σε ένα κομμάτι, συμβαίνει η ακόλουθη διαδικασία:",
+      newspaperStep2List1: "Το frontend καταγράφει τη συντεταγμένη του τετραγώνου του κομματιού",
+      newspaperStep2List2: "Το frontend στέλνει ένα POST request στο /api/game/{gameId}/move με:",
+      newspaperStep2List2a: "sourceCoordinate: Η συντεταγμένη του τετραγώνου του κομματιού που επιλέχθηκε.",
+      newspaperStep2List2b: "targetCoordinate: Η συντεταγμένη του τετραγώνου όπου θα μετακινηθεί το κομμάτι.",
+      newspaperStep3: "Βήμα 3: Η κίνηση επεξεργάζεται",
+      newspaperStep3Description: "Η κίνηση επεξεργάζεται μέσω πολλών βημάτων:",
+      newspaperStep3List1: "Το GameController λαμβάνει το αίτημα κίνησης και καλεί το GameService",
+      newspaperStep3List2: "Το GameService ανακτά την τρέχουσα κατάσταση του παιχνιδιού από τη βάση δεδομένων",
+      newspaperStep3List3: "Η σκακιέρα κατασκευάζεται από το αποθηκευμένο JSON",
+      newspaperStep3List4: "Ανακτώνται οι νόμιμες κινήσεις του τρέχοντος παίκτη",
+      newspaperStep4: "Βήμα 4: Δημιουργία Σκακιέρας & Ενημερώσεις Παικτών",
+      newspaperStep4Description: "Αν η παιχθείσα κίνηση είναι στη λίστα των νόμιμων κινήσεων, δημιουργείται ένα νέο Board με ενημερωμένα τετράγωνα και παίκτες.",
+      newspaperStep4ForEach: "Για κάθε παίκτη, συμβαίνει το ακόλουθο:",
+      newspaperStep4List1: "Όλα τα κομμάτια του χρώματος του παίκτη συλλέγονται από τα τετράγωνα",
+      newspaperStep4List2: "Οι νόμιμες κινήσεις υπολογίζονται για κάθε κομμάτι μέσω μιας περίπλοκης διαδικασίας:",
+      newspaperStep4List2a: "Για κάθε κομμάτι, υπολογίζονται όλες οι πιθανές συντεταγμένες προορισμού, βάσει του μοτίβου κίνησής του:",
+      newspaperStep4List2b: "Εφαρμόζονται πολλαπλά στρώματα επαλήθευσης για κάθε πιθανή κίνηση:",
+      newspaperStep4List2c: "Για τα κομμάτια ολίσθησης (Αξιωματικός, Πύργος, Βασίλισσα) συνεχίζεται ο έλεγχος σε κάθε κατεύθυνση μέχρι να συμβεί ένα από τα ακόλουθα :",
+      newspaperStep4List2d: "Για τα κομμάτια σταθερής απόστασης (Πιόνι, Ίππος, Βασιλιάς):",
+      newspaperStep4List3: "Ο παίκτης δημιουργείται με:",
+      newspaperStep5: "Βήμα 5: Ενημέρωση Παιχνιδιού",
+      newspaperStep5Description: "Μετά την εκτέλεση της κίνησης:",
+      newspaperStep5List1: "Η νέα κατάσταση της σκακιέρας σειριοποιείται σε JSON",
+      newspaperStep5List2: "Η οντότητα του παιχνιδιού ενημερώνεται στη βάση δεδομένων",
+      newspaperStep5List3: "Η νέα κατάσταση μεταδίδεται και στους δύο παίκτες μέσω WebSocket",
+      newspaperStep5List4: "Το frontend ενημερώνει την εμφάνιση της σκακιέρας",
+      newspaperSpringBootIntegration: "Ενσωμάτωση Spring Boot",
+      newspaperSpringBootSubtitle: "🌱",
+      newspaperSpringBootDescription: " ",
+      newspaperFancyLayers: "Τα στρώματα της εφαρμογής μας",
+      newspaperTechStack: "Τech Stack",
+      newspaperWebSocket: "WebSocket - Για αυτές τις γλυκές, γλυκές real-time ενημερώσεις (όχι αγριοπερίστερα εδώ!) 📡",
+      newspaperPostgreSQL: "PostgreSQL - Ο αξιόπιστος μπάτλερ δεδομένων μας, πάντα έτοιμος να εξυπηρετήσει 🎩",
+      newspaperThymeleaf: "Thymeleaf - Η αξιόπιστη μηχανή προτύπων μας για server-side rendering 🎨",
+      // Additional bullet point translations
+      newspaperBasicValidations: "Βασικές επαληθεύσεις (όρια, χρώμα τετραγώνου, μοτίβο)",
+      newspaperCheckValidations: "Επαληθεύσεις check (ασφάλεια βασιλιά, pins)",
+      newspaperSpecialMoveValidations: "Επαληθεύσεις ειδικών κινήσεων (ροκέ, en passant)",
+      newspaperHittingBoardEdge: "Χτύπημα στο άκρο της σκακιέρας",
+      newspaperHittingPiece: "Χτύπημα σε κομμάτι",
+      newspaperFailingValidation: "Αποτυχία επαλήθευσης",
+      newspaperCheckDestination: "Έλεγχος κάθε πιθανού προορισμό μία φορά",
+      newspaperValidateSpecial: "Επαλήθευση ειδικών συνθηκών (πρώτη κίνηση, δικαιώματα ροκέ)",
+      newspaperCollectionPieces: "Συλλογή κομματιών",
+      newspaperCollectionMoves: "Συλλογή νόμιμων κινήσεων",
+      newspaperPlayerAlliance: "Χρώμα παίκτη (ΛΕΥΚΑ/ΜΑΥΡΑ)"
     }
   };
   
@@ -745,6 +877,14 @@ const translations = {
         if (typeof window.forceUpdateMusicTooltip === 'function') {
           window.forceUpdateMusicTooltip();
         }
+        // Update quotes when language changes
+        if (typeof window.updateQuotesOnLanguageChange === 'function') {
+          window.updateQuotesOnLanguageChange();
+        }
+        // Update newspaper content when language changes
+        if (typeof window.updateNewspaperContent === 'function') {
+          window.updateNewspaperContent();
+        }
     }, 50);
     
     localStorage.setItem('lang', lang);
@@ -754,4 +894,40 @@ const translations = {
     const activeSpan = document.getElementById('lang-' + lang);
     if (activeSpan) activeSpan.classList.add('active');
 }
+
+// Function to update newspaper content when language changes
+function updateNewspaperContent() {
+  const lang = getCurrentLanguage();
+  const newspaperElements = [
+    'newspaperCoreArchitecture', 'newspaperDeepDive', 'newspaperWelcomeToSKGChess', 
+    'newspaperJustTheBeginning', 'newspaperCustomChessEngine', 'newspaperByHaris',
+    'newspaperCustomEngineDescription', 'newspaperHeartOfEngine', 'newspaperHeartDescription',
+    'newspaperPiecesAndMoves', 'newspaperPiecesDescription', 'newspaperPiecesDescription2',
+    'newspaperMoveDescription', 'newspaperHowDoesItWork', 'newspaperTechnicalWarning',
+    'newspaperStep1', 'newspaperStep1Description', 'newspaperStep2', 'newspaperStep2Description',
+    'newspaperStep2List1', 'newspaperStep2List2', 'newspaperStep2List2a', 'newspaperStep2List2b',
+    'newspaperStep3', 'newspaperStep3Description', 'newspaperStep3List1', 'newspaperStep3List2',
+    'newspaperStep3List3', 'newspaperStep3List4', 'newspaperStep4', 'newspaperStep4Description',
+    'newspaperStep4ForEach', 'newspaperStep4List1', 'newspaperStep4List2', 'newspaperStep4List2a',
+    'newspaperStep4List2b', 'newspaperStep4List2c', 'newspaperStep4List2d', 'newspaperStep4List3',
+    'newspaperStep5', 'newspaperStep5Description', 'newspaperStep5List1', 'newspaperStep5List2',
+    'newspaperStep5List3', 'newspaperStep5List4', 'newspaperSpringBootIntegration',
+    'newspaperSpringBootSubtitle', 'newspaperSpringBootDescription', 'newspaperFancyLayers',
+    'newspaperTechStack', 'newspaperWebSocket', 'newspaperPostgreSQL', 'newspaperThymeleaf',
+    'newspaperBasicValidations', 'newspaperCheckValidations', 'newspaperSpecialMoveValidations',
+    'newspaperHittingBoardEdge', 'newspaperHittingPiece', 'newspaperFailingValidation',
+    'newspaperCheckDestination', 'newspaperValidateSpecial', 'newspaperCollectionPieces',
+    'newspaperCollectionMoves', 'newspaperPlayerAlliance'
+  ];
+  
+  newspaperElements.forEach(elementId => {
+    const element = document.getElementById(elementId);
+    if (element && translations[lang] && translations[lang][elementId]) {
+      element.textContent = translations[lang][elementId];
+    }
+  });
+}
+
+// Make the function globally available
+window.updateNewspaperContent = updateNewspaperContent;
   

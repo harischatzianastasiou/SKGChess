@@ -279,24 +279,24 @@
         <div class="head">
             <div class="headerobjectswrapper">
                 <div class="weatherforcastbox">
-                    <span style="font-style: italic;">Core Architecture</span><br>
-                    <span>Deep Dive</span>
+                    <span style="font-style: italic;" id="newspaperCoreArchitecture">Core Architecture</span><br>
+                    <span id="newspaperDeepDive">Deep Dive</span>
                 </div>
-                <header>Welcome to SKG Chess</header>
+                <header id="newspaperWelcomeToSKGChess">Welcome to SKG Chess</header>
             </div>
-            <div class="subhead">Just the beginning <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" target="_blank" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a> <a href="https://github.com/harischatzianastasiou/SKGChess" target="_blank" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a> <a href="mailto:harischatzi@tutanota.com" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Email" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a></div>
+            <div class="subhead"><span id="newspaperJustTheBeginning">Just the beginning</span> <a href="https://www.linkedin.com/in/haris-chatzianastasiou-084783212/" target="_blank" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" alt="LinkedIn" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a> <a href="https://github.com/harischatzianastasiou/SKGChess" target="_blank" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" alt="GitHub" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a> <a href="mailto:harischatzi@tutanota.com" style="text-decoration: none;"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Email" style="width: 20px; height: 20px; vertical-align: middle; filter: grayscale(100%);"></a></div>
         </div>
         <div class="content">
             <div class="collumns">
                 <div class="collumn">
                     <div class="head">
-                        <span class="headline hl3">Custom Chess Engine!</span>
-                        <p><span class="headline hl4">by Haris Chatzianastasiou</span></p>
+                        <span class="headline hl3" id="newspaperCustomChessEngine">Custom Chess Engine!</span>
+                        <p><span class="headline hl4" id="newspaperByHaris">by Haris Chatzianastasiou</span></p>
                     </div>
-                    <p>Unlike most chess projects that rely on existing libraries, SKG Chess implements its own chess engine from scratch in Java. This gives us complete control over the game logic and allows for deep optimization. Let's see how this works!</p>
+                    <p id="newspaperCustomEngineDescription">Unlike most chess projects that rely on existing libraries, SKG Chess implements its own chess engine from scratch in Java. This gives us complete control over the game logic and allows for deep optimization. Let's see how this works!</p>
 
-                    <p><strong>The heart of the engine</strong></p>
-                    <p>At the heart of the engine lies the Board class, which follows an immutable design pattern. The important thing to understand is that each time a move is played, a new Board is created, hoding the information of the tiles (empty or occupied -- which piece is on it -- ) and the players (current and opponent, with their pieces and list of moves they can play). Here's the Board class describing the structure of the board:</p>
+                    <p><strong id="newspaperHeartOfEngine">The heart of the engine</strong></p>
+                    <p id="newspaperHeartDescription">At the heart of the engine lies the Board class, which follows an immutable design pattern. The important thing to understand is that each time a move is played, a new Board is created, hoding the information of the tiles (empty or occupied -- which piece is on it -- ) and the players (current and opponent, with their pieces and list of moves they can play). Here's the Board class describing the structure of the board:</p>
 
                     <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
 Board (Immutable Class)
@@ -355,9 +355,9 @@ Key Points:
 </pre>
 <br>
 
-<p><strong>Pieces and Moves</strong></p>
-<p></p>Each player has a collection of pieces and a collections of moves they can make.</p>
-<p>Let's see how each piece on the board is represented by a Piece object.</p>
+<p><strong id="newspaperPiecesAndMoves">Pieces and Moves</strong></p>
+<p id="newspaperPiecesDescription">Each player has a collection of pieces and a collections of moves they can make.</p>
+<p id="newspaperPiecesDescription2">Let's see how each piece on the board is represented by a Piece object.</p>
 
 <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
 Piece (Abstract Class)
@@ -423,7 +423,7 @@ Key Points:
 </pre>
 
                     <p><br>
-                        Let's also see how we represent a move with the Move class.</p>
+                        <span id="newspaperMoveDescription">Let's also see how we represent a move with the Move class.</span></p>
 
                     <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
 Move (Abstract Class)
@@ -485,12 +485,12 @@ Key Points:
 
                 <div class="collumn">
                     <div class="head">
-                        <span class="headline hl5">But how does it work?</span>
-                        <p><span class="headline hl6">Warning : Technical content ahead! If you thought the left section was complex, buckle up - we're about to dive into the chess engine's brain! 🧠♟️</span></p>
+                        <span class="headline hl5" id="newspaperHowDoesItWork">But how does it work?</span>
+                        <p><span class="headline hl6" id="newspaperTechnicalWarning">Warning : Technical content ahead! If you thought the left section was complex, buckle up - we're about to dive into the chess engine's brain! 🧠♟️</span></p>
                     </div>
                     
-                    <p><strong>Step 1 : Game Initialization</strong></p>
-                    <p>When a new game starts, a new Game entity is created in the database. The initial board state is created using the Builder pattern through the createStandardBoard() method:</p>
+                    <p><strong id="newspaperStep1">Step 1 : Game Initialization</strong></p>
+                    <p id="newspaperStep1Description">When a new game starts, a new Game entity is created in the database. The initial board state is created using the Builder pattern through the createStandardBoard() method:</p>
 
                     <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
 public static IBoard createStandardBoard() {
@@ -528,28 +528,28 @@ public static IBoard createStandardBoard() {
     return createBoard(builder);
 }</pre>
 
-                    <p><br><strong>Step 2 : User clicks a piece from position x to position y</strong></p>
-                    <p>When a player clicks a piece, the following sequence occurs:</p>
+                    <p><br><strong id="newspaperStep2">Step 2 : User clicks a piece from position x to position y</strong></p>
+                    <p id="newspaperStep2Description">When a player clicks a piece, the following sequence occurs:</p>
                     <ol>
-                        <li>Frontend captures the tile coordinate of the clicked piece</li>
-                        <li>Frontend sends a POST request to <code>/api/game/{gameId}/move</code> with:
-                            <ul>
-                                <li>sourceCoordinate: The tile coordinate of the clicked piece</li>
-                                <li>targetCoordinate: The tile coordinate where the piece will move</li>
-                            </ul>
-                        </li>
+                        <li id="newspaperStep2List1">Frontend captures the tile coordinate of the clicked piece</li>
+                        <li id="newspaperStep2List2">Frontend sends a POST request to <code>/api/game/{gameId}/move</code> with: </li>
+                                <br>
+                                <span id="newspaperStep2List2a">sourceCoordinate: The tile coordinate of the clicked piece</span>
+                                <br>
+                                <span id="newspaperStep2List2b">targetCoordinate: The tile coordinate where the piece will move</span>
+                            
                     </ol>
 
-                    <p><br><strong>Step 3 : The move is processed</strong></p>
-                    <p>The move is processed through several steps:</p>
+                    <p><br><strong id="newspaperStep3">Step 3 : The move is processed</strong></p>
+                    <p id="newspaperStep3Description">The move is processed through several steps:</p>
                     <ol>
-                        <li>GameController receives the move request and calls GameService</li>
-                        <li>GameService retrieves the current game state from the database</li>
-                        <li>The board is deserialized from the stored JSON:
+                        <li id="newspaperStep3List1">GameController receives the move request and calls GameService</li>
+                        <li id="newspaperStep3List2">GameService retrieves the current game state from the database</li>
+                        <li id="newspaperStep3List3">The board is deserialized from the stored JSON:
                             <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
 IBoard currentBoard = IBoard.deserialize(game.getBoard(), game.getLastMoveData());</pre>
                         </li>
-                        <li>The current player's legal moves are retrieved:
+                        <li id="newspaperStep3List4">The current player's legal moves are retrieved:
                             <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
 Player player = currentBoard.getCurrentPlayer();
 Move move = player.getMoves().stream()
@@ -560,8 +560,8 @@ Move move = player.getMoves().stream()
                         </li>
                     </ol>
 
-                    <p><br><strong>Step 4 : Board Creation & Player Updates</strong></p>
-                    <p>If the move played is in the list of legal moves, a new Board is created with updated tiles and players.</p>
+                    <p><br><strong id="newspaperStep4">Step 4 : Board Creation & Player Updates</strong></p>
+                    <p id="newspaperStep4Description">If the move played is in the list of legal moves, a new Board is created with updated tiles and players.</p>
                     <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
 private Board(final Builder builder, final Move lastMove) {
     // Create new tiles
@@ -576,65 +576,65 @@ private Board(final Builder builder, final Move lastMove) {
         builder.currentPlayerAlliance, this.opponentPlayer, lastMove);
 }</pre>
 
-                    <p><br>For each player, the following happens:</p>
+                    <p><br><strong id="newspaperStep4ForEach">For each player, the following happens:</strong></p>
                     <div style="margin-left: 20px;">
-                        <p style="margin: 10px 0;"><strong>1.</strong> All pieces of the player's color are collected from the tiles</p>
+                        <p style="margin: 10px 0;"><strong>1.</strong> <span id="newspaperStep4List1">All pieces of the player's color are collected from the tiles</span></p>
                         
-                        <p style="margin: 10px 0;"><strong>2.</strong> Legal moves are calculated for each piece through a complex process:</p>
+                        <p style="margin: 10px 0;"><strong>2.</strong> <span id="newspaperStep4List2">Legal moves are calculated for each piece through a complex process:</span></p>
                         <div style="margin-left: 20px;">
-                            <p style="margin: 10px 0;"><strong>a.</strong> For each piece, calculate all possible destination coordinates based on its movement pattern:</p>
+                            <p style="margin: 10px 0;"><strong>a.</strong> <span id="newspaperStep4List2a">For each piece, calculate all possible destination coordinates based on its movement pattern:</span></p>
                             <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px; margin: 10px 0;">
 // Example for a Bishop's move offsets
 private static final int[] CANDIDATE_MOVE_COORDINATES = { -9, -7, 7, 9 };
 // These represent diagonal directions: up-left, up-right, down-left, down-right</pre>
 
-                            <p style="margin: 10px 0;"><strong>b.</strong> Apply multiple validation layers for each potential move:</p>
+                            <p style="margin: 10px 0;"><strong>b.</strong> <span id="newspaperStep4List2b">Apply multiple validation layers for each potential move:</span></p>
                             <div style="margin-left: 20px;">
-                                • Basic validations (bounds, alliance, pattern)<br>
-                                • Check validations (king safety, pins)<br>
-                                • Special move validations (castling, en passant)
+                                • <span id="newspaperBasicValidations">Basic validations (bounds, alliance, pattern)</span><br>
+                                • <span id="newspaperCheckValidations">Check validations (king safety, pins)</span><br>
+                                • <span id="newspaperSpecialMoveValidations">Special move validations (castling, en passant)</span>
                             </div>
 
-                            <p style="margin: 10px 0;"><strong>c.</strong> For sliding pieces (Bishop, Rook, Queen), continue checking in each direction until:</p>
+                            <p style="margin: 10px 0;"><strong>c.</strong> <span id="newspaperStep4List2c">For sliding pieces (Bishop, Rook, Queen), continue checking in each direction until:</span></p>
                             <div style="margin-left: 20px;">
-                                • Hitting the board edge<br>
-                                • Hitting a piece (stop or capture)<br>
-                                • Failing a validation
+                                • <span id="newspaperHittingBoardEdge">Hitting the board edge</span><br>
+                                • <span id="newspaperHittingPiece">Hitting a piece (stop or capture)</span><br>
+                                • <span id="newspaperFailingValidation">Failing a validation</span>
                             </div>
 
-                            <p style="margin: 10px 0;"><strong>d.</strong> For fixed-distance pieces (Pawn, Knight, King):</p>
+                            <p style="margin: 10px 0;"><strong>d.</strong> <span id="newspaperStep4List2d">For fixed-distance pieces (Pawn, Knight, King):</span></p>
                             <div style="margin-left: 20px;">
-                                • Check each possible destination once<br>
-                                • Validate special conditions (first move, castling rights)
+                                • <span id="newspaperCheckDestination">Check each possible destination once</span><br>
+                                • <span id="newspaperValidateSpecial">Validate special conditions (first move, castling rights)</span>
                             </div>
                         </div>
 
-                        <p style="margin: 10px 0;"><strong>3.</strong> The player is created with:</p>
+                        <p style="margin: 10px 0;"><strong>3.</strong> <span id="newspaperStep4List3">The player is created with:</span></p>
                         <div style="margin-left: 20px;">
-                            • Collection of pieces<br>
-                            • Collection of legal moves<br>
-                            • Player's alliance (WHITE/BLACK)
+                            • <span id="newspaperCollectionPieces">Collection of pieces</span><br>
+                            • <span id="newspaperCollectionMoves">Collection of legal moves</span><br>
+                            • <span id="newspaperPlayerAlliance">Player's alliance (WHITE/BLACK)</span>
                         </div>
                     </div>
 
-                    <p><br><strong>Step 5 : Game Update</strong></p>
-                    <p>After the move is executed:</p>
+                    <p><br><strong id="newspaperStep5">Step 5 : Game Update</strong></p>
+                    <p id="newspaperStep5Description">After the move is executed:</p>
                     <ol>
-                        <li>The new board state is serialized to JSON</li>
-                        <li>The game entity is updated in the database</li>
-                        <li>The new state is broadcast to both players via WebSocket</li>
-                        <li>The frontend updates the board display</li>
+                        <li id="newspaperStep5List1">The new board state is serialized to JSON</li>
+                        <li id="newspaperStep5List2">The game entity is updated in the database</li>
+                        <li id="newspaperStep5List3">The new state is broadcast to both players via WebSocket</li>
+                        <li id="newspaperStep5List4">The frontend updates the board display</li>
                     </ol>
                 </div>
 
                 <div class="collumn">
                     <div class="head">
-                        <span class="headline hl1">Spring Boot Integration</span>
-                        <p><span class="headline hl2">Because We're Not Savages - We Use Spring Boot! 🌱</span></p>
+                        <span class="headline hl1" id="newspaperSpringBootIntegration">Spring Boot Integration</span>
+                        <p><span class="headline hl2" id="newspaperSpringBootSubtitle">Because We're Not Savages - We Use Spring Boot! 🌱</span></p>
                     </div>
-                    <p>Ah yes, Spring Boot! The framework that makes Java developers feel like they're not living in the stone age. SKG Chess proudly rides the Spring Boot train, because who doesn't love auto-configuration and not having to write XML files until 3 AM? 🚂</p>
+                    <p id="newspaperSpringBootDescription">Ah yes, Spring Boot! The framework that makes Java developers feel like they're not living in the stone age. SKG Chess proudly rides the Spring Boot train, because who doesn't love auto-configuration? 🚂</p>
 
-                    <p><strong>Our Fancy Application Layers</strong></p>
+                    <p><strong id="newspaperFancyLayers">Our Fancy Application Layers</strong></p>
                     <pre style="font-family: monospace; font-size: 12px; background: #f5f5f5; padding: 10px;">
 Application Layers (AKA The Organized Chaos)
 ├── Controllers (REST API)
@@ -652,69 +652,13 @@ Application Layers (AKA The Organized Chaos)
     ├── Game            // The game state container 🎲
     └── User            // Player information holder 👤</pre>
 
-                    <p><strong>Our Tech Stack (AKA The Cool Kids' Table)</strong></p>
+                    <p><strong id="newspaperTechStack">Our Tech Stack (AKA The Cool Kids' Table)</strong></p>
                     <ul>
-                        <li><strong>WebSocket</strong> - For those sweet, sweet real-time updates (no carrier pigeons here!) 📡</li>
-                        <li><strong>PostgreSQL</strong> - Our reliable data butler, always ready to serve 🎩</li>
-                        <li><strong>Thymeleaf</strong> - Our trusty template engine for server-side rendering 🎨</li>
+                        <li><strong>WebSocket</strong> - <span id="newspaperWebSocket">For those sweet, sweet real-time updates (no carrier pigeons here!) 📡</span></li>
+                        <li><strong>PostgreSQL</strong> - <span id="newspaperPostgreSQL">Our reliable data butler, always ready to serve 🎩</span></li>
+                        <li><strong>Thymeleaf</strong> - <span id="newspaperThymeleaf">Our trusty template engine for server-side rendering 🎨</span></li>
                     </ul>
 
-                    <p><br><em>P.S. Can't wait to finish this project and go back to my life 😐</em></p>
-                </div>
-
-                <div class="collumn">
-                    <div class="head">
-                        <span class="headline hl1">Frontend</span>
-                        <p><span class="headline hl2">The "We Had To" Part</span></p>
-                    </div>
-                    <p>Look, we're here for the backend magic, but since you asked... 🤷‍♂️</p>
-
-                    <p>SKG Chess uses the holy trinity of web development:</p>
-                    <ul>
-                        <li><strong>HTML</strong> - For structure (because we're not savages)</li>
-                        <li><strong>CSS</strong> - To make it not look like it's from 1995</li>
-                        <li><strong>JavaScript</strong> - To make things move and stuff</li>
-                    </ul>
-
-                    <p><br>And because we're fancy, we threw in Thymeleaf with its cool fragments feature. It's like copy-paste but for grown-ups! 🎭</p>
-
-                    <p><em>Now, can we get to the fun stuff? What does SKG Chess really offers to chess players? 🎪</em></p>
-                </div>
-
-                <div class="collumn">
-                    <div class="head">
-                        <span class="headline hl1">What's in the Box?</span>
-                        <p><span class="headline hl2">SKG Chess Package</span></p>
-                    </div>
-                    <p>Alright, let's talk about what makes SKG Chess special!</p>
-
-                    <p><strong>Thessaloniki Vibes 🏛️</strong></p>
-                    <p>Ever wondered why it's called SKG Chess? Well, we borrowed the name from Thessaloniki's airport code (SKG) because, you know, we're fancy like that! ✈️</p>
-                    <p>Are you from Thessaloniki? Great! You'll see your city in the background. Not from Thessaloniki? Welcome to the club! Time to experience the magic of the Queen of the North! 👑</p>
-
-                    <p><strong>Entertainment Package 🎮</strong></p>
-                    <ul>
-                        <li>Chess moves that'll make your opponent go "Wait, what?" 🤔</li>
-                        <li>Daily wisdom quotes (because why not?) 📚</li>
-                        <li>Background music to set the mood (because silence is awkward) 🎵</li>
-                    </ul>
-
-                    <p><br><strong>Fancy Features </strong></p>
-                    <ul>
-                        <li>Two themes to switch between (because one is boring) 🎨</li>
-                        <li>Game history collection (to show off your wins) 🏆</li>
-                        <li>Chat with your opponent (trash talk included, free of charge) 💬</li>
-                        <li>Save your games (because memory is overrated) 💾</li>
-                    </ul>
-
-                    <p><br><strong>The Fine Print (AKA The Not-So-Fun Part) 📝</strong></p>
-                    <ul>
-                        <li>Yes, you need an account (we're not savages, we need to know who you are) 👤</li>
-                        <li>Matchmaking is manual (copy-paste-share-play, because we're old school) 🔗</li>
-                        <li>No AI opponents (yet) - we're keeping it human for now 🤖</li>
-                    </ul>
-
-                    <p><br><em>P.S. If you're still reading this, you're probably procrastinating. Go play some chess! ♟️</em></p>
                 </div>
             </div>
         </div>
