@@ -576,7 +576,7 @@ const translations = {
       inProgressLang: "Σε εξέλιξη",
       // Newspaper translations
       newspaperCoreArchitecture: "Ανάλυση",
-      newspaperDeepDive: "Βασικής Αρχιτεκτονικής",
+      newspaperDeepDive: "Αρχιτεκτονικής",
       newspaperWelcomeToSKGChess: "Καλώς ήρθατε στο SKG Chess",
       newspaperJustTheBeginning: "Μόνο η αρχή",
       newspaperCustomChessEngine: "Προσαρμοσμένη Μηχανή Σκακιού!",
