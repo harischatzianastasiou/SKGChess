@@ -29,7 +29,7 @@
 </head>
 <body>
     <header class="header">
-        <a href="/" class="logo" style="text-decoration: none; color: #fff;">skgchess</a>
+        <a href="#" id="logo-link" class="logo" style="text-decoration: none; color: #fff;">skgchess</a>
         <div sec:authorize="isAuthenticated()">
             <span sec:authentication="name" id="username" style="display: none;"></span>
         </div>
@@ -254,11 +254,14 @@
         });
 
         window.addEventListener('DOMContentLoaded', function() {
-            // 1. Read language from localStorage, default to 'gr'
-            const lang = localStorage.getItem('lang') || 'gr';
+            // 1. Read language from URL first, then localStorage, default to 'gr'
+            const lang = getCurrentLanguage();
         
             // 2. Update all translatable areas
             updateLanguage(lang);
+            
+            // 3. Update logo link with current language
+            updateLogoLink();
         });
         </script>
     </div>

@@ -205,7 +205,7 @@
     <div class="home-container">
         <!-- Header with logo and user info -->
         <header class="header">
-            <a href="/" class="logo" style="text-decoration: none; color: inherit;" aria-label="SKGChess home page">skgchess</a>
+            <a href="#" id="logo-link" class="logo" style="text-decoration: none; color: inherit;" aria-label="SKGChess home page">skgchess</a>
             <div class="header-auth">
                 <div sec:authorize="isAuthenticated()">
                     <button class="menu-btn" onclick="openBurgerMenu()" aria-label="Open navigation menu">&#9776;</button>
@@ -223,8 +223,8 @@
         <div id="burgerMenuOverlay" style="display:none; position:fixed; top:0; right:0; width:90vw; max-width:400px; height:100vh; background:#fff; z-index:4000; flex-direction:column; justify-content:flex-start; align-items:flex-start; padding:0; box-sizing:border-box; box-shadow:-2px 0 16px rgba(0,0,0,0.08); transition:transform 0.2s;">
             <div class="burger-menu-topbar" style="width:100%; display:flex; align-items:center; justify-content:space-between; padding:20px 24px 12px 24px; box-sizing:border-box; font-size:0.98rem; font-weight:500;">
                 <div style="display:flex; gap:0.5rem; align-items:center; font-size:0.98rem;">
-                    <span class="burger-lang" data-lang="gr" onclick="updateLanguage('gr'); return false;">GR</span> / 
-                    <span class="burger-lang" data-lang="en" onclick="updateLanguage('en'); return false;">EN</span>
+                    <span class="burger-lang" id="lang-gr" data-lang="gr" onclick="updateLanguage('gr'); return false;">GR</span> / 
+                    <span class="burger-lang" id="lang-en" data-lang="en" onclick="updateLanguage('en'); return false;">EN</span>
                 </div>
                 <button onclick="closeBurgerMenu()" aria-label="Close navigation menu" style="background:none; border:none; font-size:2.2rem; color:#222; cursor:pointer; z-index:4100; margin-left:1rem;">&times;</button>
             </div>
@@ -946,13 +946,16 @@
             if (event.key === 'Escape') closeBurgerMenu();
         });
 
-        // On page load, set language from storage or default
+        // On page load, set language from URL or storage or default
         window.addEventListener('DOMContentLoaded', function() {
-            // 1. Read language from localStorage, default to 'gr'
-            const lang = localStorage.getItem('lang') || 'gr';
+            // 1. Read language from URL first, then localStorage, default to 'gr'
+            const lang = getCurrentLanguage();
         
             // 2. Update all translatable areas
             updateLanguage(lang);
+            
+            // 3. Update logo link with current language
+            updateLogoLink();
         });
 
         document.addEventListener('DOMContentLoaded', function() {

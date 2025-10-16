@@ -107,7 +107,14 @@ public class SecurityConfig {
                     "/login/oauth2/**",
                     "/chess-websocket/**",
                     "/topic/**",
-                    "/app/**"
+                    "/app/**",
+                    // Language-based routes - allow access without authentication
+                    "/{lang}",
+                    "/{lang}/index",
+                    "/{lang}/game",
+                    "/{lang}/privacy-policy",
+                    "/{lang}/terms-of-use",
+                    "/{lang}/security-policy"
                 ).permitAll();
                 registry.anyRequest().authenticated();
             })

@@ -513,7 +513,7 @@ const translations = {
   
   // 2. Function to get translation by key
   function getTranslation(key) {
-    const lang = localStorage.getItem('lang') || 'gr';
+    const lang = getCurrentLanguage();
     return translations[lang][key] || key;
   }
 
@@ -671,8 +671,53 @@ const translations = {
     }
   };
 
+  // Function to get current language from URL or localStorage
+  function getCurrentLanguage() {
+    // First, try to get language from URL path
+    const pathSegments = window.location.pathname.split('/').filter(segment => segment !== '');
+    if (pathSegments.length > 0 && (pathSegments[0] === 'en' || pathSegments[0] === 'gr')) {
+      return pathSegments[0];
+    }
+    
+    // Fallback to localStorage
+    return localStorage.getItem('lang') || 'gr';
+  }
+
+  // Function to update URL with language parameter
+  function updateUrlWithLanguage(lang) {
+    const currentPath = window.location.pathname;
+    const pathSegments = currentPath.split('/').filter(segment => segment !== '');
+    
+    // Remove existing language from path if present
+    if (pathSegments.length > 0 && (pathSegments[0] === 'en' || pathSegments[0] === 'gr')) {
+      pathSegments.shift();
+    }
+    
+    // Add new language to the beginning
+    pathSegments.unshift(lang);
+    
+    // Reconstruct the URL
+    const newPath = '/' + pathSegments.join('/');
+    const newUrl = window.location.origin + newPath + window.location.search + window.location.hash;
+    
+    // Update URL without page reload
+    window.history.pushState({}, '', newUrl);
+  }
+
+  // Function to update logo link with current language
+  function updateLogoLink() {
+    const logoLink = document.getElementById('logo-link');
+    if (logoLink) {
+      const currentLang = getCurrentLanguage();
+      logoLink.href = '/' + currentLang;
+    }
+  }
+
   // 3. Function to update all translatable areas
   function updateLanguage(lang) {
+    // Update URL with language parameter
+    updateUrlWithLanguage(lang);
+    
     document.title = translations[lang].titlelang;
     for (const key in translations[lang]) {
         const el = document.getElementById(key);
@@ -689,6 +734,9 @@ const translations = {
     if (saveBtnModal) saveBtnModal.textContent = translations[lang].save;
     const cancelBtnModal = document.getElementById('cancelusernamebtnmodal');
     if (cancelBtnModal) cancelBtnModal.textContent = translations[lang].cancel;
+    
+    // Update logo link with current language
+    updateLogoLink();
     
     // Update music toggle tooltip immediately when language changes
     setTimeout(() => {
