@@ -3100,6 +3100,30 @@ class ChessGame {
         this.stopTimer();
         this.isUpdatingFromServer = true;
         
+        // Check if this is a pawn promotion move
+        const isPromotionMove = this.isPawnPromotionMove(sourceCoordinate, targetCoordinate);
+        let promotionPieceType = null;
+        
+        // If it's a promotion move, show the promotion modal
+        if (isPromotionMove) {
+            const sourceTile = this.boardDTO.tiles.find(t => t.tileCoordinate === sourceCoordinate);
+            const playerAlliance = sourceTile?.piece?.pieceAlliance;
+            
+            if (playerAlliance && window.promotionModal) {
+                try {
+                    // Show promotion modal and wait for user selection
+                    promotionPieceType = await window.promotionModal.showPromotionModal(playerAlliance);
+                } catch (error) {
+                    console.error('Error showing promotion modal:', error);
+                    // If modal fails, default to Queen
+                    promotionPieceType = 'QUEEN';
+                }
+            } else {
+                // Fallback to Queen if modal is not available
+                promotionPieceType = 'QUEEN';
+            }
+        }
+        
         // Immediately update the board visually for instant feedback
         this.performClientSideMove(sourceCoordinate, targetCoordinate);
         
@@ -3121,7 +3145,8 @@ class ChessGame {
                 body: JSON.stringify({
                     gameId: this.gameId,
                     sourceCoordinate: sourceCoordinate,
-                    targetCoordinate: targetCoordinate
+                    targetCoordinate: targetCoordinate,
+                    promotionPieceType: promotionPieceType // Include promotion piece type if provided
                 })
             });
             
@@ -3160,6 +3185,34 @@ class ChessGame {
         this.isUpdatingFromServer = false;
     }
     
+    /**
+     * Check if a move is a pawn promotion move
+     * @param {number} sourceCoordinate - The source coordinate of the move
+     * @param {number} targetCoordinate - The target coordinate of the move
+     * @returns {boolean} - True if this is a pawn promotion move
+     */
+    isPawnPromotionMove(sourceCoordinate, targetCoordinate) {
+        // Find the source tile and piece
+        const sourceTile = this.boardDTO.tiles.find(t => t.tileCoordinate === sourceCoordinate);
+        if (!sourceTile || !sourceTile.piece) {
+            return false;
+        }
+        
+        const piece = sourceTile.piece;
+        
+        // Check if it's a pawn
+        if (piece.pieceSymbol !== 'PAWN') {
+            return false;
+        }
+        
+        // Check if the pawn is moving to the promotion rank
+        const targetRank = Math.floor(targetCoordinate / 8);
+        const isWhitePromotion = piece.pieceAlliance === 'WHITE' && targetRank === 0;
+        const isBlackPromotion = piece.pieceAlliance === 'BLACK' && targetRank === 7;
+        
+        return isWhitePromotion || isBlackPromotion;
+    }
+
     /**
      * Perform the visual move on the client side immediately
      * @param {number} sourceCoordinate - The source coordinate of the move

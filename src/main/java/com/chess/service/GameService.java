@@ -249,6 +249,11 @@ public class GameService {
     
     @Transactional
     public Game makeMove(String gameId, int sourceCoordinate, int targetCoordinate) {
+        return makeMove(gameId, sourceCoordinate, targetCoordinate, null);
+    }
+    
+    @Transactional
+    public Game makeMove(String gameId, int sourceCoordinate, int targetCoordinate, String promotionPieceType) {
         // Check if game exists
         Game game = gameRepository.findById(gameId)
             .orElseThrow(() -> new GameNotFoundException(gameId));
@@ -285,6 +290,28 @@ public class GameService {
                     && m.getTargetCoordinate() == targetCoordinate)
             .findFirst()
             .orElseThrow(() -> new InvalidMoveException("Invalid move"));
+        
+        // Handle promotion moves specially - create new move with selected promotion piece
+        if (move instanceof com.chess.core.moves.noncapturing.PawnPromotionMove && promotionPieceType != null) {
+            // Create a new promotion move with the selected piece type
+            move = new com.chess.core.moves.noncapturing.PawnPromotionMove(
+                currentBoard.getTiles(), 
+                sourceCoordinate, 
+                targetCoordinate, 
+                move.getPieceToMove(), 
+                promotionPieceType
+            );
+        } else if (move instanceof com.chess.core.moves.capturing.PawnPromotionCapturingMove && promotionPieceType != null) {
+            // Create a new promotion capturing move with the selected piece type
+            move = new com.chess.core.moves.capturing.PawnPromotionCapturingMove(
+                currentBoard.getTiles(), 
+                sourceCoordinate, 
+                targetCoordinate, 
+                move.getPieceToMove(), 
+                move.getCapturedPiece(),
+                promotionPieceType
+            );
+        }
             
         // Execute the move
         com.chess.core.board.IBoard newBoard = move.execute();

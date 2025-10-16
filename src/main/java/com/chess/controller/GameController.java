@@ -198,11 +198,12 @@ public class GameController {
             log.info("Processing move request for game {}: from {} to {}", 
                 request.getGameId(), request.getSourceCoordinate(), request.getTargetCoordinate());
 
-            // Make the move using the service
+            // Make the move using the service with optional promotion piece type
             Game updatedGame = gameService.makeMove(
                 request.getGameId(), 
                 request.getSourceCoordinate(), 
-                request.getTargetCoordinate()
+                request.getTargetCoordinate(),
+                request.getPromotionPieceType() // Pass the promotion piece type if provided
             );
             
             // DECOMPRESS the board before sending to frontend

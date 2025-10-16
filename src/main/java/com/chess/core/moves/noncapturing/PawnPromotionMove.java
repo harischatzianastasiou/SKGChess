@@ -10,9 +10,16 @@ import  com.chess.core.pieces.Piece;
 import  com.chess.core.tiles.Tile;
 
 public class PawnPromotionMove extends NonCapturingMove {
+    private final String promotionPieceType; // Store the piece type to promote to
+    
     public PawnPromotionMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove) {
         super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
-        // add logic to promote pawn
+        this.promotionPieceType = "QUEEN"; // Default to Queen for backward compatibility
+    }
+    
+    public PawnPromotionMove(final List<Tile> boardTiles, final int sourceCoordinate, final int targetCoordinate, final Piece pieceToMove, final String promotionPieceType) {
+        super(boardTiles, sourceCoordinate, targetCoordinate, pieceToMove);
+        this.promotionPieceType = promotionPieceType; // Store the selected promotion piece type
     }
     
     @Override
@@ -30,11 +37,11 @@ public class PawnPromotionMove extends NonCapturingMove {
             }
         }
 
-        // Let the user select a new piece
-        // Assume user input is handled elsewhere and stored in newPieceType
-        String newPieceType = "QUEEN"; // Replace with actual user input
+        // Use the stored promotion piece type instead of hardcoded value
+        // This allows the frontend to specify which piece to promote to
+        String newPieceType = this.promotionPieceType;
 
-        // Create the promoted piece on the new board
+        // Create the promoted piece on the new board using the selected piece type
         Piece promotedPiece = ((Pawn) super.getPieceToMove()).promotePawn(super.getTargetCoordinate(), newPieceType);
         builder.setPiece(promotedPiece);
 
