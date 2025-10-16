@@ -1256,15 +1256,18 @@ class ChessGame {
                                 }
                             } else if (moveData.type === 'MOVE_MADE') {
                                 // Debug: Log the full message
-('Full MOVE_MADE WebSocket message:', moveData);
+                                console.log('Full MOVE_MADE WebSocket message:', moveData);
                                 
                                 // Store winner ID if provided in the message
                                 if (moveData.winnerId) {
                                     this.winnerId = moveData.winnerId;
-('Received winnerId from MOVE_MADE:', moveData.winnerId);
+                                    console.log('Received winnerId from MOVE_MADE:', moveData.winnerId);
                                 } else {
-('No winnerId in MOVE_MADE message');
+                                    console.log('No winnerId in MOVE_MADE message');
                                 }
+                                
+                                // Update material advantage display
+                                this.updateMaterialAdvantage(moveData);
                                 
                                 await this.fetchGame();
                                 
@@ -3500,6 +3503,71 @@ class ChessGame {
                 this.style.fontSize = '';
             });
         });
+    }
+    
+    /**
+     * Update the material advantage display for the connected player only
+     * @param {Object} moveData - The move data containing material advantage information
+     */
+    updateMaterialAdvantage(moveData) {
+        // Get the current player's color from the game state
+        const isWhitePlayer = this.playerColor === 'WHITE';
+        
+        // Get material advantage values from the move data
+        const whiteAdvantage = moveData.whiteMaterialAdvantage || 0;
+        const blackAdvantage = moveData.blackMaterialAdvantage || 0;
+        
+        // Calculate the advantage for the current player only
+        const currentPlayerAdvantage = isWhitePlayer ? whiteAdvantage : blackAdvantage;
+        
+        // Update only the current player's material advantage display
+        this.updatePlayerMaterialAdvantage('current', currentPlayerAdvantage);
+        
+        // Hide opponent's material advantage display (never show to opponent)
+        this.hideOpponentMaterialAdvantage();
+    }
+    
+    /**
+     * Update the material advantage display for a specific player
+     * @param {string} playerType - 'current' or 'opponent'
+     * @param {number} advantage - The material advantage value
+     */
+    updatePlayerMaterialAdvantage(playerType, advantage) {
+        const advantageElement = document.getElementById(`${playerType}-material-advantage`);
+        const advantageText = document.getElementById(`${playerType}-advantage-text`);
+        
+        if (!advantageElement || !advantageText) {
+            return; // Elements not found, skip update
+        }
+        
+        // Remove existing classes
+        advantageElement.classList.remove('advantage', 'disadvantage', 'equal');
+        
+        if (advantage > 0) {
+            // Player has material advantage
+            advantageElement.classList.add('advantage');
+            advantageText.textContent = `+${advantage}`;
+            advantageElement.style.display = 'flex';
+        } else if (advantage < 0) {
+            // Player has material disadvantage
+            advantageElement.classList.add('disadvantage');
+            advantageText.textContent = `${advantage}`; // Already includes minus sign
+            advantageElement.style.display = 'flex';
+        } else {
+            // Equal material - hide the display
+            advantageElement.style.display = 'none';
+        }
+    }
+    
+    /**
+     * Hide the opponent's material advantage display
+     * This ensures only the connected player sees their own advantage
+     */
+    hideOpponentMaterialAdvantage() {
+        const opponentAdvantageElement = document.getElementById('opponent-material-advantage');
+        if (opponentAdvantageElement) {
+            opponentAdvantageElement.style.display = 'none';
+        }
     }
 }
 

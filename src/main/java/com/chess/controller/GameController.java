@@ -209,8 +209,11 @@ public class GameController {
             // DECOMPRESS the board before sending to frontend
             String decompressedBoard = CompressionUtil.safeDecompress(updatedGame.getBoard());
 
-            // Parse the lastMoveData to get the moveType for sound effects
+            // Parse the lastMoveData to get the moveType and material advantage data
             String moveType = "NORMAL"; // Default move type
+            int whiteMaterialAdvantage = 0; // Default material advantage
+            int blackMaterialAdvantage = 0; // Default material advantage
+            
             if (updatedGame.getLastMoveData() != null && !updatedGame.getLastMoveData().isEmpty()) {
                 try {
                     JsonNode moveDataNode = objectMapper.readTree(updatedGame.getLastMoveData());
@@ -218,8 +221,15 @@ public class GameController {
                         moveType = moveDataNode.get("moveType").asText();
                         log.info("Move type for sound effect: {}", moveType);
                     }
+                    // Extract material advantage data
+                    if (moveDataNode.has("whiteMaterialAdvantage")) {
+                        whiteMaterialAdvantage = moveDataNode.get("whiteMaterialAdvantage").asInt();
+                    }
+                    if (moveDataNode.has("blackMaterialAdvantage")) {
+                        blackMaterialAdvantage = moveDataNode.get("blackMaterialAdvantage").asInt();
+                    }
                 } catch (Exception e) {
-                    log.warn("Failed to parse lastMoveData for moveType, using default: {}", e.getMessage());
+                    log.warn("Failed to parse lastMoveData, using defaults: {}", e.getMessage());
                 }
             }
 
@@ -241,6 +251,8 @@ public class GameController {
             "\"blackPlayerId\":\"%s\"," +
             "\"winnerId\":\"%s\"," +
             "\"moveType\":\"%s\"," +
+            "\"whiteMaterialAdvantage\":%d," +
+            "\"blackMaterialAdvantage\":%d," +
             "\"boardDTO\":%s}",
             request.getGameId(),
             updatedGame.getStatus(),
@@ -248,6 +260,8 @@ public class GameController {
             blackPlayerId,
             winnerId,
             moveType,
+            whiteMaterialAdvantage,
+            blackMaterialAdvantage,
             objectMapper.writeValueAsString(decompressedBoard)
             );
 

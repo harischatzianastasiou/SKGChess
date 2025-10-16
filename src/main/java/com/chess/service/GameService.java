@@ -370,6 +370,18 @@ public class GameService {
         moveData.put("pieceAlliance", move.getPieceToMove().getPieceAlliance().toString());
         moveData.put("timeUsedSeconds", timeUsedSeconds); // Add time used to move data
         
+        // Calculate material advantage for both players after the move
+        // Get all pieces from the new board state
+        java.util.Collection<com.chess.core.pieces.Piece> allPieces = newBoard.getAllPieces();
+        
+        // Calculate material advantage from white player's perspective
+        int whiteMaterialAdvantage = com.chess.core.utils.PieceValueCalculator.calculateMaterialAdvantage(allPieces, Alliance.WHITE);
+        int blackMaterialAdvantage = com.chess.core.utils.PieceValueCalculator.calculateMaterialAdvantage(allPieces, Alliance.BLACK);
+        
+        // Add material advantage data to move data
+        moveData.put("whiteMaterialAdvantage", whiteMaterialAdvantage);
+        moveData.put("blackMaterialAdvantage", blackMaterialAdvantage);
+        
         // Determine move type for sound effects
         if(move instanceof CapturingMove) {
             moveData.put("moveType", "CAPTURE");

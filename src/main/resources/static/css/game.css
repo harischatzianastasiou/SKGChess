@@ -213,6 +213,38 @@ html, body {
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Material advantage display styles */
+.material-advantage {
+    display: flex;
+    align-items: center;
+    margin-left: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.material-advantage.advantage {
+    background: rgba(76, 175, 80, 0.2); /* Green background for advantage */
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.material-advantage.disadvantage {
+    background: rgba(244, 67, 54, 0.2); /* Red background for disadvantage */
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.material-advantage.equal {
+    background: rgba(158, 158, 158, 0.2); /* Gray background for equal material */
+    color: #9e9e9e;
+    border: 1px solid rgba(158, 158, 158, 0.3);
+}
+
 /* Player Timer styles are now handled by theme-specific CSS files (board-purple.css and board-gold.css) */
 
 /* Timer styles */
