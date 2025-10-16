@@ -14,16 +14,16 @@
     --color-card: rgba(255, 255, 255, 0.05);
     --color-card-hover: rgba(255, 255, 255, 0.08);
     --transition-speed: 0.3s;
-    --color-accent: #ab9b87;
+    --color-accent: #ffd700;  /* Bright gold for better contrast */
     
     /* Chess-specific colors */
     --color-white-square: #ab9b87;  /* Light brown instead of white */
     --color-black-square: #71645a;  /* Dark brown */
     --color-white-piece: #ffffff;
     --color-black-piece: #000000;
-    --color-selected: rgba(171, 155, 135, 0.4);
-    --color-legal-move: rgba(171, 155, 135, 0.6);
-    --color-capture: rgba(220, 53, 69, 0.3);
+    --color-selected: rgba(255, 215, 0, 0.6);  /* Bright gold for better visibility */
+    --color-legal-move: rgba(255, 215, 0, 0.8);  /* Bright gold for legal moves */
+    --color-capture: rgba(220, 53, 69, 0.7);  /* More opaque red for captures */
     
     /* Dynamic base unit that adapts to screen size */
     --base-unit: clamp(0.0325rem, 0.0325rem + 0.01vw, 0.04rem);
@@ -237,13 +237,13 @@ body {
 
 @keyframes selectedPulse {
     0% { 
-        border-color: rgba(171, 155, 135, 0.8);
+        border-color: rgba(255, 215, 0, 0.8);
     }
     50% { 
-        border-color: rgba(171, 155, 135, 1);
+        border-color: rgba(255, 215, 0, 1);
     }
     100% { 
-        border-color: rgba(171, 155, 135, 0.8);
+        border-color: rgba(255, 215, 0, 0.8);
     }
 }
 
@@ -399,16 +399,16 @@ body {
 
 /* Enhanced styling for source and target tiles */
 .last-move-source {
-    background-color: rgba(59, 45, 87, 0.263) !important;
+    background-color: rgba(255, 215, 0, 0.3) !important; /* Bright gold for source */
 }
 
 .last-move-target {
-    background-color: rgb(65, 60, 84) !important;
+    background-color: rgba(255, 140, 0, 0.4) !important; /* Orange for target */
 }
 
 /* Special highlighting for capture moves - red background */
 .last-move-capture {
-    background-color: rgba(30, 29, 34, 0.086) !important; /* Semi-transparent red background */
+    background-color: rgba(220, 53, 69, 0.5) !important; /* More visible red for captures */
 }
 
 @keyframes fadeInArrow {
@@ -645,31 +645,31 @@ body {
 
 @keyframes selectedBreathingLight {
     0% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
-        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.6), rgba(255, 140, 0, 0.7));
+        box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.4);
     }
     50% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95));
-        box-shadow: inset 0 0 20px rgba(142, 68, 173, 0.5);
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.8), rgba(255, 140, 0, 0.9));
+        box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.6);
     }
     100% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
-        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.6), rgba(255, 140, 0, 0.7));
+        box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.4);
     }
 }
 
 @keyframes selectedBreathingDark {
     0% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
-        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.6), rgba(255, 140, 0, 0.7));
+        box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.4);
     }
     50% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.85), rgba(192, 57, 43, 0.95));
-        box-shadow: inset 0 0 20px rgba(142, 68, 173, 0.5);
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.8), rgba(255, 140, 0, 0.9));
+        box-shadow: inset 0 0 20px rgba(255, 215, 0, 0.6);
     }
     100% { 
-        background: linear-gradient(135deg, rgba(142, 68, 173, 0.75), rgba(192, 57, 43, 0.85));
-        box-shadow: inset 0 0 15px rgba(142, 68, 173, 0.3);
+        background: linear-gradient(135deg, rgba(255, 215, 0, 0.6), rgba(255, 140, 0, 0.7));
+        box-shadow: inset 0 0 15px rgba(255, 215, 0, 0.4);
     }
 }
 
@@ -679,7 +679,7 @@ body {
     100% { transform: translateY(0) rotate(0deg); }
 }
 
-/* Add en passant highlighting for purple theme */
+/* Add en passant highlighting for brown theme */
 .tile.legal-move-en-passant::after {
     content: '';
     position: absolute;
@@ -687,10 +687,10 @@ body {
     left: 50%;
     width: 33%;
     height: 33%;
-    background: #ab9b87;  /* Brown theme color */
+    background: #ffd700;  /* Bright gold for better visibility */
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    border: 2px solid #ab9b87;  /* Darker brown for border */
+    border: 2px solid #ff8c00;  /* Orange border for better contrast */
     animation: pulseMove 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     z-index: 2;
     pointer-events: none;
@@ -703,21 +703,21 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(171, 155, 135, 0.15);  /* Light brown with transparency */
-    border: 2px solid #ab9b87;  /* Darker brown for border */
+    background: rgba(255, 215, 0, 0.2);  /* Light gold with transparency */
+    border: 2px solid #ff8c00;  /* Orange border for better contrast */
     z-index: 1;
     pointer-events: none;
 }
 
 .tile.legal-move-en-passant:hover::after {
     animation: pulseMoveHover 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-    background: #ab9b87;  /* Darker brown on hover */
-    border: 2px solid #71645a;  /* Even darker brown for border on hover */
+    background: #ff8c00;  /* Orange on hover for better visibility */
+    border: 2px solid #ff4500;  /* Darker orange for border on hover */
 }
 
 .tile.legal-move-en-passant:hover::before {
-    background: rgba(171, 155, 135, 0.3);  /* More opaque brown on hover */
-    border: 2px solid #71645a;  /* Even darker brown for border on hover */
+    background: rgba(255, 140, 0, 0.4);  /* More opaque orange on hover */
+    border: 2px solid #ff4500;  /* Darker orange for border on hover */
 }
 
 /* Player Timer - Purple Theme */
@@ -778,8 +778,8 @@ body {
 
 /* Valid move hover effect - piece can land here */
 .tile.dragover-valid {
-    background-color: rgba(171, 155, 135, 0.6) !important; /* Brown highlight for valid moves */
-    box-shadow: inset 0 0 0 3px rgba(171, 155, 135, 0.8);
+    background-color: rgba(255, 215, 0, 0.4) !important; /* Bright gold highlight for valid moves */
+    box-shadow: inset 0 0 0 3px rgba(255, 215, 0, 0.8);
     transform: scale(1.05);
 }
 
@@ -790,7 +790,7 @@ body {
     left: 50%;
     width: 60%;
     height: 60%;
-    background: radial-gradient(circle, rgba(171, 155, 135, 0.3) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.5) 0%, transparent 70%);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     animation: validDropPulse 0.8s ease-in-out infinite;
