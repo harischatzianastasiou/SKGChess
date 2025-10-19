@@ -548,7 +548,7 @@ const translations = {
       rematchOfferSent: "Η πρόταση επανάληψης στάλθηκε στον αντίπαλό σας",
       drawOfferSent: "Η πρόταση ισοπαλίας στάλθηκε στον αντίπαλό σας",
       gameResignedSuccessfully: "Το παιχνίδι παραιτήθηκε επιτυχώς",
-      rematchAccepted: "Η επανάληψη αποδέχτηκε",
+      rematchAccepted: "Η πρόταση έγινε αποδεκτή",
       // Popup button translations
       successTitle: " ",
       okButton: "Εντάξει",
