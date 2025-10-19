@@ -838,6 +838,12 @@ class ChessGame {
                 z-index: 100000;
                 backdrop-filter: blur(20px);
             `;
+            // Get translations for the rematch popup
+            const rematchTitle = getTranslation('rematchOfferTitle');
+            const rematchMessage = getTranslation('rematchOfferMessage');
+            const acceptText = getTranslation('acceptRematch');
+            const declineText = getTranslation('declineRematch');
+            
             dialog.innerHTML = `
                 <div class="rematch-offer-content" style="
                     background: rgba(40, 30, 60, 0.97);
@@ -848,8 +854,8 @@ class ChessGame {
                     border: 2px solid var(--color-accent, #ffd700);
                     backdrop-filter: blur(6px);
                 ">
-                    <h3 style="margin-bottom: 1rem; color: #ffd700;">Rematch Offer</h3>
-                    <p style="margin-bottom: 1.5rem;">${offeringPlayerUsername} has offered a rematch.</p>
+                    <h3 style="margin-bottom: 1rem; color: #ffd700;">${rematchTitle}</h3>
+                    <p style="margin-bottom: 1.5rem;">${offeringPlayerUsername} ${rematchMessage}</p>
                     <div class="rematch-offer-buttons" style="display: flex; gap: 1rem; justify-content: center;">
                         <button class="btn-accept-rematch" style="
                             padding: 10px 20px;
@@ -859,7 +865,7 @@ class ChessGame {
                             border-radius: 6px;
                             cursor: pointer;
                             font-weight: 600;
-                        ">Accept Rematch</button>
+                        ">${acceptText}</button>
                         <button class="btn-decline-rematch" style="
                             padding: 10px 20px;
                             background: linear-gradient(135deg, #dc3545, #c82333);
@@ -868,7 +874,7 @@ class ChessGame {
                             border-radius: 6px;
                             cursor: pointer;
                             font-weight: 600;
-                        ">Decline Rematch</button>
+                        ">${declineText}</button>
                     </div>
                 </div>
             `;

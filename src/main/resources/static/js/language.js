@@ -90,6 +90,11 @@ const translations = {
       gameEndSubtitle: "The game has ended",
       offerRematch: "Offer Rematch",
       newGame: "New Game",
+      // Rematch offer popup
+      rematchOfferTitle: "Rematch Offer",
+      rematchOfferMessage: "has offered a rematch.",
+      acceptRematch: "Accept Rematch",
+      declineRematch: "Decline Rematch",
       // Error messages
       errorTitle: " ",
       successTitle: " ",
@@ -408,6 +413,11 @@ const translations = {
       gameEndSubtitle: "Το παιχνίδι έχει τελειώσει",
       offerRematch: "Πρόταση Επανάληψης",
       newGame: "Νέο Παιχνίδι",
+      // Rematch offer popup
+      rematchOfferTitle: "Πρόταση Επανάληψης",
+      rematchOfferMessage: "πρότεινε να παίξετε ξανά.",
+      acceptRematch: "Αποδοχή",
+      declineRematch: "Απόρριψη",
       // Error messages
       errorTitle: " ",
       successTitle: " ",
