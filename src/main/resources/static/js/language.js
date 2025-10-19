@@ -598,7 +598,7 @@ const translations = {
       newspaperPiecesDescription: "Κάθε παίκτης έχει μια συλλογή κομματιών και μια συλλογή κινήσεων που μπορεί να κάνει.",
       newspaperPiecesDescription2: "Ας δούμε πώς κάθε κομμάτι στη σκακιέρα αντιπροσωπεύεται στη Java από ένα αντικείμενο Piece.",
       newspaperMoveDescription: "Ας δούμε επίσης πώς αντιπροσωπεύουμε μια κίνηση με την κλάση Move.",
-      newspaperHowDoesItWork: "Πως λειτουργεί ;",
+      newspaperHowDoesItWork: "Πως λειτουργεί;",
       newspaperTechnicalWarning: " ",
       newspaperStep1: "Βήμα 1: Αρχικοποίηση Παιχνιδιού",
       newspaperStep1Description: "Όταν ξεκινά ένα νέο παιχνίδι, δημιουργείται μια νέα οντότητα Game στη βάση δεδομένων. Η αρχική κατάσταση της σκακιέρας δημιουργείται χρησιμοποιώντας το Builder pattern μέσω της μεθόδου createStandardBoard():",
