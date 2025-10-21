@@ -4,18 +4,8 @@
     <title>Cookie Banner Fragment</title>
 </head>
 <body>
-    <!-- Cookie Notice Banner - Hidden by default to prevent crawler issues -->
-    <div id="cookieBanner" class="cookie-banner" style="display: none !important; visibility: hidden;">
-        <div class="cookie-content">
-            <div class="cookie-text">
-                <h3>🍪 Cookie Notice</h3>
-                <p>We use only essential cookies for login functionality. We do not use tracking or advertising cookies.</p>
-            </div>
-            <div class="cookie-actions">
-                <button id="acceptCookies" class="cookie-btn accept">Got it</button>
-            </div>
-        </div>
-    </div>
+    <!-- Cookie Notice Banner - Will be injected via JavaScript after page load -->
+    <div id="cookieBanner"></div>
 
 
     <style>
@@ -141,31 +131,44 @@
     </style>
 
     <script>
-        // Simple Cookie Notice JavaScript - Load after page is fully rendered
+        // Cookie Notice JavaScript - Create banner dynamically after page load
         window.addEventListener('load', function() {
             // Check if user has already seen the notice
             const cookieNoticeSeen = localStorage.getItem('cookieNoticeSeen');
             
             if (!cookieNoticeSeen) {
-                // Show banner after a longer delay to ensure page is fully loaded
+                // Create banner dynamically after a delay
                 setTimeout(() => {
-                    const banner = document.getElementById('cookieBanner');
-                    if (banner) {
-                        banner.style.display = 'block';
+                    const bannerContainer = document.getElementById('cookieBanner');
+                    if (bannerContainer) {
+                        // Create the banner HTML dynamically
+                        bannerContainer.innerHTML = `
+                            <div class="cookie-banner" style="display: block;">
+                                <div class="cookie-content">
+                                    <div class="cookie-text">
+                                        <h3>🍪 Cookie Notice</h3>
+                                        <p>We use only essential cookies for login functionality. We do not use tracking or advertising cookies.</p>
+                                    </div>
+                                    <div class="cookie-actions">
+                                        <button id="acceptCookies" class="cookie-btn accept">Got it</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Add event listener to the dynamically created button
+                        const acceptBtn = document.getElementById('acceptCookies');
+                        if (acceptBtn) {
+                            acceptBtn.addEventListener('click', function() {
+                                localStorage.setItem('cookieNoticeSeen', 'true');
+                                const banner = document.querySelector('.cookie-banner');
+                                if (banner) {
+                                    banner.style.display = 'none';
+                                }
+                            });
+                        }
                     }
-                }, 5000); // Increased delay to 5 seconds
-            }
-
-            // Got it button - just hide the banner
-            const acceptBtn = document.getElementById('acceptCookies');
-            if (acceptBtn) {
-                acceptBtn.addEventListener('click', function() {
-                    localStorage.setItem('cookieNoticeSeen', 'true');
-                    const banner = document.getElementById('cookieBanner');
-                    if (banner) {
-                        banner.style.display = 'none';
-                    }
-                });
+                }, 10000); // 10 second delay to ensure crawlers don't see it
             }
         });
     </script>
