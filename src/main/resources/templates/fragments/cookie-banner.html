@@ -4,8 +4,8 @@
     <title>Cookie Banner Fragment</title>
 </head>
 <body>
-    <!-- Cookie Notice Banner -->
-    <div id="cookieBanner" class="cookie-banner" style="display: none;">
+    <!-- Cookie Notice Banner - Hidden by default to prevent crawler issues -->
+    <div id="cookieBanner" class="cookie-banner" style="display: none !important; visibility: hidden;">
         <div class="cookie-content">
             <div class="cookie-text">
                 <h3>🍪 Cookie Notice</h3>
@@ -141,23 +141,32 @@
     </style>
 
     <script>
-        // Simple Cookie Notice JavaScript
-        document.addEventListener('DOMContentLoaded', function() {
+        // Simple Cookie Notice JavaScript - Load after page is fully rendered
+        window.addEventListener('load', function() {
             // Check if user has already seen the notice
             const cookieNoticeSeen = localStorage.getItem('cookieNoticeSeen');
             
             if (!cookieNoticeSeen) {
-                // Show banner after a short delay
+                // Show banner after a longer delay to ensure page is fully loaded
                 setTimeout(() => {
-                    document.getElementById('cookieBanner').style.display = 'block';
-                }, 2000);
+                    const banner = document.getElementById('cookieBanner');
+                    if (banner) {
+                        banner.style.display = 'block';
+                    }
+                }, 5000); // Increased delay to 5 seconds
             }
 
             // Got it button - just hide the banner
-            document.getElementById('acceptCookies').addEventListener('click', function() {
-                localStorage.setItem('cookieNoticeSeen', 'true');
-                document.getElementById('cookieBanner').style.display = 'none';
-            });
+            const acceptBtn = document.getElementById('acceptCookies');
+            if (acceptBtn) {
+                acceptBtn.addEventListener('click', function() {
+                    localStorage.setItem('cookieNoticeSeen', 'true');
+                    const banner = document.getElementById('cookieBanner');
+                    if (banner) {
+                        banner.style.display = 'none';
+                    }
+                });
+            }
         });
     </script>
 </body>
