@@ -3917,7 +3917,7 @@ body.authenticated .header {
 /* Desktop only: make hc image slightly smaller; mobile stays unchanged */
 @media (min-width: 769px) {
     .skgweb-logo-large img {
-        transform: scale(0.8);
+        transform: scale(0.6);
     }
 }
 
