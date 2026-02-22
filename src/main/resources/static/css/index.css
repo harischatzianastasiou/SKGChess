@@ -3914,6 +3914,13 @@ body.authenticated .header {
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
 }
 
+/* Desktop only: make hc image slightly smaller; mobile stays unchanged */
+@media (min-width: 769px) {
+    .skgweb-logo-large img {
+        transform: scale(0.8);
+    }
+}
+
 .skgweb-logo-text {
     text-align: center;
     max-width: 600px;
